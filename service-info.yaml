@@ -1,0 +1,12 @@
+# the schema of this file is still WIP, changes will be applied/merged automatically
+name: affinidi-cli-js
+description: |-
+  This is affinidi-cli-js service.
+  The description can be multiline but please keep it short.
+criticality: high
+visibility: external
+tech-stack: lib
+business-unit-name: foundational
+team-name: phoenix
+tech-lead: TBD
+code-repository: https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli-js.git

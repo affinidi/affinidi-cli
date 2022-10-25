@@ -1,0 +1,4 @@
+include:
+  - project: affinidi/foundational/foundational-pipeline
+    ref: v1.33.0
+    file: /stack/lib.yml
