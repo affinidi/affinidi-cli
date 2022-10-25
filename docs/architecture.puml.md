@@ -1,6 +1,8 @@
+```plantuml
 @startuml
 
-Client - [Affinidi Cli Js]
-[Affinidi Cli Js] ..> DB : use
+Client - [affinidi-cli-js]
+[affinidi-cli-js] ..> DB : use
 
 @enduml
+```
