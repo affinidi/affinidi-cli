@@ -6,7 +6,5 @@ description: |-
 criticality: high
 visibility: external
 tech-stack: lib
-business-unit-name: foundational
 team-name: phoenix
-tech-lead: TBD
 code-repository: https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli-js.git
