@@ -1,3 +1,1 @@
-import { TestService } from './services/TestService'
-
-export { TestService }
+export { run } from '@oclif/core'
