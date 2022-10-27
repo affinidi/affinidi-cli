@@ -28,6 +28,7 @@ export default class Logout extends Command {
   }
 
   async catch(error: string | Error) {
-    CliUx.ux.info(`TODO: ${error.toString()}`)
+    CliUx.ux.info(`There was an error while trying to log you out. Please try again later.`)
+    // CliUx.ux.info(`${error.toString()}`)
   }
 }

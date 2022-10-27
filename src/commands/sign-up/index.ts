@@ -9,6 +9,7 @@ import {
 } from '../../user-actions'
 import { SESSION_TOKEN_KEY_NAME, userManagementService, vaultService } from '../../services'
 import { WrongEmailError } from '../../errors'
+import { buildWelcomeUserMessage } from '../../render/functions'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -38,7 +39,7 @@ export default class SignUp extends Command {
 
     const answer = await acceptConditionsAndPolicy()
     if (answer !== AnswerYes) {
-      await CliUx.ux.done()
+      CliUx.ux.info("You must accept the conditions and policy to use Affinidi's services")
       return
     }
 
@@ -62,7 +63,7 @@ export default class SignUp extends Command {
     // store the sessionToken below
     vaultService.set(SESSION_TOKEN_KEY_NAME, sessionToken)
 
-    CliUx.ux.info(`Welcome to affinidi ${email}`)
+    CliUx.ux.info(buildWelcomeUserMessage())
   }
 
   async catch(error: string | Error) {

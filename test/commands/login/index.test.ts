@@ -14,7 +14,7 @@ const validEmailAddress = 'valid@email-address.com'
 const testOTP = '123456'
 const doNothing = () => {}
 
-describe.only('login', () => {
+describe('login command', () => {
   test
     .stdout()
     .stub(prompts, 'enterEmailPrompt', () => async () => 'invalid.email.address')
@@ -43,7 +43,7 @@ describe.only('login', () => {
     describe('When the user enters a wrong OTP', () => {
       test
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-          api.post('/auth/login').reply(200, { token: 'some-valid-token' }),
+          api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
         )
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
           api.post('/auth/login/confirm').reply(StatusCodes.BAD_REQUEST),
@@ -56,6 +56,28 @@ describe.only('login', () => {
         .command(['login'])
         .it('runs login explains to the user that the OTP was invalid', (ctx) => {
           expect(ctx.stdout).to.contain(InvalidOrExpiredOTPError)
+        })
+    })
+
+    describe('When the user enters the valid OTP', () => {
+      test
+        .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+          api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
+        )
+        .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+          api
+            .post('/auth/login/confirm')
+            .reply(StatusCodes.OK, null, { 'set-cookie': ['valid-cookie'] }),
+        )
+        .stdout()
+        .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
+        .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
+        .stub(CliUx.ux.action, 'start', () => () => doNothing)
+        .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .command(['login'])
+        .it('runs login and shows a welcome back user message', (ctx) => {
+          expect(ctx.stdout).to.contain('You are authenticated')
+          expect(ctx.stdout).to.contain(`Welcome back to Affinidi ${validEmailAddress}!`)
         })
     })
   })

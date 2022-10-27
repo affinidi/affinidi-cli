@@ -1,17 +1,20 @@
 import { expect, test } from '@oclif/test'
+import { StatusCodes } from 'http-status-codes'
+import { SESSION_TOKEN_KEY_NAME, vaultService } from '../../../src/services'
 
-describe('logout', () => {
+import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
+import * as prompts from '../../../src/user-actions'
+
+describe('logout command', () => {
+  before(() => {
+    vaultService.set(SESSION_TOKEN_KEY_NAME, 'some-token')
+  })
   test
+    .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))
     .stdout()
+    .stub(prompts, 'confirmSignOut', () => async () => prompts.AnswerYes)
     .command(['logout'])
-    .it('runs hello', (ctx) => {
-      expect(ctx.stdout).to.contain('hello world')
-    })
-
-  test
-    .stdout()
-    .command(['logout', '--name', 'jeff'])
-    .it('runs hello --name jeff', (ctx) => {
-      expect(ctx.stdout).to.contain('hello jeff')
+    .it('runs logout and shows a thank you message', (ctx) => {
+      expect(ctx.stdout).to.contain("Thank you for using Affinidi's services")
     })
 })

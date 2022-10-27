@@ -1,5 +1,7 @@
 import { CliUx } from '@oclif/core'
 
+import { conditionsAndPolicyMessage } from '../render/texts'
+
 export const AnswerNo = 'n'
 export const AnswerYes = 'y'
 
@@ -22,15 +24,7 @@ export const confirmSignOut = async (): Promise<YesOrNo> => {
 }
 
 export const acceptConditionsAndPolicy = async (): Promise<YesOrNo> => {
-  return CliUx.ux.prompt(
-    `
-    Please confirm that you agree with:
-    Terms and Conditions: https://build.affinidi.com/console-landing-terms-of-use.pdf
-    Cookie Policy: https://build.affinidi.com/console-landing-cookie-policy.pdf
-    Privacy Policy: https://build.affinidi.com/console-landing-privacy-policy.pdf
-    [y/n]`,
-    {
-      default: 'n',
-    },
-  )
+  return CliUx.ux.prompt(conditionsAndPolicyMessage, {
+    default: 'n',
+  })
 }
