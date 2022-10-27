@@ -28,3 +28,9 @@ export const acceptConditionsAndPolicy = async (): Promise<YesOrNo> => {
     default: 'n',
   })
 }
+
+export const projectNamePrompt = async (
+  text: string = 'Please enter a project name',
+): Promise<string> => {
+  return CliUx.ux.prompt(text, { required: true })
+}

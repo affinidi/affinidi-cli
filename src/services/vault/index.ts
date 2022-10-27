@@ -7,7 +7,7 @@ const doNothing = () => {}
 interface IVaultSetterGetter {
   clear: () => void
   get(key: string): string
-  set(key: string, value: string): void
+  set(key: string, value: string | object): void
 }
 
 class VaultService {
@@ -25,7 +25,7 @@ class VaultService {
     return this.storer.get(key)
   }
 
-  public set = (key: string, value: string): void => {
+  public set = (key: string, value: string | object): void => {
     this.storer.set(key, value)
   }
 }
@@ -36,7 +36,7 @@ const testStorer: IVaultSetterGetter = {
   get: (key: string): string => {
     return testStore.get(key)
   },
-  set: (key: string, value: string): void => {
+  set: (key: string, value: string | object): void => {
     testStore.set(key, value)
   },
 }
@@ -52,7 +52,7 @@ const storer: IVaultSetterGetter = {
   get: (key: string): string => {
     return credentialConf.get(key)
   },
-  set: (key: string, value: string): void => {
+  set: (key: string, value: string | object): void => {
     credentialConf.set(key, value)
   },
 }
