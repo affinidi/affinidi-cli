@@ -9,3 +9,12 @@ export const conditionsAndPolicyMessage = `
     Privacy Policy: ${chalk.blue('https://build.affinidi.com/console-landing-privacy-policy.pdf')}
     [y/n]
 `
+
+export const listCommandDescription = chalk`
+  Use the ${chalk.bgCyanBright('list')} command if you want to display some of your resources
+  like schemas or the projects that you've created.
+  The current available ressources are:
+      - ${chalk.cyanBright('projects')}
+      - ${chalk.cyanBright('schemas')}
+  See the command examples below ⬇️
+`
