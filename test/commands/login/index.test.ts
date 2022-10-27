@@ -2,11 +2,7 @@ import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
-import {
-  InvalidOrExpiredOTPError,
-  UserManagementServiceDownError,
-  WrongEmailError,
-} from '../../../src/errors'
+import { InvalidOrExpiredOTPError, ServiceDownError, WrongEmailError } from '../../../src/errors'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 
@@ -28,7 +24,7 @@ describe('login command', () => {
       test
         .stdout()
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-          api.post('/auth/login').replyWithError(UserManagementServiceDownError),
+          api.post('/auth/login').replyWithError(ServiceDownError),
         )
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -36,7 +32,7 @@ describe('login command', () => {
         .command(['login'])
         .it('runs login and shows the user that something went wrong', (ctx) => {
           // TODO: the error message is contained twice in the ctx.stdout
-          expect(ctx.stdout).to.contain(UserManagementServiceDownError)
+          expect(ctx.stdout).to.contain(ServiceDownError)
         })
     })
 

@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 
 import { Api as UserManagementApi } from './user-management.api'
-import { InvalidOrExpiredOTPError, UserManagementServiceDownError } from '../../errors'
+import { InvalidOrExpiredOTPError, ServiceDownError } from '../../errors'
 
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
@@ -50,7 +50,7 @@ class UserManagementService {
       return result.data
     } catch (error: any) {
       console.log(error)
-      throw UserManagementServiceDownError
+      throw ServiceDownError
     }
   }
 
@@ -79,8 +79,7 @@ class UserManagementService {
       })
       return
     } catch (error: any) {
-      console.log(error)
-      throw UserManagementServiceDownError
+      throw ServiceDownError
     }
   }
 

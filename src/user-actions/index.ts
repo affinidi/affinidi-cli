@@ -5,4 +5,5 @@ export {
   confirmSignOut,
   enterEmailPrompt,
   enterOTPPrompt,
+  projectNamePrompt,
 } from './prompts'
