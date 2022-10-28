@@ -25,3 +25,10 @@ export const conditionsAndPolicyMessage = `
 export const listCommandDescription = buildCommandDescription('list', ['schemas', 'projects'])
 
 export const showCommandDescription = buildCommandDescription('show', ['schema', 'project'])
+
+export const useCommandDescription = chalk`
+  Use the ${chalk.bgCyanBright('use')} command if you want to select a project you want to work on.
+  See the command examples in the help:
+
+  ${chalk.bgWhite(`$ affinidi use --help`)}
+`
