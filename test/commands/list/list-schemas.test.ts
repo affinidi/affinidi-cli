@@ -2,40 +2,8 @@ import { expect, test } from '@oclif/test'
 import { FancyTypes } from 'fancy-test'
 import { StatusCodes } from 'http-status-codes'
 
-import { SearchSchemasOutputDto } from '../../../src/services/schema-manager/schema-manager.api'
+import { mockSchemaDto } from '../../../src/fixtures/mock-schemas'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
-
-const mockSchemaDto: SearchSchemasOutputDto = {
-  schemas: [
-    {
-      id: 'CealBusinessCardV1-0',
-      parentId: null,
-      authorDid: 'did:elem:EiBuV4NncamCHukI0klDajvzbZBk-Dgctc9JpC5SZTczZw',
-      description: 'Business Card VC for Ceal App',
-      createdAt: '2022-10-27T02:51:38.997Z',
-      namespace: null,
-      type: 'CealBusinessCard',
-      version: 1,
-      revision: 0,
-      jsonSchemaUrl: 'https://schema.affinidi.com/CealBusinessCardV1-0.json',
-      jsonLdContextUrl: 'https://schema.affinidi.com/CealBusinessCardV1-0.jsonld',
-    },
-    {
-      id: 'LeadershipWorkshopBadgeV1-0',
-      parentId: 'LEAPBadgeV1-0',
-      authorDid: 'did:elem:EiDsLbVSR79FLxY33rkJb3DzwPcpLczj2Iob4ci26npccA',
-      description: 'Leadership Workshop Badge',
-      createdAt: '2022-10-25T14:19:38.435Z',
-      namespace: null,
-      type: 'LeadershipWorkshopBadge',
-      version: 1,
-      revision: 0,
-      jsonSchemaUrl: 'https://schema.affinidi.com/LeadershipWorkshopBadgeV1-0.json',
-      jsonLdContextUrl: 'https://schema.affinidi.com/LeadershipWorkshopBadgeV1-0.jsonld',
-    },
-  ],
-  count: 2,
-}
 
 const getSchemasOK = async (api: FancyTypes.NockScope) =>
   api.get('/schemas?skip=0&limit=10&scope=default').reply(StatusCodes.OK, mockSchemaDto)
