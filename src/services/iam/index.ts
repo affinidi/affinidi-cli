@@ -54,6 +54,25 @@ class IAmService {
       throw new Error(error?.message)
     }
   }
+
+  public listProjects = async (
+    { token }: { token: string },
+    skip: number,
+    limit: number,
+  ): Promise<Array<ProjectDto>> => {
+    try {
+      const resp = await this.client.projects.listProjects({
+        headers: { Cookie: token, 'content-type': 'application/json', Accept: 'application/json' },
+      })
+      const projectsListSize = resp.data.projects.length
+      if (!resp.data || skip > projectsListSize) {
+        return []
+      }
+      return resp.data.projects.slice(skip, skip + limit)
+    } catch (error: any) {
+      throw new Error(error?.message)
+    }
+  }
 }
 
 const iAmService = new IAmService()
