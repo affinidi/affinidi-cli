@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 
 import { Api as SchemaManagerApi, SchemaDto } from './schema-manager.api'
-import { Unauthorized } from '../../errors'
+import { ServiceDownError, Unauthorized } from '../../errors'
 
 export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
 
@@ -32,6 +32,23 @@ class SchemaManagerService {
       return response.data.schemas
     } catch (err) {
       throw Unauthorized
+    }
+  }
+
+  public getById = async (id: string): Promise<SchemaDto> => {
+    try {
+      return (await this.client.schemas.getSchema(id)).data
+    } catch (error: any) {
+      // TODO: change later to be handled golabally
+      switch (error.response.status) {
+        case StatusCodes.FORBIDDEN:
+        case StatusCodes.UNAUTHORIZED:
+          throw Unauthorized
+        case StatusCodes.INTERNAL_SERVER_ERROR:
+          throw ServiceDownError
+        default:
+          throw new Error(error?.message)
+      }
     }
   }
 }

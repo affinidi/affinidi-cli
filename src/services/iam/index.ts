@@ -22,8 +22,9 @@ class IAmService {
       })
       return result.data
     } catch (error: any) {
-      //  change later to be handled golabally
+      // TODO: change later to be handled golabally
       switch (error.response.status) {
+        case StatusCodes.FORBIDDEN:
         case StatusCodes.UNAUTHORIZED:
           throw Unauthorized
         case StatusCodes.INTERNAL_SERVER_ERROR:

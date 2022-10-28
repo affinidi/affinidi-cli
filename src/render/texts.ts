@@ -1,5 +1,17 @@
 import chalk from 'chalk'
 
+const buildCommandDescription = (command: string, subCommands: string[]): string => {
+  return chalk`
+  Use the ${chalk.bgCyanBright(command)} command if you want to display some of your resources
+  like the ${subCommands.join(' or ')} that you've created.
+  The current available ressources are:
+  ${subCommands.map((sc: string) => `\t- ${chalk.cyanBright(sc)}`).join('\n')}
+  See the command examples in the help:
+
+  ${chalk.bgWhite(`$ affinidi ${command} --help`)}
+  `
+}
+
 export const conditionsAndPolicyMessage = `
     Please confirm that you agree with:
     Terms and Conditions: ${chalk.blue(
@@ -10,11 +22,6 @@ export const conditionsAndPolicyMessage = `
     [y/n]
 `
 
-export const listCommandDescription = chalk`
-  Use the ${chalk.bgCyanBright('list')} command if you want to display some of your resources
-  like schemas or the projects that you've created.
-  The current available ressources are:
-      - ${chalk.cyanBright('projects')}
-      - ${chalk.cyanBright('schemas')}
-  See the command examples below ⬇️
-`
+export const listCommandDescription = buildCommandDescription('list', ['schemas', 'projects'])
+
+export const showCommandDescription = buildCommandDescription('show', ['schema', 'project'])

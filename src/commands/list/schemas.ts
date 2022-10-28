@@ -1,15 +1,19 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { CommandError } from '@oclif/core/lib/interfaces'
+import { stringify as csvStringify } from 'csv-stringify'
 
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 
-type OutputType = 'table' | 'json'
+type OutputType = 'csv' | 'table' | 'json'
 
 const printData = (
   data: Record<string, unknown>[],
   { extended, output }: { extended: boolean; output: OutputType },
 ): void => {
   switch (output) {
+    case 'csv':
+      csvStringify(data, { header: true }).pipe(process.stdout)
+      break
     case 'table':
       CliUx.ux.table(
         data,
@@ -36,13 +40,20 @@ const printData = (
 }
 
 export default class Schemas extends Command {
-  static description = 'describe the command here'
+  static description = `
+    Fetches the schemas from the schema-manager and displays them in different format:
+    json, csv or table
+  `
 
-  static examples = ['<%= config.bin %> <%= command.id %>']
+  static examples: Interfaces.Example[] = [
+    {
+      description: 'Display in an extended table the schemas from the 5th to the 15th',
+      command: '<%= config.bin %> <%= command.id %> --output table --extended --skip 5 --limit 10',
+    },
+  ]
 
   static flags = {
     ...CliUx.ux.table.flags(),
-
     limit: Flags.integer({
       char: 'l',
       description: 'The number of schemas to display',
@@ -50,7 +61,7 @@ export default class Schemas extends Command {
     }),
     output: Flags.enum<OutputType>({
       char: 'o',
-      options: ['json', 'table'],
+      options: ['csv', 'json', 'table'],
       description: 'The type of output',
       default: 'json',
     }),
