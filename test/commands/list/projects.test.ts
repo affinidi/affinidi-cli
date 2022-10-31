@@ -1,26 +1,8 @@
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
+import { projectList } from '../../../src/fixtures/mock-projects'
 
 import { IAM_URL } from '../../../src/services/iam'
-const projectList = {
-  projects: [
-    {
-      name: 'Awesome project',
-      projectId: '925b8891-dba0-4e8a-a379-3686d165a8a1',
-      createdAt: '2022-09-06T20:31:20.467Z',
-    },
-    {
-      name: 'Awesome project 2',
-      projectId: '925b8891-dba0-4e8a-a379-3686d165a8a2',
-      createdAt: '2022-09-06T20:31:20.467Z',
-    },
-    {
-      name: 'Awesome project 3',
-      projectId: '925b8891-dba0-4e8a-a379-3686d165a8a3',
-      createdAt: '2022-09-06T20:31:20.467Z',
-    },
-  ],
-}
 
 describe('projects', () => {
   test
