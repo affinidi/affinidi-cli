@@ -1,10 +1,8 @@
 import { Command, CliUx } from '@oclif/core'
 
 import { projectNamePrompt } from '../../user-actions'
-import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService } from '../../services'
+import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
-
-const ACTIVE_PROJECT = 'activeProject'
 
 export default class Project extends Command {
   static description = 'Use this command to create a new Affinidi project'
@@ -29,12 +27,10 @@ export default class Project extends Command {
     const projectData = await iAmService.createProject({ token }, projectNameInput)
     const projectDetails = await iAmService.getProjectSummary({ token }, projectData.projectId)
     CliUx.ux.action.stop('Project has been successfully created: ')
-    vaultService.set(ACTIVE_PROJECT, {
-      projectId: projectDetails.project.projectId,
-      apiKeyHash: projectDetails.apiKey.apiKeyHash,
-      did: projectDetails.wallet.did,
-      projectName: projectDetails.project.name,
-    })
+    vaultService.set(VAULT_KEYS.projectId, projectDetails.project.projectId)
+    vaultService.set(VAULT_KEYS.projectName, projectDetails.project.name)
+    vaultService.set(VAULT_KEYS.projectAPIKey, projectDetails.apiKey.apiKeyHash)
+    vaultService.set(VAULT_KEYS.projectDID, projectDetails.wallet.did)
     CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
   }
 

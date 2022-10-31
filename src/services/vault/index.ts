@@ -1,13 +1,19 @@
 import Conf from 'conf'
 
 export const SESSION_TOKEN_KEY_NAME = 'sessionToken'
+export const VAULT_KEYS = {
+  projectId: 'active-project-id',
+  projectName: 'active-project-name',
+  projectAPIKey: 'active-project-api-key',
+  projectDID: 'active-project-did',
+}
 
 const doNothing = () => {}
 
 interface IVaultSetterGetter {
   clear: () => void
   get(key: string): string
-  set(key: string, value: string | object): void
+  set(key: string, value: string): void
 }
 
 class VaultService {
@@ -25,7 +31,7 @@ class VaultService {
     return this.storer.get(key)
   }
 
-  public set = (key: string, value: string | object): void => {
+  public set = (key: string, value: string): void => {
     this.storer.set(key, value)
   }
 }
@@ -52,7 +58,7 @@ const storer: IVaultSetterGetter = {
   get: (key: string): string => {
     return credentialConf.get(key)
   },
-  set: (key: string, value: string | object): void => {
+  set: (key: string, value: string): void => {
     credentialConf.set(key, value)
   },
 }
