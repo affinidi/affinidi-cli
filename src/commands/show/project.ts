@@ -1,19 +1,12 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
 import * as inquirer from 'inquirer'
-import { ProjectSummary } from '../../services/iam/iam.api'
 
 import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService, VAULT_KEYS } from '../../services'
 
 type UseFieldType = 'json' | 'json-file'
 
-const setActiveProject = (projectToBeActive: ProjectSummary): void => {
-  vaultService.set(VAULT_KEYS.projectId, projectToBeActive.project.projectId)
-  vaultService.set(VAULT_KEYS.projectName, projectToBeActive.project.name)
-  vaultService.set(VAULT_KEYS.projectAPIKey, projectToBeActive.apiKey.apiKeyHash)
-  vaultService.set(VAULT_KEYS.projectDID, projectToBeActive.wallet.did)
-}
-export default class Project extends Command {
+export default class ShowProject extends Command {
   static description = 'describe the command here'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -25,6 +18,9 @@ export default class Project extends Command {
       description: 'The details of the schema to show',
       default: 'json',
     }),
+    active: Flags.boolean({
+      char: 'a',
+    }),
   }
 
   static args: Interfaces.Arg[] = [
@@ -35,12 +31,17 @@ export default class Project extends Command {
   ]
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(Project)
+    const { args, flags } = await this.parse(ShowProject)
 
-    let projectId = args['project-id']
     const token = vaultService.get(SESSION_TOKEN_KEY_NAME)
+    let projectId = args['project-id']
 
-    if (!projectId) {
+    if (flags.active) {
+      projectId = vaultService.get(VAULT_KEYS.projectId)
+      CliUx.ux.action.start('Showing active project')
+    } else if (projectId) {
+      CliUx.ux.action.start(`Showing project with id: ${projectId}`)
+    } else {
       CliUx.ux.action.start('Fetching projects')
       const projectData = await iAmService.listProjects({ token }, 0, Number.MAX_SAFE_INTEGER)
       CliUx.ux.action.stop('List of projects: ')
@@ -61,13 +62,16 @@ export default class Project extends Command {
         .then(function (answer) {
           projectId = answer.projectId.split(' ')[0]
         })
+      CliUx.ux.action.start(`Showing project with id: ${projectId}`)
     }
-    const projectToBeActive = await iAmService.getProjectSummary({ token }, projectId)
+
+    CliUx.ux.action.stop('')
+    const projectData = await iAmService.getProjectSummary({ token }, projectId)
     if (flags.output === 'json-file') {
-      await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
+      await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
+    } else {
+      CliUx.ux.info(JSON.stringify(projectData, null, '  '))
     }
-    setActiveProject(projectToBeActive)
-    CliUx.ux.info(JSON.stringify(projectToBeActive, null, '  '))
   }
 
   async catch(error: string | Error) {
