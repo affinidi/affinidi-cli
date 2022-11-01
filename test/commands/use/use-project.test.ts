@@ -9,23 +9,21 @@ describe('project', () => {
   test
     .nock(`${IAM_URL}`, (api) =>
       api
-        .get('/projects/925b8891-dba0-4e8a-a379-3686d165a8a1/summary')
+        .get(`/projects/${projectSummary.project.projectId}/summary`)
         .reply(StatusCodes.OK, projectSummary),
     )
     .stdout()
     .command(['use project', projectSummary.project.projectId])
     .it('runs use project with a specific project-id', (ctx) => {
       expect(ctx.stdout).to.contain('"name": "Awesome project"')
-      expect(ctx.stdout).to.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a1"')
-      expect(ctx.stdout).to.contain(
-        '"apiKeyHash": "dc4ed2b27cd0d840d51c6dae6460f571824cc72f4ded47f7225dbff65bcea4bf"',
-      )
+      expect(ctx.stdout).to.contain('"projectId": "some-project1-id"')
+      expect(ctx.stdout).to.contain('"apiKeyHash": "Awesome-API-Key-Hash"')
     })
   describe('Activating a project while not authorized', () => {
     test
       .nock(`${IAM_URL}`, (api) =>
         api
-          .get('/projects/925b8891-dba0-4e8a-a379-3686d165a8a1/summary')
+          .get(`/projects/${projectSummary.project.projectId}/summary`)
           .replyWithError(Unauthorized),
       )
       .stdout()
@@ -38,7 +36,7 @@ describe('project', () => {
     test
       .nock(`${IAM_URL}`, (api) =>
         api
-          .get('/projects/925b8891-dba0-4e8a-a379-3686d165a8a1/summary')
+          .get(`/projects/${projectSummary.project.projectId}/summary`)
           .replyWithError(ServiceDownError),
       )
       .stdout()

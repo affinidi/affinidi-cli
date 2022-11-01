@@ -40,7 +40,7 @@ export default class Projects extends Command {
 
     const token = vaultService.get(SESSION_TOKEN_KEY_NAME)
 
-    CliUx.ux.action.start('Fetching list of projects...')
+    CliUx.ux.action.start('Fetching list of projects')
     const projectData = await iAmService.listProjects({ token }, flags.skip, flags.limit)
     CliUx.ux.action.stop()
 

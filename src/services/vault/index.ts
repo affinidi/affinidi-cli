@@ -42,7 +42,7 @@ const testStorer: IVaultSetterGetter = {
   get: (key: string): string => {
     return testStore.get(key)
   },
-  set: (key: string, value: string | object): void => {
+  set: (key: string, value: string): void => {
     testStore.set(key, value)
   },
 }

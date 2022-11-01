@@ -23,7 +23,7 @@ export default class Project extends Command {
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
-    CliUx.ux.action.start('Creating project...')
+    CliUx.ux.action.start('Creating project')
     const projectData = await iAmService.createProject({ token }, projectNameInput)
     const projectDetails = await iAmService.getProjectSummary({ token }, projectData.projectId)
     CliUx.ux.action.stop('Project has been successfully created: ')

@@ -11,7 +11,7 @@ describe('projects', () => {
     .command(['list projects'])
     .it('it runs list projects with default values for all flags', (ctx) => {
       expect(ctx.stdout).to.contain('"name": "Awesome project",')
-      expect(ctx.stdout).to.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a1",')
+      expect(ctx.stdout).to.contain('"projectId": "some-project1-id",')
       expect(ctx.stdout).to.contain('"createdAt": "2022-09-06T20:31:20.467Z"')
       expect(ctx.stdout).to.contain('"name": "Awesome project 2",')
       expect(ctx.stdout).to.contain('"name": "Awesome project 3",')
@@ -23,11 +23,11 @@ describe('projects', () => {
       .command(['list projects', '--skip=1'])
       .it('it runs list projects with skip flag = 1', (ctx) => {
         expect(ctx.stdout).to.not.contain('"name": "Awesome project",')
-        expect(ctx.stdout).to.not.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a1",')
+        expect(ctx.stdout).to.not.contain('"projectId": "some-project1-id",')
         expect(ctx.stdout).to.contain('"name": "Awesome project 2",')
-        expect(ctx.stdout).to.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a2",')
+        expect(ctx.stdout).to.contain('"projectId": "some-project2-id",')
         expect(ctx.stdout).to.contain('"name": "Awesome project 3",')
-        expect(ctx.stdout).to.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a3",')
+        expect(ctx.stdout).to.contain('"projectId": "some-project3-id",')
       })
   })
   describe('list projects with skip and limit flag set', () => {
@@ -37,11 +37,11 @@ describe('projects', () => {
       .command(['list projects', '--skip=1', '--limit=1'])
       .it('it runs list projects with skip=1 limit=1', (ctx) => {
         expect(ctx.stdout).to.not.contain('"name": "Awesome project",')
-        expect(ctx.stdout).to.not.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a1",')
+        expect(ctx.stdout).to.not.contain('"projectId": "some-project1-id",')
         expect(ctx.stdout).to.contain('"name": "Awesome project 2",')
-        expect(ctx.stdout).to.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a2",')
+        expect(ctx.stdout).to.contain('"projectId": "some-project2-id",')
         expect(ctx.stdout).to.not.contain('"name": "Awesome project 3",')
-        expect(ctx.stdout).to.not.contain('"projectId": "925b8891-dba0-4e8a-a379-3686d165a8a3",')
+        expect(ctx.stdout).to.not.contain('"projectId": "some-project3-id",')
       })
   })
   describe('list projects output flag set to table format', () => {
@@ -50,9 +50,7 @@ describe('projects', () => {
       .stdout()
       .command(['list projects', '--output=table'])
       .it('it runs list projects with output=table', (ctx) => {
-        expect(ctx.stdout).to.contain(
-          '925b8891-dba0-4e8a-a379-3686d165a8a1 Awesome project   2022-09-06T20:31:20.467Z',
-        )
+        expect(ctx.stdout).to.contain('some-project1-id Awesome project   2022-09-06T20:31:20.467Z')
       })
   })
 })
