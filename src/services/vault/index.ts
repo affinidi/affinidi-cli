@@ -47,7 +47,7 @@ const testStorer: IVaultSetterGetter = {
   },
 }
 
-const credentialConf = new Conf<{ token: string }>({
+const credentialConf = new Conf<{ token: string } >({
   cwd: `${process.env.HOME}/.affinidi/credentials`,
 })
 

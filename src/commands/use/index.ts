@@ -3,7 +3,7 @@ import { CliUx, Command, Interfaces } from '@oclif/core'
 import { useCommandDescription } from '../../render/texts'
 
 export default class Use extends Command {
-  static summary = 'The Use commmand selects an entity to work with'
+  static summary = 'The Use command selects an entity to work with'
 
   static description = useCommandDescription
 
