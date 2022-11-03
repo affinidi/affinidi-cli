@@ -1,6 +1,6 @@
 {
   "name": "@affinidi/cli",
-  "version": "0.11.0",
+  "version": "1.12.0",
   "description": "Affinidi elemental command-line-interface",
   "author": "Denis Davidov denis.d@affinidi.com",
   "typings": "dist/index.d.ts",
