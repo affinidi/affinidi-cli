@@ -1,7 +1,8 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { CommandError } from '@oclif/core/lib/interfaces'
 
-import { schemaManagerService } from '../../services/schema-manager'
+import { VAULT_KEYS, vaultService } from '../../services/vault'
+import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
@@ -45,7 +46,8 @@ export default class Schema extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
 
-    const schema = await schemaManagerService.getById(args['schema-id'])
+    const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
+    const schema = await schemaManagerService.getById(args['schema-id'], apiKey)
 
     let output = ''
     switch (flags.show) {

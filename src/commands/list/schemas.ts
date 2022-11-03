@@ -2,6 +2,7 @@ import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { CommandError } from '@oclif/core/lib/interfaces'
 import { stringify as csvStringify } from 'csv-stringify'
 
+import { vaultService, VAULT_KEYS } from '../../services'
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 
 type OutputType = 'csv' | 'table' | 'json'
@@ -71,6 +72,12 @@ export default class Schemas extends Command {
       description: 'The type of scope',
       default: 'default',
     }),
+    public: Flags.enum<'true' | 'false'>({
+      char: 'p',
+      options: ['true', 'false'],
+      description: 'To specify if you want to get public or private schemas',
+      default: 'true',
+    }),
     // search: Flags.string({ char: 'q', description: 'The name of the schema to search for' }),
     skip: Flags.integer({ char: 's', description: 'The number of schemas to skip', default: 0 }),
   }
@@ -80,9 +87,20 @@ export default class Schemas extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(Schemas)
 
-    const { extended, limit, output, scope, skip } = flags
+    const { extended, limit, public: publicFlag, output, scope, skip } = flags
 
-    const schemas = await schemaManagerService.search({ limit, scope, skip })
+    const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
+    const did = vaultService.get(VAULT_KEYS.projectDID)
+    const params = {
+      apiKey,
+      authorDid: did,
+      did,
+      limit,
+      scope: publicFlag === 'false' ? 'unlisted' : scope,
+      skip,
+    }
+
+    const schemas = await schemaManagerService.search(params)
 
     const data = schemas
       .map((s, index) => {
