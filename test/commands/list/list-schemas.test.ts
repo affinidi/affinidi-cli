@@ -6,7 +6,9 @@ import { mockSchemaDto } from '../../../src/fixtures/mock-schemas'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
 
 const getSchemasOK = async (api: FancyTypes.NockScope) =>
-  api.get('/schemas?skip=0&limit=10&scope=default').reply(StatusCodes.OK, mockSchemaDto)
+  api
+    .get('/schemas?skip=0&limit=10&scope=default&did=did:elem:AwesomeDID')
+    .reply(StatusCodes.OK, mockSchemaDto)
 
 describe('list schemas command', () => {
   describe('--output json', () => {
