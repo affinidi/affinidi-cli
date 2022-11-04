@@ -15,7 +15,7 @@ const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'NOT IMPLEMENTED YET',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
   'certification-and-verification':
-    'git@gitlab.com:affinidi/foundational/phoenix/holder-reference-app.git',
+    'https://gitlab.com/affinidi/foundational/phoenix/holder-reference-app.git',
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 
@@ -88,7 +88,7 @@ export default class GenerateApplication extends Command {
 
     try {
       Writer.write(`${name}/.env`, [
-        'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
+        'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.dev.affinity-project.org',
         `REACT_APP_API_KEY=${activeProject}`,
       ])
     } catch (error) {
@@ -101,6 +101,6 @@ export default class GenerateApplication extends Command {
       await GitService.clone(gitUrl, destination)
     } catch (error) {
       CliUx.ux.info(`Download Failed: ${error.message}`)
-        }
+    }
   }
 }
