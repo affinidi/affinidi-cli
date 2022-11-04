@@ -1,8 +1,8 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 
-import { vaultService } from '../../services'
+import { vaultService, Writer } from '../../services'
 import { GitService } from '../../services/git'
-import { Writer } from './writer'
+
 
 type PlatformType = 'web' | 'mobile'
 type UseCaseType =
@@ -88,7 +88,7 @@ export default class GenerateApplication extends Command {
 
     try {
       Writer.write(`${name}/.env`, [
-        'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.dev.affinity-project.org',
+        'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
         `REACT_APP_API_KEY=${activeProject}`,
       ])
     } catch (error) {

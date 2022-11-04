@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { Api as SchemaManagerApi, SchemaDto } from './schema-manager.api'
 import { ServiceDownError, Unauthorized } from '../../errors'
 
-export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.dev.affinity-project.org/api/v1'
+export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
 
 export type ScopeType = 'public' | 'unlisted' | 'default'
 

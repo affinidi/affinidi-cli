@@ -6,7 +6,7 @@ import { InvalidOrExpiredOTPError, ServiceDownError } from '../../errors'
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
 
-export const USER_MANAGEMENT_URL = 'https://console-user-management.dev.affinity-project.org/api/v1'
+export const USER_MANAGEMENT_URL = 'https://console-user-management.prod.affinity-project.org/api/v1'
 
 class UserManagementService {
   constructor(
