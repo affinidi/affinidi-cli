@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import { ServiceDownError, Unauthorized } from '../../errors'
 import { Api as IamApi, ProjectDto, CreateProjectInput, ProjectSummary } from './iam.api'
 
-export const IAM_URL = 'https://affinidi-iam.dev.affinity-project.org/api/v1'
+export const IAM_URL = 'https://affinidi-iam.prod.affinity-project.org/api/v1'
 
 class IAmService {
   constructor(
