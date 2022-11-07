@@ -1,7 +1,7 @@
 import { Command, CliUx } from '@oclif/core'
 
 import { confirmSignOut } from '../../user-actions'
-import { SESSION_TOKEN_KEY_NAME, userManagementService, vaultService } from '../../services'
+import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
 import { SignoutError } from '../../errors'
 
 export default class Logout extends Command {
@@ -16,7 +16,7 @@ export default class Logout extends Command {
       return
     }
 
-    const token = await vaultService.get(SESSION_TOKEN_KEY_NAME)
+    const token = await vaultService.get(VAULT_KEYS.sessionToken)
     if (!token) {
       CliUx.ux.error(SignoutError)
     }

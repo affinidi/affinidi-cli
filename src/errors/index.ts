@@ -8,3 +8,8 @@ export const SignoutError = Error('There was an error while trying to sign-out')
 export const Unauthorized = Error(
   "You are not authorized to perform this action. Try logging in or sign-up if you don't have an account",
 )
+export const couldNotParseSchema = Error(
+  'Could not parse schema URL, please provide a valid schema URl',
+)
+export const emptyIssueDataFlag = Error('Please enter a directory to a json file.')
+export const noSuchFileOrDir = Error('Please provide a vaild directory for the json file')

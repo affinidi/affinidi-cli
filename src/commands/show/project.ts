@@ -2,7 +2,7 @@ import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
 import * as inquirer from 'inquirer'
 
-import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -33,7 +33,7 @@ export default class ShowProject extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ShowProject)
 
-    const token = vaultService.get(SESSION_TOKEN_KEY_NAME)
+    const token = vaultService.get(VAULT_KEYS.sessionToken)
     let projectId = args['project-id']
 
     if (flags.active) {
@@ -43,7 +43,7 @@ export default class ShowProject extends Command {
       CliUx.ux.action.start(`Showing project with id: ${projectId}`)
     } else {
       CliUx.ux.action.start('Fetching projects')
-      const projectData = await iAmService.listProjects({ token }, 0, Number.MAX_SAFE_INTEGER)
+      const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       CliUx.ux.action.stop('List of projects: ')
       const maxNameLength = projectData
         .map((p) => p.name.length)
@@ -66,7 +66,7 @@ export default class ShowProject extends Command {
     }
 
     CliUx.ux.action.stop('')
-    const projectData = await iAmService.getProjectSummary({ token }, projectId)
+    const projectData = await iAmService.getProjectSummary(token, projectId)
     if (flags.output === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
     } else {

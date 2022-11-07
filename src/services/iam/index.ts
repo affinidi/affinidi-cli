@@ -13,7 +13,7 @@ class IAmService {
   ) {}
 
   public createProject = async (
-    { token }: { token: string },
+    token: string,
     projectName: CreateProjectInput,
   ): Promise<ProjectDto> => {
     try {
@@ -36,7 +36,7 @@ class IAmService {
   }
 
   public getProjectSummary = async (
-    { token }: { token: string },
+    token: string,
     projectId: string,
   ): Promise<ProjectSummary | null> => {
     try {
@@ -56,7 +56,7 @@ class IAmService {
   }
 
   public listProjects = async (
-    { token }: { token: string },
+    token: string,
     skip: number,
     limit: number,
   ): Promise<Array<ProjectDto>> => {

@@ -1,13 +1,13 @@
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
-import { SESSION_TOKEN_KEY_NAME, vaultService } from '../../../src/services'
+import { vaultService, VAULT_KEYS } from '../../../src/services'
 
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 
 describe('logout command', () => {
   before(() => {
-    vaultService.set(SESSION_TOKEN_KEY_NAME, 'some-token')
+    vaultService.set(VAULT_KEYS.sessionToken, 'some-token')
   })
   test
     .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))
