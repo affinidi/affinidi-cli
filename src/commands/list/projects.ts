@@ -2,7 +2,7 @@ import { Command, CliUx, Flags } from '@oclif/core'
 import * as fs from 'fs/promises'
 import { stringify as csv_stringify } from 'csv-stringify'
 
-import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService } from '../../services'
+import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
@@ -38,10 +38,10 @@ export default class Projects extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
 
-    const token = vaultService.get(SESSION_TOKEN_KEY_NAME)
+    const token = vaultService.get(VAULT_KEYS.sessionToken)
 
     CliUx.ux.action.start('Fetching list of projects')
-    const projectData = await iAmService.listProjects({ token }, flags.skip, flags.limit)
+    const projectData = await iAmService.listProjects(token, flags.skip, flags.limit)
     CliUx.ux.action.stop()
 
     switch (flags.output) {

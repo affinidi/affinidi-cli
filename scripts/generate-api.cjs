@@ -4,6 +4,7 @@ const path = require('path')
 const USER_MANAGEMENT_URL = 'https://console-user-management.prod.affinity-project.org'
 const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org'
 const IAM_URL = 'https://affinidi-iam.prod.affinity-project.org'
+const ISSUANCE_URL = 'https://console-vc-issuance.prod.affinity-project.org'
 
 generateApi({
   name: 'schema-manager.api.ts',
@@ -23,5 +24,12 @@ generateApi({
   name: 'iam.api.ts',
   output: path.resolve(process.cwd(), './src/services/iam'),
   url: `${IAM_URL}/api/swagger`,
+  httpClientType: 'axios',
+}).catch(console.error)
+
+generateApi({
+  name: 'issuance.api.ts',
+  output: path.resolve(process.cwd(), './src/services/issuance'),
+  url: `${ISSUANCE_URL}/api/swagger`,
   httpClientType: 'axios',
 }).catch(console.error)

@@ -2,7 +2,7 @@ import { Command, CliUx } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
-import { SESSION_TOKEN_KEY_NAME, userManagementService, vaultService } from '../../services'
+import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
 import { WrongEmailError } from '../../errors'
 
 const MAX_EMAIL_ATTEMPT = 3
@@ -49,7 +49,7 @@ export default class Login extends Command {
     CliUx.ux.action.stop('Log-in successful')
 
     // store the sessionToken below
-    vaultService.set(SESSION_TOKEN_KEY_NAME, sessionToken)
+    vaultService.set(VAULT_KEYS.sessionToken, sessionToken)
 
     CliUx.ux.info('You are authenticated')
     CliUx.ux.info(`Welcome back to Affinidi ${email}!`)

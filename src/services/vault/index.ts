@@ -1,11 +1,11 @@
 import Conf from 'conf'
 
-export const SESSION_TOKEN_KEY_NAME = 'sessionToken'
 export const VAULT_KEYS = {
   projectId: 'active-project-id',
   projectName: 'active-project-name',
   projectAPIKey: 'active-project-api-key',
   projectDID: 'active-project-did',
+  sessionToken: 'sessionToken',
 }
 
 const doNothing = () => {}

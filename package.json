@@ -58,6 +58,7 @@
     "conf": "^10.2.0",
     "csv-stringify": "^6.2.0",
     "email-validator": "^2.0.4",
+    "form-data": "^4.0.0",
     "http-status-codes": "^2.2.0",
     "inquirer": "^8.2.3",
     "ts-toolbelt": "^9.6.0"
@@ -75,7 +76,6 @@
     "@types/inquirer": "^8.2.3",
     "@types/mocha": "10.0.0",
     "@types/node": "18.11.5",
-    "@types/node-fetch": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "chai": "4.3.6",

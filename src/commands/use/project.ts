@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 import * as inquirer from 'inquirer'
 import { ProjectSummary } from '../../services/iam/iam.api'
 
-import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -38,11 +38,11 @@ export default class Project extends Command {
     const { args, flags } = await this.parse(Project)
 
     let projectId = args['project-id']
-    const token = vaultService.get(SESSION_TOKEN_KEY_NAME)
+    const token = vaultService.get(VAULT_KEYS.sessionToken)
 
     if (!projectId) {
       CliUx.ux.action.start('Fetching projects')
-      const projectData = await iAmService.listProjects({ token }, 0, Number.MAX_SAFE_INTEGER)
+      const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       CliUx.ux.action.stop('List of projects: ')
       const maxNameLength = projectData
         .map((p) => p.name.length)
@@ -62,7 +62,7 @@ export default class Project extends Command {
           projectId = answer.projectId.split(' ')[0]
         })
     }
-    const projectToBeActive = await iAmService.getProjectSummary({ token }, projectId)
+    const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
     if (flags.output === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
     }

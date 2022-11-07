@@ -1,7 +1,7 @@
 import { Command, CliUx } from '@oclif/core'
 
 import { projectNamePrompt } from '../../user-actions'
-import { SESSION_TOKEN_KEY_NAME, iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
 
 export default class Project extends Command {
@@ -19,13 +19,13 @@ export default class Project extends Command {
     if (!projectName) {
       projectName = await projectNamePrompt()
     }
-    const token = vaultService.get(SESSION_TOKEN_KEY_NAME)
+    const token = vaultService.get(VAULT_KEYS.sessionToken)
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
     CliUx.ux.action.start('Creating project')
-    const projectData = await iAmService.createProject({ token }, projectNameInput)
-    const projectDetails = await iAmService.getProjectSummary({ token }, projectData.projectId)
+    const projectData = await iAmService.createProject(token, projectNameInput)
+    const projectDetails = await iAmService.getProjectSummary(token, projectData.projectId)
     CliUx.ux.action.stop('Project has been successfully created: ')
     vaultService.set(VAULT_KEYS.projectId, projectDetails.project.projectId)
     vaultService.set(VAULT_KEYS.projectName, projectDetails.project.name)

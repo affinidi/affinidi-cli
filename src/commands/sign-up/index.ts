@@ -7,7 +7,7 @@ import {
   enterOTPPrompt,
   AnswerYes,
 } from '../../user-actions'
-import { SESSION_TOKEN_KEY_NAME, userManagementService, vaultService } from '../../services'
+import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
 import { WrongEmailError } from '../../errors'
 import { buildWelcomeUserMessage } from '../../render/functions'
 
@@ -61,7 +61,7 @@ export default class SignUp extends Command {
     CliUx.ux.action.stop('Sign-up successful')
 
     // store the sessionToken below
-    vaultService.set(SESSION_TOKEN_KEY_NAME, sessionToken)
+    vaultService.set(VAULT_KEYS.sessionToken, sessionToken)
 
     CliUx.ux.info(buildWelcomeUserMessage())
   }
