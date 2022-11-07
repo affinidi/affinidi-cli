@@ -40,7 +40,7 @@ const offerResponse = {
   },
 }
 const doNothing = () => {}
-const csvFile = 'some-user/some-folder/someFile.csv'
+const jsonFile = 'some-user/some-folder/someFile.json'
 const projectId = 'some-project-id'
 
 describe('issue-vc', () => {
@@ -53,7 +53,7 @@ describe('issue-vc', () => {
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
-    .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`])
+    .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
     .it('runs issue-vc', (ctx) => {
       expect(ctx.stdout).to.contain(`"id": "${projectId}"`)
       expect(ctx.stdout).to.contain(`"jsonSchemaUrl": "${schema}"`)
@@ -66,7 +66,7 @@ describe('issue-vc', () => {
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
-      .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`])
+      .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
       .it('runs issue-vc when not authenticated', (ctx) => {
         expect(ctx.stdout).to.contain(Unauthorized)
       })
@@ -78,7 +78,7 @@ describe('issue-vc', () => {
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
-      .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`])
+      .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
       .it('runs issue-vc when not authenticated', (ctx) => {
         expect(ctx.stdout).to.contain(ServiceDownError)
       })
@@ -88,7 +88,7 @@ describe('issue-vc', () => {
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
-      .command(['issue-vc', `-d ${csvFile}`])
+      .command(['issue-vc', `-d ${jsonFile}`])
       .it('runs issue-vc with no schema provided', (ctx) => {
         expect(ctx.stdout).to.contain(couldNotParseSchema)
       })

@@ -13,3 +13,4 @@ export const couldNotParseSchema = Error(
 )
 export const emptyIssueDataFlag = Error('Please enter a directory to a json file.')
 export const noSuchFileOrDir = Error('Please provide a vaild directory for the json file')
+export const badRequest = Error('Please check that your json file content is in the right format')
