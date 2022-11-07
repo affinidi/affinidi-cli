@@ -10,7 +10,7 @@ import {
 import { issuanceService } from '../services/issuance'
 
 export default class IssueVc extends Command {
-  static description = 'describe the command here'
+  static description = 'Issues a verifiable credential based on an given schema'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
