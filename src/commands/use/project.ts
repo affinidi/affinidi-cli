@@ -4,6 +4,7 @@ import * as inquirer from 'inquirer'
 import { ProjectSummary } from '../../services/iam/iam.api'
 
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { getSession } from '../../services/user-management'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -38,7 +39,7 @@ export default class Project extends Command {
     const { args, flags } = await this.parse(Project)
 
     let projectId = args['project-id']
-    const token = vaultService.get(VAULT_KEYS.sessionToken)
+    const token = getSession()?.accessToken
 
     if (!projectId) {
       CliUx.ux.action.start('Fetching projects')

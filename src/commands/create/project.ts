@@ -3,6 +3,7 @@ import { Command, CliUx } from '@oclif/core'
 import { projectNamePrompt } from '../../user-actions'
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
+import { getSession } from '../../services/user-management'
 
 export default class Project extends Command {
   static description = 'Use this command to create a new Affinidi project'
@@ -19,7 +20,7 @@ export default class Project extends Command {
     if (!projectName) {
       projectName = await projectNamePrompt()
     }
-    const token = vaultService.get(VAULT_KEYS.sessionToken)
+    const token = getSession()?.accessToken
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
