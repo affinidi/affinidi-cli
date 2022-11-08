@@ -8,6 +8,7 @@ import {
   VerificationMethod,
 } from '../services/issuance/issuance.api'
 import { issuanceService } from '../services/issuance'
+import { getSession } from '../services/user-management'
 
 export default class IssueVc extends Command {
   static description = 'Issues a verifiable credential based on an given schema'
@@ -23,7 +24,7 @@ export default class IssueVc extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(IssueVc)
-    const token = vaultService.get(VAULT_KEYS.sessionToken)
+    const token = getSession()?.accessToken
     const apiKeyHash = vaultService.get(VAULT_KEYS.projectAPIKey)
 
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)

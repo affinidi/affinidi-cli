@@ -1,6 +1,7 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
 import * as inquirer from 'inquirer'
+import { getSession } from '../../services/user-management'
 
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 
@@ -33,7 +34,7 @@ export default class ShowProject extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ShowProject)
 
-    const token = vaultService.get(VAULT_KEYS.sessionToken)
+    const token = getSession()?.accessToken
     let projectId = args['project-id']
 
     if (flags.active) {

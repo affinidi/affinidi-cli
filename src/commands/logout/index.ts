@@ -1,8 +1,9 @@
 import { Command, CliUx } from '@oclif/core'
 
 import { confirmSignOut } from '../../user-actions'
-import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
+import { userManagementService, vaultService } from '../../services'
 import { SignoutError } from '../../errors'
+import { getSession } from '../../services/user-management'
 
 export default class Logout extends Command {
   static description = 'Use this command to end your affinidi session'
@@ -16,7 +17,8 @@ export default class Logout extends Command {
       return
     }
 
-    const token = await vaultService.get(VAULT_KEYS.sessionToken)
+    const token = getSession()?.accessToken
+
     if (!token) {
       CliUx.ux.error(SignoutError)
     }

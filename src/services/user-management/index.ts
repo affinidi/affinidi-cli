@@ -1,12 +1,49 @@
 import { AxiosResponse } from 'axios'
-
+import { nanoid } from 'nanoid'
 import { Api as UserManagementApi } from './user-management.api'
 import { InvalidOrExpiredOTPError, ServiceDownError } from '../../errors'
+import { vaultService, VAULT_KEYS } from '../vault'
 
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
 
 export const USER_MANAGEMENT_URL = 'https://console-user-management.apse1.affinidi.com/api/v1'
+
+type Session = {
+  id: string
+  accessToken: string
+  account: {
+    id: string
+    label: string
+  }
+  scopes: string[]
+}
+
+export const parseJwt = (token: string) => {
+  return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+}
+
+export const getSession = (): Session => {
+  const storageValue = vaultService.get(VAULT_KEYS.session)
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return storageValue ? (JSON.parse(storageValue) as Session) : undefined
+}
+
+export const createSession = (
+  accountLabel: string,
+  accountId: string,
+  accessToken: string,
+  scopes: string[] = [],
+): Session => {
+  const session: Session = {
+    id: nanoid(),
+    accessToken,
+    account: { label: accountLabel, id: accountId },
+    scopes,
+  }
+  vaultService.set(VAULT_KEYS.session, JSON.stringify(session))
+  return session
+}
 
 class UserManagementService {
   constructor(
