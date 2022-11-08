@@ -66,12 +66,11 @@
   "devDependencies": {
     "@affinidi/eslint-config": "2.0.0-beta.0",
     "@affinidi/prettier-config": "2.0.0-beta.0",
-    "@affinidi/vc-data": "^1.6.0",
     "@oclif/test": "^2.2.6",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/gitlab": "^9.4.2",
-    "@semantic-release/npm": "^8.0.1",
+    "@semantic-release/npm": "^9.0.1",
     "@types/chai": "4.3.3",
     "@types/inquirer": "^8.2.3",
     "@types/mocha": "10.0.0",
