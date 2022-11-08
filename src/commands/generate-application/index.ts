@@ -89,6 +89,7 @@ export default class GenerateApplication extends Command {
     try {
       Writer.write(`${name}/.env`, [
         'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
+        'REACT_APP_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',
         `REACT_APP_API_KEY=${activeProject}`,
       ])
     } catch (error) {
