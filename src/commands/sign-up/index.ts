@@ -70,6 +70,7 @@ export default class SignUp extends Command {
   }
 
   async catch(error: string | Error) {
+    CliUx.ux.action.stop('')
     CliUx.ux.info(error.toString())
   }
 }

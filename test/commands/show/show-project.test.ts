@@ -1,11 +1,13 @@
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
+import { CliUx } from '@oclif/core'
 
 import { IAM_URL } from '../../../src/services/iam'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { vaultService, VAULT_KEYS } from '../../../src/services'
 
+const doNothing = () => {}
 describe('project', () => {
   test
     .nock(`${IAM_URL}`, (api) =>
@@ -13,6 +15,8 @@ describe('project', () => {
         .get(`/projects/${projectSummary.project.projectId}/summary`)
         .reply(StatusCodes.OK, projectSummary),
     )
+    .stub(CliUx.ux.action, 'start', () => () => doNothing)
+    .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
     .command(['show project', projectSummary.project.projectId])
     .it('runs show project with a specific project-id', (ctx) => {
@@ -28,6 +32,8 @@ describe('project', () => {
           .get(`/projects/${projectSummary.project.projectId}/summary`)
           .reply(StatusCodes.OK, projectSummary),
       )
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['show project', '--active'])
       .it('runs show project with active project', (ctx) => {
@@ -41,8 +47,10 @@ describe('project', () => {
       .nock(`${IAM_URL}`, (api) =>
         api
           .get(`/projects/${projectSummary.project.projectId}/summary`)
-          .replyWithError(Unauthorized),
+          .reply(StatusCodes.UNAUTHORIZED),
       )
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['show project', projectSummary.project.projectId])
       .it('runs show project while user is unauthorized', (ctx) => {
@@ -54,8 +62,10 @@ describe('project', () => {
       .nock(`${IAM_URL}`, (api) =>
         api
           .get(`/projects/${projectSummary.project.projectId}/summary`)
-          .replyWithError(ServiceDownError),
+          .reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['show project', projectSummary.project.projectId])
       .it('runs show project while the service is down', (ctx) => {

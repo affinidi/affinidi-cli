@@ -24,7 +24,7 @@ describe('project', () => {
       .nock(`${IAM_URL}`, (api) =>
         api
           .get(`/projects/${projectSummary.project.projectId}/summary`)
-          .replyWithError(Unauthorized),
+          .reply(StatusCodes.UNAUTHORIZED),
       )
       .stdout()
       .command(['use project', projectSummary.project.projectId])
@@ -37,7 +37,7 @@ describe('project', () => {
       .nock(`${IAM_URL}`, (api) =>
         api
           .get(`/projects/${projectSummary.project.projectId}/summary`)
-          .replyWithError(ServiceDownError),
+          .reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
       .stdout()
       .command(['use project', projectSummary.project.projectId])

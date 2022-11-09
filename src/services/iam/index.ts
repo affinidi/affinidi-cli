@@ -1,8 +1,8 @@
-import { StatusCodes } from 'http-status-codes'
-import { ServiceDownError, Unauthorized } from '../../errors'
+import { CliError, handleErrors } from '../../errors'
 import { Api as IamApi, ProjectDto, CreateProjectInput, ProjectSummary } from './iam.api'
 
 export const IAM_URL = 'https://affinidi-iam.prod.affinity-project.org/api/v1'
+const SERVICE = 'iAm'
 
 class IAmService {
   constructor(
@@ -22,16 +22,7 @@ class IAmService {
       })
       return result.data
     } catch (error: any) {
-      // TODO: change later to be handled golabally
-      switch (error.response.status) {
-        case StatusCodes.FORBIDDEN:
-        case StatusCodes.UNAUTHORIZED:
-          throw Unauthorized
-        case StatusCodes.INTERNAL_SERVER_ERROR:
-          throw ServiceDownError
-        default:
-          throw new Error(error?.message)
-      }
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -51,7 +42,7 @@ class IAmService {
       }
       return projectDetails
     } catch (error: any) {
-      throw new Error(error?.message)
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -70,7 +61,7 @@ class IAmService {
       }
       return resp.data.projects.slice(skip, skip + limit)
     } catch (error: any) {
-      throw new Error(error?.message)
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 }

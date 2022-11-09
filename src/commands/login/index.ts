@@ -58,7 +58,8 @@ export default class Login extends Command {
     CliUx.ux.info(`Welcome back to Affinidi ${email}!`)
   }
 
-  async catch(error: string | Error) {
-    CliUx.ux.info(error.toString())
+  async catch(error: Error) {
+    CliUx.ux.action.stop('')
+    CliUx.ux.info(error?.message)
   }
 }
