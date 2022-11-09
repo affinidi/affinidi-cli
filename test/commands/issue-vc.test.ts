@@ -3,13 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
 import { CliUx } from '@oclif/core'
 
-import {
-  couldNotParseSchema,
-  emptyIssueDataFlag,
-  noSuchFileOrDir,
-  ServiceDownError,
-  Unauthorized,
-} from '../../src/errors'
+import { NoSuchFileOrDir, ServiceDownError, Unauthorized } from '../../src/errors'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
 const issuanceRespnse = {
@@ -61,7 +55,7 @@ describe('issue-vc', () => {
 
   describe('issuance of vc without authentication', () => {
     test
-      .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').replyWithError(Unauthorized))
+      .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').reply(StatusCodes.UNAUTHORIZED))
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -73,7 +67,9 @@ describe('issue-vc', () => {
   })
   describe('issuance of vc when server is down', () => {
     test
-      .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').replyWithError(ServiceDownError))
+      .nock(`${ISSUANCE_URL}`, (api) =>
+        api.post('/issuances').reply(StatusCodes.INTERNAL_SERVER_ERROR),
+      )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -83,50 +79,18 @@ describe('issue-vc', () => {
         expect(ctx.stdout).to.contain(ServiceDownError)
       })
   })
-  describe('issuance of vc without providing a schema URL', () => {
-    test
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
-      .stdout()
-      .command(['issue-vc', `-d ${jsonFile}`])
-      .it('runs issue-vc with no schema provided', (ctx) => {
-        expect(ctx.stdout).to.contain(couldNotParseSchema)
-      })
-  })
-  describe('issuance of vc without providing a json file', () => {
-    test
-      .stub(fs.promises, 'readFile', () => {
-        throw Error(emptyIssueDataFlag.message)
-      })
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
-      .stdout()
-      .command(['issue-vc', `-s ${schema}`])
-      .it('runs issue-vc with no schema provided', (ctx) => {
-        expect(ctx.stdout).to.contain(emptyIssueDataFlag)
-      })
-  })
+
   describe('issuance of vc providing an invalid json file directory', () => {
     test
       .stub(fs.promises, 'readFile', () => {
-        throw Error(noSuchFileOrDir.message)
+        throw Error(NoSuchFileOrDir.message)
       })
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, '-d file/system'])
       .it('runs issue-vc with invalid directory provided', (ctx) => {
-        expect(ctx.stdout).to.contain(noSuchFileOrDir)
-      })
-  })
-  describe('issuance of vc without any flags', () => {
-    test
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
-      .stdout()
-      .command(['issue-vc'])
-      .it('runs issue-vc with invalid directory provided', (ctx) => {
-        expect(ctx.stdout).to.contain(couldNotParseSchema)
+        expect(ctx.stdout).to.contain(NoSuchFileOrDir)
       })
   })
 })

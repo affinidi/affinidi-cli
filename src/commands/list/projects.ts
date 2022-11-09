@@ -70,4 +70,9 @@ export default class Projects extends Command {
         break
     }
   }
+
+  async catch(error: Error) {
+    CliUx.ux.action.stop("Projects can't be fetched.")
+    CliUx.ux.info(error?.message)
+  }
 }

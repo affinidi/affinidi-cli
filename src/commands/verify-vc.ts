@@ -5,6 +5,7 @@ import { verfierService } from '../services/verification'
 
 import { vaultService, VAULT_KEYS } from '../services/vault'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
+import { JsonFileSyntaxError } from '../errors'
 
 export default class VerifyVc extends Command {
   static description = 'Verfies a verifiable credential'
@@ -15,6 +16,7 @@ export default class VerifyVc extends Command {
     data: Flags.string({
       char: 'd',
       description: 'source json file with credentials to be verified',
+      required: true,
     }),
   }
 
@@ -30,6 +32,10 @@ export default class VerifyVc extends Command {
   }
 
   async catch(error: string | Error) {
-    CliUx.ux.info(error.toString())
+    if (error instanceof SyntaxError) {
+      CliUx.ux.info(JsonFileSyntaxError.message)
+    } else {
+      CliUx.ux.info(error.toString())
+    }
   }
 }

@@ -1,11 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 
 import { Api as SchemaManagerApi, SchemaDto } from './schema-manager.api'
-import { ServiceDownError, Unauthorized } from '../../errors'
+import { CliError, handleErrors } from '../../errors'
 
 export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
 
 export type ScopeType = 'public' | 'unlisted' | 'default'
+const SERVICE = 'schema'
 
 class SchemaManagerService {
   constructor(
@@ -44,7 +45,7 @@ class SchemaManagerService {
       }
       return response.data.schemas
     } catch (err) {
-      throw Unauthorized
+      return handleErrors(new CliError(err?.message, err.response.status, SERVICE))
     }
   }
 
@@ -52,16 +53,7 @@ class SchemaManagerService {
     try {
       return (await this.client.schemas.getSchema(id, { headers: { 'API-KEY': apiKey } })).data
     } catch (error: any) {
-      // TODO: change later to be handled golabally
-      switch (error.response.status) {
-        case StatusCodes.FORBIDDEN:
-        case StatusCodes.UNAUTHORIZED:
-          throw Unauthorized
-        case StatusCodes.INTERNAL_SERVER_ERROR:
-          throw ServiceDownError
-        default:
-          throw new Error(error?.message)
-      }
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 }

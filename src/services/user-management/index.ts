@@ -1,13 +1,14 @@
 import { AxiosResponse } from 'axios'
 import { nanoid } from 'nanoid'
 import { Api as UserManagementApi } from './user-management.api'
-import { InvalidOrExpiredOTPError, ServiceDownError } from '../../errors'
+import { CliError, handleErrors } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../vault'
 
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
 
 export const USER_MANAGEMENT_URL = 'https://console-user-management.apse1.affinidi.com/api/v1'
+const SERVICE = 'userManagement'
 
 type Session = {
   id: string
@@ -68,7 +69,7 @@ class UserManagementService {
           throw Error(`cannot call the ${flow} method from the user-management service`)
       }
     } catch (error: any) {
-      throw new Error(error?.message)
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -77,7 +78,7 @@ class UserManagementService {
       const result = await this.client.auth.signupUser({ username })
       return result.data
     } catch (error: any) {
-      throw new Error(error?.message)
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -86,8 +87,7 @@ class UserManagementService {
       const result = await this.client.auth.login({ username })
       return result.data
     } catch (error: any) {
-      console.log(error)
-      throw ServiceDownError
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -105,7 +105,7 @@ class UserManagementService {
       }
       return cookie
     } catch (err) {
-      throw InvalidOrExpiredOTPError
+      return handleErrors(new CliError(err?.message, err.response.status, SERVICE))
     }
   }
 
@@ -116,7 +116,7 @@ class UserManagementService {
       })
       return
     } catch (error: any) {
-      throw ServiceDownError
+      handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -125,7 +125,7 @@ class UserManagementService {
       const result = await this.client.auth.me()
       return result.data
     } catch (error: any) {
-      throw new Error(error?.error?.message)
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 }

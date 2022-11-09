@@ -1,3 +1,4 @@
+import { CliError, handleErrors } from '../../errors'
 import {
   Api as IssuanceAPI,
   CreateIssuanceInput,
@@ -7,6 +8,7 @@ import {
 } from './issuance.api'
 
 export const ISSUANCE_URL = 'https://console-vc-issuance.prod.affinity-project.org/api/v1'
+const SERVICE = 'issuance'
 
 class IssuanceService {
   constructor(
@@ -26,8 +28,8 @@ class IssuanceService {
         headers: { Cookie: token, 'Api-Key': apiKey },
       })
       return resp.data
-    } catch (error) {
-      throw new Error(error?.message)
+    } catch (error: any) {
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 
@@ -42,8 +44,8 @@ class IssuanceService {
         headers: { Cookie: token, 'Api-Key': apiKey },
       })
       return resp.data
-    } catch (error) {
-      throw new Error(error?.message)
+    } catch (error: any) {
+      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
     }
   }
 }

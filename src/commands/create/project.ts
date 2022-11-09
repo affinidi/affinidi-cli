@@ -36,6 +36,7 @@ export default class Project extends Command {
   }
 
   async catch(error: string | Error) {
+    CliUx.ux.action.stop('')
     CliUx.ux.info(error.toString())
   }
 }

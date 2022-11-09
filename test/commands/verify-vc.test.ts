@@ -5,11 +5,10 @@ import fs from 'fs'
 
 import { VERIFIER_URL } from '../../src/services/verification'
 import {
-  badRequest,
-  emptyIssueDataFlag,
-  noSuchFileOrDir,
+  NoSuchFileOrDir,
   ServiceDownError,
   Unauthorized,
+  verifierBadRequest,
 } from '../../src/errors'
 
 const doNothing = () => {}
@@ -34,20 +33,22 @@ describe('verify-vc', () => {
 
   describe('Bad request', () => {
     test
-      .nock(`${VERIFIER_URL}`, (api) => api.post('/verifier/verify-vcs').replyWithError(badRequest))
+      .nock(`${VERIFIER_URL}`, (api) =>
+        api.post('/verifier/verify-vcs').reply(StatusCodes.BAD_REQUEST),
+      )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
       .it('runs verify-vc with bad request', (ctx) => {
-        expect(ctx.stdout).to.contain(badRequest)
+        expect(ctx.stdout).to.contain(verifierBadRequest)
       })
   })
   describe('Server Down', () => {
     test
       .nock(`${VERIFIER_URL}`, (api) =>
-        api.post('/verifier/verify-vcs').replyWithError(ServiceDownError),
+        api.post('/verifier/verify-vcs').reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -62,7 +63,7 @@ describe('verify-vc', () => {
   describe('Unauthorized', () => {
     test
       .nock(`${VERIFIER_URL}`, (api) =>
-        api.post('/verifier/verify-vcs').replyWithError(Unauthorized),
+        api.post('/verifier/verify-vcs').reply(StatusCodes.UNAUTHORIZED),
       )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -77,28 +78,14 @@ describe('verify-vc', () => {
     test
 
       .stub(fs.promises, 'readFile', () => {
-        throw Error(noSuchFileOrDir.message)
+        throw Error(NoSuchFileOrDir.message)
       })
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['verify-vc', `-d file/systme`])
       .it('runs verify-vc invalid file directory', (ctx) => {
-        expect(ctx.stdout).to.contain(noSuchFileOrDir)
-      })
-  })
-  describe('Not providing a json file', () => {
-    test
-
-      .stub(fs.promises, 'readFile', () => {
-        throw Error(emptyIssueDataFlag.message)
-      })
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
-      .stdout()
-      .command(['verify-vc'])
-      .it('runs verify-vc without prviding verifiable credential', (ctx) => {
-        expect(ctx.stdout).to.contain(emptyIssueDataFlag)
+        expect(ctx.stdout).to.contain(NoSuchFileOrDir)
       })
   })
 })

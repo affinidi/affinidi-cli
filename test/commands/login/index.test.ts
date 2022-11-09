@@ -18,7 +18,7 @@ describe('login command', () => {
     .stub(prompts, 'enterEmailPrompt', () => async () => 'invalid.email.address')
     .command(['login'])
     .it('runs login with an invalid email address', (ctx) => {
-      expect(ctx.stdout).to.contain(WrongEmailError)
+      expect(ctx.stdout).to.contain(WrongEmailError.message)
     })
 
   describe('Given a valid email address', () => {
@@ -26,7 +26,7 @@ describe('login command', () => {
       test
         .stdout()
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-          api.post('/auth/login').replyWithError(ServiceDownError),
+          api.post('/auth/login').reply(StatusCodes.INTERNAL_SERVER_ERROR),
         )
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -34,7 +34,7 @@ describe('login command', () => {
         .command(['login'])
         .it('runs login and shows the user that something went wrong', (ctx) => {
           // TODO: the error message is contained twice in the ctx.stdout
-          expect(ctx.stdout).to.contain(ServiceDownError)
+          expect(ctx.stdout).to.contain(ServiceDownError.message)
         })
     })
 
@@ -53,7 +53,7 @@ describe('login command', () => {
         .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['login'])
         .it('runs login explains to the user that the OTP was invalid', (ctx) => {
-          expect(ctx.stdout).to.contain(InvalidOrExpiredOTPError)
+          expect(ctx.stdout).to.contain(InvalidOrExpiredOTPError.message)
         })
     })
 

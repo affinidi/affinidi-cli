@@ -8,6 +8,7 @@ import {
   VerificationMethod,
 } from '../services/issuance/issuance.api'
 import { issuanceService } from '../services/issuance'
+import { JsonFileSyntaxError } from '../errors'
 import { getSession } from '../services/user-management'
 
 export default class IssueVc extends Command {
@@ -16,8 +17,12 @@ export default class IssueVc extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    schema: Flags.string({ char: 's', description: 'json schema url' }),
-    data: Flags.string({ char: 'd', description: 'source json file with credential data' }),
+    schema: Flags.string({ char: 's', description: 'json schema url', required: true }),
+    data: Flags.string({
+      char: 'd',
+      description: 'source json file with credential data',
+      required: true,
+    }),
   }
 
   static args = [{ name: 'file' }]
@@ -26,7 +31,6 @@ export default class IssueVc extends Command {
     const { flags } = await this.parse(IssueVc)
     const token = getSession()?.accessToken
     const apiKeyHash = vaultService.get(VAULT_KEYS.projectAPIKey)
-
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)
 
     const issuanceJson: CreateIssuanceInput = {
@@ -60,6 +64,10 @@ export default class IssueVc extends Command {
   }
 
   async catch(error: string | Error) {
-    CliUx.ux.info(error.toString())
+    if (error instanceof SyntaxError) {
+      CliUx.ux.info(JsonFileSyntaxError.message)
+    } else {
+      CliUx.ux.info(error.toString())
+    }
   }
 }
