@@ -4,6 +4,7 @@ import fs from 'fs'
 import { CliUx } from '@oclif/core'
 
 import { NoSuchFileOrDir, ServiceDownError, Unauthorized } from '../../src/errors'
+import * as prompts from '../../src/user-actions'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
 const issuanceRespnse = {
@@ -33,6 +34,7 @@ const offerResponse = {
     },
   },
 }
+const EXAMPLE_EMAIL = 'example@email.com'
 const doNothing = () => {}
 const jsonFile = 'some-user/some-folder/someFile.json'
 const projectId = 'some-project-id'
@@ -43,6 +45,7 @@ describe('issue-vc', () => {
     .nock(`${ISSUANCE_URL}`, (api) =>
       api.post(`/issuances/some-vc-id/offers`).reply(StatusCodes.OK, offerResponse),
     )
+    .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -56,6 +59,7 @@ describe('issue-vc', () => {
   describe('issuance of vc without authentication', () => {
     test
       .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').reply(StatusCodes.UNAUTHORIZED))
+      .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -70,6 +74,7 @@ describe('issue-vc', () => {
       .nock(`${ISSUANCE_URL}`, (api) =>
         api.post('/issuances').reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
+      .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -85,6 +90,7 @@ describe('issue-vc', () => {
       .stub(fs.promises, 'readFile', () => {
         throw Error(NoSuchFileOrDir.message)
       })
+      .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()

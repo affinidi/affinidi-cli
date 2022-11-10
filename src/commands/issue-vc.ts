@@ -1,5 +1,7 @@
 import { Command, Flags, CliUx } from '@oclif/core'
 import fs from 'fs/promises'
+import * as EmailValidator from 'email-validator'
+
 import { parseSchemaURL } from '../services/issuance/parse.schema.url'
 import { vaultService, VAULT_KEYS } from '../services'
 import {
@@ -8,8 +10,11 @@ import {
   VerificationMethod,
 } from '../services/issuance/issuance.api'
 import { issuanceService } from '../services/issuance'
-import { JsonFileSyntaxError } from '../errors'
+import { JsonFileSyntaxError, WrongEmailError } from '../errors'
 import { getSession } from '../services/user-management'
+import { enterIssuanceEmailPrompt } from '../user-actions'
+
+const MAX_EMAIL_ATTEMPT = 3
 
 export default class IssueVc extends Command {
   static description = 'Issues a verifiable credential based on an given schema'
@@ -25,10 +30,25 @@ export default class IssueVc extends Command {
     }),
   }
 
-  static args = [{ name: 'file' }]
+  static args = [{ name: 'email' }]
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(IssueVc)
+    const { flags, args } = await this.parse(IssueVc)
+
+    let { email } = args
+    if (!email) {
+      email = await enterIssuanceEmailPrompt()
+    }
+
+    let wrongEmailCount = 0
+    while (!EmailValidator.validate(email)) {
+      // eslint-disable-next-line no-await-in-loop
+      email = await enterIssuanceEmailPrompt()
+      wrongEmailCount += 1
+      if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
+        CliUx.ux.error(WrongEmailError)
+      }
+    }
     const token = getSession()?.accessToken
     const apiKeyHash = vaultService.get(VAULT_KEYS.projectAPIKey)
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)
@@ -51,7 +71,7 @@ export default class IssueVc extends Command {
     const offerInput: CreateIssuanceOfferInput = {
       verification: {
         target: {
-          email: VerificationMethod.Email,
+          email,
         },
       },
       credentialSubject: JSON.parse(file),
