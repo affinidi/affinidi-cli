@@ -1,4 +1,5 @@
 import { Command, CliUx } from '@oclif/core'
+import chalk from 'chalk'
 
 import { projectNamePrompt } from '../../user-actions'
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
@@ -32,6 +33,11 @@ export default class Project extends Command {
     vaultService.set(VAULT_KEYS.projectName, projectDetails.project.name)
     vaultService.set(VAULT_KEYS.projectAPIKey, projectDetails.apiKey.apiKeyHash)
     vaultService.set(VAULT_KEYS.projectDID, projectDetails.wallet.did)
+    CliUx.ux.info(
+      chalk.red.bold(
+        'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
+      ),
+    )
     CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
   }
 

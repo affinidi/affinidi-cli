@@ -22,7 +22,7 @@ describe('project', () => {
     .it('runs show project with a specific project-id', (ctx) => {
       expect(ctx.stdout).to.contain('"name": "Awesome project"')
       expect(ctx.stdout).to.contain('"projectId": "some-project1-id"')
-      expect(ctx.stdout).to.contain('"apiKeyHash": "Awesome-API-Key-Hash"')
+      expect(ctx.stdout).to.contain('"apiKeyHash": "********************"')
     })
   describe('Showing active project', () => {
     vaultService.set(VAULT_KEYS.projectId, projectSummary.project.projectId)
@@ -39,7 +39,7 @@ describe('project', () => {
       .it('runs show project with active project', (ctx) => {
         expect(ctx.stdout).to.contain('"name": "Awesome project"')
         expect(ctx.stdout).to.contain('"projectId": "some-project1-id"')
-        expect(ctx.stdout).to.contain('"apiKeyHash": "Awesome-API-Key-Hash"')
+        expect(ctx.stdout).to.contain('"apiKeyHash": "********************"')
       })
   })
   describe('Showing a project while not authorized', () => {

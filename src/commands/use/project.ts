@@ -68,6 +68,16 @@ export default class Project extends Command {
       await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
     }
     setActiveProject(projectToBeActive)
+    if (projectToBeActive.apiKey?.apiKeyHash) {
+      projectToBeActive.apiKey.apiKeyHash = ''.padEnd(
+        projectToBeActive.apiKey.apiKeyHash?.length,
+        '*',
+      )
+    }
+    if (projectToBeActive.wallet?.didUrl) {
+      projectToBeActive.wallet.didUrl = ''.padEnd(projectToBeActive.wallet.didUrl?.length, '*')
+    }
+
     CliUx.ux.info(JSON.stringify(projectToBeActive, null, '  '))
   }
 

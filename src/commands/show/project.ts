@@ -68,6 +68,12 @@ export default class ShowProject extends Command {
 
     CliUx.ux.action.stop('')
     const projectData = await iAmService.getProjectSummary(token, projectId)
+    if (projectData.apiKey?.apiKeyHash) {
+      projectData.apiKey.apiKeyHash = ''.padEnd(projectData.apiKey.apiKeyHash?.length, '*')
+    }
+    if (projectData.wallet?.didUrl) {
+      projectData.wallet.didUrl = ''.padEnd(projectData.wallet.didUrl?.length, '*')
+    }
     if (flags.output === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
     } else {

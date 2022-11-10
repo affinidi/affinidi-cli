@@ -17,7 +17,7 @@ describe('project', () => {
     .it('runs use project with a specific project-id', (ctx) => {
       expect(ctx.stdout).to.contain('"name": "Awesome project"')
       expect(ctx.stdout).to.contain('"projectId": "some-project1-id"')
-      expect(ctx.stdout).to.contain('"apiKeyHash": "Awesome-API-Key-Hash"')
+      expect(ctx.stdout).to.contain('"apiKeyHash": "********************"')
     })
   describe('Activating a project while not authorized', () => {
     test
