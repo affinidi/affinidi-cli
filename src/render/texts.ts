@@ -22,7 +22,7 @@ export const buildInvalidCommandUsage = (
     hint ? ` (${hint.join(',')})` : ''
   }.
   See "${command} --help"
-  
+
   Usage: ${chalk.bold(`$ affinidi ${usage}`)}
 
   ${summary}
@@ -51,25 +51,41 @@ export const useCommandDescription = chalk`
 export const buildGeneratedAppNextStepsMessageBlocks = (
   name: string,
   appPath: string,
+  withProxy: boolean,
 ): { text: string; styled: string }[] => {
   return [
     {
       text: `Successfully generated ${name} at ${appPath}`,
       styled: `${chalk.green('Successfully')} generated ${chalk.italic(name)} at ${appPath}`,
     },
-    {
-      text: 'cd inside of this directory and install the dependencies fist by installing the dependencies',
-      styled:
-        'cd inside of this directory and install the dependencies fist by installing the dependencies',
+    withProxy && {
+      text: `Successfully generated ${name}-backend at ${appPath}-backend`,
+      styled: `${chalk.green('Successfully')} generated ${chalk.italic(
+        `${name}-backend`,
+      )} at ${appPath}-backend`,
     },
+    withProxy
+      ? {
+          text: 'open each directory in separate terminals and install the dependencies',
+          styled: 'open each directory in separate terminals and install the dependencies',
+        }
+      : {
+          text: 'open this directory in terminal and install the dependencies',
+          styled: 'open this directory in terminal and install the dependencies',
+        },
     {
       text: '$ npm install',
       styled: `  ${chalk.bgWhite('$ npm install')}`,
     },
-    {
-      text: 'then start the application with the command:',
-      styled: 'then start the application with the command:',
-    },
+    withProxy
+      ? {
+          text: 'then start both applications with the command:',
+          styled: 'then start both applications with the command:',
+        }
+      : {
+          text: 'then start the application with the command:',
+          styled: 'then start the application with the command:',
+        },
     {
       text: '$ npm run start',
       styled: `  ${chalk.bgWhite('$ npm run start')}`,
@@ -78,11 +94,15 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
       text: 'Enjoy the App!',
       styled: 'Enjoy the App!',
     },
-  ]
+  ].filter((item) => !!item)
 }
 
-export const buildGeneratedAppNextStepsMessage = (name: string, appPath: string): string => {
-  return buildGeneratedAppNextStepsMessageBlocks(name, appPath)
+export const buildGeneratedAppNextStepsMessage = (
+  name: string,
+  appPath: string,
+  withProxy: boolean,
+): string => {
+  return buildGeneratedAppNextStepsMessageBlocks(name, appPath, withProxy)
     .map((b) => b.styled)
     .join('\n\n')
 }

@@ -81,6 +81,7 @@ describe('generate-application command', () => {
           buildGeneratedAppNextStepsMessageBlocks(
             defaultAppName,
             `${process.cwd()}/${defaultAppName}`,
+            false,
           )
             .map((b) => b.text)
             .forEach((msg) => {
@@ -88,5 +89,28 @@ describe('generate-application command', () => {
             })
         })
     })
+  })
+
+  describe('Given -w (backend proxy)', () => {
+    test
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+      .stdout()
+      .stub(GitService, 'clone', doNothing)
+      .stub(Writer, 'write', doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .command(['generate-application', '-w'])
+      .it('it runs generate-application and shows the next steps long description', (ctx) => {
+        buildGeneratedAppNextStepsMessageBlocks(
+          defaultAppName,
+          `${process.cwd()}/${defaultAppName}`,
+          true,
+        )
+          .map((b) => b.text)
+          .forEach((msg) => {
+            expect(ctx.stdout).to.contain(msg)
+          })
+      })
   })
 })
