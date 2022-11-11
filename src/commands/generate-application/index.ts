@@ -15,7 +15,7 @@ const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'NOT IMPLEMENTED YET',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
   'certification-and-verification':
-    'https://gitlab.com/affinidi/foundational/phoenix/holder-reference-app.git',
+    'https://github.com/affinityproject/elements-reference-app-frontend.git',
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 

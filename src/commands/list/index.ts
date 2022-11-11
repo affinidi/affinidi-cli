@@ -3,7 +3,7 @@ import { CliUx, Command, Interfaces } from '@oclif/core'
 import { listCommandDescription } from '../../render/texts'
 
 export default class List extends Command {
-  static summary = 'The list commmand to display various resources'
+  static summary = 'The list command to display various resources'
 
   static description = listCommandDescription
 

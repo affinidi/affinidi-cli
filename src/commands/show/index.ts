@@ -3,7 +3,7 @@ import { CliUx, Command, Interfaces } from '@oclif/core'
 import { showCommandDescription } from '../../render/texts'
 
 export default class Show extends Command {
-  static summary = 'The Show commmand to display the detail of a ressource'
+  static summary = 'The Show command to display the detail of a resource'
 
   static description = showCommandDescription
 
