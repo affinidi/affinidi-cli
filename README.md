@@ -2,8 +2,16 @@
 
 ## Installation
 
+### Prerequisites:
+
+You need to have installed on your machine:
+- [git](https://git-scm.com/)
+- [NodeJs](https://nodejs.org). (it's recommended to use [nvm](https://github.com/nvm-sh/nvm))
+
+
+Run the installation command:
 ```
-npm install @affinidi/cli
+npm install -g @affinidi/cli
 ```
 
 ## Quick start
@@ -135,7 +143,7 @@ list schemas
 
 ## affinidi show
 
-The Show command to display the detail of a resource
+The Show command to display the details of a resource
 
 USAGE
 ```
@@ -165,7 +173,7 @@ Shows information about a specific project that you own.
 ```
 COMMANDS
 ```
-show project  describe the command here
+show project
 show schema
 ```
 
