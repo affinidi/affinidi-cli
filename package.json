@@ -33,6 +33,7 @@
     "generate:api": "node scripts/generate-api.cjs"
   },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "repository": {
@@ -44,7 +45,7 @@
     "cli",
     "oclif"
   ],
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli-js/issues"
   },
