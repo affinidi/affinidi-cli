@@ -1,8 +1,8 @@
 import { CliUx, Command, Flags } from '@oclif/core'
+import path from 'path'
 
 import { vaultService, Writer } from '../../services'
 import { GitService } from '../../services/git'
-
 
 type PlatformType = 'web' | 'mobile'
 type UseCaseType =
@@ -55,7 +55,7 @@ export default class GenerateApplication extends Command {
     CliUx.ux.action.start('Generating an application')
 
     const useCase = flags['use-case']
-    const name = flags.name
+    const { name } = flags
 
     try {
       switch (useCase) {
@@ -87,7 +87,7 @@ export default class GenerateApplication extends Command {
     CliUx.ux.info(`Setting up the project`)
 
     try {
-      Writer.write(`${name}/.env`, [
+      Writer.write(path.join(name, '.env'), [
         'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
         'REACT_APP_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',
         `REACT_APP_API_KEY=${activeProject}`,
