@@ -14,10 +14,8 @@ const buildCommandDescription = (command: string, subCommands: string[]): string
 
 export const conditionsAndPolicyMessage = `
     Please confirm that you agree with:
-    Terms and Conditions: ${chalk.blue(
-      'https://build.affinidi.com/console-landing-terms-of-use.pdf',
-    )}
-    Privacy Policy: ${chalk.blue('https://build.affinidi.com/console-landing-privacy-policy.pdf')}
+    Terms and Conditions: ${chalk.blue('https://build.affinidi.com/dev-tools/terms-of-use.pdf')}
+    Privacy Policy: ${chalk.blue('https://build.affinidi.com/dev-tools/privacy-policy.pdf')}
     [y/n]
 `
 
