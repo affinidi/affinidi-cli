@@ -1,3 +1,4 @@
+import FormData from 'form-data'
 import { CliError, handleErrors } from '../../errors'
 import {
   Api as IssuanceAPI,
@@ -6,6 +7,7 @@ import {
   CreateIssuanceOutput,
   OfferDto,
 } from './issuance.api'
+import { BulkApi } from './bulkIssuance.api'
 
 export const ISSUANCE_URL = 'https://console-vc-issuance.prod.affinity-project.org/api/v1'
 const SERVICE = 'issuance'
@@ -16,16 +18,19 @@ class IssuanceService {
       baseURL: ISSUANCE_URL,
       withCredentials: true,
     }),
+    private readonly bulkClient = new BulkApi({
+      baseURL: ISSUANCE_URL,
+      withCredentials: true,
+    }),
   ) {}
 
   public createIssuance = async (
     apiKey: string,
-    token: string,
     issuanceInput: CreateIssuanceInput,
   ): Promise<CreateIssuanceOutput> => {
     try {
       const resp = await this.client.issuances.createIssuance(issuanceInput, {
-        headers: { Cookie: token, 'Api-Key': apiKey },
+        headers: { 'Api-Key': apiKey },
       })
       return resp.data
     } catch (error: any) {
@@ -35,17 +40,27 @@ class IssuanceService {
 
   public createOffer = async (
     apiKey: string,
-    token: string,
     issuanceId: string,
     offerInput: CreateIssuanceOfferInput,
   ): Promise<OfferDto> => {
     try {
       const resp = await this.client.issuances.createOffer(issuanceId, offerInput, {
-        headers: { Cookie: token, 'Api-Key': apiKey },
+        headers: { 'Api-Key': apiKey },
       })
       return resp.data
     } catch (error: any) {
       return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+    }
+  }
+
+  public createFromCsv = async (apiKey: string, data: FormData): Promise<CreateIssuanceOutput> => {
+    try {
+      const resp = await this.bulkClient.bulkIssuances.createFromCsvFile(data, {
+        headers: { 'Api-Key': apiKey },
+      })
+      return resp.data.issuance
+    } catch (error: any) {
+      return handleErrors(new CliError(error?.message, error.response?.status, SERVICE))
     }
   }
 }

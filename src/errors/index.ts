@@ -19,9 +19,11 @@ export const CouldNotParseSchema = Error(
   'Could not parse schema URL, please provide a valid schema URl',
 )
 export const EmptyIssueDataFlag = Error('Please enter a directory to a json file.')
-export const NoSuchFileOrDir = Error('Please provide a vaild directory for the json file')
 export const issuanceBadRequest = Error(
-  'Please check that your json file content is in the right structure as in the schema.',
+  'Please check that your file content is matching the schema.',
+)
+export const WrongFileType = Error(
+  'Please provide a valid file directory with the right extensions. (".csv" for bulk issuance or ".json" for single issuance)',
 )
 export const JsonFileSyntaxError = Error('Please check syntax of json file and try again.')
 export const NotFoundEmail = Error(

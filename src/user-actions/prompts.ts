@@ -36,7 +36,7 @@ export const projectNamePrompt = async (
 }
 
 export const enterIssuanceEmailPrompt = async (
-  text: string = 'Enter email address to send verifiable credential to',
+  text: string = 'Please enter email the verifiable credential is sent to',
 ): Promise<string> => {
   return CliUx.ux.prompt(text, { required: true })
 }

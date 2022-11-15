@@ -174,6 +174,7 @@ export interface CreateIssuanceOutput {
 
 export interface CreateIssuanceInput {
   template: {
+    walletUrl?: string
     verification: {
       method: VerificationMethod
     }
@@ -355,7 +356,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title console-vc-issuance
- * @version 1.49.1
+ * @version 1.51.1
  * @license ISC
  * @baseUrl /api/v1
  * @contact Yiğitcan UÇUM yigitcan.u@affinidi.com

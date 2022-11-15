@@ -3,12 +3,17 @@ import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
 import { CliUx } from '@oclif/core'
 
-import { NoSuchFileOrDir, ServiceDownError, Unauthorized } from '../../src/errors'
+import { ServiceDownError, Unauthorized, WrongFileType } from '../../src/errors'
 import * as prompts from '../../src/user-actions'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
 const issuanceRespnse = {
   id: 'some-vc-id',
+}
+const bulkIssuanceRespone = {
+  issuance: {
+    id: 'some-vc-id',
+  },
 }
 const schema = 'https://schema.affinidi.com/awesomeV1-0.json'
 const offerResponse = {
@@ -37,6 +42,7 @@ const offerResponse = {
 const EXAMPLE_EMAIL = 'example@email.com'
 const doNothing = () => {}
 const jsonFile = 'some-user/some-folder/someFile.json'
+const csvFile = 'some-user/some-folder/someFile.csv'
 const projectId = 'some-project-id'
 
 describe('issue-vc', () => {
@@ -51,10 +57,38 @@ describe('issue-vc', () => {
     .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
     .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
-    .it('runs issue-vc', (ctx) => {
-      expect(ctx.stdout).to.contain(`"id": "${projectId}"`)
-      expect(ctx.stdout).to.contain(`"jsonSchemaUrl": "${schema}"`)
+    .it('runs issue-vc single issuance', (ctx) => {
+      expect(ctx.stdout).to.contain(issuanceRespnse.id)
     })
+  describe('bulk issuance of vc', () => {
+    test
+      .nock(`${ISSUANCE_URL}`, (api) =>
+        api.post('/issuances/create-from-csv').reply(StatusCodes.OK, bulkIssuanceRespone),
+      )
+      .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stdout()
+      .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
+      .it('runs issue-vc bulk issuance', (ctx) => {
+        expect(ctx.stdout).to.contain(bulkIssuanceRespone.issuance.id)
+      })
+  })
+  describe('bulk issuance of vc without authentication', () => {
+    test
+      .nock(`${ISSUANCE_URL}`, (api) =>
+        api.post('/issuances/create-from-csv').reply(StatusCodes.UNAUTHORIZED),
+      )
+      .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
+      .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stdout()
+      .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
+      .it('runs issue-vc when not authenticated bulk flag is true', (ctx) => {
+        expect(ctx.stdout).to.contain(Unauthorized)
+      })
+  })
 
   describe('issuance of vc without authentication', () => {
     test
@@ -67,6 +101,21 @@ describe('issue-vc', () => {
       .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
       .it('runs issue-vc when not authenticated', (ctx) => {
         expect(ctx.stdout).to.contain(Unauthorized)
+      })
+  })
+  describe('bulk issuance of vc when server is down', () => {
+    test
+      .nock(`${ISSUANCE_URL}`, (api) =>
+        api.post('/issuances/create-from-csv').reply(StatusCodes.INTERNAL_SERVER_ERROR),
+      )
+      .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
+      .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stdout()
+      .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
+      .it('runs issue-vc when not authenticated bulk flag true', (ctx) => {
+        expect(ctx.stdout).to.contain(ServiceDownError)
       })
   })
   describe('issuance of vc when server is down', () => {
@@ -84,11 +133,25 @@ describe('issue-vc', () => {
         expect(ctx.stdout).to.contain(ServiceDownError)
       })
   })
+  describe('bulk issuance of vc providing an invalid json file directory', () => {
+    test
+      .stub(fs.promises, 'readFile', () => {
+        throw Error(WrongFileType.message)
+      })
+      .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stdout()
+      .command(['issue-vc', `-s ${schema}`, '-d file/system', '-b'])
+      .it('runs issue-vc with invalid directory provided bulk flag is true', (ctx) => {
+        expect(ctx.stdout).to.contain(WrongFileType)
+      })
+  })
 
   describe('issuance of vc providing an invalid json file directory', () => {
     test
       .stub(fs.promises, 'readFile', () => {
-        throw Error(NoSuchFileOrDir.message)
+        throw Error(WrongFileType.message)
       })
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -96,7 +159,7 @@ describe('issue-vc', () => {
       .stdout()
       .command(['issue-vc', `-s ${schema}`, '-d file/system'])
       .it('runs issue-vc with invalid directory provided', (ctx) => {
-        expect(ctx.stdout).to.contain(NoSuchFileOrDir)
+        expect(ctx.stdout).to.contain(WrongFileType)
       })
   })
 })
