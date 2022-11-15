@@ -10,7 +10,10 @@ export const InvalidOrExpiredOTPError = Error(
 )
 export const SignoutError = Error(`There was an error while trying to sign-out. ${pleaseTryAgain}`)
 export const Unauthorized = Error(
-  "You are not authorized to perform this action. Please try logging in, sign-up if you don't have an account or make sure you have an active project",
+  "You are not authorized to perform this action. Please try to log-in, sign-up if you don't have an account or make sure you have an active project",
+)
+export const notFoundProject = Error(
+  'Please provide an existing project ID or activate a project in case trying to show active project.',
 )
 export const CouldNotParseSchema = Error(
   'Could not parse schema URL, please provide a valid schema URl',
@@ -21,7 +24,7 @@ export const issuanceBadRequest = Error(
   'Please check that your json file content is in the right structure as in the schema.',
 )
 export const JsonFileSyntaxError = Error('Please check syntax of json file and try again.')
-export const NotFound = Error(
+export const NotFoundEmail = Error(
   "Please enter the email address you signed-up with or sign-up if you don't have an account.",
 )
 export const Conflict = Error(
@@ -29,6 +32,7 @@ export const Conflict = Error(
 )
 export const verifierBadRequest = Error('Please make sure that the VC is valid.')
 export const schemaBadrequest = Error('Please make sure to provide a valid schema ID.')
+export const NotFoundSchema = Error('Please provide an existing schema ID.')
 
 export class CliError extends Error {
   code: number
@@ -57,6 +61,18 @@ const handleBadRequest = (service: string): Error => {
       return new Error('IAm service bad request')
   }
 }
+const handleNotFound = (service: string): Error => {
+  switch (service) {
+    case 'iAm':
+      return notFoundProject
+    case 'userManagement':
+      return NotFoundEmail
+    case 'schema':
+      return NotFoundSchema
+    default:
+      return new Error('Service not found')
+  }
+}
 
 export const handleErrors = (error: CliError) => {
   switch (error.code) {
@@ -68,7 +84,7 @@ export const handleErrors = (error: CliError) => {
     case StatusCodes.BAD_REQUEST:
       throw handleBadRequest(error.service)
     case StatusCodes.NOT_FOUND:
-      throw NotFound
+      throw handleNotFound(error.service)
     case StatusCodes.CONFLICT:
       throw Conflict
     default:
