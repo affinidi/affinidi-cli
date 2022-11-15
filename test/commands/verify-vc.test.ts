@@ -4,12 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
 
 import { VERIFIER_URL } from '../../src/services/verification'
-import {
-  NoSuchFileOrDir,
-  ServiceDownError,
-  Unauthorized,
-  verifierBadRequest,
-} from '../../src/errors'
+import { ServiceDownError, Unauthorized, verifierBadRequest, WrongFileType } from '../../src/errors'
 
 const doNothing = () => {}
 const vcFile = 'som/vs/file.json'
@@ -78,14 +73,14 @@ describe('verify-vc', () => {
     test
 
       .stub(fs.promises, 'readFile', () => {
-        throw Error(NoSuchFileOrDir.message)
+        throw Error(WrongFileType.message)
       })
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['verify-vc', `-d file/systme`])
       .it('runs verify-vc invalid file directory', (ctx) => {
-        expect(ctx.stdout).to.contain(NoSuchFileOrDir)
+        expect(ctx.stdout).to.contain(WrongFileType)
       })
   })
 })
