@@ -2,7 +2,7 @@ import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
-import { welcomeMessageBlocks } from '../../../src/render/functions'
+import { getWelcomeUserRawMessages, WelcomeUserStyledMessage } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
@@ -53,9 +53,10 @@ describe('sign-up command', () => {
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['sign-up'])
       .it('runs sign-up and shows a welcome back message', (ctx) => {
-        expect(ctx.stdout).to.contain(welcomeMessageBlocks[0])
-        expect(ctx.stdout).to.contain(welcomeMessageBlocks[1])
-        expect(ctx.stdout).to.contain(welcomeMessageBlocks[2])
+        const output = ctx.stdout
+        getWelcomeUserRawMessages().forEach((b) => {
+          expect(output).to.contain(b)
+        })
       })
   })
 })
