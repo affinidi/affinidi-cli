@@ -29,3 +29,41 @@ export const useCommandDescription = chalk`
 
   ${chalk.bgWhite(`$ affinidi use --help`)}
 `
+export const buildGeneratedAppNextStepsMessageBlocks = (
+  name: string,
+  appPath: string,
+): { text: string; styled: string }[] => {
+  return [
+    {
+      text: `Successfully generated ${name} at ${appPath}`,
+      styled: `${chalk.green('Successfully')} generated ${chalk.italic(name)} at ${appPath}`,
+    },
+    {
+      text: 'cd inside of this directory and install the dependencies fist by installing the dependencies',
+      styled:
+        'cd inside of this directory and install the dependencies fist by installing the dependencies',
+    },
+    {
+      text: '$ npm install',
+      styled: `  ${chalk.bgWhite('$ npm install')}`,
+    },
+    {
+      text: 'then start the application with the command:',
+      styled: 'then start the application with the command:',
+    },
+    {
+      text: '$ npm run start',
+      styled: `  ${chalk.bgWhite('$ npm run start')}`,
+    },
+    {
+      text: 'Enjoy the App!',
+      styled: 'Enjoy the App!',
+    },
+  ]
+}
+
+export const buildGeneratedAppNextStepsMessage = (name: string, appPath: string): string => {
+  return buildGeneratedAppNextStepsMessageBlocks(name, appPath)
+    .map((b) => b.styled)
+    .join('\n\n')
+}
