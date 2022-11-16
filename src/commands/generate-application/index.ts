@@ -1,15 +1,24 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 import path from 'path'
 
-import { vaultService, Writer } from '../../services'
-import { GitService } from '../../services/git'
+import { vaultService, GitService, Writer } from '../../services'
+import { InvalidUseCase, NotSupportedPlatform } from '../../errors'
+import { buildGeneratedAppNextStepsMessage } from '../../render/texts'
 
-type PlatformType = 'web' | 'mobile'
-type UseCaseType =
-  | 'portable-reputation'
-  | 'access-without-ownership-of-data'
-  | 'certification-and-verification'
-  | 'kyc-kyb'
+export enum Platforms {
+  web = 'web',
+  mobile = 'mobile',
+}
+
+export enum UseCasesAppNames {
+  portableReputation = 'portable-reputation',
+  accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
+  certificationAndVerification = 'certification-and-verification',
+  kycKyb = 'kyc-kyb',
+}
+
+type PlatformType = `${Platforms}`
+type UseCaseType = `${UseCasesAppNames}`
 
 const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'NOT IMPLEMENTED YET',
@@ -19,6 +28,7 @@ const UseCaseSources: Record<UseCaseType, string> = {
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 
+export const defaultAppName = 'my-app'
 export default class GenerateApplication extends Command {
   static description = 'Use this command to generate a Privacy Preserving app'
 
@@ -34,51 +44,54 @@ export default class GenerateApplication extends Command {
     name: Flags.string({
       char: 'n',
       description: 'Name of the application',
-      default: 'my-app',
+      default: defaultAppName,
     }),
     'use-case': Flags.enum<UseCaseType>({
       char: 'u',
       description: 'Use case',
       default: 'certification-and-verification',
-      options: [
-        'portable-reputation',
-        'access-without-ownership-of-data',
-        'certification-and-verification',
-        'kyc-kyb',
-      ],
+      options: Object.values(UseCasesAppNames),
     }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApplication)
 
-    CliUx.ux.action.start('Generating an application')
+    const { name, platform, 'use-case': useCase } = flags
 
-    const useCase = flags['use-case']
-    const { name } = flags
+    if (platform === Platforms.mobile) {
+      CliUx.ux.error(NotSupportedPlatform)
+    }
+
+    CliUx.ux.action.start('Generating an application')
 
     try {
       switch (useCase) {
-        case 'certification-and-verification':
+        case UseCasesAppNames.certificationAndVerification:
           await this.download(UseCaseSources[useCase], name)
           break
-        case 'access-without-ownership-of-data':
-        case 'portable-reputation':
-        case 'kyc-kyb':
+        case UseCasesAppNames.accessWithoutOwnershipOfData:
+        case UseCasesAppNames.portableReputation:
+        case UseCasesAppNames.kycKyb:
           CliUx.ux.info('Not implemented yet')
-          return
-        default:
-          CliUx.ux.error('Invalid use-case')
           break
+        default:
+          CliUx.ux.error(InvalidUseCase)
       }
     } catch (error) {
-      CliUx.ux.info(`Failed to generate an application: ${error.message}`)
-      return
+      CliUx.ux.error(`Failed to generate an application: ${error.message}`)
     }
 
     this.setUpProject(name)
 
-    CliUx.ux.action.stop()
+    CliUx.ux.action.stop('Application generated')
+
+    const appPath = `${process.cwd()}/${name}`
+    CliUx.ux.info(buildGeneratedAppNextStepsMessage(name, appPath))
+  }
+
+  async catch(error: Error) {
+    CliUx.ux.info(error?.message)
   }
 
   private setUpProject(name: string) {
@@ -101,7 +114,7 @@ export default class GenerateApplication extends Command {
     try {
       await GitService.clone(gitUrl, destination)
     } catch (error) {
-      CliUx.ux.info(`Download Failed: ${error.message}`)
+      throw Error(`Download Failed: ${error.message}`)
     }
   }
 }

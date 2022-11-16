@@ -67,7 +67,6 @@ export default class Projects extends Command {
         break
       default:
         CliUx.ux.error('Unknown output format')
-        break
     }
   }
 

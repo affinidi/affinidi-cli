@@ -35,6 +35,8 @@ export const Conflict = Error(
 export const verifierBadRequest = Error('Please make sure that the VC is valid.')
 export const schemaBadrequest = Error('Please make sure to provide a valid schema ID.')
 export const NotFoundSchema = Error('Please provide an existing schema ID.')
+export const NotSupportedPlatform = Error('This platform is not supported.')
+export const InvalidUseCase = Error('Invalid use-case')
 
 export class CliError extends Error {
   code: number
