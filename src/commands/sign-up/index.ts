@@ -9,7 +9,7 @@ import {
 } from '../../user-actions'
 import { userManagementService } from '../../services'
 import { WrongEmailError } from '../../errors'
-import { buildWelcomeUserMessage } from '../../render/functions'
+import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createSession, parseJwt } from '../../services/user-management'
 
 const MAX_EMAIL_ATTEMPT = 3
@@ -66,7 +66,7 @@ export default class SignUp extends Command {
 
     createSession(email, userId, sessionToken)
 
-    CliUx.ux.info(buildWelcomeUserMessage())
+    CliUx.ux.info(WelcomeUserStyledMessage)
   }
 
   async catch(error: string | Error) {
