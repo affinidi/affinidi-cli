@@ -1,5 +1,5 @@
 import FormData from 'form-data'
-import { CliError, handleErrors } from '../../errors'
+import { CliError } from '../../errors'
 import {
   Api as IssuanceAPI,
   CreateIssuanceInput,
@@ -34,7 +34,7 @@ class IssuanceService {
       })
       return resp.data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -49,7 +49,7 @@ class IssuanceService {
       })
       return resp.data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -60,7 +60,7 @@ class IssuanceService {
       })
       return resp.data.issuance
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response?.status, SERVICE))
+      throw new CliError(error?.message, error.response?.status, SERVICE)
     }
   }
 }

@@ -4,13 +4,16 @@ import { stringify as csv_stringify } from 'csv-stringify'
 
 import { iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
+import { getErrorOutput, CliError } from '../../errors'
 
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
 export default class Projects extends Command {
   public static enableJsonFlag = true
 
-  static description = 'Perform the action of listing all the projects you created'
+  static command = 'affinidi list projects'
+  static usage = 'show projects [FLAGS]'
+  static description = 'Listing of all projects you created.'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -70,8 +73,8 @@ export default class Projects extends Command {
     }
   }
 
-  async catch(error: Error) {
-    CliUx.ux.action.stop("Projects can't be fetched.")
-    CliUx.ux.info(error?.message)
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, Projects.command, Projects.usage, Projects.description))
   }
 }

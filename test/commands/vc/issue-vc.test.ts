@@ -3,8 +3,8 @@ import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
 import { CliUx } from '@oclif/core'
 
-import { ServiceDownError, Unauthorized, WrongFileType } from '../../src/errors'
-import * as prompts from '../../src/user-actions'
+import { ServiceDownError, Unauthorized, WrongFileType } from '../../../src/errors'
+import * as prompts from '../../../src/user-actions'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
 const issuanceRespnse = {
@@ -136,7 +136,7 @@ describe('issue-vc', () => {
   describe('bulk issuance of vc providing an invalid json file directory', () => {
     test
       .stub(fs.promises, 'readFile', () => {
-        throw Error(WrongFileType.message)
+        throw Error(WrongFileType)
       })
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -151,7 +151,7 @@ describe('issue-vc', () => {
   describe('issuance of vc providing an invalid json file directory', () => {
     test
       .stub(fs.promises, 'readFile', () => {
-        throw Error(WrongFileType.message)
+        throw Error(WrongFileType)
       })
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)

@@ -5,6 +5,6 @@ describe('list command', () => {
     .stdout()
     .command(['list'])
     .it('runs list and shows the help', (ctx) => {
-      expect(ctx.stdout).to.contain('Use the list command')
+      expect(ctx.stdout).to.contain('The list commmand to display')
     })
 })

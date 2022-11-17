@@ -13,13 +13,17 @@ import {
   VerificationMethod,
 } from '../services/issuance/issuance.api'
 import { issuanceService } from '../services/issuance'
-import { JsonFileSyntaxError, WrongEmailError, WrongFileType } from '../errors'
+import { CliError, WrongEmailError, WrongFileType, getErrorOutput } from '../errors'
 import { enterIssuanceEmailPrompt } from '../user-actions'
 
 const MAX_EMAIL_ATTEMPT = 4
 
 export default class IssueVc extends Command {
-  static description = 'Issues a verifiable credential based on an given schema'
+  static command = 'affinidi issue-vc'
+
+  static usage = 'issue-vc [email] [FLAGS]'
+
+  static description = 'Issues a verifiable credential based on an given schema.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
@@ -27,7 +31,7 @@ export default class IssueVc extends Command {
     schema: Flags.string({ char: 's', description: 'json schema url', required: true }),
     data: Flags.string({
       char: 'd',
-      description: 'source file with credential data, either .json or .csv',
+      description: 'the source file with credential data, either .json or .csv',
       required: true,
     }),
     bulk: Flags.boolean({
@@ -42,7 +46,7 @@ export default class IssueVc extends Command {
     }),
   }
 
-  static args = [{ name: 'email' }]
+  static args = [{ name: 'email', description: 'the email to whom the VC will be issued' }]
 
   public async run(): Promise<void> {
     const { flags, args } = await this.parse(IssueVc)
@@ -100,18 +104,15 @@ export default class IssueVc extends Command {
       issuanceId = await issuanceService.createIssuance(apiKeyHash, issuanceJson)
       await issuanceService.createOffer(apiKeyHash, issuanceId.id, offerInput)
     } else {
-      throw WrongFileType
+      CliUx.ux.error(WrongFileType)
     }
 
     CliUx.ux.action.stop('')
     CliUx.ux.info(issuanceId.id)
   }
 
-  async catch(error: string | Error) {
-    if (error instanceof SyntaxError) {
-      CliUx.ux.info(JsonFileSyntaxError.message)
-    } else {
-      CliUx.ux.info(error.toString())
-    }
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, IssueVc.command, IssueVc.usage, IssueVc.description))
   }
 }

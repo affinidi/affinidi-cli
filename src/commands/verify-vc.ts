@@ -5,17 +5,21 @@ import { verfierService } from '../services/verification'
 
 import { vaultService, VAULT_KEYS } from '../services/vault'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
-import { JsonFileSyntaxError } from '../errors'
+import { CliError, getErrorOutput } from '../errors'
 
 export default class VerifyVc extends Command {
-  static description = 'Verfies a verifiable credential'
+  static command = 'affinidi verify-vc'
+
+  static usage = 'verify-vc [FLAGS]'
+
+  static description = 'Verfies a verifiable credential.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
     data: Flags.string({
       char: 'd',
-      description: 'source json file with credentials to be verified',
+      description: 'source JSON file with credentials to be verified',
       required: true,
     }),
   }
@@ -31,11 +35,8 @@ export default class VerifyVc extends Command {
     CliUx.ux.info(JSON.stringify(verification, null, ' '))
   }
 
-  async catch(error: string | Error) {
-    if (error instanceof SyntaxError) {
-      CliUx.ux.info(JsonFileSyntaxError.message)
-    } else {
-      CliUx.ux.info(error.toString())
-    }
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, VerifyVc.command, VerifyVc.usage, VerifyVc.description))
   }
 }

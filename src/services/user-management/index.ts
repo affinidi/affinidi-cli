@@ -1,8 +1,9 @@
 import { AxiosResponse } from 'axios'
 import { nanoid } from 'nanoid'
 import { Api as UserManagementApi } from './user-management.api'
-import { CliError, handleErrors } from '../../errors'
+import { CliError } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../vault'
+import { StatusCodes } from 'http-status-codes'
 
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
@@ -21,7 +22,11 @@ type Session = {
 }
 
 export const parseJwt = (token: string) => {
-  return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+  try {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+  } catch (error: any) {
+    throw new CliError('Invalid login token', StatusCodes.BAD_REQUEST, SERVICE)
+  }
 }
 
 export const getSession = (): Session => {
@@ -69,7 +74,7 @@ class UserManagementService {
           throw Error(`cannot call the ${flow} method from the user-management service`)
       }
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -78,7 +83,7 @@ class UserManagementService {
       const result = await this.client.auth.signupUser({ username })
       return result.data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -87,7 +92,7 @@ class UserManagementService {
       const result = await this.client.auth.login({ username })
       return result.data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -105,7 +110,7 @@ class UserManagementService {
       }
       return cookie
     } catch (err) {
-      return handleErrors(new CliError(err?.message, err.response.status, SERVICE))
+      throw new CliError(err?.message, err.response.status, SERVICE)
     }
   }
 
@@ -116,7 +121,7 @@ class UserManagementService {
       })
       return
     } catch (error: any) {
-      handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -125,7 +130,7 @@ class UserManagementService {
       const result = await this.client.auth.me()
       return result.data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 }

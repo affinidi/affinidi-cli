@@ -3,12 +3,14 @@ import * as EmailValidator from 'email-validator'
 
 import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { userManagementService } from '../../services'
-import { WrongEmailError } from '../../errors'
+import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createSession, parseJwt } from '../../services/user-management'
 
 const MAX_EMAIL_ATTEMPT = 3
 
 export default class Login extends Command {
+  static command = 'affinidi login'
+  static usage = 'affinidi login [email]'
   static description =
     'Please log-in with your email address to use Affinidi privacy preserving services."'
 
@@ -58,8 +60,8 @@ export default class Login extends Command {
     CliUx.ux.info(`Welcome back to Affinidi ${email}!`)
   }
 
-  async catch(error: Error) {
-    CliUx.ux.action.stop('')
-    CliUx.ux.info(error?.message)
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, Login.command, Login.usage, Login.description))
   }
 }

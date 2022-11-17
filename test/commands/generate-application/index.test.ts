@@ -18,7 +18,7 @@ describe('generate-application command', () => {
       .stdout()
       .command(['generate-application', '-p', Platforms.mobile])
       .it('it runs generate-application and shows a non platform supported message', (ctx) => {
-        expect(ctx.stdout).to.contain(NotSupportedPlatform.message)
+        expect(ctx.stdout).to.contain(NotSupportedPlatform)
       })
   })
 

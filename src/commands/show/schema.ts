@@ -1,5 +1,5 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import { CommandError } from '@oclif/core/lib/interfaces'
+import { getErrorOutput, CliError } from '../../errors'
 
 import { VAULT_KEYS, vaultService } from '../../services/vault'
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
@@ -7,9 +7,9 @@ import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
 export default class Schema extends Command {
-  static description = `
-    Fetches the information of a specific schema.
-  `
+  static command = 'affinidi show schema'
+  static usage = 'show schema [schema-id]'
+  static description = `Fetches the information of a specific schema.`
 
   static examples: Interfaces.Example[] = [
     {
@@ -46,6 +46,8 @@ export default class Schema extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
 
+    CliUx.ux.action.start('Fetching schema')
+
     const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
     const schema = await schemaManagerService.getById(args['schema-id'], apiKey)
 
@@ -61,10 +63,12 @@ export default class Schema extends Command {
         output = JSON.stringify(schema, null, '  ')
     }
 
+    CliUx.ux.action.stop('')
     CliUx.ux.log(output)
   }
 
-  protected async catch(err: CommandError): Promise<void> {
-    CliUx.ux.info(err.message)
+  protected async catch(error: CliError): Promise<void> {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, Schema.command, Schema.usage, Schema.description))
   }
 }

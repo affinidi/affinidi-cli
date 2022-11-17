@@ -5,9 +5,12 @@ import { projectNamePrompt } from '../../user-actions'
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
 import { getSession } from '../../services/user-management'
+import { getErrorOutput, CliError } from '../../errors'
 
 export default class Project extends Command {
-  static description = 'Use this command to create a new Affinidi project'
+  static command = 'affinidi create project'
+  static usage = 'affinidi create project [projectName]'
+  static description = 'Use this command to create a new Affinidi project.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
@@ -41,8 +44,8 @@ export default class Project extends Command {
     CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
   }
 
-  async catch(error: string | Error) {
-    CliUx.ux.action.stop('')
-    CliUx.ux.info(error.toString())
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, Project.command, Project.usage, Project.description))
   }
 }

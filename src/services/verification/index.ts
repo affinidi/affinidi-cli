@@ -1,4 +1,4 @@
-import { CliError, handleErrors } from '../../errors'
+import { CliError } from '../../errors'
 import { Api as VerifierApi, VerifyCredentialInput, VerifyCredentialOutput } from './verifier.api'
 
 export const VERIFIER_URL = 'https://affinity-verifier.prod.affinity-project.org/api/v1'
@@ -22,7 +22,7 @@ class VerifierService {
       })
       return resp.data
     } catch (error) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 }

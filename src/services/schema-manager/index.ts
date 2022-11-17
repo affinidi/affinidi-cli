@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 
 import { Api as SchemaManagerApi, SchemaDto } from './schema-manager.api'
-import { CliError, handleErrors } from '../../errors'
+import { CliError } from '../../errors'
 
 export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
 
@@ -45,7 +45,7 @@ class SchemaManagerService {
       }
       return response.data.schemas
     } catch (err) {
-      return handleErrors(new CliError(err?.message, err.response.status, SERVICE))
+      throw new CliError(err?.message, err.response.status, SERVICE)
     }
   }
 
@@ -53,7 +53,7 @@ class SchemaManagerService {
     try {
       return (await this.client.schemas.getSchema(id, { headers: { 'API-KEY': apiKey } })).data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 }

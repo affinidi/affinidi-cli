@@ -4,10 +4,9 @@ import { StatusCodes } from 'http-status-codes'
 import { createSession, USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 
-
 describe('logout command', () => {
   before(() => {
-    createSession("email", "userId", "sessionToken")
+    createSession('email', 'userId', 'sessionToken')
   })
   test
     .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))

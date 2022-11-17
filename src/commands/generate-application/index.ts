@@ -2,7 +2,7 @@ import { CliUx, Command, Flags } from '@oclif/core'
 import path from 'path'
 
 import { vaultService, GitService, Writer } from '../../services'
-import { InvalidUseCase, NotSupportedPlatform } from '../../errors'
+import { CliError, InvalidUseCase, NotSupportedPlatform, getErrorOutput } from '../../errors'
 import { buildGeneratedAppNextStepsMessage } from '../../render/texts'
 
 export enum Platforms {
@@ -30,6 +30,8 @@ const UseCaseSources: Record<UseCaseType, string> = {
 
 export const defaultAppName = 'my-app'
 export default class GenerateApplication extends Command {
+  static command = 'affinidi generate-application'
+  static usage = 'affinidi generate-application [FLAGS]'
   static description = 'Use this command to generate a Privacy Preserving app'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -56,7 +58,6 @@ export default class GenerateApplication extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApplication)
-
     const { name, platform, 'use-case': useCase } = flags
 
     if (platform === Platforms.mobile) {
@@ -90,8 +91,16 @@ export default class GenerateApplication extends Command {
     CliUx.ux.info(buildGeneratedAppNextStepsMessage(name, appPath))
   }
 
-  async catch(error: Error) {
-    CliUx.ux.info(error?.message)
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        GenerateApplication.command,
+        GenerateApplication.usage,
+        GenerateApplication.description,
+      ),
+    )
   }
 
   private setUpProject(name: string) {

@@ -2,13 +2,16 @@ import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
 import * as inquirer from 'inquirer'
 import { getSession } from '../../services/user-management'
+import { getErrorOutput, CliError } from '../../errors'
 
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 
 type UseFieldType = 'json' | 'json-file'
 
 export default class ShowProject extends Command {
-  static description = 'describe the command here'
+  static command = 'affinidi show project'
+  static usage = 'show project [project-id]'
+  static description = `Fetches the information of a specific project.`
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
@@ -39,9 +42,9 @@ export default class ShowProject extends Command {
 
     if (flags.active) {
       projectId = vaultService.get(VAULT_KEYS.projectId)
-      CliUx.ux.action.start('Showing active project')
+      CliUx.ux.action.start('Fetching active project')
     } else if (projectId) {
-      CliUx.ux.action.start(`Showing project with id: ${projectId}`)
+      CliUx.ux.action.start(`Fetching project with id: ${projectId}`)
     } else {
       CliUx.ux.action.start('Fetching projects')
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
@@ -63,10 +66,9 @@ export default class ShowProject extends Command {
         .then(function (answer) {
           projectId = answer.projectId.split(' ')[0]
         })
-      CliUx.ux.action.start(`Showing project with id: ${projectId}`)
+      CliUx.ux.action.start(`Fetching project with id: ${projectId}`)
     }
 
-    CliUx.ux.action.stop('')
     const projectData = await iAmService.getProjectSummary(token, projectId)
     if (projectData.apiKey?.apiKeyHash) {
       projectData.apiKey.apiKeyHash = ''.padEnd(projectData.apiKey.apiKeyHash?.length, '*')
@@ -79,9 +81,13 @@ export default class ShowProject extends Command {
     } else {
       CliUx.ux.info(JSON.stringify(projectData, null, '  '))
     }
+    CliUx.ux.action.stop('')
   }
 
-  async catch(error: string | Error) {
-    CliUx.ux.info(error.toString())
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(
+      getErrorOutput(error, ShowProject.command, ShowProject.usage, ShowProject.description),
+    )
   }
 }

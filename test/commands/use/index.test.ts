@@ -5,6 +5,6 @@ describe('use', () => {
     .stdout()
     .command(['use'])
     .it('runs use and shows the help', (ctx) => {
-      expect(ctx.stdout).to.contain('Use the use command')
+      expect(ctx.stdout).to.contain('The use command selects')
     })
 })
