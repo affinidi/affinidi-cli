@@ -8,13 +8,14 @@ import {
   AnswerYes,
 } from '../../user-actions'
 import { userManagementService } from '../../services'
-import { WrongEmailError } from '../../errors'
+import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createSession, parseJwt } from '../../services/user-management'
 
 const MAX_EMAIL_ATTEMPT = 3
 
 export default class SignUp extends Command {
+  static command = 'affinidi sign-up'
   static description = 'Use this command with your email address to create a new Affinid account.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -69,8 +70,8 @@ export default class SignUp extends Command {
     CliUx.ux.info(WelcomeUserStyledMessage)
   }
 
-  async catch(error: string | Error) {
-    CliUx.ux.action.stop('')
-    CliUx.ux.info(error.toString())
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, SignUp.command, SignUp.command, SignUp.description))
   }
 }

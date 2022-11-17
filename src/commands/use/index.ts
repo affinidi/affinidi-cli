@@ -1,21 +1,22 @@
 import { CliUx, Command, Interfaces } from '@oclif/core'
 
-import { useCommandDescription } from '../../render/texts'
+import { useCommandDescription, buildInvalidCommandUsage } from '../../render/texts'
 
 export default class Use extends Command {
-  static summary = 'The Use command selects an entity to work with'
+  static command = 'affinidi use'
+  static summary = 'The use command selects an entity to work with.'
+  static usage = 'use [COMMAND] [ARGS...]'
 
   static description = useCommandDescription
 
   static examples: Interfaces.Example[] = [
     {
       description: 'Use a given project',
-      command: '$ <%= config.bin %> <%= command.id %> use [<project-id>]',
+      command: '$ <%= config.bin %> <%= command.id %> [project-id]',
     },
   ]
 
   public async run(): Promise<void> {
-    CliUx.ux.log(Use.summary)
-    CliUx.ux.log(Use.description)
+    CliUx.ux.info(buildInvalidCommandUsage(Use.command, Use.usage, Use.summary))
   }
 }

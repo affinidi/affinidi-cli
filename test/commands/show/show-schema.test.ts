@@ -17,7 +17,7 @@ describe('schema', () => {
       .stdout()
       .command(['show schema', mockSchemaDtoOne.id])
       .it('runs show schema and display the Unauthorized error message', (ctx) => {
-        expect(ctx.stdout).to.contain(Unauthorized.message)
+        expect(ctx.stdout).to.contain(Unauthorized)
       })
   })
   describe('Given a FORBIDDEN response from the schema-manager-api', () => {
@@ -28,7 +28,7 @@ describe('schema', () => {
       .stdout()
       .command(['show schema', mockSchemaDtoOne.id])
       .it('runs show schema ServiceDown error message', (ctx) => {
-        expect(ctx.stdout).to.contain(ServiceDownError.message)
+        expect(ctx.stdout).to.contain(ServiceDownError)
       })
   })
 

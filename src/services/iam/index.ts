@@ -1,4 +1,4 @@
-import { CliError, handleErrors } from '../../errors'
+import { CliError } from '../../errors'
 import { Api as IamApi, ProjectDto, CreateProjectInput, ProjectSummary } from './iam.api'
 
 export const IAM_URL = 'https://affinidi-iam.prod.affinity-project.org/api/v1'
@@ -22,7 +22,7 @@ class IAmService {
       })
       return result.data
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -42,7 +42,7 @@ class IAmService {
       }
       return projectDetails
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 
@@ -61,7 +61,7 @@ class IAmService {
       }
       return resp.data.projects.slice(skip, skip + limit)
     } catch (error: any) {
-      return handleErrors(new CliError(error?.message, error.response.status, SERVICE))
+      throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
 }

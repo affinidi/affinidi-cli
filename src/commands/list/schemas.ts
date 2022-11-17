@@ -1,5 +1,5 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import { CommandError } from '@oclif/core/lib/interfaces'
+import { getErrorOutput, CliError } from '../../errors'
 import { stringify as csvStringify } from 'csv-stringify'
 
 import { vaultService, VAULT_KEYS } from '../../services'
@@ -41,10 +41,9 @@ const printData = (
 }
 
 export default class Schemas extends Command {
-  static description = `
-    Fetches the schemas from the schema-manager and displays them in different format:
-    json, csv or table
-  `
+  static command = 'affinidi list schemas'
+  static usage = 'show schemas [FLAGS]'
+  static description = `Fetches and displays the schemas from the schema-manager.`
 
   static examples: Interfaces.Example[] = [
     {
@@ -122,7 +121,8 @@ export default class Schemas extends Command {
     printData(data, { extended, output })
   }
 
-  protected async catch(err: CommandError): Promise<void> {
-    CliUx.ux.info(err.message)
+  protected async catch(error: CliError): Promise<void> {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, Schemas.command, Schemas.usage, Schemas.description))
   }
 }

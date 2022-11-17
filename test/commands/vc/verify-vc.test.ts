@@ -3,8 +3,13 @@ import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
 
-import { VERIFIER_URL } from '../../src/services/verification'
-import { ServiceDownError, Unauthorized, verifierBadRequest, WrongFileType } from '../../src/errors'
+import { VERIFIER_URL } from '../../../src/services/verification'
+import {
+  ServiceDownError,
+  Unauthorized,
+  verifierBadRequest,
+  WrongFileType,
+} from '../../../src/errors'
 
 const doNothing = () => {}
 const vcFile = 'som/vs/file.json'
@@ -73,7 +78,7 @@ describe('verify-vc', () => {
     test
 
       .stub(fs.promises, 'readFile', () => {
-        throw Error(WrongFileType.message)
+        throw Error(WrongFileType)
       })
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)

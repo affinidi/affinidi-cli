@@ -5,6 +5,7 @@ import { ProjectSummary } from '../../services/iam/iam.api'
 
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { getSession } from '../../services/user-management'
+import { getErrorOutput, CliError } from '../../errors'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -15,7 +16,9 @@ const setActiveProject = (projectToBeActive: ProjectSummary): void => {
   vaultService.set(VAULT_KEYS.projectDID, projectToBeActive.wallet.did)
 }
 export default class Project extends Command {
-  static description = 'describe the command here'
+  static command = 'affinidi use'
+  static description = 'Defines the project you want to work with.'
+  static usage = 'use project [project-id] [FLAGS]'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
@@ -23,7 +26,7 @@ export default class Project extends Command {
     output: Flags.enum<UseFieldType>({
       char: 'o',
       options: ['json', 'json-file'],
-      description: 'The details of the schema to show',
+      description: 'print details of the project to use as JSON',
       default: 'json',
     }),
   }
@@ -31,7 +34,7 @@ export default class Project extends Command {
   static args: Interfaces.Arg[] = [
     {
       name: 'project-id',
-      description: 'id of the project to use',
+      description: 'the ID of the project to use',
     },
   ]
 
@@ -81,7 +84,8 @@ export default class Project extends Command {
     CliUx.ux.info(JSON.stringify(projectToBeActive, null, '  '))
   }
 
-  async catch(error: string | Error) {
-    CliUx.ux.info(error.toString())
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, Project.command, Project.usage, Project.description))
   }
 }
