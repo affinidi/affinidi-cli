@@ -38,7 +38,7 @@ export default class IssueVc extends Command {
     wallet: Flags.string({
       char: 'w',
       description: 'configure your own wallet to store VCs',
-      default: 'https://wallet.affinidi.com',
+      default: 'https://wallet.affinidi.com/claim',
     }),
   }
 
