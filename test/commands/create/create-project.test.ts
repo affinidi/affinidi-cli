@@ -2,10 +2,10 @@ import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
-import { ServiceDownError, Unauthorized } from '../../../../src/errors'
-import { projectSummary } from '../../../../src/fixtures/mock-projects'
-import { IAM_URL } from '../../../../src/services/iam'
-import * as prompts from '../../../../src/user-actions'
+import { ServiceDownError, Unauthorized } from '../../../src/errors'
+import { projectSummary } from '../../../src/fixtures/mock-projects'
+import { IAM_URL } from '../../../src/services/iam'
+import * as prompts from '../../../src/user-actions'
 
 const doNothing = () => {}
 

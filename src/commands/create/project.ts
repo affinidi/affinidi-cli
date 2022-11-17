@@ -9,7 +9,9 @@ import { getErrorOutput, CliError } from '../../errors'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
+
   static usage = 'affinidi create project [projectName]'
+
   static description = 'Use this command to create a new Affinidi project.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
