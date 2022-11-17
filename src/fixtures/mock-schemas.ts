@@ -28,6 +28,20 @@ export const mockSchemaDtoTwo: SchemaDto = {
   jsonLdContextUrl: 'https://schema.affinidi.com/LeadershipWorkshopBadgeV1-0.jsonld',
 }
 
+export const mockSchemaDtoUnlisted: SchemaDto = {
+  id: '@did:elem:EiC8lGLPTODEnlyZYMQHGIWrXJ6niReJdyWAt5NxoXOOCw/nestdNamesV1-0',
+  parentId: null,
+  authorDid: 'did:elem:AwesomeDID',
+  description: 'Nested Names',
+  createdAt: '2022-11-16T14:17:25.268Z',
+  namespace: 'Some-namespae',
+  type: 'nestdNames',
+  version: 1,
+  revision: 0,
+  jsonSchemaUrl: 'https://schema.affinidi.com/did:elem:AwesomeDID/nestdNamesV1-0.json',
+  jsonLdContextUrl: 'https://schema.affinidi.com/did:elem:AwesomeDID/nestdNamesV1-0.jsonld',
+}
+
 export const mockSchemaDto: SearchSchemasOutputDto = {
   schemas: [mockSchemaDtoOne, mockSchemaDtoTwo],
   count: 2,

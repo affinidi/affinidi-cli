@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
+import { getNextVersion } from './generator/helpers'
 
-import { Api as SchemaManagerApi, SchemaDto } from './schema-manager.api'
+import { Api as SchemaManagerApi, CreateSchemaInputDto, SchemaDto } from './schema-manager.api'
 import { CliError } from '../../errors'
 
 export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
@@ -55,6 +56,45 @@ class SchemaManagerService {
     } catch (error: any) {
       throw new CliError(error?.message, error.response.status, SERVICE)
     }
+  }
+
+  public createSchema = async (
+    apiKey: string,
+    schemaInput: CreateSchemaInputDto,
+  ): Promise<SchemaDto> => {
+    try {
+      return (
+        await this.client.schemas.createSchema(schemaInput, { headers: { 'API-KEY': apiKey } })
+      ).data
+    } catch (error: any) {
+      throw new CliError(error?.message, error.response.status, SERVICE)
+    }
+  }
+
+  public generateNextVersion = async (
+    { type, scope }: { type: string; scope: ScopeType },
+    {
+      apiKey = null,
+      authorDid = null,
+      limit = 1,
+      skip = 0,
+    }: { apiKey: string; authorDid: string; limit: number; skip: number },
+  ) => {
+    const schemas = await this.client.schemas.searchSchemas(
+      { scope, skip, limit, type, did: authorDid },
+      {
+        headers: {
+          'API-KEY': apiKey,
+        },
+      },
+    )
+
+    return schemas.data.count
+      ? getNextVersion({
+          version: schemas.data.schemas[0].version,
+          revision: schemas.data.schemas[0].revision,
+        })
+      : [1, 0]
   }
 }
 

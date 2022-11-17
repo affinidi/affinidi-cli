@@ -7,4 +7,5 @@ export {
   enterOTPPrompt,
   projectNamePrompt,
   enterIssuanceEmailPrompt,
+  enterSchemaName,
 } from './prompts'

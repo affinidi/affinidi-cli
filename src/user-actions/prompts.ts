@@ -40,3 +40,9 @@ export const enterIssuanceEmailPrompt = async (
 ): Promise<string> => {
   return CliUx.ux.prompt(text, { required: true })
 }
+
+export const enterSchemaName = async (
+  text: string = 'Please enter a name for the schema to be created',
+): Promise<string> => {
+  return CliUx.ux.prompt(text, { required: true })
+}

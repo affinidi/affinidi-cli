@@ -20,6 +20,8 @@ export const issuanceBadRequest =
   'Please check that your json file content is in the right structure as in the schema.'
 export const WrongFileType =
   'Please provide a valid file directory with the right extensions. (".csv" for bulk issuance or ".json" for single issuance)'
+export const WrongSchemaFileType =
+  'Please provide a valid file directory with the right extension (.json).'
 export const JsonFileSyntaxError = 'Please check syntax of json file and try again.'
 export const NotFoundEmail =
   "Please enter the email address you signed-up with or sign-up if you don't have an account."
@@ -27,8 +29,9 @@ export const NotFound =
   "Please enter the email address you signed-up with or sign-up if you don't have an account."
 export const Conflict = 'This email has already been registered, please use the login command.'
 export const verifierBadRequest = 'Please make sure that the VC is valid.'
-export const schemaBadrequest = 'Please make sure to provide a valid schema ID.'
+export const schemaBadrequest = 'Please make sure to provide a valid schema credential subject.'
 export const notFoundSchema = 'Please provide an existing schema ID.'
+export const InvalidSchemaName = 'Please, enter a schema name using only alpha numeric characters'
 export const NotSupportedPlatform = 'This platform is not supported.'
 export const InvalidUseCase = 'Invalid use-case'
 export class CliError extends Error {
