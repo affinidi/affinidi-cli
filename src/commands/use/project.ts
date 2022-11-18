@@ -1,11 +1,11 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
-import * as inquirer from 'inquirer'
 import { ProjectSummary } from '../../services/iam/iam.api'
 
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
+import { selectProject } from '../../user-actions'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -17,7 +17,9 @@ const setActiveProject = (projectToBeActive: ProjectSummary): void => {
 }
 export default class Project extends Command {
   static command = 'affinidi use'
+
   static description = 'Defines the project you want to work with.'
+
   static usage = 'use project [project-id] [FLAGS]'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -51,20 +53,8 @@ export default class Project extends Command {
       const maxNameLength = projectData
         .map((p) => p.name.length)
         .reduce((p, c) => Math.max(p, c), 0)
-      await inquirer
-        .prompt([
-          {
-            type: 'list',
-            name: 'projectId',
-            message: 'select a project',
-            choices: projectData.map((data) => ({
-              name: `${data.projectId} ${data.name.padEnd(maxNameLength)} ${data.createdAt}`,
-            })),
-          },
-        ])
-        .then(function (answer) {
-          projectId = answer.projectId.split(' ')[0]
-        })
+
+      projectId = await selectProject(projectData, maxNameLength)
     }
     const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
     if (flags.output === 'json-file') {

@@ -25,7 +25,12 @@ describe('project', () => {
       expect(ctx.stdout).to.contain('"apiKeyHash": "********************"')
     })
   describe('Showing active project', () => {
-    vaultService.set(VAULT_KEYS.projectId, projectSummary.project.projectId)
+    before(() => {
+      vaultService.set(VAULT_KEYS.projectId, projectSummary.project.projectId)
+    })
+    after(() => {
+      vaultService.clear()
+    })
     test
       .nock(`${IAM_URL}`, (api) =>
         api

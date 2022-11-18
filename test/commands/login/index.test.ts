@@ -2,9 +2,17 @@ import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
-import { InvalidOrExpiredOTPError, ServiceDownError, WrongEmailError } from '../../../src/errors'
+import { IAM_URL } from '../../../src/services/iam'
+import * as userActions from '../../../src/user-actions'
+import { projectList, projectSummary, projectSummary3 } from '../../../src/fixtures/mock-projects'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
-import * as prompts from '../../../src/user-actions'
+import { getSignupNextStepRawMessages } from '../../../src/render/functions'
+import {
+  InvalidOrExpiredOTPError,
+  ServiceDownError,
+  WrongEmailError,
+  notFoundProject,
+} from '../../../src/errors'
 
 const validEmailAddress = 'valid@email-address.com'
 const testOTP = '123456'
@@ -15,7 +23,7 @@ const doNothing = () => {}
 describe('login command', () => {
   test
     .stdout()
-    .stub(prompts, 'enterEmailPrompt', () => async () => 'invalid.email.address')
+    .stub(userActions, 'enterEmailPrompt', () => async () => 'invalid.email.address')
     .command(['login'])
     .it('runs login with an invalid email address', (ctx) => {
       expect(ctx.stdout).to.contain(WrongEmailError)
@@ -28,7 +36,7 @@ describe('login command', () => {
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
           api.post('/auth/login').reply(StatusCodes.INTERNAL_SERVER_ERROR),
         )
-        .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
+        .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['login'])
@@ -47,8 +55,8 @@ describe('login command', () => {
           api.post('/auth/login/confirm').reply(StatusCodes.BAD_REQUEST),
         )
         .stdout()
-        .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
-        .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
+        .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
+        .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['login'])
@@ -58,25 +66,119 @@ describe('login command', () => {
     })
 
     describe('When the user enters the valid OTP', () => {
-      test
-        .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-          api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
-        )
-        .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-          api
-            .post('/auth/login/confirm')
-            .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
-        )
-        .stdout()
-        .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
-        .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
-        .stub(CliUx.ux.action, 'start', () => () => doNothing)
-        .stub(CliUx.ux.action, 'stop', () => doNothing)
-        .command(['login'])
-        .it('runs login and shows a welcome back user message', (ctx) => {
-          expect(ctx.stdout).to.contain('You are authenticated')
-          expect(ctx.stdout).to.contain(`Welcome back to Affinidi ${validEmailAddress}!`)
-        })
+      const setupTest = () => {
+        return test
+          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+            api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
+          )
+          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+            api
+              .post('/auth/login/confirm')
+              .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
+          )
+          .stdout()
+          .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
+          .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
+      }
+
+      describe('And When the user has no project', () => {
+        setupTest()
+          .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, { projects: [] }))
+          .command(['login'])
+          .it(
+            'runs login and shows a welcome back message with the next steps to follow',
+            (ctx) => {
+              const output = ctx.stdout
+              expect(output).to.contain('You are authenticated')
+              expect(output).to.contain(`Welcome back to Affinidi ${validEmailAddress}!`)
+              getSignupNextStepRawMessages().forEach((b) => {
+                expect(output).to.contain(b)
+              })
+            },
+          )
+      })
+
+      describe('And When the user has 1 project', () => {
+        setupTest()
+          .nock(`${IAM_URL}`, (api) =>
+            api.get('/projects').reply(StatusCodes.OK, { projects: [projectList.projects[0]] }),
+          )
+          .nock(`${IAM_URL}`, (api) =>
+            api
+              .get(`/projects/${projectSummary.project.projectId}/summary`)
+              .reply(StatusCodes.OK, projectSummary),
+          )
+          .command(['login'])
+          .it('runs login and activates the project ', (ctx) => {
+            const output = ctx.stdout
+            expect(output).to.contain('You are authenticated')
+            expect(output).to.contain(`Welcome back to Affinidi ${validEmailAddress}!`)
+          })
+
+        test
+          .nock(`${IAM_URL}`, (api) =>
+            api
+              .get(`/projects/${projectSummary.project.projectId}/summary`)
+              .reply(StatusCodes.OK, projectSummary),
+          )
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
+          .stdout()
+          .command(['show project', '-a'])
+          .it("chains the show project and doesn't throw an error", (ctx) => {
+            expect(ctx.stdout).to.not.contain(notFoundProject)
+          })
+      })
+
+      describe('And When the user has several projects', () => {
+        const projectId3 = projectSummary3.project.projectId
+        test
+          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+            api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
+          )
+          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+            api
+              .post('/auth/login/confirm')
+              .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
+          )
+          .nock(`${IAM_URL}`, (api) =>
+            api.get('/projects').reply(StatusCodes.OK, { projects: [...projectList.projects] }),
+          )
+          .nock(`${IAM_URL}`, (api) =>
+            api.get('/projects').reply(StatusCodes.OK, { projects: [...projectList.projects] }),
+          )
+          .nock(`${IAM_URL}`, (api) =>
+            api.get(`/projects/${projectId3}/summary`).reply(StatusCodes.OK, projectSummary3),
+          )
+          .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
+          .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
+          .stub(userActions, 'selectProject', () => async () => projectId3)
+          .stdout()
+          .command(['login'])
+          .it('runs login and activates the selected project ', (ctx) => {
+            const output = ctx.stdout
+            expect(output).to.contain('You are authenticated')
+            expect(output).to.contain(`Welcome back to Affinidi ${validEmailAddress}!`)
+          })
+
+        test
+          .nock(`${IAM_URL}`, (api) =>
+            api
+              .get(`/projects/${projectSummary3.project.projectId}/summary`)
+              .reply(StatusCodes.OK, projectSummary3),
+          )
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
+          .stdout()
+          .command(['show project', '-a'])
+          .it("chains the show project and doesn't throw an error", (ctx) => {
+            expect(ctx.stdout).to.not.contain(notFoundProject)
+          })
+      })
     })
   })
 })

@@ -26,9 +26,10 @@ const description = 'Some description'
 describe('Create Schema', () => {
   describe('Creating schema unlisted', () => {
     test
+
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=unlisted&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
@@ -63,7 +64,7 @@ describe('Create Schema', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
-      .command(['create schema', `-s ${schemaFile}`, `-d ${description}`, '--public=public'])
+      .command(['create schema', `-s ${schemaFile}`, `-d ${description}`, '--public=true'])
       .it('runs create schema command with public flag set to public', (ctx) => {
         expect(ctx.stdout).to.contain(mockSchemaDtoOne.id)
         expect(ctx.stdout).to.contain(mockSchemaDtoOne.authorDid)
@@ -75,7 +76,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=unlisted&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
@@ -95,7 +96,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=unlisted&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) => api.post('/schemas').reply(StatusCodes.UNAUTHORIZED))
@@ -111,6 +112,7 @@ describe('Create Schema', () => {
   })
   describe('Creating schema public with wrong file extension', () => {
     test
+
       .stdout()
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
@@ -125,7 +127,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=unlisted&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) => api.post('/schemas').reply(StatusCodes.BAD_REQUEST))

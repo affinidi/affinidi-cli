@@ -1,16 +1,18 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
-import * as inquirer from 'inquirer'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
 
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { selectProject } from '../../user-actions'
 
 type UseFieldType = 'json' | 'json-file'
 
 export default class ShowProject extends Command {
   static command = 'affinidi show project'
+
   static usage = 'show project [project-id]'
+
   static description = `Fetches the information of a specific project.`
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -52,20 +54,8 @@ export default class ShowProject extends Command {
       const maxNameLength = projectData
         .map((p) => p.name.length)
         .reduce((p, c) => Math.max(p, c), 0)
-      await inquirer
-        .prompt([
-          {
-            type: 'list',
-            name: 'projectId',
-            message: 'select a project',
-            choices: projectData.map((data) => ({
-              name: `${data.projectId} ${data.name.padEnd(maxNameLength)} ${data.createdAt}`,
-            })),
-          },
-        ])
-        .then(function (answer) {
-          projectId = answer.projectId.split(' ')[0]
-        })
+
+      projectId = await selectProject(projectData, maxNameLength)
       CliUx.ux.action.start(`Fetching project with id: ${projectId}`)
     }
 

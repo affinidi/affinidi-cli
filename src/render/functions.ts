@@ -13,6 +13,25 @@ const bigName = `
 
 type MessageBlock = { text: string; styled: string }
 
+const nextStepMessageBlocks: MessageBlock[] = [
+  {
+    text: "To start using the Affinidi services, you need to create a project to get an Api-Key.\nThe Api-Key is required to access Affinidi's resources.",
+    styled: `${chalk.yellow(
+      'To start using the Affinidi services, you need to create a project to get an Api-Key.',
+    )}\nThe Api-Key is required to access Affinidi's resources.`,
+  },
+  {
+    text: `To create your new project, use the command below:\n${indent}$ affinidi create project PROJECT-NAME`,
+    styled: `To create your new project, use the command below:\n${indent}${chalk.black.bgWhite(
+      '$ affinidi create project PROJECT-NAME',
+    )}`,
+  },
+  {
+    text: 'Replace PROJECT-NAME with your own project name.',
+    styled: `Replace ${chalk.bold('PROJECT-NAME')} with your own project name.`,
+  },
+]
+
 export const welcomeMessageBlocks: MessageBlock[] = [
   { text: 'Welcome to', styled: 'Welcome to' },
   {
@@ -27,22 +46,7 @@ export const welcomeMessageBlocks: MessageBlock[] = [
     text: 'and boilerplate your next privacy-preserving app!',
     styled: 'and boilerplate your next privacy-preserving app!',
   },
-  {
-    text: "To start using the Affinidi services, you need to create a project to get an Api-Key.\nThe Api-Key is required to access Affinidi's resources.",
-    styled: `${chalk.yellow(
-      'To start using the Affinidi services, you need to create a project to get an Api-Key.',
-    )}\nThe Api-Key is required to access Affinidi's resources.`,
-  },
-  {
-    text: `To create your new project, use the command below:\n${indent}$ affinidi create project PROJECT-NAME`,
-    styled: `To create your new project, use the command below:\n${indent}${chalk.bgWhite(
-      '$ affinidi create project PROJECT-NAME',
-    )}`,
-  },
-  {
-    text: 'Replace PROJECT-NAME with your own project name.',
-    styled: `Replace ${chalk.bold('PROJECT-NAME')} with your own project name.`,
-  },
+  ...nextStepMessageBlocks,
 ]
 
 export const mapStyled = (b: MessageBlock): string => b.styled
@@ -50,8 +54,11 @@ export const mapRawText = (b: MessageBlock): string => b.text
 
 const getWelcomeUserMessageByType = (mapFn: (b: MessageBlock) => string): string[] =>
   welcomeMessageBlocks.map(mapFn)
-
 export const getWelcomeUserRawMessages = (): string[] => getWelcomeUserMessageByType(mapRawText)
+
+const getNextStepsMessageByType = (mapFn: (b: MessageBlock) => string): string[] =>
+  nextStepMessageBlocks.map(mapFn)
+export const getSignupNextStepRawMessages = (): string[] => getNextStepsMessageByType(mapRawText)
 
 export const buildWelcomeUserMessageByType = (mapFn: (b: MessageBlock) => string): string => {
   return getWelcomeUserMessageByType(mapFn).join('\n\n')
@@ -59,3 +66,4 @@ export const buildWelcomeUserMessageByType = (mapFn: (b: MessageBlock) => string
 
 export const WelcomeUserStyledMessage = buildWelcomeUserMessageByType(mapStyled)
 export const WelcomeUserRawMessage = buildWelcomeUserMessageByType(mapRawText)
+export const NextStepsRawMessage = nextStepMessageBlocks.map((m) => m.styled).join('\n\n')
