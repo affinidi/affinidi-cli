@@ -1,7 +1,7 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import { getErrorOutput, CliError } from '../../errors'
 import { stringify as csvStringify } from 'csv-stringify'
 
+import { getErrorOutput, CliError } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../../services'
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 
@@ -42,7 +42,9 @@ const printData = (
 
 export default class Schemas extends Command {
   static command = 'affinidi list schemas'
+
   static usage = 'show schemas [FLAGS]'
+
   static description = `Fetches and displays the schemas from the schema-manager.`
 
   static examples: Interfaces.Example[] = [

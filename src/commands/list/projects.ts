@@ -12,7 +12,9 @@ export default class Projects extends Command {
   public static enableJsonFlag = true
 
   static command = 'affinidi list projects'
+
   static usage = 'show projects [FLAGS]'
+
   static description = 'Listing of all projects you created.'
 
   static examples = [

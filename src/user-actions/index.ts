@@ -9,3 +9,5 @@ export {
   enterIssuanceEmailPrompt,
   enterSchemaName,
 } from './prompts'
+
+export { selectProject } from './inquirer'

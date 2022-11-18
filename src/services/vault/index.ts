@@ -46,7 +46,9 @@ class VaultService {
 
 const testStore = new Map()
 const testStorer: IVaultSetterGetter = {
-  clear: doNothing,
+  clear: () => {
+    testStore.clear()
+  },
   delete: (key: string): void => {
     testStore.delete(key)
   },
