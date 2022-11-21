@@ -2,7 +2,13 @@ import { CliUx, Command, Flags } from '@oclif/core'
 import path from 'path'
 
 import { vaultService, GitService, Writer } from '../../services'
-import { CliError, InvalidUseCase, NotSupportedPlatform, getErrorOutput } from '../../errors'
+import {
+  CliError,
+  InvalidUseCase,
+  NotSupportedPlatform,
+  getErrorOutput,
+  Unauthorized,
+} from '../../errors'
 import { buildGeneratedAppNextStepsMessage } from '../../render/texts'
 
 export enum Platforms {
@@ -31,7 +37,9 @@ const UseCaseSources: Record<UseCaseType, string> = {
 export const defaultAppName = 'my-app'
 export default class GenerateApplication extends Command {
   static command = 'affinidi generate-application'
+
   static usage = 'affinidi generate-application [FLAGS]'
+
   static description = 'Use this command to generate a Privacy Preserving app'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -104,7 +112,13 @@ export default class GenerateApplication extends Command {
   }
 
   private setUpProject(name: string) {
-    const activeProject = vaultService.get('active-project-api-key')
+    const activeProjectApiKey = vaultService.get('active-project-api-key')
+    const activeProjectDid = vaultService.get('active-project-did')
+    const activeProjectId = vaultService.get('active-project-id')
+
+    if (!activeProjectApiKey || !activeProjectDid || !activeProjectId) {
+      throw Error(Unauthorized)
+    }
 
     CliUx.ux.info(`Setting up the project`)
 
@@ -112,7 +126,13 @@ export default class GenerateApplication extends Command {
       Writer.write(path.join(name, '.env'), [
         'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
         'REACT_APP_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',
-        `REACT_APP_API_KEY=${activeProject}`,
+        'REACT_APP_USER_MANAGEMENT_URL=https://console-user-management.apse1.affinidi.com',
+        'REACT_APP_ISSUANCE_URL=https://console-vc-issuance.apse1.affinidi.com',
+        'REACT_APP_IAM_URL=https://affinidi-iam.apse1.affinidi.com',
+
+        `REACT_APP_API_KEY=${activeProjectApiKey}`,
+        `REACT_APP_PROJECT_DID=${activeProjectDid}`,
+        `REACT_APP_PROJECT_ID=${activeProjectId}`,
       ])
     } catch (error) {
       CliUx.ux.info(`Failed to set up project: ${error.message}`)
