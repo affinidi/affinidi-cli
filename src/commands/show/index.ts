@@ -4,8 +4,11 @@ import { showCommandDescription, buildInvalidCommandUsage } from '../../render/t
 
 export default class Show extends Command {
   static command = 'affinidi show'
-  static summary = 'Shows the details of a ressource'
+
+  static summary = 'Shows the details of a resource'
+
   static description = showCommandDescription
+
   static usage = 'show [COMMAND] [ARG...]'
 
   static examples: Interfaces.Example[] = [

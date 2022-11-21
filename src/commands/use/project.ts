@@ -6,6 +6,7 @@ import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
 import { selectProject } from '../../user-actions'
+import { NextStepsRawMessage } from '../../render/functions'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -49,6 +50,11 @@ export default class Project extends Command {
     if (!projectId) {
       CliUx.ux.action.start('Fetching projects')
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
+      if (projectData.length === 0) {
+        CliUx.ux.action.stop('No Projects were found')
+        CliUx.ux.info(NextStepsRawMessage)
+        return
+      }
       CliUx.ux.action.stop('List of projects: ')
       const maxNameLength = projectData
         .map((p) => p.name.length)
