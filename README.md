@@ -1,7 +1,7 @@
 # Affinidi CLI
 
 ## Context
-
+test
 Affinidi’s vision is to empower communities with control and ownership of their data,
 creating new business models and greater trust.
 
