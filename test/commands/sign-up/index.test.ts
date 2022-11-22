@@ -6,6 +6,7 @@ import { getWelcomeUserRawMessages } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 const validEmailAddress = 'valid@email-address.com'
 const validCookie =
@@ -45,6 +46,7 @@ describe('sign-up command', () => {
           .post('/auth/signup/confirm')
           .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
       )
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
       .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)

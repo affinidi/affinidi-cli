@@ -13,6 +13,7 @@ import {
   WrongEmailError,
   notFoundProject,
 } from '../../../src/errors'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 const validEmailAddress = 'valid@email-address.com'
 const testOTP = '123456'
@@ -76,6 +77,7 @@ describe('login command', () => {
               .post('/auth/login/confirm')
               .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
           )
+          .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
           .stdout()
           .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
           .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
@@ -143,6 +145,7 @@ describe('login command', () => {
               .post('/auth/login/confirm')
               .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
           )
+          .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
           .nock(`${IAM_URL}`, (api) =>
             api.get('/projects').reply(StatusCodes.OK, { projects: [...projectList.projects] }),
           )

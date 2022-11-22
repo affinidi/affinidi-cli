@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import { IAM_URL } from '../../../src/services/iam'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 describe('project', () => {
   test
@@ -12,6 +13,7 @@ describe('project', () => {
         .get(`/projects/${projectSummary.project.projectId}/summary`)
         .reply(StatusCodes.OK, projectSummary),
     )
+    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['use project', projectSummary.project.projectId])
     .it('runs use project with a specific project-id', (ctx) => {

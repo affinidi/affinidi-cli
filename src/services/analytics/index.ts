@@ -1,10 +1,7 @@
-import * as jwt from 'jsonwebtoken'
-
 import { CliError } from '../../errors'
-import { getSession } from '../user-management'
 import { Api as AnalyticsApi, EventDTO } from './analytics.api'
 
-const ANALYTICS_URL = 'https://analytics-stream.prod.affinity-project.org'
+export const ANALYTICS_URL = 'https://analytics-stream.prod.affinity-project.org'
 const SERVICE = 'analytics'
 
 const INTERNAL_DOMAINS = ['affinidi.com', 'trustana.com', 'goodworker.in', 'lemmatree.com']

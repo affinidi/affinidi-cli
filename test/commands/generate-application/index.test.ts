@@ -1,5 +1,6 @@
 import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
+import { StatusCodes } from 'http-status-codes'
 
 import { GitService, Writer } from '../../../src/services'
 import {
@@ -9,6 +10,7 @@ import {
 } from '../../../src/commands/generate-application'
 import { NotSupportedPlatform } from '../../../src/errors'
 import { buildGeneratedAppNextStepsMessageBlocks } from '../../../src/render/texts'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 const doNothing = () => {}
 
@@ -53,6 +55,7 @@ describe('generate-application command', () => {
 
     describe('When the Writer write function fails', () => {
       test
+        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .stdout()
         .stub(GitService, 'clone', doNothing)
         .stub(Writer, 'write', fails)
@@ -66,6 +69,8 @@ describe('generate-application command', () => {
 
     describe('When the GitService clone and Writer write functions work', () => {
       test
+        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .stdout()
         .stub(GitService, 'clone', doNothing)
         .stub(Writer, 'write', doNothing)

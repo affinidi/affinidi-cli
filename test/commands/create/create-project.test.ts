@@ -1,6 +1,7 @@
 import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
@@ -35,6 +36,7 @@ describe('create project command', () => {
         },
       }),
     )
+    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
     .stub(CliUx.ux.action, 'start', () => () => doNothing)

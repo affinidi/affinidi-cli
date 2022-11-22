@@ -17,6 +17,7 @@ import {
   mockSchemaDtoUnlisted,
 } from '../../../src/fixtures/mock-schemas'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 const SCHEMA_NAME = 'schemaName'
 const schemaFile = 'some/file.json'
@@ -35,6 +36,7 @@ describe('Create Schema', () => {
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api.post('/schemas').reply(StatusCodes.OK, mockSchemaDtoUnlisted),
       )
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
@@ -59,6 +61,7 @@ describe('Create Schema', () => {
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api.post('/schemas').reply(StatusCodes.OK, mockSchemaDtoOne),
       )
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
