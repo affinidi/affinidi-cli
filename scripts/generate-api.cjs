@@ -41,3 +41,10 @@ generateApi({
   url: `${VERIFY_URL}/api/swagger`,
   httpClientType: 'axios',
 }).catch(console.error)
+
+generateApi({
+  name: 'analytics.api.ts',
+  output: path.resolve(process.cwd(), './src/services/analytics'),
+  url: `${VERIFY_URL}/api/swagger`,
+  httpClientType: 'axios',
+}).catch(console.error)

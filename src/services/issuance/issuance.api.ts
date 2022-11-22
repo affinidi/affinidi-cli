@@ -109,29 +109,12 @@ export enum OfferStatus {
 }
 
 /**
-* The URL interface represents an object providing static methods used for creating object URLs.
-`URL` class is a global reference for `require('url').URL`
-https://nodejs.org/api/url.html#the-whatwg-url-api
-*/
-export type URL = string
-
-/**
  * Description of schema
  */
 export interface SchemaDescription {
   type: string
-  /**
-   * The URL interface represents an object providing static methods used for creating object URLs.
-   * `URL` class is a global reference for `require('url').URL`
-   * https://nodejs.org/api/url.html#the-whatwg-url-api
-   */
-  jsonLdContextUrl: URL
-  /**
-   * The URL interface represents an object providing static methods used for creating object URLs.
-   * `URL` class is a global reference for `require('url').URL`
-   * https://nodejs.org/api/url.html#the-whatwg-url-api
-   */
-  jsonSchemaUrl: URL
+  jsonLdContextUrl: string
+  jsonSchemaUrl: string
 }
 
 export interface OfferDto {
@@ -356,7 +339,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title console-vc-issuance
- * @version 1.51.1
+ * @version 1.54.2
  * @license ISC
  * @baseUrl /api/v1
  * @contact Yiğitcan UÇUM yigitcan.u@affinidi.com
@@ -505,6 +488,40 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/issuances/${issuanceId}/offers`,
         method: 'GET',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags issuances
+     * @name CreateFromCsvFile
+     * @request POST:/issuances/create-from-csv
+     * @deprecated
+     * @secure
+     */
+    createFromCsvFile: (
+      data: {
+        issuance: string
+        /** @format binary */
+        offers: File
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          issuance: {
+            id: string
+          }
+        },
+        any
+      >({
+        path: `/issuances/create-from-csv`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
         format: 'json',
         ...params,
       }),

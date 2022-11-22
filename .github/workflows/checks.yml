@@ -1,0 +1,38 @@
+name: checks
+
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.12.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Npm run test
+        run: npm run lint
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.12.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Npm run test
+        run: npm run test
+

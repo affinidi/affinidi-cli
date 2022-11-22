@@ -1,4 +1,19 @@
-# Command Line tools for Affinidi Elements
+# Affinidi CLI
+
+## Context
+
+Affinidi’s vision is to empower communities with control and ownership of their data,
+creating new business models and greater trust.
+
+As the customer demand for control and ownership of data continues to increase, it is
+becoming increasingly important for developers to better manage data privacy and portability
+within their apps. With our tooling, you can start creating a privacy-preserving app within minutes.
+
+## What are privacy-preserving apps?
+
+Privacy-preserving apps make it easy to manage and store customer information while giving your customers more control over how this information is used and shared. We enable this data ownership and control through Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs).
+
+Learn more about [VCs](https://academy.affinidi.com/what-are-verifiable-credentials-79f1846a7b9), [trust triangle](https://academy.affinidi.com/what-is-the-trust-triangle-9a9caf36b321), [Decentralized Identifiers (DIDs)](https://academy.affinidi.com/demystifying-decentralized-identifiers-dids-2dc6fc3148fd), and [selective disclosure](https://academy.affinidi.com/a-detailed-guide-on-selective-disclosure-87b89cea1602).
 
 ## Installation
 

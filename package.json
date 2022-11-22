@@ -3,6 +3,7 @@
   "version": "1.27.0",
   "description": "Affinidi Elements command-line-interface",
   "author": "affinidi.com",
+  "license": "Apache-2.0",
   "typings": "dist/index.d.ts",
   "bin": {
     "affinidi": "./bin/run"
@@ -38,18 +39,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/affinidi/foundational/phoenix/affinidi-cli-js.git"
+    "url": "git+ssh://git@github.com:affinityproject/affinidi-cli.git"
   },
   "keywords": [
     "affinidi",
     "cli",
     "oclif"
   ],
-  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli-js/issues"
+    "url": "https://github.com/affinityproject/affinidi-cli/issues"
   },
-  "homepage": "https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli-js#readme",
+  "homepage": "https://github.com/affinityproject/affinidi-cli#readme",
   "dependencies": {
     "@oclif/core": "^1.19.2",
     "@oclif/plugin-help": "^5.1.16",
@@ -113,33 +113,6 @@
     "topics": {}
   },
   "engines": {
-    "node": ">=12.0.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog",
-      "types": {
-        "feat": {
-          "description": "A new feature (minor)",
-          "title": "Features"
-        },
-        "fix": {
-          "description": "A bug fix (patch)",
-          "title": "Bugs"
-        },
-        "perf": {
-          "description": "A change which improves performance (patch)",
-          "title": "Performance"
-        },
-        "chore": {
-          "description": "A CI change (no-release)",
-          "title": "CI"
-        },
-        "docs": {
-          "description": "A documentation change (no-release)",
-          "title": "Documentation"
-        }
-      }
-    }
+    "node": ">=16.0.0"
   }
 }
