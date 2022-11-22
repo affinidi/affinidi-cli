@@ -11,11 +11,14 @@ import { userManagementService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createSession, parseJwt } from '../../services/user-management'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 const MAX_EMAIL_ATTEMPT = 3
 
 export default class SignUp extends Command {
   static command = 'affinidi sign-up'
+
   static description = 'Use this command with your email address to create a new Affinid account.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
@@ -66,6 +69,18 @@ export default class SignUp extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
+
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_USER_SIGN_UP',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: userId,
+      metadata: {
+        commandId: 'affinidi.sign-up',
+        ...generateUserMetadata(email),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
 
     CliUx.ux.info(WelcomeUserStyledMessage)
   }

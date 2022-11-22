@@ -2,13 +2,18 @@ import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { getErrorOutput, CliError } from '../../errors'
 
 import { VAULT_KEYS, vaultService } from '../../services/vault'
-import { schemaManagerService, ScopeType } from '../../services/schema-manager'
+import { schemaManagerService } from '../../services/schema-manager'
+import { getSession } from '../../services/user-management'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { EventDTO } from '../../services/analytics/analytics.api'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
 export default class Schema extends Command {
   static command = 'affinidi show schema'
+
   static usage = 'show schema [schema-id]'
+
   static description = `Fetches the information of a specific schema.`
 
   static examples: Interfaces.Example[] = [
@@ -45,12 +50,24 @@ export default class Schema extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
+    const session = getSession()
 
     CliUx.ux.action.start('Fetching schema')
 
     const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
     const schema = await schemaManagerService.getById(args['schema-id'], apiKey)
-
+    const analyticsData: EventDTO = {
+      name: 'VC_SCHEMAS_READ',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        schemaId: schema?.id,
+        commandId: 'affinidi.showSchema',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     let output = ''
     switch (flags.show) {
       case 'json':

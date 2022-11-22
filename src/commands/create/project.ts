@@ -6,6 +6,8 @@ import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -26,7 +28,8 @@ export default class Project extends Command {
     if (!projectName) {
       projectName = await projectNamePrompt()
     }
-    const token = getSession()?.accessToken
+    const session = getSession()
+    const token = session?.accessToken
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
@@ -38,6 +41,18 @@ export default class Project extends Command {
     vaultService.set(VAULT_KEYS.projectName, projectDetails.project.name)
     vaultService.set(VAULT_KEYS.projectAPIKey, projectDetails.apiKey.apiKeyHash)
     vaultService.set(VAULT_KEYS.projectDID, projectDetails.wallet.did)
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_PROJECT_CREATED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account.id,
+      metadata: {
+        projectId: projectData?.projectId,
+        commandId: 'affinidi.createProject',
+        ...generateUserMetadata(session?.account.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.info(
       chalk.red.bold(
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',

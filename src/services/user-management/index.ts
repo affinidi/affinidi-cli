@@ -1,9 +1,10 @@
 import { AxiosResponse } from 'axios'
 import { nanoid } from 'nanoid'
+import { StatusCodes } from 'http-status-codes'
+
 import { Api as UserManagementApi } from './user-management.api'
 import { CliError } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../vault'
-import { StatusCodes } from 'http-status-codes'
 
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'

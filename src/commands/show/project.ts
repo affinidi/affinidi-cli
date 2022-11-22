@@ -6,6 +6,8 @@ import { getErrorOutput, CliError } from '../../errors'
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { selectProject } from '../../user-actions'
 import { NextStepsRawMessage } from '../../render/functions'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -40,7 +42,8 @@ export default class ShowProject extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ShowProject)
 
-    const token = getSession()?.accessToken
+    const session = getSession()
+    const token = session?.accessToken
     let projectId = args['project-id']
 
     if (flags.active) {
@@ -66,6 +69,18 @@ export default class ShowProject extends Command {
     }
 
     const projectData = await iAmService.getProjectSummary(token, projectId)
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_PROJECT_READ',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        projectId: projectData?.project?.projectId,
+        commandId: 'affinidi.showProject',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     if (projectData.apiKey?.apiKeyHash) {
       projectData.apiKey.apiKeyHash = ''.padEnd(projectData.apiKey.apiKeyHash?.length, '*')
     }

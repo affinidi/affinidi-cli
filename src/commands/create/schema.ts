@@ -20,6 +20,9 @@ import {
   JsonFileSyntaxError,
   WrongSchemaFileType,
 } from '../../errors'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { getSession } from '../../services/user-management'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -50,6 +53,7 @@ export default class Schema extends Command {
     const { args, flags } = await this.parse(Schema)
     const apiKeyhash = vaultService.get(VAULT_KEYS.projectAPIKey)
     const did = vaultService.get(VAULT_KEYS.projectDID)
+    const session = getSession()
 
     let { schemaName } = args
     if (!(flags.source.split('.').pop() === 'json')) {
@@ -122,6 +126,18 @@ export default class Schema extends Command {
     CliUx.ux.action.start('Creating Schema')
     const schemaInfo = await schemaManagerService.createSchema(apiKeyhash, createSchemaInput)
     CliUx.ux.action.stop('')
+    const analyticsData: EventDTO = {
+      name: 'VC_SCHEMA_CREATED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        schemaId: schemaInfo?.id,
+        commandId: 'affinidi.createSchema',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.info(JSON.stringify(schemaInfo, null, ' '))
   }
 
