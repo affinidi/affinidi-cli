@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "dev": "./bin/dev",
-    "semantic-release": "semantic-release",
+    "semantic-release": "npx semantic-release",
     "build": "npm run remove:dist && npm run tsc",
     "build:binary": "npm run remove:dist && npm run tsc -b",
     "start": "npm run build && node dist/index.js",
