@@ -7,18 +7,18 @@ exec('echo $SHELL', (err, stdout, stderr) => {
   }
   
   if(stdout.includes('zsh')){
-    addEnvVar('zsh')
+    execEnvVarCommand('zsh')
     return
   }
   if(stdout.includes('bash')){
-    addEnvVar('bash')
+    execEnvVarCommand('bash')
     return
   }
   console.log('Auto-completion supports only zsh or bash shells.')
 })
 
-const addEnvVar = (shell) => {
-  exec(`printf "eval $(./bin/dev autocomplete:script ${shell})" >> ~/.${shell}rc; source ~/.${shell}rc`,(err, stdout, stderr) =>{
+const execEnvVarCommand = (shell) => {
+  exec(`printf "eval $(affinidi autocomplete:script ${shell})" >> ~/.${shell}rc; source ~/.${shell}rc`,(err, stdout, stderr) =>{
   if (err){
     return
   }
