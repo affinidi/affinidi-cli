@@ -108,7 +108,8 @@ export default class IssueVc extends Command {
       issuanceId = await issuanceService.createIssuance(apiKeyHash, issuanceJson)
       await issuanceService.createOffer(apiKeyHash, issuanceId.id, offerInput)
     } else {
-      CliUx.ux.error(WrongFileType)
+      const expectedExtension = flags.bulk ? '.csv' : '.json'
+      CliUx.ux.error(`${WrongFileType}${expectedExtension} file`)
     }
     CliUx.ux.action.stop('')
     CliUx.ux.info(issuanceId.id)
