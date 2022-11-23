@@ -1,4 +1,3 @@
-const { string } = require('@oclif/core/lib/parser')
 const { exec } = require('child_process')
 
 exec('echo $SHELL', (err, stdout, stderr) => {
@@ -32,5 +31,5 @@ exec('echo $SHELL', (err, stdout, stderr) => {
     } )
     return
   }
-  console.log('Auto-completion is supports only zsh or bash shells.')
+  console.log('Auto-completion supports only zsh or bash shells.')
 })
