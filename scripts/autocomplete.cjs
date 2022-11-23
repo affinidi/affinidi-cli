@@ -5,7 +5,7 @@ exec('echo $SHELL', (err, stdout, stderr) => {
     // node couldn't execute the command
     return
   }
-  
+
   if(stdout.includes('zsh')){
     execEnvVarCommand('zsh')
     return
