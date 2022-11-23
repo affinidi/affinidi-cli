@@ -13,11 +13,11 @@ export const enterEmailPrompt = async (
   return CliUx.ux.prompt(text, { required: true })
 }
 
-export const enterOTPPrompt = async (): Promise<string> => {
+export const enterOTPPrompt = async (): Promise<YesOrNo> => {
   return CliUx.ux.prompt('Enter the confirmation code we emailed to you', { type: 'mask' })
 }
 
-export const confirmSignOut = async (): Promise<string> => {
+export const confirmSignOut = async (): Promise<YesOrNo> => {
   return CliUx.ux.prompt('Please confirm that you want to sign-out from Affinidi [Y/n]', {
     default: 'y',
   })
