@@ -4,22 +4,20 @@ import { buildInvalidCommandUsage, wrapError } from '../render/texts'
 const pleaseTryAgain = 'Please try again later.'
 const somethingWentWrong = `Something went wrong. ${pleaseTryAgain}`
 
-export const WrongEmailError = 'Invalid email address entered. Exiting the program.'
+export const WrongEmailError = 'Invalid email address entered'
 export const ServiceDownError = somethingWentWrong
 export const InvalidOrExpiredOTPError = 'The confirmation code entered is either invalid or expired'
 export const SignoutError = `There was an error while trying to sign-out. ${pleaseTryAgain}`
 export const Unauthorized =
-  "You are not authorized to perform this action. Please try logging in, sign-up if you don't have an account or make sure you have an active project"
-export const notFoundProject =
-  'Please provide an existing project ID or activate a project in case trying to show active project.'
+  'You are not authorized to perform this action. Please try logging in, sign-up or make sure you have an active project'
+export const notFoundProject = 'Please provide an existing project ID or activate a project.'
 
 export const CouldNotParseSchema = 'Could not parse schema URL, please provide a valid schema URl'
 export const EmptyIssueDataFlag = 'Please enter a directory to a json file.'
 export const NoSuchFileOrDir = 'Please provide a vaild directory for the json file'
 export const issuanceBadRequest =
   'Please check that your json file content is in the right structure as in the schema.'
-export const WrongFileType =
-  'Please provide a valid file directory with the right extensions. (".csv" for bulk issuance or ".json" for single issuance)'
+export const WrongFileType = 'Please provide a valid '
 export const WrongSchemaFileType =
   'Please provide a valid file directory with the right extension (.json).'
 export const JsonFileSyntaxError = 'Please check syntax of json file and try again.'
