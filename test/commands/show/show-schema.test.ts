@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
 import { mockSchemaDtoOne } from '../../../src/fixtures/mock-schemas'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 
 const getSchemaOK = (id: string) => async (api: FancyTypes.NockScope) =>
   api.get(`/schemas/${id}`).reply(StatusCodes.OK, mockSchemaDtoOne)
@@ -34,6 +35,7 @@ describe('schema', () => {
 
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
+    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['show schema', mockSchemaDtoOne.id])
     .it('runs show schema and displays the detailed schema', (ctx) => {
@@ -42,6 +44,7 @@ describe('schema', () => {
     })
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
+    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['show schema', mockSchemaDtoOne.id, '-s', 'json'])
     .it('runs show schema and displays the jsonSchemaUrl field', (ctx) => {
@@ -49,6 +52,7 @@ describe('schema', () => {
     })
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
+    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['show schema', mockSchemaDtoOne.id, '-s', 'jsonld'])
     .it('runs show schema and displays the jsonLdContextUrl field', (ctx) => {

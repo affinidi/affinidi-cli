@@ -1,5 +1,7 @@
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
+
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { projectList } from '../../../src/fixtures/mock-projects'
 
 import { IAM_URL } from '../../../src/services/iam'
@@ -7,6 +9,7 @@ import { IAM_URL } from '../../../src/services/iam'
 describe('projects', () => {
   test
     .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
+    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['list projects'])
     .it('it runs list projects with default values for all flags', (ctx) => {
@@ -19,6 +22,7 @@ describe('projects', () => {
   describe('list projects with skip flag set', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['list projects', '--skip=1'])
       .it('it runs list projects with skip flag = 1', (ctx) => {
@@ -33,6 +37,7 @@ describe('projects', () => {
   describe('list projects with skip and limit flag set', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['list projects', '--skip=1', '--limit=1'])
       .it('it runs list projects with skip=1 limit=1', (ctx) => {
@@ -47,6 +52,7 @@ describe('projects', () => {
   describe('list projects output flag set to table format', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['list projects', '--output=table'])
       .it('it runs list projects with output=table', (ctx) => {

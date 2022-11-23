@@ -1,12 +1,14 @@
 import { Command, CliUx } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
-import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
+import UseProject from '../use/project'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { NextStepsRawMessage } from '../../render/functions'
 import { iAmService, userManagementService } from '../../services'
+import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createSession, parseJwt } from '../../services/user-management'
-import { NextStepsRawMessage } from '../../render/functions'
-import UseProject from '../use/project'
+import { EventDTO } from '../../services/analytics/analytics.api'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -59,6 +61,17 @@ export default class Login extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_USER_SIGN_IN',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: userId,
+      metadata: {
+        commandId: 'affinidi.login',
+        ...generateUserMetadata(email),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
     CliUx.ux.info('You are authenticated')
@@ -78,6 +91,7 @@ export default class Login extends Command {
   }
 
   async catch(error: CliError) {
+    console.log(error)
     CliUx.ux.action.stop('failed')
     CliUx.ux.info(getErrorOutput(error, Login.command, Login.usage, Login.description))
   }

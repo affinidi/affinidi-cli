@@ -7,6 +7,8 @@ import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
 import { selectProject } from '../../user-actions'
 import { NextStepsRawMessage } from '../../render/functions'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -45,7 +47,8 @@ export default class Project extends Command {
     const { args, flags } = await this.parse(Project)
 
     let projectId = args['project-id']
-    const token = getSession()?.accessToken
+    const session = getSession()
+    const token = session?.accessToken
 
     if (!projectId) {
       CliUx.ux.action.start('Fetching projects')
@@ -67,6 +70,18 @@ export default class Project extends Command {
       await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
     }
     setActiveProject(projectToBeActive)
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_PROJECT_SET_ACTIVE',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        commandId: 'affinidi.useProject',
+        projectId: projectToBeActive?.project?.projectId,
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     if (projectToBeActive.apiKey?.apiKeyHash) {
       projectToBeActive.apiKey.apiKeyHash = ''.padEnd(
         projectToBeActive.apiKey.apiKeyHash?.length,

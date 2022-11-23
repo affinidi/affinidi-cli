@@ -1,9 +1,12 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { stringify as csvStringify } from 'csv-stringify'
 
+import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../../services'
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -90,6 +93,17 @@ export default class Schemas extends Command {
 
     const { extended, limit, public: publicFlag, output, scope, skip } = flags
 
+    const session = getSession()
+    const analyticsData: EventDTO = {
+      name: 'VC_SCHEMAS_SEARCHED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        commandId: 'affinidi.listSchemas',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
     const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
     const did = vaultService.get(VAULT_KEYS.projectDID)
     const params = {
@@ -102,6 +116,7 @@ export default class Schemas extends Command {
     }
 
     const schemas = await schemaManagerService.search(params)
+    await analyticsService.eventsControllerSend(analyticsData)
 
     const data = schemas
       .map((s, index) => {

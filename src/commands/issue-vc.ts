@@ -15,6 +15,9 @@ import {
 import { issuanceService } from '../services/issuance'
 import { CliError, WrongEmailError, WrongFileType, getErrorOutput } from '../errors'
 import { enterIssuanceEmailPrompt } from '../user-actions'
+import { getSession } from '../services/user-management'
+import { EventDTO } from '../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../services/analytics'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -52,6 +55,7 @@ export default class IssueVc extends Command {
     const { flags, args } = await this.parse(IssueVc)
     const apiKeyHash = vaultService.get(VAULT_KEYS.projectAPIKey)
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)
+    const session = getSession()
 
     const issuanceJson: CreateIssuanceInput = {
       template: {
@@ -106,9 +110,20 @@ export default class IssueVc extends Command {
     } else {
       CliUx.ux.error(WrongFileType)
     }
-
     CliUx.ux.action.stop('')
     CliUx.ux.info(issuanceId.id)
+
+    const analyticsData: EventDTO = {
+      name: 'BULK_VC_ISSUED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        commandId: 'affinidi.issue-vc',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
   }
 
   async catch(error: CliError) {

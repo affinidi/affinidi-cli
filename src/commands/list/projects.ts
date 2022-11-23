@@ -5,6 +5,8 @@ import { stringify as csv_stringify } from 'csv-stringify'
 import { iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError } from '../../errors'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { EventDTO } from '../../services/analytics/analytics.api'
 
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
@@ -43,11 +45,23 @@ export default class Projects extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
+    const session = getSession()
 
-    const token = getSession()?.accessToken
+    const token = session?.accessToken
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_PROJECTS_READ',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        commandId: 'affinidi.listProjects',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
 
     CliUx.ux.action.start('Fetching list of projects')
     const projectData = await iAmService.listProjects(token, flags.skip, flags.limit)
+    await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop()
 
     switch (flags.output) {

@@ -6,6 +6,14 @@ const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-projec
 const IAM_URL = 'https://affinidi-iam.prod.affinity-project.org'
 const ISSUANCE_URL = 'https://console-vc-issuance.prod.affinity-project.org'
 const VERIFY_URL = 'https://affinity-verifier.prod.affinity-project.org'
+const ANALYTICS_URL = 'https://analytics-stream.staging.affinity-project.org'
+
+generateApi({
+  name: 'analytics.api.ts',
+  output: path.resolve(process.cwd(), './src/services/analytics'),
+  url: `${ANALYTICS_URL}/api-json`,
+  httpClientType: 'axios',
+}).catch(console.error)
 
 generateApi({
   name: 'schema-manager.api.ts',
@@ -42,9 +50,3 @@ generateApi({
   httpClientType: 'axios',
 }).catch(console.error)
 
-generateApi({
-  name: 'analytics.api.ts',
-  output: path.resolve(process.cwd(), './src/services/analytics'),
-  url: `${VERIFY_URL}/api/swagger`,
-  httpClientType: 'axios',
-}).catch(console.error)

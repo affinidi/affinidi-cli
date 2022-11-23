@@ -6,6 +6,9 @@ import { verfierService } from '../services/verification'
 import { vaultService, VAULT_KEYS } from '../services/vault'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
 import { CliError, getErrorOutput } from '../errors'
+import { EventDTO } from '../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../services/analytics'
+import { getSession } from '../services/user-management'
 
 export default class VerifyVc extends Command {
   static command = 'affinidi verify-vc'
@@ -26,12 +29,23 @@ export default class VerifyVc extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(VerifyVc)
-
+    const session = getSession()
     const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
 
     const credentialData = await fs.readFile(flags.data, 'utf-8')
     const verifyCredentialInput: VerifyCredentialInput = JSON.parse(credentialData)
     const verification = await verfierService.verifyVC(apiKey, verifyCredentialInput)
+    const analyticsData: EventDTO = {
+      name: 'VC Verified',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        commandId: 'affinidi.verify-vc',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.info(JSON.stringify(verification, null, ' '))
   }
 

@@ -10,6 +10,9 @@ import {
   Unauthorized,
 } from '../../errors'
 import { buildGeneratedAppNextStepsMessage } from '../../render/texts'
+import { getSession } from '../../services/user-management'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 export enum Platforms {
   web = 'web',
@@ -67,6 +70,18 @@ export default class GenerateApplication extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApplication)
     const { name, platform, 'use-case': useCase } = flags
+    const session = getSession()
+    const analyticsData: EventDTO = {
+      name: 'APPLICATION_GENERATION_STARTED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account.id,
+      metadata: {
+        appName: name,
+        commandId: 'affinidi.generate-application',
+        ...generateUserMetadata(session?.account.label),
+      },
+    }
 
     if (platform === Platforms.mobile) {
       CliUx.ux.error(NotSupportedPlatform)
@@ -78,6 +93,7 @@ export default class GenerateApplication extends Command {
       switch (useCase) {
         case UseCasesAppNames.certificationAndVerification:
           await this.download(UseCaseSources[useCase], name)
+          await analyticsService.eventsControllerSend(analyticsData)
           break
         case UseCasesAppNames.accessWithoutOwnershipOfData:
         case UseCasesAppNames.portableReputation:
@@ -92,7 +108,8 @@ export default class GenerateApplication extends Command {
     }
 
     this.setUpProject(name)
-
+    analyticsData.name = 'APPLICATION_GENERATION_COMPLETED'
+    await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop('Application generated')
 
     const appPath = `${process.cwd()}/${name}`
