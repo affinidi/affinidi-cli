@@ -7,29 +7,23 @@ exec('echo $SHELL', (err, stdout, stderr) => {
   }
   
   if(stdout.includes('zsh')){
-    exec('printf "eval $(affinidi autocomplete:script zsh)" >> ~/.zshrc; source ~/.zshrc',(err, stdout, stderr) =>{
-
-      if (err){
-        return
-      }
-      if (stderr){
-        console.log("Failed to activate auto-completion")
-      }
-      return
-    } )
+    addEnvVar('zsh')
     return
   }
   if(stdout.includes('bash')){
-    exec('printf "eval $(affinidi autocomplete:script bash)" >> ~/.bash; source ~/.bash',(err, stdout, stderr) =>{
-      if (err){
-        return
-      }
-      if (stderr){
-        console.log("Failed to activate auto-completion")
-      }
-      return
-    } )
+    addEnvVar('bash')
     return
   }
   console.log('Auto-completion supports only zsh or bash shells.')
 })
+
+const addEnvVar = (shell) => {
+  exec(`printf "eval $(./bin/dev autocomplete:script ${shell})" >> ~/.${shell}rc; source ~/.${shell}rc`,(err, stdout, stderr) =>{
+  if (err){
+    return
+  }
+  if (stderr){
+    console.log("Failed to activate auto-completion")
+  }
+  return
+} )}
