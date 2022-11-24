@@ -1,4 +1,6 @@
+import { analyticsConsent } from '../../user-actions/prompts'
 import { CliError } from '../../errors'
+import { vaultService, VAULT_KEYS } from '../vault'
 import { Api as AnalyticsApi, EventDTO } from './analytics.api'
 
 export const ANALYTICS_URL = 'https://analytics-stream.prod.affinity-project.org'
@@ -31,7 +33,28 @@ class AnalyticsService {
     }),
   ) {}
 
+  public async hasAnalyticsOptIn(): Promise<boolean> {
+    const optIn = vaultService.get(VAULT_KEYS.analyticsOptIn)
+    if (optIn == null) {
+      if (process.env.NODE_ENV === 'test') {
+        return true
+      }
+
+      this.setAnalyticsOptIn(await analyticsConsent())
+    }
+
+    return optIn === 'true'
+  }
+
+  public setAnalyticsOptIn(value: boolean) {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, value.toString())
+  }
+
   public eventsControllerSend = async (data: EventDTO) => {
+    if (!await this.hasAnalyticsOptIn()) {
+      return
+    }
+
     try {
       // TODO: this toke is going to expire in 180 days, generate new one before it expires. Created on 22/11/2022.
       const JWT_TOKEN =

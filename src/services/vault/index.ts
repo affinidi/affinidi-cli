@@ -8,6 +8,7 @@ export const VAULT_KEYS = {
   projectAPIKey: 'active-project-api-key',
   projectDID: 'active-project-did',
   session: 'session',
+  analyticsOptIn: 'analytics-opt-in',
 }
 
 interface IVaultSetterGetter {
