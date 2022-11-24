@@ -2,10 +2,9 @@ name: Public Release to npmjs.com
 
 on:
   release:
-    types: [published]
 
 jobs:
-  if_merged:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

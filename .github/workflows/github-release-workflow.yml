@@ -1,4 +1,4 @@
-name: Public Release to npmjs.com
+name: Public Release to github.com
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  if_merged:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
