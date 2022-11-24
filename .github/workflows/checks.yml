@@ -35,3 +35,14 @@ jobs:
 
       - name: Npm run test
         run: npm run test
+
+      - name: Build
+        run: npm run build:binary
+
+      - name: Run release
+        run: |
+          {
+            echo "@affinidi:registry=https://registry.npmjs.org/"
+            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}"
+          } >> .npmrc
+          npm run semantic-release
