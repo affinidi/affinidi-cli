@@ -1,8 +1,9 @@
 name: Public Release to npmjs.com
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
 
 jobs:
   if_merged:
@@ -24,7 +25,9 @@ jobs:
       - name: Build
         run: npm run build:binary
 
-      - name: Publish to npmjs.org
-        run: npm publish --access public --dry-run
+      - name: Run release
+        run:
+          npm run semantic-release
         env:
           NODE_AUTH_TOKEN: ${{secrets.PUBLIC_NPM_NODE_AUTH_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
