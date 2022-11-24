@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 18
           registry-url: "https://registry.npmjs.org"
+          scope: "@affinidi"
 
       - name: Install dependencies
         run: npm ci
@@ -25,12 +26,13 @@ jobs:
         run: npm run build:binary
 
       - name: Run release
-        run: |
-          {
-            echo "@affinidi:registry=https://registry.npmjs.org/"
-            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}"
-          } >> .npmrc
+        run:
           npm run semantic-release
         env:
           NODE_AUTH_TOKEN: ${{secrets.PUBLIC_NPM_NODE_AUTH_TOKEN}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Publish to npmjs.org
+        run: npm publish --access public --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.PUBLIC_NPM_NODE_AUTH_TOKEN}}
