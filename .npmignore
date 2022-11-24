@@ -22,3 +22,4 @@ config-overrides.js
 service-info.yaml
 tsconfig.json
 tsconfig-tests.json
+.npmrc
