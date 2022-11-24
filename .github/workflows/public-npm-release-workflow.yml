@@ -2,6 +2,7 @@ name: Public Release to npmjs.com
 
 on:
   release:
+    types: [released]
 
 jobs:
   release:
