@@ -10,8 +10,6 @@ export const VAULT_KEYS = {
   session: 'session',
 }
 
-const doNothing = () => {}
-
 interface IVaultSetterGetter {
   clear: () => void
   delete: (key: string) => void
@@ -20,27 +18,27 @@ interface IVaultSetterGetter {
 }
 
 class VaultService {
-  private readonly storer: IVaultSetterGetter
+  private readonly store: IVaultSetterGetter
 
   constructor(storer: IVaultSetterGetter) {
-    this.storer = storer
+    this.store = storer
   }
 
   public clear = (): void => {
-    this.storer.clear()
+    this.store.clear()
   }
 
   public delete = (key: string): void => {
-    this.storer.delete(key)
+    this.store.delete(key)
   }
 
   public get = (key: string): string | null => {
-    const value = this.storer.get(key)
+    const value = this.store.get(key)
     return typeof value === 'string' ? value : null
   }
 
   public set = (key: string, value: string): void => {
-    this.storer.set(key, value)
+    this.store.set(key, value)
   }
 }
 
@@ -62,7 +60,8 @@ const testStorer: IVaultSetterGetter = {
 }
 
 const credentialConf = new Conf({
-  cwd: path.join(os.homedir(), '.affinidi', 'credentials'),
+  cwd: path.join(os.homedir(), '.affinidi'),
+  configName: 'credentials',
 })
 
 const storer: IVaultSetterGetter = {

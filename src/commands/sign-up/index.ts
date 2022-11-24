@@ -10,7 +10,7 @@ import {
 import { userManagementService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
-import { createSession, parseJwt } from '../../services/user-management'
+import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
@@ -69,6 +69,7 @@ export default class SignUp extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
+    createConfig({ userId })
 
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_UP',
