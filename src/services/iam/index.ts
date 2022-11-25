@@ -1,7 +1,7 @@
 import { CliError } from '../../errors'
 import { Api as IamApi, ProjectDto, CreateProjectInput, ProjectSummary } from './iam.api'
 
-export const IAM_URL = 'https://affinidi-iam.prod.affinity-project.org/api/v1'
+export const IAM_URL = 'https://affinidi-iam.apse1.affinidi.com/api/v1'
 const SERVICE = 'iAm'
 
 class IAmService {
