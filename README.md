@@ -47,7 +47,7 @@ affinidi create project
 ### Generate an application
 
 ```
-affinidi generate-application -n "My Application"
+affinidi generate-application -n "My application"
 ```
 
 ## Usage
