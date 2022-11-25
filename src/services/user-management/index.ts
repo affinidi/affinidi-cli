@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes'
 import { Api as UserManagementApi } from './user-management.api'
 import { CliError } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../vault'
+import { configService } from '../config'
 
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
@@ -50,6 +51,10 @@ export const createSession = (
   }
   vaultService.set(VAULT_KEYS.session, JSON.stringify(session))
   return session
+}
+
+export const createConfig = ({ userId }: { userId: string }): void => {
+  configService.create(userId)
 }
 
 class UserManagementService {
