@@ -12,6 +12,7 @@
   "files": [
     "/bin",
     "/dist",
+    "/scripts/autocomplete.cjs",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
