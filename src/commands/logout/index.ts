@@ -1,11 +1,13 @@
 import { Command, CliUx } from '@oclif/core'
+import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
 import { userManagementService, vaultService } from '../../services'
-import { SignoutError, getErrorOutput, CliError } from '../../errors'
+import { SignoutError, getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export default class Logout extends Command {
   static command = 'affinidi logout'
@@ -15,6 +17,9 @@ export default class Logout extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   public async run(): Promise<void> {
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'iAm')
+    }
     const answer = await confirmSignOut()
     if (answer !== 'y') {
       await CliUx.ux.done()

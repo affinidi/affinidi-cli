@@ -3,6 +3,7 @@ import fs from 'fs/promises'
 import FormData from 'form-data'
 import path from 'path'
 import * as EmailValidator from 'email-validator'
+import { StatusCodes } from 'http-status-codes'
 
 import { parseSchemaURL } from '../services/issuance/parse.schema.url'
 import { vaultService, VAULT_KEYS } from '../services'
@@ -13,11 +14,12 @@ import {
   VerificationMethod,
 } from '../services/issuance/issuance.api'
 import { issuanceService } from '../services/issuance'
-import { CliError, WrongEmailError, WrongFileType, getErrorOutput } from '../errors'
+import { CliError, WrongEmailError, WrongFileType, getErrorOutput, Unauthorized } from '../errors'
 import { enterIssuanceEmailPrompt } from '../user-actions'
 import { getSession } from '../services/user-management'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
+import { isAuthenticated } from '../middleware/authentication'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -53,6 +55,9 @@ export default class IssueVc extends Command {
 
   public async run(): Promise<void> {
     const { flags, args } = await this.parse(IssueVc)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'issuance')
+    }
     const apiKeyHash = vaultService.get(VAULT_KEYS.projectAPIKey)
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)
     const session = getSession()

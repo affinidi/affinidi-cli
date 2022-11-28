@@ -11,6 +11,7 @@ import {
 import { NotSupportedPlatform } from '../../../src/errors'
 import { buildGeneratedAppNextStepsMessageBlocks } from '../../../src/render/texts'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
+import * as authentication from '../../../src/middleware/authentication'
 
 const doNothing = () => {}
 
@@ -18,6 +19,7 @@ describe('generate-application command', () => {
   describe('Given a non supported platform flag --platform mobile', () => {
     test
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .command(['generate-application', '-p', Platforms.mobile])
       .it('it runs generate-application and shows a non platform supported message', (ctx) => {
         expect(ctx.stdout).to.contain(NotSupportedPlatform)
@@ -42,6 +44,7 @@ describe('generate-application command', () => {
     describe('When the git clone command fails', () => {
       test
         .stdout()
+        .stub(authentication, 'isAuthenticated', () => true)
         .stub(GitService, 'clone', fails)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -56,11 +59,14 @@ describe('generate-application command', () => {
     describe('When the Writer write function fails', () => {
       test
         .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
-        .stdout()
+        .stub(authentication, 'isAuthenticated', () => {
+          return true
+        })
         .stub(GitService, 'clone', doNothing)
         .stub(Writer, 'write', fails)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .stdout()
         .command(['generate-application'])
         .it('it runs generate-application and shows a failing message', (ctx) => {
           expect(ctx.stdout).to.contain(`Failed to set up project: ${failError.message}`)
@@ -72,6 +78,9 @@ describe('generate-application command', () => {
         .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .stdout()
+        .stub(authentication, 'isAuthenticated', () => {
+          return true
+        })
         .stub(GitService, 'clone', doNothing)
         .stub(Writer, 'write', doNothing)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)

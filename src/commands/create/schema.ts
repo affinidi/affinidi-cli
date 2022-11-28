@@ -1,5 +1,6 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 import fs from 'fs/promises'
+import { StatusCodes } from 'http-status-codes'
 
 import { schemaManagerService } from '../../services/schema-manager'
 import { vaultService, VAULT_KEYS } from '../../services'
@@ -18,11 +19,13 @@ import {
   getErrorOutput,
   InvalidSchemaName,
   JsonFileSyntaxError,
+  Unauthorized,
   WrongSchemaFileType,
 } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -51,6 +54,9 @@ export default class Schema extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
+    }
     const apiKeyhash = vaultService.get(VAULT_KEYS.projectAPIKey)
     const did = vaultService.get(VAULT_KEYS.projectDID)
     const session = getSession()

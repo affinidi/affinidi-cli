@@ -1,13 +1,15 @@
 import { Command, CliUx } from '@oclif/core'
+import { StatusCodes } from 'http-status-codes'
 import chalk from 'chalk'
 
 import { projectNamePrompt } from '../../user-actions'
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
 import { getSession } from '../../services/user-management'
-import { getErrorOutput, CliError } from '../../errors'
+import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -22,6 +24,9 @@ export default class Project extends Command {
 
   public async run(): Promise<void> {
     const { args } = await this.parse(Project)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+    }
 
     let { projectName } = args
 

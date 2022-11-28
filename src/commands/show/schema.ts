@@ -1,11 +1,13 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import { getErrorOutput, CliError } from '../../errors'
+import { StatusCodes } from 'http-status-codes'
 
+import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { VAULT_KEYS, vaultService } from '../../services/vault'
 import { schemaManagerService } from '../../services/schema-manager'
 import { getSession } from '../../services/user-management'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
@@ -50,6 +52,9 @@ export default class Schema extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
+    }
     const session = getSession()
 
     CliUx.ux.action.start('Fetching schema')

@@ -1,13 +1,15 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import * as fs from 'fs/promises'
-import { getSession } from '../../services/user-management'
-import { getErrorOutput, CliError } from '../../errors'
+import { StatusCodes } from 'http-status-codes'
 
+import { getSession } from '../../services/user-management'
+import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { selectProject } from '../../user-actions'
 import { NextStepsRawMessage } from '../../render/functions'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { isAuthenticated } from '../../middleware/authentication'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -41,6 +43,9 @@ export default class ShowProject extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ShowProject)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+    }
 
     const session = getSession()
     const token = session?.accessToken

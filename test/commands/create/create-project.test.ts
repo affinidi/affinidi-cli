@@ -7,6 +7,7 @@ import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { IAM_URL } from '../../../src/services/iam'
 import * as prompts from '../../../src/user-actions'
+import * as authentication from '../../../src/middleware/authentication'
 
 const doNothing = () => {}
 
@@ -38,6 +39,7 @@ describe('create project command', () => {
     )
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
+    .stub(authentication, 'isAuthenticated', () => true)
     .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -50,6 +52,7 @@ describe('create project command', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.post('/projects').reply(StatusCodes.INTERNAL_SERVER_ERROR))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
@@ -61,7 +64,6 @@ describe('create project command', () => {
 
   describe('User is unauthorized', () => {
     test
-      .nock(`${IAM_URL}`, (api) => api.post('/projects').reply(StatusCodes.UNAUTHORIZED))
       .stdout()
       .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)

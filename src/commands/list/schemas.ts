@@ -1,12 +1,15 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { stringify as csvStringify } from 'csv-stringify'
+import { StatusCodes } from 'http-status-codes'
 
 import { getSession } from '../../services/user-management'
-import { getErrorOutput, CliError } from '../../errors'
+import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../../services'
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { isAuthenticated } from '../../middleware/authentication'
+import { anonymous } from '../../constants'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -92,13 +95,15 @@ export default class Schemas extends Command {
     const { flags } = await this.parse(Schemas)
 
     const { extended, limit, public: publicFlag, output, scope, skip } = flags
-
+    if (!isAuthenticated() && (scope === 'unlisted' || publicFlag === 'false')) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
+    }
     const session = getSession()
     const analyticsData: EventDTO = {
       name: 'VC_SCHEMAS_SEARCHED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: session ? session.account?.id : anonymous,
       metadata: {
         commandId: 'affinidi.listSchemas',
         ...generateUserMetadata(session?.account?.label),

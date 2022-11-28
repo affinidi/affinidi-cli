@@ -7,6 +7,7 @@ import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { vaultService, VAULT_KEYS } from '../../../src/services'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
+import * as authentication from '../../../src/middleware/authentication'
 
 const doNothing = () => {}
 describe('project', () => {
@@ -20,6 +21,7 @@ describe('project', () => {
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
+    .stub(authentication, 'isAuthenticated', () => true)
     .command(['show project', projectSummary.project.projectId])
     .it('runs show project with a specific project-id', (ctx) => {
       expect(ctx.stdout).to.contain('"name": "Awesome project"')
@@ -40,9 +42,11 @@ describe('project', () => {
           .reply(StatusCodes.OK, projectSummary),
       )
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .command(['show project', '--active'])
       .it('runs show project with active project', (ctx) => {
         expect(ctx.stdout).to.contain('"name": "Awesome project"')
@@ -52,11 +56,6 @@ describe('project', () => {
   })
   describe('Showing a project while not authorized', () => {
     test
-      .nock(`${IAM_URL}`, (api) =>
-        api
-          .get(`/projects/${projectSummary.project.projectId}/summary`)
-          .reply(StatusCodes.UNAUTHORIZED),
-      )
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
@@ -72,6 +71,7 @@ describe('project', () => {
           .get(`/projects/${projectSummary.project.projectId}/summary`)
           .reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()

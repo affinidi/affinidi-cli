@@ -9,7 +9,7 @@ export const ServiceDownError = somethingWentWrong
 export const InvalidOrExpiredOTPError = 'The confirmation code entered is either invalid or expired'
 export const SignoutError = `There was an error while trying to sign-out. ${pleaseTryAgain}`
 export const Unauthorized =
-  'You are not authorized to perform this action. Please try logging in, sign-up or make sure you have an active project'
+  'You are not authorized to perform this action. Please try to log-in, sign-up or make sure you have an active project'
 export const notFoundProject = 'Please provide an existing project ID or activate a project.'
 
 export const CouldNotParseSchema = 'Could not parse schema URL, please provide a valid schema URl'
