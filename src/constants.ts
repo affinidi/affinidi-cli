@@ -1,3 +1,1 @@
-const fs = require('fs')
-
-export const { version } = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+export const version = process.env.npm_package_version
