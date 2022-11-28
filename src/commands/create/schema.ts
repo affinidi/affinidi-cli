@@ -1,7 +1,7 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 import fs from 'fs/promises'
 
-import { schemaManagerService } from '../../services/schema-manager'
+import { schemaManagerService, SCHEMA_MANAGER_BASE_URL } from '../../services/schema-manager'
 import { vaultService, VAULT_KEYS } from '../../services'
 import { CreateSchemaInputDto } from '../../services/schema-manager/schema-manager.api'
 import { enterSchemaName } from '../../user-actions'
@@ -89,7 +89,7 @@ export default class Schema extends Command {
     }
     schemaName = generateSchemaId(generateIdInput)
     const { jsonSchemaUrl, jsonLdContextUrl } = generateSchemaFilesMetadata(
-      'https://schema-manager.prod.affinity-project.org',
+      SCHEMA_MANAGER_BASE_URL,
       schemaName,
     )
     const file = await fs.readFile(flags.source, 'utf-8')

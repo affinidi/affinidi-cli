@@ -1,14 +1,14 @@
 import { CliError } from '../../errors'
 import { Api as IamApi, ProjectDto, CreateProjectInput, ProjectSummary } from './iam.api'
 
-export const IAM_URL = 'https://affinidi-iam.apse1.affinidi.com/api/v1'
+export const IAM_BASE_URL = 'https://affinidi-iam.apse1.affinidi.com'
+export const IAM_URL = `${IAM_BASE_URL}/api/v1`
 const SERVICE = 'iAm'
 
 class IAmService {
   constructor(
     private readonly client = new IamApi({
-      baseURL: IAM_URL,
-      withCredentials: true,
+      baseUrl: IAM_URL,
     }),
   ) {}
 

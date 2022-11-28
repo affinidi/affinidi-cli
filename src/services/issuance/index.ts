@@ -9,18 +9,17 @@ import {
 } from './issuance.api'
 import { BulkApi } from './bulkIssuance.api'
 
-export const ISSUANCE_URL = 'https://console-vc-issuance.prod.affinity-project.org/api/v1'
+export const ISSUANCE_BASE_URL = 'https://console-vc-issuance.prod.affinity-project.org'
+export const ISSUANCE_URL = `${ISSUANCE_BASE_URL}/api/v1`
 const SERVICE = 'issuance'
 
 class IssuanceService {
   constructor(
     private readonly client = new IssuanceAPI({
-      baseURL: ISSUANCE_URL,
-      withCredentials: true,
+      baseUrl: ISSUANCE_URL,
     }),
     private readonly bulkClient = new BulkApi({
-      baseURL: ISSUANCE_URL,
-      withCredentials: true,
+      baseUrl: ISSUANCE_URL,
     }),
   ) {}
 

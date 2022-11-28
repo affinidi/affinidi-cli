@@ -4,7 +4,8 @@ import { getNextVersion } from './generator/helpers'
 import { Api as SchemaManagerApi, CreateSchemaInputDto, SchemaDto } from './schema-manager.api'
 import { CliError } from '../../errors'
 
-export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
+export const SCHEMA_MANAGER_BASE_URL = 'https://affinidi-schema-manager.prod.affinity-project.org'
+export const SCHEMA_MANAGER_URL = `${SCHEMA_MANAGER_BASE_URL}/api/v1`
 
 export type ScopeType = 'public' | 'unlisted' | 'default'
 const SERVICE = 'schema'
@@ -12,7 +13,7 @@ const SERVICE = 'schema'
 class SchemaManagerService {
   constructor(
     private readonly client = new SchemaManagerApi({
-      baseURL: SCHEMA_MANAGER_URL,
+      baseUrl: SCHEMA_MANAGER_URL,
     }),
   ) {}
 

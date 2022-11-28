@@ -23,8 +23,7 @@ export const generateUserMetadata = (userEmail: string | undefined) => {
 class AnalyticsService {
   constructor(
     private readonly client = new AnalyticsApi({
-      baseURL: ANALYTICS_URL,
-      withCredentials: true,
+      baseUrl: ANALYTICS_URL,
     }),
   ) {}
 

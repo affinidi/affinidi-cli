@@ -10,7 +10,8 @@ import { configService } from '../config'
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
 
-export const USER_MANAGEMENT_URL = 'https://console-user-management.apse1.affinidi.com/api/v1'
+export const USER_MANAGEMENT_BASE_URL = 'https://console-user-management.apse1.affinidi.com'
+export const USER_MANAGEMENT_URL = `${USER_MANAGEMENT_BASE_URL}/api/v1`
 const SERVICE = 'userManagement'
 
 type Session = {
@@ -60,8 +61,7 @@ export const createConfig = ({ userId }: { userId: string }): void => {
 class UserManagementService {
   constructor(
     private readonly client = new UserManagementApi({
-      baseURL: USER_MANAGEMENT_URL,
-      withCredentials: true,
+      baseUrl: USER_MANAGEMENT_URL,
     }),
   ) {}
 
