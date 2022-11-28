@@ -13,6 +13,9 @@ class SchemaManagerService {
   constructor(
     private readonly client = new SchemaManagerApi({
       baseURL: SCHEMA_MANAGER_URL,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
   ) {}
 

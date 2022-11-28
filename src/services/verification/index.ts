@@ -9,6 +9,9 @@ class VerifierService {
     private readonly client = new VerifierApi({
       baseURL: VERIFIER_URL,
       withCredentials: true,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
   ) {}
 

@@ -17,10 +17,16 @@ class IssuanceService {
     private readonly client = new IssuanceAPI({
       baseURL: ISSUANCE_URL,
       withCredentials: true,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
     private readonly bulkClient = new BulkApi({
       baseURL: ISSUANCE_URL,
       withCredentials: true,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
   ) {}
 
