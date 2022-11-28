@@ -213,7 +213,7 @@ EXAMPLES
 ```
 Use a given project
 
-    $ affinidi use use [<project-id>]
+    $ affinidi use [<project-id>]
 ```
 
 ## affinidi issue-vc
