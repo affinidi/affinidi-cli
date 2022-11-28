@@ -62,6 +62,9 @@ class UserManagementService {
     private readonly client = new UserManagementApi({
       baseURL: USER_MANAGEMENT_URL,
       withCredentials: true,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
   ) {}
 

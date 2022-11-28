@@ -25,6 +25,9 @@ class AnalyticsService {
     private readonly client = new AnalyticsApi({
       baseURL: ANALYTICS_URL,
       withCredentials: true,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
   ) {}
 

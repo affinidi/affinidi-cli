@@ -9,6 +9,9 @@ class IAmService {
     private readonly client = new IamApi({
       baseURL: IAM_URL,
       withCredentials: true,
+      headers: {
+        'Accept-Encoding': 'application/json',
+      },
     }),
   ) {}
 
