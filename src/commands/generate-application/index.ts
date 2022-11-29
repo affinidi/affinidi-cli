@@ -33,7 +33,7 @@ const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'NOT IMPLEMENTED YET',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
   'certification-and-verification':
-    'https://github.com/affinityproject/elements-reference-app-frontend.git',
+    'https://github.com/affinidi/elements-reference-app-frontend.git',
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 
@@ -41,7 +41,7 @@ export const defaultAppName = 'my-app'
 export default class GenerateApplication extends Command {
   static command = 'affinidi generate-application'
 
-  static usage = 'affinidi generate-application [FLAGS]'
+  static usage = 'generate-application [FLAGS]'
 
   static description = 'Use this command to generate a Privacy Preserving app'
 
@@ -65,11 +65,16 @@ export default class GenerateApplication extends Command {
       default: 'certification-and-verification',
       options: Object.values(UseCasesAppNames),
     }),
+    'with-proxy': Flags.boolean({
+      char: 'w',
+      description: 'Add BE-proxy to protect credentials',
+      default: false,
+    }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApplication)
-    const { name, platform, 'use-case': useCase } = flags
+    const { name, platform, 'use-case': useCase, 'with-proxy': withProxy } = flags
     const session = getSession()
     const analyticsData: EventDTO = {
       name: 'APPLICATION_GENERATION_STARTED',
@@ -107,13 +112,25 @@ export default class GenerateApplication extends Command {
       CliUx.ux.error(`Failed to generate an application: ${error.message}`)
     }
 
-    this.setUpProject(name)
+    try {
+      if (withProxy) {
+        await this.download(
+          'https://github.com/affinidi/elements-reference-app-backend.git',
+          `${name}-backend`,
+        )
+      }
+    } catch (error) {
+      CliUx.ux.info(`Failed to generate an application: ${error.message}`)
+      return
+    }
+
+    this.setUpProject(name, withProxy)
     analyticsData.name = 'APPLICATION_GENERATION_COMPLETED'
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.action.stop('Application generated')
+    CliUx.ux.action.stop('\nApplication generated')
 
-    const appPath = `${process.cwd()}/${name}`
-    CliUx.ux.info(buildGeneratedAppNextStepsMessage(name, appPath))
+    const appPath = path.resolve(`${process.cwd()}/${name}`)
+    CliUx.ux.info(buildGeneratedAppNextStepsMessage(name, appPath, withProxy))
   }
 
   async catch(error: CliError) {
@@ -128,7 +145,7 @@ export default class GenerateApplication extends Command {
     )
   }
 
-  private setUpProject(name: string) {
+  private setUpProject(name: string, withProxy: boolean) {
     const activeProjectApiKey = vaultService.get('active-project-api-key')
     const activeProjectDid = vaultService.get('active-project-did')
     const activeProjectId = vaultService.get('active-project-id')
@@ -140,6 +157,29 @@ export default class GenerateApplication extends Command {
     CliUx.ux.info(`Setting up the project`)
 
     try {
+      if (withProxy) {
+        Writer.write(path.join(name, '.env'), [
+          'REACT_APP_CLOUD_WALLET_URL=http://localhost:8080/cloud-wallet',
+          'REACT_APP_VERIFIER_URL=http://localhost:8080/affinity-verifier',
+          'REACT_APP_USER_MANAGEMENT_URL=http://localhost:8080/user-management',
+          'REACT_APP_ISSUANCE_URL=http://localhost:8080/console-vc-issuance',
+        ])
+
+        Writer.write(path.join(`${name}-backend`, '.env'), [
+          'HOST=127.0.0.1',
+          'PORT=8080',
+          'NODE_ENV=dev',
+          'ENVIRONMENT=development',
+          'FRONTEND_HOST=http://localhost:3000',
+
+          `API_KEY_HASH=${activeProjectApiKey}`,
+          `ISSUER_DID=${activeProjectDid}`,
+          `PROJECT_ID=${activeProjectId}`,
+        ])
+
+        return
+      }
+
       Writer.write(path.join(name, '.env'), [
         'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
         'REACT_APP_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',

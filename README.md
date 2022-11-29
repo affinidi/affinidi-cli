@@ -58,12 +58,13 @@ Use this command to generate a Privacy Preserving app
 
 USAGE
 ```
-$ affinidi generate-application [-p web|mobile] [-n <value>] [-u portable-reputation|access-without-ownership-of-data|certification-and-verification|kyc-kyb]
+$ affinidi generate-application [-p web|mobile] [-n <value>] [-u portable-reputation|access-without-ownership-of-data|certification-and-verification|kyc-kyb] [-w]
 
 FLAGS
 -n, --name=<value>                                                                                            [default: my-app] Name of the application
 -p, --platform=(web|mobile)                                                                                   [default: web] Platform
 -u, --use-case=(portable-reputation|access-without-ownership-of-data|certification-and-verification|kyc-kyb)  [default: certification-and-verification] Use case
+-w, --with-proxy                                                                                              Add backend-proxy to protect credentials
 
 DESCRIPTION
 Use this command to generate a Privacy Preserving app
