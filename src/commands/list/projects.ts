@@ -9,6 +9,7 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
+import { displayOutput } from '../../middleware/display'
 
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
@@ -87,7 +88,8 @@ export default class Projects extends Command {
         await fs.writeFile('projects.csv', csv_stringify(projectData, { header: true }))
         break
       case 'json':
-        CliUx.ux.info(JSON.stringify(projectData, null, '  '))
+        displayOutput(JSON.stringify(projectData, null, '  '), session.account.id)
+        // CliUx.ux.info(JSON.stringify(projectData, null, '  '))
         break
       default:
         CliUx.ux.error('Unknown output format')

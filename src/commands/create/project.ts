@@ -10,6 +10,7 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { displayOutput } from '../../middleware/display'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -63,7 +64,8 @@ export default class Project extends Command {
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
     )
-    CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
+    displayOutput(JSON.stringify(projectDetails, null, '  '), '')
+    // CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
   }
 
   async catch(error: CliError) {
