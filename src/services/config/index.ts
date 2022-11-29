@@ -5,7 +5,7 @@ import * as path from 'path'
 import { version } from '../../constants'
 
 export const getMajorVersion = (): number => {
-  return parseInt(version[0], 10)
+  return version
 }
 
 type UserId = string
