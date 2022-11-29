@@ -30,7 +30,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 export default class Schema extends Command {
   static command = 'affinidi create schema'
 
-  static usage = 'affinidi create schema [schemaName] [FLAGS]'
+  static usage = 'create schema [schemaName] [FLAGS]'
 
   static description = 'Use this command to create a new Schema for your verifiable credential.'
 

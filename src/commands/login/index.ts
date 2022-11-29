@@ -15,7 +15,7 @@ const MAX_EMAIL_ATTEMPT = 3
 export default class Login extends Command {
   static command = 'affinidi login'
 
-  static usage = 'affinidi login [email]'
+  static usage = 'login [email]'
 
   static description =
     'Please log-in with your email address to use Affinidi privacy preserving services."'

@@ -14,7 +14,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 export default class Project extends Command {
   static command = 'affinidi create project'
 
-  static usage = 'affinidi create project [projectName]'
+  static usage = 'create project [projectName]'
 
   static description = 'Use this command to create a new Affinidi project.'
 
