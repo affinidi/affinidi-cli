@@ -19,7 +19,7 @@ exec('echo $SHELL', async (err, stdout, stderr)  => {
     return
   }
   console.log('Auto-completion supports only zsh or bash shells.') }
-  console.log('Auto-completion not activated. To activate in future run "npm run postinstall"')
+  console.log('Auto-completion not activated. To activate in future run "Affinidi autocomplete" and steps to activate it will be shown.')
 })
 
 const execEnvVarCommand = (shell) => {
