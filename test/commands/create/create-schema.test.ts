@@ -4,6 +4,7 @@ import fs from 'fs'
 
 import { StatusCodes } from 'http-status-codes'
 import * as prompts from '../../../src/user-actions'
+import * as authentication from '../../../src/middleware/authentication'
 import {
   InvalidSchemaName,
   schemaBadrequest,
@@ -38,6 +39,7 @@ describe('Create Schema', () => {
       )
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -63,6 +65,7 @@ describe('Create Schema', () => {
       )
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -86,6 +89,7 @@ describe('Create Schema', () => {
         api.post('/schemas').reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -97,12 +101,6 @@ describe('Create Schema', () => {
   })
   describe('Creating schema public when unauthorized', () => {
     test
-      .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
-        api
-          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
-          .reply(StatusCodes.OK, mockSchemaDto),
-      )
-      .nock(`${SCHEMA_MANAGER_URL}`, (api) => api.post('/schemas').reply(StatusCodes.UNAUTHORIZED))
       .stdout()
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
@@ -117,6 +115,7 @@ describe('Create Schema', () => {
     test
 
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -135,6 +134,7 @@ describe('Create Schema', () => {
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) => api.post('/schemas').reply(StatusCodes.BAD_REQUEST))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -147,6 +147,7 @@ describe('Create Schema', () => {
   describe('Invalid Schema name', () => {
     test
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => 'SCHEMA_NAME')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)

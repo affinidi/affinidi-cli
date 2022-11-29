@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { projectList } from '../../../src/fixtures/mock-projects'
-
+import * as authentication from '../../../src/middleware/authentication'
 import { IAM_URL } from '../../../src/services/iam'
 
 describe('projects', () => {
@@ -11,6 +11,7 @@ describe('projects', () => {
     .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
+    .stub(authentication, 'isAuthenticated', () => true)
     .command(['list projects'])
     .it('it runs list projects with default values for all flags', (ctx) => {
       expect(ctx.stdout).to.contain('"name": "Awesome project",')
@@ -24,6 +25,7 @@ describe('projects', () => {
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .command(['list projects', '--skip=1'])
       .it('it runs list projects with skip flag = 1', (ctx) => {
         expect(ctx.stdout).to.not.contain('"name": "Awesome project",')
@@ -39,6 +41,7 @@ describe('projects', () => {
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .command(['list projects', '--skip=1', '--limit=1'])
       .it('it runs list projects with skip=1 limit=1', (ctx) => {
         expect(ctx.stdout).to.not.contain('"name": "Awesome project",')
@@ -54,6 +57,7 @@ describe('projects', () => {
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => true)
       .command(['list projects', '--output=table'])
       .it('it runs list projects with output=table', (ctx) => {
         expect(ctx.stdout).to.contain('some-project1-id Awesome project   2022-09-06T20:31:20.467Z')

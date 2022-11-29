@@ -1,12 +1,14 @@
 import { Command, CliUx, Flags } from '@oclif/core'
 import * as fs from 'fs/promises'
 import { stringify as csv_stringify } from 'csv-stringify'
+import { StatusCodes } from 'http-status-codes'
 
 import { iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
-import { getErrorOutput, CliError } from '../../errors'
+import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
+import { isAuthenticated } from '../../middleware/authentication'
 
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
@@ -45,6 +47,9 @@ export default class Projects extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+    }
     const session = getSession()
 
     const token = session?.accessToken

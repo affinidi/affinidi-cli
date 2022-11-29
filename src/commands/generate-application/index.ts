@@ -1,4 +1,5 @@
 import { CliUx, Command, Flags } from '@oclif/core'
+import { StatusCodes } from 'http-status-codes'
 import path from 'path'
 
 import { vaultService, GitService, Writer } from '../../services'
@@ -13,6 +14,7 @@ import { buildGeneratedAppNextStepsMessage } from '../../render/texts'
 import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export enum Platforms {
   web = 'web',
@@ -75,6 +77,9 @@ export default class GenerateApplication extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApplication)
     const { name, platform, 'use-case': useCase, 'with-proxy': withProxy } = flags
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'generator')
+    }
     const session = getSession()
     const analyticsData: EventDTO = {
       name: 'APPLICATION_GENERATION_STARTED',
