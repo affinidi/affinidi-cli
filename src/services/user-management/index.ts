@@ -53,8 +53,14 @@ export const createSession = (
   return session
 }
 
-export const createConfig = ({ userId }: { userId: string }): void => {
-  configService.create(userId)
+export const createConfig = ({
+  userId,
+  projectId = '',
+}: {
+  userId: string
+  projectId?: string
+}): void => {
+  configService.create(userId, projectId)
 }
 
 class UserManagementService {

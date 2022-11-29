@@ -13,12 +13,12 @@ import { vaultService, VAULT_KEYS } from '../../../src/services'
 import { configService, getMajorVersion } from '../../../src/services/config'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 
 describe('logout command', () => {
   before(() => {
     createSession('email', testUserId, 'sessionToken')
-    createConfig({ userId: testUserId })
-    // configService.
+    createConfig({ userId: testUserId, projectId: testProjectId })
   })
   test
     .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))
@@ -35,13 +35,11 @@ describe('logout command', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       expect(vaultService.get(k)).to.be.null
     })
-    // TODO check that the config is still there
     const config = configService.show()
     expect(config.currentUserId).to.equal(testUserId)
     expect(config.version).to.equal(getMajorVersion())
-    expect(config.version).to.equal(3)
     expect(config.configs).to.haveOwnProperty(testUserId)
-    expect(config.configs[testUserId].activeProjectId).to.equal('')
+    expect(config.configs[testUserId].activeProjectId).to.equal(testProjectId)
     expect(config.configs[testUserId].outputFormat).to.equal('plaintext')
   })
 })
