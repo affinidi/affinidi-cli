@@ -173,7 +173,7 @@ export default class GenerateApplication extends Command {
           'FRONTEND_HOST=http://localhost:3000',
 
           `API_KEY_HASH=${activeProjectApiKey}`,
-          `PROJECT_DID=${activeProjectDid}`,
+          `ISSUER_DID=${activeProjectDid}`,
           `PROJECT_ID=${activeProjectId}`,
         ])
 
