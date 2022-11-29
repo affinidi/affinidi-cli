@@ -105,6 +105,9 @@ describe('generate-application command', () => {
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
+      .stub(authentication, 'isAuthenticated', () => {
+        return true
+      })
       .stub(GitService, 'clone', doNothing)
       .stub(Writer, 'write', doNothing)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
