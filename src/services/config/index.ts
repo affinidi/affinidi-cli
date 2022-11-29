@@ -47,13 +47,13 @@ class ConfigService {
     return { version: configVersion, currentUserId, configs }
   }
 
-  public create = (userId: string): void => {
+  public create = (userId: string, activeProjectId: string = ''): void => {
     this.store.save({
       currentUserId: userId,
       version: getMajorVersion(),
       configs: {
         [userId]: {
-          activeProjectId: '',
+          activeProjectId,
           outputFormat: 'plaintext',
         },
       },
