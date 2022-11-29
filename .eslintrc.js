@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['oclif', 'oclif-typescript', '@affinidi/eslint-config', 'plugin:mocha/recommended'],
+  extends: ['@affinidi/eslint-config', 'plugin:mocha/recommended'],
   parserOptions: {
     project: ['tsconfig.json'],
   },
