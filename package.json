@@ -12,7 +12,6 @@
   "files": [
     "/bin",
     "/dist",
-    "/scripts/autocomplete.cjs",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
@@ -32,8 +31,7 @@
     "prepare:dev": "is-ci || (husky install && npm run prepare-commit-hooks)",
     "prepare": "node -e \"process.exit(process.env.NODE_ENV === 'production' ? 0 : 1)\" || npm run prepare:dev",
     "remove:dist": "shx rm -rf dist",
-    "generate:api": "node scripts/generate-api.cjs",
-    "postinstall": "node scripts/autocomplete.cjs"
+    "generate:api": "node scripts/generate-api.cjs"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
