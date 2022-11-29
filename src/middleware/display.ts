@@ -1,5 +1,5 @@
 import { CliUx } from '@oclif/core'
-// import { configService } from './services/config'
+import { configService } from '../services/config'
 
 const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   if (typeof jsonObject === 'string') {
@@ -26,7 +26,7 @@ const jsonToPlainText = (jsonObject: any, result: string[]): string => {
 }
 export const displayOutput = (itemToDisplay: string, userId: string) => {
   const jsonObject = JSON.parse(itemToDisplay)
-  const outputFormat = userId
+  const outputFormat = configService.
   let formatedOutput = itemToDisplay
   if (outputFormat === 'plainText') {
     formatedOutput = jsonToPlainText(jsonObject, [])
