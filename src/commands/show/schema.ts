@@ -1,5 +1,6 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
+import { anonymous } from '../../constants'
 
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { VAULT_KEYS, vaultService } from '../../services/vault'
@@ -52,7 +53,7 @@ export default class Schema extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
-    if (!isAuthenticated()) {
+    if (!isAuthenticated() && args['schema-id'].includes('@did:elem')) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
     const session = getSession()
@@ -65,7 +66,7 @@ export default class Schema extends Command {
       name: 'VC_SCHEMAS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: session ? session?.account?.id : anonymous,
       metadata: {
         schemaId: schema?.id,
         commandId: 'affinidi.showSchema',
