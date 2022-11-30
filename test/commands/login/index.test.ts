@@ -156,7 +156,7 @@ describe('login command', () => {
         })
       })
 
-      describe.only('And When the user has several projects', () => {
+      describe('And When the user has several projects', () => {
         before(() => {
           clearSessionAndConfig()
         })
