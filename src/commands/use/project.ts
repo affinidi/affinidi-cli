@@ -12,6 +12,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
+import { displayOutput } from '../../middleware/display'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -101,7 +102,7 @@ export default class Project extends Command {
       projectToBeActive.wallet.didUrl = ''.padEnd(projectToBeActive.wallet.didUrl?.length, '*')
     }
 
-    CliUx.ux.info(JSON.stringify(projectToBeActive, null, '  '))
+    displayOutput(JSON.stringify(projectToBeActive, null, '  '), session?.account.id)
   }
 
   async catch(error: CliError) {
