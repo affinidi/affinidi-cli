@@ -11,6 +11,7 @@ import { NextStepsRawMessage } from '../../render/functions'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { configService } from '../../services/config'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -74,18 +75,20 @@ export default class Project extends Command {
     if (flags.output === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
     }
+    const userId = session?.account?.id
     setActiveProject(projectToBeActive)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_SET_ACTIVE',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: userId,
       metadata: {
         commandId: 'affinidi.useProject',
         projectId: projectToBeActive?.project?.projectId,
         ...generateUserMetadata(session?.account?.label),
       },
     }
+    configService.create(userId, projectToBeActive?.project?.projectId)
     await analyticsService.eventsControllerSend(analyticsData)
     if (projectToBeActive.apiKey?.apiKeyHash) {
       projectToBeActive.apiKey.apiKeyHash = ''.padEnd(
