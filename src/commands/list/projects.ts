@@ -14,8 +14,6 @@ import { displayOutput } from '../../middleware/display'
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
 export default class Projects extends Command {
-  public static enableJsonFlag = true
-
   static command = 'affinidi list projects'
 
   static usage = 'show projects [FLAGS]'
@@ -41,7 +39,6 @@ export default class Projects extends Command {
     output: Flags.enum<ListProjectsOutputType>({
       char: 'o',
       description: 'Project listing output format',
-      default: 'json',
       options: ['json', 'table', 'json-file', 'csv-file'],
     }),
   }
@@ -88,11 +85,10 @@ export default class Projects extends Command {
         await fs.writeFile('projects.csv', csv_stringify(projectData, { header: true }))
         break
       case 'json':
-        displayOutput(JSON.stringify(projectData, null, '  '), session.account.id)
-        // CliUx.ux.info(JSON.stringify(projectData, null, '  '))
+        CliUx.ux.info(JSON.stringify(projectData, null, '  '))
         break
       default:
-        CliUx.ux.error('Unknown output format')
+        displayOutput(JSON.stringify(projectData, null, '  '), session.account.id)
     }
   }
 

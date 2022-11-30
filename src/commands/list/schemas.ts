@@ -10,12 +10,14 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { anonymous } from '../../constants'
+import { displayOutput } from '../../middleware/display'
 
 type OutputType = 'csv' | 'table' | 'json'
 
 const printData = (
   data: Record<string, unknown>[],
   { extended, output }: { extended: boolean; output: OutputType },
+  userId: string,
 ): void => {
   switch (output) {
     case 'csv':
@@ -42,7 +44,7 @@ const printData = (
       )
       break
     default:
-      CliUx.ux.info(JSON.stringify(data, null, '  '))
+      displayOutput(JSON.stringify(data, null, '  '), userId)
   }
 }
 
@@ -71,7 +73,6 @@ export default class Schemas extends Command {
       char: 'o',
       options: ['csv', 'json', 'table'],
       description: 'The type of output',
-      default: 'json',
     }),
     scope: Flags.enum<ScopeType>({
       char: 'c',
@@ -140,7 +141,7 @@ export default class Schemas extends Command {
       })
       .slice(skip, skip + limit)
 
-    printData(data, { extended, output })
+    printData(data, { extended, output }, session ? session.account?.id : anonymous)
   }
 
   protected async catch(error: CliError): Promise<void> {

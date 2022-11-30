@@ -8,6 +8,7 @@ import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { displayOutput } from '../../middleware/display'
 
 export default class Logout extends Command {
   static command = 'affinidi logout'
@@ -43,9 +44,9 @@ export default class Logout extends Command {
     }
 
     await userManagementService.signout({ token })
-    await analyticsService.eventsControllerSend(analyticsData)
     vaultService.clear()
-    CliUx.ux.info("Thank you for using Affinidi's services")
+    await analyticsService.eventsControllerSend(analyticsData)
+    displayOutput("Thank you for using Affinidi's services", session.account.id)
   }
 
   async catch(error: CliError) {

@@ -15,7 +15,7 @@ const jsonToPlainText = (jsonObject: any, result: string[]): string => {
       }
       return jsonToPlainText(jsonObject[key], newResult)
     }
-    if (typeof jsonObject[key] === 'string') {
+    if (typeof jsonObject[key] !== 'object') {
       const newResult = result
       newResult.push(`${key} : ${jsonObject[key]}`)
       return jsonToPlainText(jsonObject[key], newResult)
@@ -25,11 +25,17 @@ const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   return result.join('\n')
 }
 export const displayOutput = (itemToDisplay: string, userId: string) => {
-  const jsonObject = JSON.parse(itemToDisplay)
-  const outputFormat = configService.
+  const outputFormat = 'plainText'
   let formatedOutput = itemToDisplay
+  const nullRegex = new RegExp('null', 'g')
   if (outputFormat === 'plainText') {
-    formatedOutput = jsonToPlainText(jsonObject, [])
+    try {
+      const nullRemoved = itemToDisplay.replace(nullRegex, '"null"')
+      const jsonObject = JSON.parse(nullRemoved)
+      formatedOutput = jsonToPlainText(jsonObject, [])
+    } catch (error) {
+      formatedOutput = itemToDisplay
+    }
   }
   CliUx.ux.info(formatedOutput)
 }

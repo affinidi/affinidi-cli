@@ -9,6 +9,7 @@ import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
+import { displayOutput } from '../../middleware/display'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -74,10 +75,10 @@ export default class Login extends Command {
     await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
-    CliUx.ux.info('You are authenticated')
-    CliUx.ux.info(`Welcome back to Affinidi ${email}!`)
+    displayOutput('You are authenticated', userId)
+    displayOutput(`Welcome back to Affinidi ${email}!`, userId)
     if (projectsList.length === 0) {
-      CliUx.ux.info(NextStepsRawMessage)
+      displayOutput(NextStepsRawMessage, userId)
       return
     }
 

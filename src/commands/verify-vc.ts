@@ -12,6 +12,7 @@ import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
 import { anonymous } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
+import { displayOutput } from '../middleware/display'
 
 export default class VerifyVc extends Command {
   static command = 'affinidi verify-vc'
@@ -52,7 +53,10 @@ export default class VerifyVc extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.info(JSON.stringify(verification, null, ' '))
+    displayOutput(
+      JSON.stringify(verification, null, ' '),
+      session ? session.account?.id : anonymous,
+    )
   }
 
   async catch(error: CliError) {

@@ -64,8 +64,7 @@ export default class Project extends Command {
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
     )
-    displayOutput(JSON.stringify(projectDetails, null, '  '), '')
-    // CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
+    displayOutput(JSON.stringify(projectDetails, null, '  '), session.account.id)
   }
 
   async catch(error: CliError) {

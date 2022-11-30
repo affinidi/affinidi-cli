@@ -9,6 +9,7 @@ import { getSession } from '../../services/user-management'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
+import { displayOutput } from '../../middleware/display'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
@@ -87,7 +88,7 @@ export default class Schema extends Command {
     }
 
     CliUx.ux.action.stop('')
-    CliUx.ux.log(output)
+    displayOutput(output, session ? session.account?.id : anonymous)
   }
 
   protected async catch(error: CliError): Promise<void> {

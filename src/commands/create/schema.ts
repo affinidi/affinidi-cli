@@ -26,6 +26,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
+import { displayOutput } from '../../middleware/display'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -44,6 +45,7 @@ export default class Schema extends Command {
     }),
 
     description: Flags.string({ char: 'd', description: 'description of schema', required: true }),
+
     source: Flags.string({
       char: 's',
       description: 'path to the json file with schema properties',
@@ -145,7 +147,7 @@ export default class Schema extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.info(JSON.stringify(schemaInfo, null, ' '))
+    displayOutput(JSON.stringify(schemaInfo, null, '  '), session.account.id)
   }
 
   async catch(error: CliError) {

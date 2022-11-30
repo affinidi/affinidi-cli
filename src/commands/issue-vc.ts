@@ -20,6 +20,7 @@ import { getSession } from '../services/user-management'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { isAuthenticated } from '../middleware/authentication'
+import { displayOutput } from '../middleware/display'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -123,7 +124,7 @@ export default class IssueVc extends Command {
       CliUx.ux.error(`${WrongFileType}${expectedExtension} file`)
     }
     CliUx.ux.action.stop('')
-    CliUx.ux.info(issuanceId.id)
+    displayOutput(JSON.stringify(issuanceId), session?.account?.id)
 
     const analyticsData: EventDTO = {
       name: 'BULK_VC_ISSUED',
