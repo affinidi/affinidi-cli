@@ -146,6 +146,7 @@ export default class GenerateApplication extends Command {
         GenerateApplication.command,
         GenerateApplication.usage,
         GenerateApplication.description,
+        false,
       ),
     )
   }

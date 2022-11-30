@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 import { stringify as csv_stringify } from 'csv-stringify'
 import { StatusCodes } from 'http-status-codes'
 
-import { iAmService } from '../../services'
+import { iAmService, vaultService, VAULT_KEYS } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
@@ -94,12 +94,22 @@ export default class Projects extends Command {
         CliUx.ux.info(JSON.stringify(projectData, null, '  '))
         break
       default:
-        CliUx.ux.error('Unknown output format')
+        throw new CliError('Unknown output format', 0, 'schema')
     }
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Projects.command, Projects.usage, Projects.description))
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        Projects.command,
+        Projects.usage,
+        Projects.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

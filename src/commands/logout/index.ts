@@ -2,13 +2,14 @@ import { Command, CliUx } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
-import { userManagementService, vaultService } from '../../services'
+import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
 import { SignoutError, getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 export default class Logout extends Command {
   static command = 'affinidi logout'
@@ -40,7 +41,7 @@ export default class Logout extends Command {
     }
 
     if (!token) {
-      CliUx.ux.error(SignoutError)
+      throw new CliError(SignoutError, 0, 'userManagement')
     }
 
     await userManagementService.signout({ token })
@@ -50,6 +51,16 @@ export default class Logout extends Command {
   }
 
   async catch(error: CliError) {
-    CliUx.ux.info(getErrorOutput(error, Logout.command, Logout.command, Logout.description))
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        Logout.command,
+        Logout.command,
+        Logout.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

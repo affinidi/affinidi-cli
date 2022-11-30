@@ -8,12 +8,13 @@ import {
   AnswerYes,
   analyticsConsentPrompt,
 } from '../../user-actions'
-import { userManagementService } from '../../services'
+import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { configService } from '../../services/config'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -91,6 +92,6 @@ export default class SignUp extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, SignUp.command, SignUp.command, SignUp.description))
+    CliUx.ux.info(getErrorOutput(error, SignUp.command, SignUp.command, SignUp.description, false))
   }
 }

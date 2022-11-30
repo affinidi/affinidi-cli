@@ -25,12 +25,13 @@ export const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   return result.join('\n')
 }
 export const displayOutput = (itemToDisplay: string, userId: string) => {
-  let outputFormat: string
-  try {
-    outputFormat = configService.get('configs')[userId]?.outputFormat
-  } catch (error) {
-    outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
-  }
+  const outputFormat = configService.getOutputFormat(userId)
+  // try {
+  //   outputFormat = configService.get('configs')[userId]?.outputFormat
+  // } catch (error) {
+  //   outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+  // }
+  console.log(outputFormat)
   let formatedOutput = itemToDisplay
   const nullRegex = new RegExp('null', 'g')
 

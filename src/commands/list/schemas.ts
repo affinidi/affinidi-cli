@@ -55,7 +55,7 @@ const printData = (
       )
       break
     default:
-      CliUx.ux.error('Unknown output format')
+      throw new CliError('Unknown output format', 0, 'schema')
   }
 }
 
@@ -157,6 +157,16 @@ export default class Schemas extends Command {
 
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Schemas.command, Schemas.usage, Schemas.description))
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        Schemas.command,
+        Schemas.usage,
+        Schemas.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

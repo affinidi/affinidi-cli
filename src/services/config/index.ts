@@ -30,6 +30,7 @@ interface IConfigStorer {
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
   setCurrentProjectId: (id: string) => void
+  getOutputFormat: (userId: string) => string
 }
 
 class ConfigService {
@@ -53,7 +54,9 @@ class ConfigService {
     const configs = this.store.getAllUserConfigs()
     return { version: configVersion, currentUserId, configs }
   }
-
+  public getOutputFormat = (userId: string) => {
+    return this.store.getOutputFormat(userId)
+  }
   public create = (
     userId: string,
     activeProjectId: string = '',
@@ -71,6 +74,8 @@ class ConfigService {
       },
     })
   }
+
+
 
   public currentUserConfig = (): UserConfig => {
     const user = this.store.getCurrentUser()
@@ -140,6 +145,17 @@ const store: IConfigStorer = {
     configs[this.getCurrentUser()].activeProjectId = id
     configConf.set('configs', configs)
   },
+  getOutputFormat: (userId: string): string => {
+    const configs = configConf.get('configs')
+    const parsedConfigs = JSON.parse(JSON.stringify(configs))
+    let outputFormat: string
+    try {
+      outputFormat = parsedConfigs[userId]?.outputFormat
+    } catch (err) {
+      outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+    }
+    return outputFormat
+  },
 }
 
 export const testStore = new Map()
@@ -168,6 +184,16 @@ const testStorer: IConfigStorer = {
     const configs = this.getAllUserConfigs()
     configs[this.getCurrentUser()].activeProjectId = id
     testStore.set('configs', configs)
+  },
+  getOutputFormat: (userId: string): string => {
+    const configs = testStore.get('configs')
+    let outputFormat: string
+    try {
+      outputFormat = configs[userId].outputFormat
+    } catch (err) {
+      outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+    }
+    return outputFormat
   },
 }
 

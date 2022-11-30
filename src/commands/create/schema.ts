@@ -27,6 +27,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -74,7 +75,7 @@ export default class Schema extends Command {
     }
     const regex = new RegExp(/^[0-9a-zA-Z]+$/)
     if (!regex.test(schemaName)) {
-      CliUx.ux.error(new Error(InvalidSchemaName))
+      throw new CliError(InvalidSchemaName, 0, 'schema')
     }
 
     const scope = flags.public ? 'public' : 'unlisted'
@@ -151,10 +152,20 @@ export default class Schema extends Command {
   }
 
   async catch(error: CliError) {
+    const err = error
     if (error instanceof SyntaxError) {
-      CliUx.ux.info(JsonFileSyntaxError)
-    } else {
-      CliUx.ux.info(getErrorOutput(error, Schema.command, Schema.usage, Schema.description))
+      err.message = JsonFileSyntaxError
     }
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+    CliUx.ux.info(
+      getErrorOutput(
+        err,
+        Schema.command,
+        Schema.usage,
+        Schema.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

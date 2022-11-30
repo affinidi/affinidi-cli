@@ -6,13 +6,14 @@ import { verfierService } from '../services/verification'
 
 import { vaultService, VAULT_KEYS } from '../services/vault'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
-import { CliError, getErrorOutput, Unauthorized } from '../errors'
+import { CliError, getErrorOutput, JsonFileSyntaxError, Unauthorized } from '../errors'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
 import { anonymous } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
 import { displayOutput } from '../middleware/display'
+import { configService } from '../services/config'
 
 export default class VerifyVc extends Command {
   static command = 'affinidi verify-vc'
@@ -61,6 +62,21 @@ export default class VerifyVc extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, VerifyVc.command, VerifyVc.usage, VerifyVc.description))
+    const err = error
+    if (error instanceof SyntaxError) {
+      err.message = JsonFileSyntaxError
+    }
+    CliUx.ux.action.stop('failed')
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        VerifyVc.command,
+        VerifyVc.usage,
+        VerifyVc.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

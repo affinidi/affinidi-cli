@@ -62,7 +62,7 @@ export default class Project extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        CliUx.ux.info(NextStepsRawMessage)
+        displayOutput(NextStepsRawMessage, session?.account?.id)
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -107,6 +107,16 @@ export default class Project extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Project.command, Project.usage, Project.description))
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        Project.command,
+        Project.usage,
+        Project.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

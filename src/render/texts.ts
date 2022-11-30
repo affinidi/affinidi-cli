@@ -107,6 +107,7 @@ export const buildGeneratedAppNextStepsMessage = (
     .join('\n\n')
 }
 
-export const wrapError = (message: string): string => {
-  return chalk.red(`Error: ${message}`)
+export const wrapError = (message: string, json: boolean): string => {
+  const error = 'Error: '
+  return chalk.red(`${json ? '' : error}${message}`)
 }

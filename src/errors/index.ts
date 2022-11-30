@@ -113,6 +113,7 @@ export const getErrorOutput = (
   command: string,
   usage: string,
   summary: string,
+  json: boolean,
 ): string => {
   if (error.args) {
     const missingArgs: string[] = []
@@ -123,5 +124,8 @@ export const getErrorOutput = (
     }
     return buildInvalidCommandUsage(command, usage, summary, missingArgs)
   }
-  return wrapError(handleResponseErrors(error))
+  if (json) {
+    return wrapError(errorToJSON(handleResponseErrors(error)), json)
+  }
+  return wrapError(handleResponseErrors(error), json)
 }

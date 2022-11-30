@@ -11,6 +11,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -69,6 +70,17 @@ export default class Project extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Project.command, Project.usage, Project.description))
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+
+    CliUx.ux.info(
+      getErrorOutput(
+        error,
+        Project.command,
+        Project.usage,
+        Project.description,
+        outputFormat !== 'plaintext',
+      ),
+    )
   }
 }

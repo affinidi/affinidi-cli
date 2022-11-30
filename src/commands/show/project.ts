@@ -11,6 +11,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 type UseFieldType = 'json' | 'json-file'
 
@@ -103,8 +104,17 @@ export default class ShowProject extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
+    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
+    const outputFormat = configService.getOutputFormat(userId)
+
     CliUx.ux.info(
-      getErrorOutput(error, ShowProject.command, ShowProject.usage, ShowProject.description),
+      getErrorOutput(
+        error,
+        ShowProject.command,
+        ShowProject.usage,
+        ShowProject.description,
+        outputFormat !== 'plaintext',
+      ),
     )
   }
 }
