@@ -1,8 +1,8 @@
 import { CliUx } from '@oclif/core'
 import { configService } from '../services/config'
 
-const jsonToPlainText = (jsonObject: any, result: string[]): string => {
-  if (typeof jsonObject === 'string') {
+export const jsonToPlainText = (jsonObject: any, result: string[]): string => {
+  if (typeof jsonObject !== 'object') {
     return result.join('\n')
   }
   Object.keys(jsonObject).forEach((key): string => {
@@ -25,10 +25,11 @@ const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   return result.join('\n')
 }
 export const displayOutput = (itemToDisplay: string, userId: string) => {
-  const outputFormat = 'plainText'
+  let outputFormat = configService.get('configs')[userId]?.outputFormat
+  outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
   let formatedOutput = itemToDisplay
   const nullRegex = new RegExp('null', 'g')
-  if (outputFormat === 'plainText') {
+  if (outputFormat === 'plaintext') {
     try {
       const nullRemoved = itemToDisplay.replace(nullRegex, '"null"')
       const jsonObject = JSON.parse(nullRemoved)

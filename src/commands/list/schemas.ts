@@ -10,7 +10,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { anonymous } from '../../constants'
-import { displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -19,7 +19,18 @@ const printData = (
   { extended, output }: { extended: boolean; output: OutputType },
   userId: string,
 ): void => {
-  switch (output) {
+  let outputFormat = configService.get('configs')[userId]?.outputFormat
+  outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+  let confOutput = output
+  if (!output && outputFormat === 'plaintext') {
+    confOutput = 'table'
+  } else if (!output) {
+    confOutput = 'json'
+  }
+  switch (confOutput) {
+    case 'json':
+      CliUx.ux.info(JSON.stringify(data, null, ' '))
+      break
     case 'csv':
       csvStringify(data, { header: true }).pipe(process.stdout)
       break
@@ -44,7 +55,7 @@ const printData = (
       )
       break
     default:
-      displayOutput(JSON.stringify(data, null, '  '), userId)
+      CliUx.ux.error('Unknown output format')
   }
 }
 
@@ -104,7 +115,7 @@ export default class Schemas extends Command {
       name: 'VC_SCHEMAS_SEARCHED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session.account?.id : anonymous,
+      uuid: session ? session?.account?.id : anonymous,
       metadata: {
         commandId: 'affinidi.listSchemas',
         ...generateUserMetadata(session?.account?.label),
@@ -141,7 +152,7 @@ export default class Schemas extends Command {
       })
       .slice(skip, skip + limit)
 
-    printData(data, { extended, output }, session ? session.account?.id : anonymous)
+    printData(data, { extended, output }, session ? session?.account?.id : anonymous)
   }
 
   protected async catch(error: CliError): Promise<void> {

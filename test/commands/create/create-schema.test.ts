@@ -43,7 +43,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
@@ -69,7 +69,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
@@ -94,7 +94,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
@@ -141,7 +141,7 @@ describe('Create Schema', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
-          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')
+          .get('/schemas?scope=public&skip=0&limit=1&type=schemaName')
           .reply(StatusCodes.OK, mockSchemaDto),
       )
       .nock(`${SCHEMA_MANAGER_URL}`, (api) => api.post('/schemas').reply(StatusCodes.BAD_REQUEST))

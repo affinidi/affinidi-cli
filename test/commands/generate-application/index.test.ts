@@ -115,6 +115,9 @@ describe('generate-application command', () => {
   })
 
   describe('Given -w (backend proxy)', () => {
+    after(() => {
+      vaultService.clear()
+    })
     test
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))

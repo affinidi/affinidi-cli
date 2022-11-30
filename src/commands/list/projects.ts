@@ -9,7 +9,7 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
 
@@ -45,6 +45,7 @@ export default class Projects extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
+    let { skip, limit, output } = flags
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
@@ -63,11 +64,16 @@ export default class Projects extends Command {
     }
 
     CliUx.ux.action.start('Fetching list of projects')
-    const projectData = await iAmService.listProjects(token, flags.skip, flags.limit)
+    const projectData = await iAmService.listProjects(token, skip, limit)
     await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop()
-
-    switch (flags.output) {
+    const outputFormat = configService.get('configs')[session?.account?.id]?.outputFormat
+    if (!output && outputFormat === 'plaintext') {
+      output = 'table'
+    } else if (!output) {
+      output = 'json'
+    }
+    switch (output) {
       case 'table':
         CliUx.ux.table(
           projectData.map((data) => ({
@@ -88,7 +94,7 @@ export default class Projects extends Command {
         CliUx.ux.info(JSON.stringify(projectData, null, '  '))
         break
       default:
-        displayOutput(JSON.stringify(projectData, null, '  '), session.account.id)
+        CliUx.ux.error('Unknown output format')
     }
   }
 
