@@ -25,10 +25,15 @@ export const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   return result.join('\n')
 }
 export const displayOutput = (itemToDisplay: string, userId: string) => {
-  let outputFormat = configService.get('configs')[userId]?.outputFormat
-  outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+  let outputFormat: string
+  try {
+    outputFormat = configService.get('configs')[userId]?.outputFormat
+  } catch (error) {
+    outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+  }
   let formatedOutput = itemToDisplay
   const nullRegex = new RegExp('null', 'g')
+
   if (outputFormat === 'plaintext') {
     try {
       const nullRemoved = itemToDisplay.replace(nullRegex, '"null"')
