@@ -35,8 +35,8 @@ const buildJSONMessage = (message: string): string => {
   return jsonCleanMessage
 }
 
-export const displayOutput = (itemToDisplay: string) => {
-  const outputFormat = configService.getOutputFormat()
+export const displayOutput = (itemToDisplay: string, flag?: string) => {
+  const outputFormat = flag || configService.getOutputFormat()
   let formatedOutput = itemToDisplay
   const nullRegex = new RegExp('null', 'g')
 

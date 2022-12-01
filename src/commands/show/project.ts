@@ -34,6 +34,11 @@ export default class ShowProject extends Command {
     active: Flags.boolean({
       char: 'a',
     }),
+    view: Flags.enum<'plaintext' | 'json'>({
+      char: 'v',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
   }
 
   static args: Interfaces.Arg[] = [
@@ -63,7 +68,7 @@ export default class ShowProject extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        displayOutput(NextStepsRawMessage)
+        displayOutput(NextStepsRawMessage, flags.view)
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -97,7 +102,7 @@ export default class ShowProject extends Command {
     if (flags.output === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
     } else {
-      displayOutput(JSON.stringify(projectData, null, '  '))
+      displayOutput(JSON.stringify(projectData, null, '  '), flags.view)
     }
     CliUx.ux.action.stop('')
   }

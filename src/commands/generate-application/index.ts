@@ -73,6 +73,11 @@ export default class GenerateApplication extends Command {
       description: 'Add BE-proxy to protect credentials',
       default: false,
     }),
+    view: Flags.enum<'plaintext' | 'json'>({
+      char: 'v',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
   }
 
   public async run(): Promise<void> {
@@ -109,7 +114,7 @@ export default class GenerateApplication extends Command {
         case UseCasesAppNames.accessWithoutOwnershipOfData:
         case UseCasesAppNames.portableReputation:
         case UseCasesAppNames.kycKyb:
-          displayOutput('Not implemented yet')
+          displayOutput('Not implemented yet', flags.view)
           break
         default:
           throw new CliError(InvalidUseCase, 0, 'reference-app')
@@ -126,7 +131,7 @@ export default class GenerateApplication extends Command {
         )
       }
     } catch (error) {
-      displayOutput(`Failed to generate an application: ${error.message}`)
+      displayOutput(`Failed to generate an application: ${error.message}`, flags.view)
       return
     }
 
@@ -136,7 +141,7 @@ export default class GenerateApplication extends Command {
     CliUx.ux.action.stop('\nApplication generated')
 
     const appPath = path.resolve(`${process.cwd()}/${name}`)
-    displayOutput(buildGeneratedAppNextStepsMessage(name, appPath, withProxy))
+    displayOutput(buildGeneratedAppNextStepsMessage(name, appPath, withProxy), flags.view)
   }
 
   async catch(error: CliError) {
@@ -152,15 +157,17 @@ export default class GenerateApplication extends Command {
     )
   }
 
-  private setUpProject(name: string, withProxy: boolean) {
+  private async setUpProject(name: string, withProxy: boolean) {
     const activeProjectApiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
     const activeProjectDid = vaultService.get(VAULT_KEYS.projectDID)
     const activeProjectId = vaultService.get(VAULT_KEYS.projectId)
+    const { flags } = await this.parse(GenerateApplication)
+
     if (!activeProjectApiKey || !activeProjectDid || !activeProjectId) {
       throw Error(Unauthorized)
     }
 
-    displayOutput(`Setting up the project`)
+    displayOutput(`Setting up the project`, flags.view)
 
     try {
       if (withProxy) {
@@ -198,7 +205,7 @@ export default class GenerateApplication extends Command {
         `REACT_APP_PROJECT_ID=${activeProjectId}`,
       ])
     } catch (error) {
-      displayOutput(`Failed to set up project: ${error.message}`)
+      displayOutput(`Failed to set up project: ${error.message}`, flags.view)
     }
   }
 

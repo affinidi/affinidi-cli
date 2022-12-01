@@ -1,4 +1,4 @@
-import { Command, CliUx } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import UseProject from '../use/project'
@@ -25,8 +25,16 @@ export default class Login extends Command {
 
   static args = [{ name: 'email' }]
 
+  static flags = {
+    view: Flags.enum<'plaintext' | 'json'>({
+      char: 'v',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
+  }
+
   public async run(): Promise<void> {
-    const { args } = await this.parse(Login)
+    const { args, flags } = await this.parse(Login)
 
     let { email } = args
     if (!email) {
@@ -75,10 +83,10 @@ export default class Login extends Command {
     await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
-    displayOutput('You are authenticated')
-    displayOutput(`Welcome back to Affinidi ${email}!`)
+    displayOutput('You are authenticated', flags.view)
+    displayOutput(`Welcome back to Affinidi ${email}!`, flags.view)
     if (projectsList.length === 0) {
-      displayOutput(NextStepsRawMessage)
+      displayOutput(NextStepsRawMessage, flags.view)
       return
     }
 

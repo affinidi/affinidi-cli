@@ -14,8 +14,6 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
 import { displayOutput } from '../../middleware/display'
 
-type UseFieldType = 'json' | 'json-file'
-
 const setActiveProject = (projectToBeActive: ProjectSummary): void => {
   vaultService.set(VAULT_KEYS.projectId, projectToBeActive.project.projectId)
   vaultService.set(VAULT_KEYS.projectName, projectToBeActive.project.name)
@@ -32,11 +30,10 @@ export default class Project extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    output: Flags.enum<UseFieldType>({
-      char: 'o',
-      options: ['json', 'json-file'],
-      description: 'print details of the project to use as JSON',
-      default: 'json',
+    view: Flags.enum<'plaintext' | 'json' | 'json-file'>({
+      char: 'v',
+      options: ['plaintext', 'json', 'json-file'],
+      description: 'set flag to override default output format view',
     }),
   }
 
@@ -62,7 +59,7 @@ export default class Project extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        displayOutput(NextStepsRawMessage)
+        displayOutput(NextStepsRawMessage, flags.view)
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -73,7 +70,7 @@ export default class Project extends Command {
       projectId = await selectProject(projectData, maxNameLength)
     }
     const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
-    if (flags.output === 'json-file') {
+    if (flags.view === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
     }
     const userId = session?.account?.id
@@ -102,7 +99,7 @@ export default class Project extends Command {
       projectToBeActive.wallet.didUrl = ''.padEnd(projectToBeActive.wallet.didUrl?.length, '*')
     }
 
-    displayOutput(JSON.stringify(projectToBeActive, null, '  '))
+    displayOutput(JSON.stringify(projectToBeActive, null, '  '), flags.view)
   }
 
   async catch(error: CliError) {

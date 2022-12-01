@@ -43,6 +43,11 @@ export default class Schema extends Command {
       description: 'The details of the schema to show',
       default: 'info',
     }),
+    view: Flags.enum<'plaintext' | 'json'>({
+      char: 'v',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
   }
 
   static args: Interfaces.Arg[] = [
@@ -89,7 +94,7 @@ export default class Schema extends Command {
     }
 
     CliUx.ux.action.stop('')
-    displayOutput(output)
+    displayOutput(output, flags.view)
   }
 
   protected async catch(error: CliError): Promise<void> {

@@ -1,8 +1,8 @@
-import { Command, CliUx } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
-import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
+import { userManagementService, vaultService } from '../../services'
 import { SignoutError, getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
@@ -18,7 +18,16 @@ export default class Logout extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
+  static flags = {
+    view: Flags.enum<'plaintext' | 'json'>({
+      char: 'v',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
+  }
+
   public async run(): Promise<void> {
+    const { flags } = await this.parse(Logout)
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'iAm')
     }
@@ -47,7 +56,7 @@ export default class Logout extends Command {
     await userManagementService.signout({ token })
     vaultService.clear()
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput("Thank you for using Affinidi's services")
+    displayOutput("Thank you for using Affinidi's services", flags.view)
   }
 
   async catch(error: CliError) {
