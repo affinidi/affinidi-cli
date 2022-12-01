@@ -2,6 +2,7 @@ import { Hook } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import Sinon from 'sinon'
 
+import { CHECK_OPERATION } from '../../../src/hooks/check/checkVersion'
 import { UnsuportedConfig } from '../../../src/errors'
 import * as config from '../../../src/services/config'
 import { createConfig } from '../../../src/services/user-management'
@@ -12,8 +13,8 @@ const testProjectId = 'random-test-project-id'
 const unsuportedVersion = -1
 
 describe('hooks', () => {
-  describe('checkVersion', () => {
-    describe('Given an unsuported version', () => {
+  describe('checkVersion for the config.json file', () => {
+    describe('Given an unsuported version in the config file', () => {
       before(() => {
         Sinon.stub(config, 'getMajorVersion').returns(unsuportedVersion)
         createConfig({ userId: testUserId, projectId: testProjectId })
@@ -24,7 +25,7 @@ describe('hooks', () => {
 
       test
         .stdout()
-        .hook('check', { id: 'sign-up' })
+        .hook('check', { id: CHECK_OPERATION.CONFIG })
         .do((output: { returned: Hook.Result<undefined> }) => {
           expect(output.returned.failures).to.have.lengthOf(1)
           const { error } = output.returned.failures.shift()
@@ -33,13 +34,13 @@ describe('hooks', () => {
         .it(`shows an ${UnsuportedConfig} error message`)
     })
 
-    describe('Given an suported version', () => {
+    describe('Given a suported version in the config file', () => {
       before(() => {
         createConfig({ userId: testUserId, projectId: testProjectId })
       })
       test
         .stdout()
-        .hook('check', { id: 'sign-up' })
+        .hook('check', { id: CHECK_OPERATION.CONFIG })
         .do((output: { returned: Hook.Result<undefined> }) => {
           expect(output.returned.failures).to.have.lengthOf(0)
           expect(output.returned.successes).to.have.lengthOf(1)
@@ -47,4 +48,27 @@ describe('hooks', () => {
         .it(`shows an ${UnsuportedConfig} error message`)
     })
   })
+
+  // describe('checkVersion for the credentials.json file', () => {
+  //   describe('Given an unsuported version in the credentials file', () => {
+  //     before(() => {
+  //       Sinon.stub(config, 'getMajorVersion').returns(unsuportedVersion)
+  //       createSession('email', testUserId, 'sessionToken')
+  //     })
+  //     after(() => {
+  //       Sinon.restore()
+  //     })
+
+  //     test
+  //       .only()
+  //       .stdout()
+  //       .hook('check', { id: CHECK_OPERATION.CREDENTIALS })
+  //       .do((output: { returned: Hook.Result<undefined> }) => {
+  //         expect(output.returned.failures).to.have.lengthOf(1)
+  //         const { error } = output.returned.failures.shift()
+  //         expect(error.message).to.contain(UnsuportedCredential)
+  //       })
+  //       .it(`shows an ${UnsuportedCredential} error message`)
+  //   })
+  // })
 })
