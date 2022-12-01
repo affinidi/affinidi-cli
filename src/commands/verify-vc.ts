@@ -41,8 +41,10 @@ export default class VerifyVc extends Command {
     const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
 
     const credentialData = await fs.readFile(flags.data, 'utf-8')
+    CliUx.ux.action.start('verifying')
     const verifyCredentialInput: VerifyCredentialInput = JSON.parse(credentialData)
     const verification = await verfierService.verifyVC(apiKey, verifyCredentialInput)
+    CliUx.ux.action.stop()
     const analyticsData: EventDTO = {
       name: 'VC Verified',
       category: 'APPLICATION',
@@ -66,7 +68,6 @@ export default class VerifyVc extends Command {
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError
     }
-    CliUx.ux.action.stop('failed')
     const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
     const outputFormat = configService.getOutputFormat(userId)
     CliUx.ux.info(

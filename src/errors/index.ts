@@ -103,8 +103,8 @@ export const errorToJSON = (err: string): string => {
   const jsonError = {
     error: err,
   }
-  const jsonErronString = JSON.stringify(jsonError, null, ' ')
-  const cleanErr = jsonErronString.replace(ansiCodeRegex, '')
+  const jsonErroString = JSON.stringify(jsonError, null, ' ')
+  const cleanErr = jsonErroString.replace(ansiCodeRegex, '')
   return cleanErr
 }
 

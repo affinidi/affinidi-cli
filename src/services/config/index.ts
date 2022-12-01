@@ -26,6 +26,7 @@ type ConfigStoreFormat = {
 interface IConfigStorer {
   save(params: ConfigStoreFormat): void
   clear(): void
+  setOutputFormat(userId: string, outputFormat: string): void
   getVersion: () => number
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
@@ -75,7 +76,9 @@ class ConfigService {
     })
   }
 
-
+  public setOutputFormat = (userId: string, format: string): void => {
+    this.store.setOutputFormat(userId, format)
+  }
 
   public currentUserConfig = (): UserConfig => {
     const user = this.store.getCurrentUser()
@@ -83,7 +86,6 @@ class ConfigService {
     if (!configs[user]) {
       throw Error(NoUserConfigFound)
     }
-
     return configs[user]
   }
 
@@ -156,6 +158,12 @@ const store: IConfigStorer = {
     }
     return outputFormat
   },
+  setOutputFormat: (userId: string, outputFormat: string): void => {
+    const configs = configConf.get('configs')
+    const parsedConfigs = JSON.parse(JSON.stringify(configs))
+    parsedConfigs[userId].outputFormat = outputFormat
+    configConf.set('configs', parsedConfigs)
+  },
 }
 
 export const testStore = new Map()
@@ -194,6 +202,9 @@ const testStorer: IConfigStorer = {
       outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
     }
     return outputFormat
+  },
+  setOutputFormat: (userId: string, outputFormat: string): void => {
+    testStore.set(testStore.get('configs')[userId].outputFormat, outputFormat)
   },
 }
 

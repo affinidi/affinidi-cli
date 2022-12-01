@@ -60,10 +60,11 @@ export default class Project extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.info(
+    displayOutput(
       chalk.red.bold(
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
+      session?.account.id,
     )
     displayOutput(JSON.stringify(projectDetails, null, '  '), session.account.id)
   }
