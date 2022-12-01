@@ -29,13 +29,14 @@ const buildJSONMessage = (message: string): string => {
   const ansiCodeRegex = new RegExp(
     /(\\u001b)(8|7|H|>|\[(\?\d+(h|l)|[0-2]?(K|J)|\d*(A|B|C|D\D|E|F|G|g|i|m|n|S|s|T|u)|1000D\d+|\d*;\d*(f|H|r|m)|\d+;\d+;\d+m))/g,
   )
+
   const jsonMessage = JSON.stringify({ Message: message }, null, ' ')
   const jsonCleanMessage = jsonMessage.replace(ansiCodeRegex, '')
   return jsonCleanMessage
 }
 
-export const displayOutput = (itemToDisplay: string, userId: string) => {
-  const outputFormat = configService.getOutputFormat(userId)
+export const displayOutput = (itemToDisplay: string) => {
+  const outputFormat = configService.getOutputFormat()
   let formatedOutput = itemToDisplay
   const nullRegex = new RegExp('null', 'g')
 

@@ -56,7 +56,7 @@ export default class Projects extends Command {
       name: 'CONSOLE_PROJECTS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.listProjects',
         ...generateUserMetadata(session?.account?.label),
@@ -67,7 +67,7 @@ export default class Projects extends Command {
     const projectData = await iAmService.listProjects(token, skip, limit)
     await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop()
-    const outputFormat = configService.get('configs')[session?.account?.id]?.outputFormat
+    const outputFormat = configService.getOutputFormat()
     if (!output && outputFormat === 'plaintext') {
       output = 'table'
     } else if (!output) {
@@ -100,8 +100,7 @@ export default class Projects extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         error,

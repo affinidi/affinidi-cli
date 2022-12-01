@@ -50,7 +50,7 @@ export default class Project extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Project)
     if (!isAuthenticated()) {
-      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+      throw new CliError(`${Unauthorized}`, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
 
     let projectId = args['project-id']
@@ -62,7 +62,7 @@ export default class Project extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        displayOutput(NextStepsRawMessage, session?.account?.id)
+        displayOutput(NextStepsRawMessage)
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -102,13 +102,12 @@ export default class Project extends Command {
       projectToBeActive.wallet.didUrl = ''.padEnd(projectToBeActive.wallet.didUrl?.length, '*')
     }
 
-    displayOutput(JSON.stringify(projectToBeActive, null, '  '), session?.account.id)
+    displayOutput(JSON.stringify(projectToBeActive, null, '  '))
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         error,

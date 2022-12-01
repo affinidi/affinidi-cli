@@ -109,7 +109,7 @@ export default class GenerateApplication extends Command {
         case UseCasesAppNames.accessWithoutOwnershipOfData:
         case UseCasesAppNames.portableReputation:
         case UseCasesAppNames.kycKyb:
-          displayOutput('Not implemented yet', userId)
+          displayOutput('Not implemented yet')
           break
         default:
           throw new CliError(InvalidUseCase, 0, 'reference-app')
@@ -126,7 +126,7 @@ export default class GenerateApplication extends Command {
         )
       }
     } catch (error) {
-      displayOutput(`Failed to generate an application: ${error.message}`, userId)
+      displayOutput(`Failed to generate an application: ${error.message}`)
       return
     }
 
@@ -136,7 +136,7 @@ export default class GenerateApplication extends Command {
     CliUx.ux.action.stop('\nApplication generated')
 
     const appPath = path.resolve(`${process.cwd()}/${name}`)
-    displayOutput(buildGeneratedAppNextStepsMessage(name, appPath, withProxy), userId)
+    displayOutput(buildGeneratedAppNextStepsMessage(name, appPath, withProxy))
   }
 
   async catch(error: CliError) {
@@ -156,12 +156,11 @@ export default class GenerateApplication extends Command {
     const activeProjectApiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
     const activeProjectDid = vaultService.get(VAULT_KEYS.projectDID)
     const activeProjectId = vaultService.get(VAULT_KEYS.projectId)
-    const userId = getSession()?.account?.id
     if (!activeProjectApiKey || !activeProjectDid || !activeProjectId) {
       throw Error(Unauthorized)
     }
 
-    displayOutput(`Setting up the project`, userId)
+    displayOutput(`Setting up the project`)
 
     try {
       if (withProxy) {
@@ -199,7 +198,7 @@ export default class GenerateApplication extends Command {
         `REACT_APP_PROJECT_ID=${activeProjectId}`,
       ])
     } catch (error) {
-      displayOutput(`Failed to set up project: ${error.message}`, userId)
+      displayOutput(`Failed to set up project: ${error.message}`)
     }
   }
 

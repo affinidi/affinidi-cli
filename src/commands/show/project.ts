@@ -63,7 +63,7 @@ export default class ShowProject extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        displayOutput(NextStepsRawMessage, session.account.id)
+        displayOutput(NextStepsRawMessage)
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -80,7 +80,7 @@ export default class ShowProject extends Command {
       name: 'CONSOLE_PROJECT_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         projectId: projectData?.project?.projectId,
         commandId: 'affinidi.showProject',
@@ -97,15 +97,14 @@ export default class ShowProject extends Command {
     if (flags.output === 'json-file') {
       await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
     } else {
-      displayOutput(JSON.stringify(projectData, null, '  '), session.account.id)
+      displayOutput(JSON.stringify(projectData, null, '  '))
     }
     CliUx.ux.action.stop('')
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
 
     CliUx.ux.info(
       getErrorOutput(

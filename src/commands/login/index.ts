@@ -75,10 +75,10 @@ export default class Login extends Command {
     await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
-    displayOutput('You are authenticated', userId)
-    displayOutput(`Welcome back to Affinidi ${email}!`, userId)
+    displayOutput('You are authenticated')
+    displayOutput(`Welcome back to Affinidi ${email}!`)
     if (projectsList.length === 0) {
-      displayOutput(NextStepsRawMessage, userId)
+      displayOutput(NextStepsRawMessage)
       return
     }
 

@@ -33,7 +33,7 @@ export default class Logout extends Command {
       name: 'CONSOLE_USER_SIGN_OUT',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.logout',
         ...generateUserMetadata(session?.account?.label),
@@ -47,12 +47,11 @@ export default class Logout extends Command {
     await userManagementService.signout({ token })
     vaultService.clear()
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput("Thank you for using Affinidi's services", session.account.id)
+    displayOutput("Thank you for using Affinidi's services")
   }
 
   async catch(error: CliError) {
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         error,

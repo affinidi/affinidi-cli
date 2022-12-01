@@ -62,7 +62,7 @@ const handleBadRequest = (service: string): string => {
     case 'schema':
       return schemaBadrequest
     default:
-      return 'IAm service bad request'
+      return `${service} service bad request`
   }
 }
 const handleNotFound = (service: string): string => {

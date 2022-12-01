@@ -4,8 +4,6 @@ import { StatusCodes } from 'http-status-codes'
 import { configService } from '../../services/config'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { isAuthenticated } from '../../middleware/authentication'
-import { vaultService, VAULT_KEYS } from '../../services'
-import { getSession } from '../../services/user-management'
 import { displayOutput } from '../../middleware/display'
 
 export default class View extends Command {
@@ -32,16 +30,14 @@ export default class View extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
-    const userId = getSession()?.account?.id
 
-    configService.setOutputFormat(userId, format)
-    displayOutput(`Default output format view is set to ${format}`, userId)
+    configService.setOutputFormat(format)
+    displayOutput(`Default output format view is set to ${format}`)
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
 
     CliUx.ux.info(
       getErrorOutput(

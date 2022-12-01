@@ -36,7 +36,7 @@ describe('logout command', () => {
       expect(vaultService.get(k)).to.be.null
     })
     const config = configService.show()
-    expect(config.currentUserId).to.equal(testUserId)
+    expect(config.currentUserID).to.equal(testUserId)
     expect(config.version).to.equal(getMajorVersion())
     expect(config.configs).to.haveOwnProperty(testUserId)
     expect(config.configs[testUserId].activeProjectId).to.equal(testProjectId)

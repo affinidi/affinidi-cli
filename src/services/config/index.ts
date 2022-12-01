@@ -19,7 +19,7 @@ type UserConfig = {
 
 type ConfigStoreFormat = {
   version: number
-  currentUserId: string
+  currentUserID: string
   configs: Record<UserId, UserConfig>
 }
 
@@ -30,8 +30,8 @@ interface IConfigStorer {
   getVersion: () => number
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
+  getOutputFormat: () => string
   setCurrentProjectId: (id: string) => void
-  getOutputFormat: (userId: string) => string
 }
 
 class ConfigService {
@@ -50,13 +50,18 @@ class ConfigService {
   }
 
   public show = (): ConfigStoreFormat => {
-    const currentUserId = this.store.getCurrentUser()
+    const currentUserId = this.getCurrentUser()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
-    return { version: configVersion, currentUserId, configs }
+    return { version: configVersion, currentUserID: currentUserId, configs }
   }
-  public getOutputFormat = (userId: string) => {
-    return this.store.getOutputFormat(userId)
+
+  public getCurrentUser = (): string => {
+    return this.store.getCurrentUser()
+  }
+
+  public getOutputFormat = (): string => {
+    return this.store.getOutputFormat()
   }
   public create = (
     userId: string,
@@ -64,7 +69,7 @@ class ConfigService {
     analyticsOptIn: boolean | undefined = undefined,
   ): void => {
     this.store.save({
-      currentUserId: userId,
+      currentUserID: userId,
       version: getMajorVersion(),
       configs: {
         [userId]: {
@@ -76,8 +81,8 @@ class ConfigService {
     })
   }
 
-  public setOutputFormat = (userId: string, format: string): void => {
-    this.store.setOutputFormat(userId, format)
+  public setOutputFormat = (format: string): void => {
+    this.store.setOutputFormat(format)
   }
 
   public currentUserConfig = (): UserConfig => {
@@ -98,7 +103,7 @@ class ConfigService {
     const userConfig = this.currentUserConfig()
     userConfig.analyticsOptIn = inOrOut
     const all = this.show()
-    const user = all.currentUserId
+    const user = all.currentUserID
     const updateConfigFile = {
       ...all,
       configs: Object.assign(all.configs, { [user]: { ...userConfig } }),
@@ -120,7 +125,7 @@ const store: IConfigStorer = {
   save: (params: ConfigStoreFormat): void => {
     // TODO validate the config before saving
     configConf.set('version', params.version)
-    configConf.set('currentUserID', params.currentUserId)
+    configConf.set('currentUserId', params.currentUserID)
     configConf.set('configs', params.configs)
   },
 
@@ -132,12 +137,10 @@ const store: IConfigStorer = {
     const v = Number(configConf.get('version'))
     return Number.isNaN(v) ? null : v
   },
-
   getCurrentUser: function getCurrentUser(): string {
     const value = configConf.get('currentUserID')
-    return typeof value === 'string' ? value : ''
+    return value
   },
-
   getAllUserConfigs: (): Record<string, UserConfig> => {
     return configConf.get('configs')
   },
@@ -147,22 +150,25 @@ const store: IConfigStorer = {
     configs[this.getCurrentUser()].activeProjectId = id
     configConf.set('configs', configs)
   },
-  getOutputFormat: (userId: string): string => {
+  getOutputFormat: function getOutputFormat(): string {
     const configs = configConf.get('configs')
-    const parsedConfigs = JSON.parse(JSON.stringify(configs))
-    let outputFormat: string
-    try {
-      outputFormat = parsedConfigs[userId]?.outputFormat
-    } catch (err) {
-      outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+    const userId = this.getCurrentUser()
+
+    if (!configs || !configs[userId]) {
+      return 'plaintext'
     }
-    return outputFormat
+
+    return configs[userId].outputFormat
   },
-  setOutputFormat: (userId: string, outputFormat: string): void => {
+  setOutputFormat: function setOutputFormat(outputFormat: string): void {
     const configs = configConf.get('configs')
-    const parsedConfigs = JSON.parse(JSON.stringify(configs))
-    parsedConfigs[userId].outputFormat = outputFormat
-    configConf.set('configs', parsedConfigs)
+    const userId = this.getCurrentUser()
+    const newUserConfig: UserConfig = {
+      activeProjectId: configs[userId].activeProjectId,
+      outputFormat,
+    }
+    configs[userId] = newUserConfig
+    configConf.set('configs', configs)
   },
 }
 
@@ -170,7 +176,7 @@ export const testStore = new Map()
 const testStorer: IConfigStorer = {
   save: (params: ConfigStoreFormat): void => {
     testStore.set('version', params.version)
-    testStore.set('currentUserID', params.currentUserId)
+    testStore.set('currentUserID', params.currentUserID)
     testStore.set('configs', params.configs)
   },
 
@@ -181,7 +187,6 @@ const testStorer: IConfigStorer = {
   getVersion: (): number => {
     return testStore.get('version')
   },
-
   getCurrentUser: function getCurrentUser(): string {
     return testStore.get('currentUserID')
   },
@@ -193,18 +198,18 @@ const testStorer: IConfigStorer = {
     configs[this.getCurrentUser()].activeProjectId = id
     testStore.set('configs', configs)
   },
-  getOutputFormat: (userId: string): string => {
-    const configs = testStore.get('configs')
-    let outputFormat: string
-    try {
-      outputFormat = configs[userId].outputFormat
-    } catch (err) {
-      outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+  getOutputFormat: function getOutputFormat(): string {
+    const configs = configConf.get('configs')
+    const userId = this.getCurrentUser()
+
+    if (!configs || !configs[userId]) {
+      return 'plaintext'
     }
-    return outputFormat
+
+    return configs[userId].outputFormat
   },
-  setOutputFormat: (userId: string, outputFormat: string): void => {
-    testStore.set(testStore.get('configs')[userId].outputFormat, outputFormat)
+  setOutputFormat: function setOutputFormat(outputFormat: string): void {
+    testStore.set(testStore.get('configs')[this.getCurrentUser()].outputFormat, outputFormat)
   },
 }
 

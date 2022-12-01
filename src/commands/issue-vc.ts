@@ -132,13 +132,13 @@ export default class IssueVc extends Command {
       throw new CliError(`${WrongFileType}${expectedExtension} file`, 0, 'issuance')
     }
     CliUx.ux.action.stop('')
-    displayOutput(JSON.stringify(issuanceId), session?.account?.id)
+    displayOutput(JSON.stringify(issuanceId))
 
     const analyticsData: EventDTO = {
       name: 'BULK_VC_ISSUED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.issue-vc',
         ...generateUserMetadata(session?.account?.label),
@@ -153,8 +153,7 @@ export default class IssueVc extends Command {
       err.message = JsonFileSyntaxError
     }
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         err,

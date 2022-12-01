@@ -49,17 +49,14 @@ export default class VerifyVc extends Command {
       name: 'VC Verified',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session.account?.id : anonymous,
+      uuid: session ? configService.getCurrentUser() : anonymous,
       metadata: {
         commandId: 'affinidi.verify-vc',
         ...generateUserMetadata(session?.account?.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput(
-      JSON.stringify(verification, null, ' '),
-      session ? session.account?.id : anonymous,
-    )
+    displayOutput(JSON.stringify(verification, null, ' '))
   }
 
   async catch(error: CliError) {
@@ -68,8 +65,7 @@ export default class VerifyVc extends Command {
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError
     }
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         error,

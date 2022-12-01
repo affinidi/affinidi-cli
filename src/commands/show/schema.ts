@@ -68,7 +68,7 @@ export default class Schema extends Command {
       name: 'VC_SCHEMAS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session?.account?.id : anonymous,
+      uuid: session ? configService.getCurrentUser() : anonymous,
       metadata: {
         schemaId: schema?.id,
         commandId: 'affinidi.showSchema',
@@ -89,13 +89,12 @@ export default class Schema extends Command {
     }
 
     CliUx.ux.action.stop('')
-    displayOutput(output, session ? session.account?.id : anonymous)
+    displayOutput(output)
   }
 
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
 
     CliUx.ux.info(
       getErrorOutput(

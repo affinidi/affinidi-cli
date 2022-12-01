@@ -1,4 +1,6 @@
-import { CliUx, Command, Interfaces } from '@oclif/core'
+import { Command, Interfaces } from '@oclif/core'
+import { getSession } from '../../services/user-management'
+import { displayOutput } from '../../middleware/display'
 
 import { buildInvalidCommandUsage, configCommandDescription } from '../../render/texts'
 
@@ -23,6 +25,6 @@ export default class Config extends Command {
   ]
 
   public async run(): Promise<void> {
-    CliUx.ux.info(buildInvalidCommandUsage(Config.command, Config.usage, Config.summary))
+    displayOutput(buildInvalidCommandUsage(Config.command, Config.usage, Config.summary))
   }
 }

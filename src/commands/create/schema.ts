@@ -140,7 +140,7 @@ export default class Schema extends Command {
       name: 'VC_SCHEMA_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         schemaId: schemaInfo?.id,
         commandId: 'affinidi.createSchema',
@@ -148,7 +148,7 @@ export default class Schema extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput(JSON.stringify(schemaInfo, null, '  '), session.account.id)
+    displayOutput(JSON.stringify(schemaInfo, null, '  '))
   }
 
   async catch(error: CliError) {
@@ -156,8 +156,7 @@ export default class Schema extends Command {
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError
     }
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         err,

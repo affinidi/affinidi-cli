@@ -52,7 +52,7 @@ export default class Project extends Command {
       name: 'CONSOLE_PROJECT_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         projectId: projectData?.projectId,
         commandId: 'affinidi.createProject',
@@ -64,15 +64,13 @@ export default class Project extends Command {
       chalk.red.bold(
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
-      session?.account.id,
     )
-    displayOutput(JSON.stringify(projectDetails, null, '  '), session.account.id)
+    displayOutput(JSON.stringify(projectDetails, null, '  '))
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
 
     CliUx.ux.info(
       getErrorOutput(

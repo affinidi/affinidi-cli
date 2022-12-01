@@ -19,7 +19,7 @@ const printData = (
   { extended, output }: { extended: boolean; output: OutputType },
   userId: string,
 ): void => {
-  let outputFormat = configService.get('configs')[userId]?.outputFormat
+  let outputFormat = configService.getOutputFormat()
   outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
   let confOutput = output
   if (!output && outputFormat === 'plaintext') {
@@ -115,7 +115,7 @@ export default class Schemas extends Command {
       name: 'VC_SCHEMAS_SEARCHED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session?.account?.id : anonymous,
+      uuid: session ? configService.getCurrentUser() : anonymous,
       metadata: {
         commandId: 'affinidi.listSchemas',
         ...generateUserMetadata(session?.account?.label),
@@ -152,13 +152,12 @@ export default class Schemas extends Command {
       })
       .slice(skip, skip + limit)
 
-    printData(data, { extended, output }, session ? session?.account?.id : anonymous)
+    printData(data, { extended, output }, session ? configService.getCurrentUser() : anonymous)
   }
 
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
-    const userId = JSON.parse(vaultService.get(VAULT_KEYS.session))?.account?.id
-    const outputFormat = configService.getOutputFormat(userId)
+    const outputFormat = configService.getOutputFormat()
     CliUx.ux.info(
       getErrorOutput(
         error,
