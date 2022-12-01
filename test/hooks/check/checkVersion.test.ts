@@ -13,13 +13,10 @@ const unsuportedVersion = -1
 
 describe('hooks', () => {
   describe('checkVersion', () => {
-    before(() => {
-      createConfig({ userId: testUserId, projectId: testProjectId })
-    })
-
     describe('Given an unsuported version', () => {
       before(() => {
         Sinon.stub(config, 'getMajorVersion').returns(unsuportedVersion)
+        createConfig({ userId: testUserId, projectId: testProjectId })
       })
       after(() => {
         Sinon.restore()
@@ -37,6 +34,9 @@ describe('hooks', () => {
     })
 
     describe('Given an suported version', () => {
+      before(() => {
+        createConfig({ userId: testUserId, projectId: testProjectId })
+      })
       test
         .stdout()
         .hook('check', { id: 'sign-up' })
