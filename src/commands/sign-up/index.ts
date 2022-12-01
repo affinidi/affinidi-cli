@@ -28,8 +28,9 @@ export default class SignUp extends Command {
   static args = [{ name: 'email' }]
 
   public async run(): Promise<void> {
-    const { args } = await this.parse(SignUp)
+    await this.config.runHook('check', { id: 'check-config-version' })
 
+    const { args } = await this.parse(SignUp)
     let { email } = args
     if (!email) {
       email = await enterEmailPrompt()

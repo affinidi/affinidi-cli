@@ -98,6 +98,7 @@
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.5",
     "shx": "^0.3.4",
+    "sinon": "^15.0.0",
     "swagger-typescript-api": "^10.0.3",
     "ts-mockito": "^2.6.1",
     "ts-node": "^10.9.1",
@@ -117,6 +118,9 @@
     "topics": {},
     "warn-if-update-available": {
       "timeoutInDays": 7
+    },
+    "hooks": {
+      "check": "./dist/hooks/check/checkVersion"
     }
   },
   "engines": {
