@@ -15,8 +15,9 @@ import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
+import { configService } from '../../services/config'
 
 export enum Platforms {
   web = 'web',
@@ -115,7 +116,7 @@ export default class GenerateApplication extends Command {
         case UseCasesAppNames.accessWithoutOwnershipOfData:
         case UseCasesAppNames.portableReputation:
         case UseCasesAppNames.kycKyb:
-          displayOutput('Not implemented yet', flags.view)
+          displayOutput({ itemToDisplay: 'Not implemented yet', flag: flags.view })
           break
         default:
           throw new CliError(InvalidUseCase, 0, 'reference-app')
@@ -132,7 +133,11 @@ export default class GenerateApplication extends Command {
         )
       }
     } catch (error) {
-      displayOutput(`Failed to generate an application: ${error.message}`, flags.view)
+      displayOutput({
+        itemToDisplay: `Failed to generate an application: ${error.message}`,
+        flag: flags.view,
+        err: true,
+      })
       return
     }
 
@@ -142,20 +147,32 @@ export default class GenerateApplication extends Command {
     CliUx.ux.action.stop('\nApplication generated')
 
     const appPath = path.resolve(`${process.cwd()}/${name}`)
-    displayOutput(buildGeneratedAppNextStepsMessage(name, appPath, withProxy), flags.view)
+    displayOutput({
+      itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, withProxy),
+      flag: flags.view,
+    })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(
-      getErrorOutput(
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         GenerateApplication.command,
         GenerateApplication.usage,
         GenerateApplication.description,
-        false,
+        outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(GenerateApplication)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 
   private async setUpProject(name: string, withProxy: boolean) {
@@ -168,7 +185,7 @@ export default class GenerateApplication extends Command {
       throw Error(Unauthorized)
     }
 
-    displayOutput(`Setting up the project`, flags.view)
+    displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.view })
 
     try {
       if (withProxy) {
@@ -206,7 +223,11 @@ export default class GenerateApplication extends Command {
         `REACT_APP_PROJECT_ID=${activeProjectId}`,
       ])
     } catch (error) {
-      displayOutput(`Failed to set up project: ${error.message}`, flags.view)
+      displayOutput({
+        itemToDisplay: `Failed to set up project: ${error.message}`,
+        flag: flags.view,
+        err: true,
+      })
     }
   }
 

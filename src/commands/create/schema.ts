@@ -26,7 +26,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 import { ViewFormat } from '../../constants'
 
@@ -154,7 +154,7 @@ export default class Schema extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput(JSON.stringify(schemaInfo, null, '  '), flags.view)
+    displayOutput({ itemToDisplay: JSON.stringify(schemaInfo, null, '  '), flag: flags.view })
   }
 
   async catch(error: CliError) {
@@ -163,14 +163,22 @@ export default class Schema extends Command {
       err.message = JsonFileSyntaxError
     }
     const outputFormat = configService.getOutputFormat()
-    CliUx.ux.info(
-      getErrorOutput(
-        err,
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
         Schema.command,
         Schema.usage,
         Schema.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Schema)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

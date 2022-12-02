@@ -27,7 +27,7 @@ import { getSession } from '../services/user-management'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { isAuthenticated } from '../middleware/authentication'
-import { displayOutput } from '../middleware/display'
+import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
 import { ViewFormat } from '../constants'
 
@@ -138,7 +138,7 @@ export default class IssueVc extends Command {
       throw new CliError(`${WrongFileType}${expectedExtension} file`, 0, 'issuance')
     }
     CliUx.ux.action.stop('')
-    displayOutput(JSON.stringify(issuanceId), flags.view)
+    displayOutput({ itemToDisplay: JSON.stringify(issuanceId), flag: flags.view })
 
     const analyticsData: EventDTO = {
       name: 'BULK_VC_ISSUED',
@@ -160,14 +160,22 @@ export default class IssueVc extends Command {
     }
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
-    CliUx.ux.info(
-      getErrorOutput(
-        err,
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
         IssueVc.command,
         IssueVc.usage,
         IssueVc.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(IssueVc)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

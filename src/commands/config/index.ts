@@ -25,6 +25,8 @@ export default class Config extends Command {
   ]
 
   public async run(): Promise<void> {
-    displayOutput(buildInvalidCommandUsage(Config.command, Config.usage, Config.summary))
+    displayOutput({
+      itemToDisplay: buildInvalidCommandUsage(Config.command, Config.usage, Config.summary),
+    })
   }
 }

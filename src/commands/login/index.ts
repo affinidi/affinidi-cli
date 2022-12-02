@@ -9,8 +9,9 @@ import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
+import { configService } from '../../services/config'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -84,10 +85,10 @@ export default class Login extends Command {
     await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
-    displayOutput('You are authenticated', flags.view)
-    displayOutput(`Welcome back to Affinidi ${email}!`, flags.view)
+    displayOutput({ itemToDisplay: 'You are authenticated', flag: flags.view })
+    displayOutput({ itemToDisplay: `Welcome back to Affinidi ${email}!`, flag: flags.view })
     if (projectsList.length === 0) {
-      displayOutput(NextStepsRawMessage, flags.view)
+      displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.view })
       return
     }
 
@@ -106,6 +107,23 @@ export default class Login extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Login.command, Login.usage, Login.description, false))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Login.command,
+        Login.usage,
+        Login.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Login)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

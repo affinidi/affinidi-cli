@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { buildInvalidCommandUsage, wrapError } from '../render/texts'
+import { buildInvalidCommandUsage } from '../render/texts'
 
 const pleaseTryAgain = 'Please try again later.'
 const somethingWentWrong = `Something went wrong. ${pleaseTryAgain}`
@@ -125,7 +125,7 @@ export const getErrorOutput = (
     return buildInvalidCommandUsage(command, usage, summary, missingArgs)
   }
   if (json) {
-    return wrapError(errorToJSON(handleResponseErrors(error)), json)
+    return errorToJSON(handleResponseErrors(error))
   }
-  return wrapError(handleResponseErrors(error), json)
+  return handleResponseErrors(error)
 }

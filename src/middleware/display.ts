@@ -1,5 +1,12 @@
 import { CliUx } from '@oclif/core'
+import { wrapError } from '../render/texts'
 import { configService } from '../services/config'
+
+export interface DisplayOptions {
+  itemToDisplay: string
+  flag?: string
+  err?: boolean
+}
 
 export const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   if (typeof jsonObject !== 'object') {
@@ -29,31 +36,34 @@ const buildJSONMessage = (message: string): string => {
   const ansiCodeRegex = new RegExp(
     /(\\u001b)(8|7|H|>|\[(\?\d+(h|l)|[0-2]?(K|J)|\d*(A|B|C|D\D|E|F|G|g|i|m|n|S|s|T|u)|1000D\d+|\d*;\d*(f|H|r|m)|\d+;\d+;\d+m))/g,
   )
-
   const jsonMessage = JSON.stringify({ Message: message }, null, ' ')
   const jsonCleanMessage = jsonMessage.replace(ansiCodeRegex, '')
   return jsonCleanMessage
 }
 
-export const displayOutput = (itemToDisplay: string, flag?: string) => {
-  const outputFormat = flag || configService.getOutputFormat()
-  let formatedOutput = itemToDisplay
+export const displayOutput = (displayOptions: DisplayOptions) => {
+  const outputFormat = displayOptions.flag || configService.getOutputFormat()
+  let formatedOutput = displayOptions.itemToDisplay
   const nullRegex = new RegExp('null', 'g')
 
   if (outputFormat === 'plaintext') {
     try {
-      const nullRemoved = itemToDisplay.replace(nullRegex, '"null"')
+      const nullRemoved = displayOptions.itemToDisplay.replace(nullRegex, '"null"')
       const jsonObject = JSON.parse(nullRemoved)
       formatedOutput = jsonToPlainText(jsonObject, [])
     } catch (error) {
-      formatedOutput = itemToDisplay
+      formatedOutput = displayOptions.itemToDisplay
     }
   } else {
     try {
-      JSON.parse(itemToDisplay)
+      JSON.parse(displayOptions.itemToDisplay)
     } catch (error) {
-      formatedOutput = buildJSONMessage(itemToDisplay)
+      formatedOutput = buildJSONMessage(displayOptions.itemToDisplay)
     }
+  }
+  if (displayOptions.err) {
+    CliUx.ux.info(wrapError(formatedOutput, displayOptions.err))
+    return
   }
   CliUx.ux.info(formatedOutput)
 }

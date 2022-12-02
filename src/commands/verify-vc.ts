@@ -12,7 +12,7 @@ import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
 import { anonymous, ViewFormat } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
-import { displayOutput } from '../middleware/display'
+import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
 
 export default class VerifyVc extends Command {
@@ -61,7 +61,7 @@ export default class VerifyVc extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput(JSON.stringify(verification, null, ' '), flags.view)
+    displayOutput({ itemToDisplay: JSON.stringify(verification, null, ' '), flag: flags.view })
   }
 
   async catch(error: CliError) {
@@ -71,14 +71,22 @@ export default class VerifyVc extends Command {
       err.message = JsonFileSyntaxError
     }
     const outputFormat = configService.getOutputFormat()
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         VerifyVc.command,
         VerifyVc.usage,
         VerifyVc.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(VerifyVc)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

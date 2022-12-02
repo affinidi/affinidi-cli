@@ -9,7 +9,7 @@ import { getSession } from '../../services/user-management'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
@@ -94,21 +94,28 @@ export default class Schema extends Command {
     }
 
     CliUx.ux.action.stop('')
-    displayOutput(output, flags.view)
+    displayOutput({ itemToDisplay: output, flag: flags.view })
   }
 
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
-
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         Schema.command,
         Schema.usage,
         Schema.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Schema)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

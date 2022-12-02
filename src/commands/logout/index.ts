@@ -8,7 +8,7 @@ import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 import { ViewFormat } from '../../constants'
 
@@ -57,19 +57,27 @@ export default class Logout extends Command {
     await userManagementService.signout({ token })
     vaultService.clear()
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput("Thank you for using Affinidi's services", flags.view)
+    displayOutput({ itemToDisplay: "Thank you for using Affinidi's services", flag: flags.view })
   }
 
   async catch(error: CliError) {
     const outputFormat = configService.getOutputFormat()
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         Logout.command,
         Logout.command,
         Logout.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Logout)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

@@ -11,6 +11,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { anonymous } from '../../constants'
 import { configService } from '../../services/config'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -157,14 +158,26 @@ export default class Schemas extends Command {
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         Schemas.command,
         Schemas.usage,
         Schemas.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Schemas)
+      if (flags.view === 'table') {
+        optionsDisplay.flag = 'plaintext'
+      } else if (flags.view === 'json') {
+        optionsDisplay.flag = 'json'
+      }
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

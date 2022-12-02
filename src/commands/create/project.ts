@@ -10,7 +10,7 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 import { ViewFormat } from '../../constants'
 
@@ -69,27 +69,34 @@ export default class Project extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput(
-      chalk.red.bold(
+    displayOutput({
+      itemToDisplay: chalk.red.bold(
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
-      flags.view,
-    )
-    displayOutput(JSON.stringify(projectDetails, null, '  '), flags.view)
+      flag: flags.view,
+    })
+    displayOutput({ itemToDisplay: JSON.stringify(projectDetails, null, '  '), flag: flags.view })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
-
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         Project.command,
         Project.usage,
         Project.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Project)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

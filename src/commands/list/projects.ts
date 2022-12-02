@@ -1,5 +1,4 @@
 import { Command, CliUx, Flags } from '@oclif/core'
-import * as fs from 'fs/promises'
 import { stringify as csv_stringify } from 'csv-stringify'
 import { StatusCodes } from 'http-status-codes'
 
@@ -10,6 +9,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 
 type ListProjectsOutputType = 'json' | 'table' | 'csv'
 
@@ -98,14 +98,26 @@ export default class Projects extends Command {
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         Projects.command,
         Projects.usage,
         Projects.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Projects)
+      if (flags.view === 'table') {
+        optionsDisplay.flag = 'plaintext'
+      } else if (flags.view === 'json') {
+        optionsDisplay.flag = 'json'
+      }
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

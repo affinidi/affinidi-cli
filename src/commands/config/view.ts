@@ -32,21 +32,22 @@ export default class View extends Command {
     }
 
     configService.setOutputFormat(format)
-    displayOutput(`Default output format view is set to ${format}`)
+    displayOutput({ itemToDisplay: `Default output format view is set to ${format}` })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
 
-    CliUx.ux.info(
-      getErrorOutput(
+    displayOutput({
+      itemToDisplay: getErrorOutput(
         error,
         View.command,
         View.usage,
         View.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    })
   }
 }

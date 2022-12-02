@@ -10,7 +10,7 @@ import { NextStepsRawMessage } from '../../render/functions'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 import { ViewFormat } from '../../constants'
 
@@ -61,7 +61,7 @@ export default class ShowProject extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        displayOutput(NextStepsRawMessage, flags.view)
+        displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.view })
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -93,7 +93,7 @@ export default class ShowProject extends Command {
       projectData.wallet.didUrl = ''.padEnd(projectData.wallet.didUrl?.length, '*')
     }
 
-    displayOutput(JSON.stringify(projectData, null, '  '), flags.view)
+    displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.view })
 
     CliUx.ux.action.stop('')
   }
@@ -101,15 +101,22 @@ export default class ShowProject extends Command {
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
-
-    CliUx.ux.info(
-      getErrorOutput(
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         ShowProject.command,
         ShowProject.usage,
         ShowProject.description,
         outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(ShowProject)
+      optionsDisplay.flag = flags.view
+      displayOutput(optionsDisplay)
+    } catch (error2) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

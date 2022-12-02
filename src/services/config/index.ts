@@ -50,10 +50,10 @@ class ConfigService {
   }
 
   public show = (): ConfigStoreFormat => {
-    const currentUserId = this.getCurrentUser()
+    const currentUserID = this.getCurrentUser()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
-    return { version: configVersion, currentUserID: currentUserId, configs }
+    return { version: configVersion, currentUserID, configs }
   }
 
   public getCurrentUser = (): string => {
@@ -125,7 +125,7 @@ const store: IConfigStorer = {
   save: (params: ConfigStoreFormat): void => {
     // TODO validate the config before saving
     configConf.set('version', params.version)
-    configConf.set('currentUserId', params.currentUserID)
+    configConf.set('currentUserID', params.currentUserID)
     configConf.set('configs', params.configs)
   },
 
