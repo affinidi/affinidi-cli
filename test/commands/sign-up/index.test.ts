@@ -6,8 +6,8 @@ import { getWelcomeUserRawMessages } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
-import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { VAULT_KEYS, vaultService } from '../../../src/services'
+import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
+import { vaultService } from '../../../src/services'
 import { configService, getMajorVersion, testStore } from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
@@ -49,7 +49,6 @@ describe('sign-up command', () => {
     describe('When user accepts the conditions and policy', () => {
       before(() => {
         clearSessionAndConfig()
-        vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
       })
       test
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
@@ -65,6 +64,7 @@ describe('sign-up command', () => {
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
         .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
+        .stub(prompts, 'analyticsConsentPrompt', () => async () => true)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['sign-up'])
@@ -80,6 +80,8 @@ describe('sign-up command', () => {
           expect(config.configs).to.haveOwnProperty(testUserId)
           expect(config.configs[testUserId].activeProjectId).to.equal('')
           expect(config.configs[testUserId].outputFormat).to.equal('plaintext')
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          expect(analyticsService.hasAnalyticsOptIn()).to.be.true
         })
     })
   })

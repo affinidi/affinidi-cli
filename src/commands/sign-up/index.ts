@@ -6,6 +6,7 @@ import {
   enterEmailPrompt,
   enterOTPPrompt,
   AnswerYes,
+  analyticsConsentPrompt,
 } from '../../user-actions'
 import { userManagementService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
@@ -47,6 +48,9 @@ export default class SignUp extends Command {
       CliUx.ux.info("You must accept the conditions and policy to use Affinidi's services")
       return
     }
+
+    const wantsToOptIn = await analyticsConsentPrompt()
+    analyticsService.setAnalyticsOptIn(wantsToOptIn)
 
     // http request to affinidi sign-up endpoint
     CliUx.ux.action.start('Start signing-up to Affinidi')

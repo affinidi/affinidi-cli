@@ -33,7 +33,7 @@ export const conditionsAndPolicyMessage = `
     Please confirm that you agree with:
     Terms and Conditions: ${chalk.blue('https://build.affinidi.com/dev-tools/terms-of-use.pdf')}
     Privacy Policy: ${chalk.blue('https://build.affinidi.com/dev-tools/privacy-policy.pdf')}
-    [y/n]
+    [y/N]
 `
 
 export const listCommandDescription = buildCommandDescription('list', ['schemas', 'projects'])
