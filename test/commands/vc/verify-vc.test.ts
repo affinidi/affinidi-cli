@@ -11,6 +11,8 @@ import {
   WrongFileType,
 } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
+import { VAULT_KEYS, vaultService } from '../../../src/services'
+import * as authentication from '../../../src/middleware/authentication'
 
 const doNothing = () => {}
 const vcFile = 'som/vs/file.json'
@@ -19,6 +21,12 @@ const verifyVcResponse = {
   errors: '[]',
 }
 describe('verify-vc', () => {
+  before(() => {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+  })
+  after(() => {
+    vaultService.clear()
+  })
   test
     .nock(`${VERIFIER_URL}`, (api) =>
       api.post('/verifier/verify-vcs').reply(StatusCodes.OK, verifyVcResponse),
@@ -27,6 +35,7 @@ describe('verify-vc', () => {
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
+    .stub(authentication, 'isAuthenticated', () => true)
     .stdout()
     .command(['verify-vc', `-d ${vcFile}`])
     .it('runs verify-vc', (ctx) => {
@@ -41,6 +50,7 @@ describe('verify-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
       .it('runs verify-vc with bad request', (ctx) => {
@@ -55,6 +65,7 @@ describe('verify-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
       .it('runs verify-vc when server is down', (ctx) => {
@@ -70,6 +81,7 @@ describe('verify-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
       .it('runs verify-vc with unauthorized user', (ctx) => {
@@ -84,6 +96,7 @@ describe('verify-vc', () => {
       })
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d file/systme`])
       .it('runs verify-vc invalid file directory', (ctx) => {
