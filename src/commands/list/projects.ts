@@ -45,7 +45,8 @@ export default class Projects extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
-    let { skip, limit, output } = flags
+    const { skip, limit } = flags
+    let output = flags.view
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
@@ -70,7 +71,7 @@ export default class Projects extends Command {
     const outputFormat = configService.getOutputFormat()
     if (!output && outputFormat === 'plaintext') {
       output = 'table'
-    } else if (!output) {
+    } else if (!flags.view) {
       output = 'json'
     }
     switch (output) {
