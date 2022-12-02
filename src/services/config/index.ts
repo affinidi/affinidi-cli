@@ -209,7 +209,14 @@ const testStorer: IConfigStorer = {
     return configs[userId].outputFormat
   },
   setOutputFormat: function setOutputFormat(outputFormat: string): void {
-    testStore.set(testStore.get('configs')[this.getCurrentUser()].outputFormat, outputFormat)
+    const configs = testStore.get('configs')
+    const userId = this.getCurrentUser()
+    const newUserConfig: UserConfig = {
+      activeProjectId: configs[userId].activeProjectId,
+      outputFormat,
+    }
+    configs[userId] = newUserConfig
+    testStore.set('configs', configs)
   },
 }
 

@@ -1,4 +1,5 @@
-import { CliUx, Command, Interfaces } from '@oclif/core'
+import { Command, Interfaces } from '@oclif/core'
+import { displayOutput } from '../../middleware/display'
 
 import { showCommandDescription, buildInvalidCommandUsage } from '../../render/texts'
 
@@ -23,6 +24,8 @@ export default class Show extends Command {
   ]
 
   public async run(): Promise<void> {
-    CliUx.ux.info(buildInvalidCommandUsage(Show.command, Show.usage, Show.summary))
+    displayOutput({
+      itemToDisplay: buildInvalidCommandUsage(Show.command, Show.usage, Show.summary),
+    })
   }
 }
