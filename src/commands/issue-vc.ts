@@ -29,6 +29,7 @@ import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { isAuthenticated } from '../middleware/authentication'
 import { displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
+import { ViewFormat } from '../constants'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -64,7 +65,7 @@ export default class IssueVc extends Command {
       description: 'configure your own wallet to store VCs',
       default: 'https://wallet.affinidi.com/claim',
     }),
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       options: ['plaintext', 'json'],
       description: 'set flag to override default output format view',

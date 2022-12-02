@@ -12,8 +12,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
-
-type UseFieldType = 'json' | 'json-file'
+import { ViewFormat } from '../../constants'
 
 export default class ShowProject extends Command {
   static command = 'affinidi show project'
@@ -25,16 +24,10 @@ export default class ShowProject extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    output: Flags.enum<UseFieldType>({
-      char: 'o',
-      options: ['json', 'json-file'],
-      description: 'The details of the schema to show',
-      default: 'json',
-    }),
     active: Flags.boolean({
       char: 'a',
     }),
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
@@ -98,9 +91,6 @@ export default class ShowProject extends Command {
     }
     if (projectData.wallet?.didUrl) {
       projectData.wallet.didUrl = ''.padEnd(projectData.wallet.didUrl?.length, '*')
-    }
-    if (flags.output === 'json-file') {
-      await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
     } else {
       displayOutput(JSON.stringify(projectData, null, '  '), flags.view)
     }

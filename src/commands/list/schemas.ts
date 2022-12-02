@@ -17,7 +17,6 @@ type OutputType = 'csv' | 'table' | 'json'
 const printData = (
   data: Record<string, unknown>[],
   { extended, output }: { extended: boolean; output: OutputType },
-  userId: string,
 ): void => {
   let outputFormat = configService.getOutputFormat()
   outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
@@ -80,8 +79,8 @@ export default class Schemas extends Command {
       description: 'The number of schemas to display',
       default: 10,
     }),
-    output: Flags.enum<OutputType>({
-      char: 'o',
+    view: Flags.enum<OutputType>({
+      char: 'v',
       options: ['csv', 'json', 'table'],
       description: 'The type of output',
     }),
@@ -152,7 +151,7 @@ export default class Schemas extends Command {
       })
       .slice(skip, skip + limit)
 
-    printData(data, { extended, output }, session ? configService.getCurrentUser() : anonymous)
+    printData(data, { extended, output })
   }
 
   protected async catch(error: CliError): Promise<void> {

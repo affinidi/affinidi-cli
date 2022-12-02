@@ -1,5 +1,4 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import * as fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
 import { ProjectSummary } from '../../services/iam/iam.api'
@@ -13,6 +12,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
 import { displayOutput } from '../../middleware/display'
+import { ViewFormat } from '../../constants'
 
 const setActiveProject = (projectToBeActive: ProjectSummary): void => {
   vaultService.set(VAULT_KEYS.projectId, projectToBeActive.project.projectId)
@@ -30,9 +30,9 @@ export default class Project extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    view: Flags.enum<'plaintext' | 'json' | 'json-file'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
-      options: ['plaintext', 'json', 'json-file'],
+      options: ['plaintext', 'json'],
       description: 'set flag to override default output format view',
     }),
   }
@@ -70,9 +70,6 @@ export default class Project extends Command {
       projectId = await selectProject(projectData, maxNameLength)
     }
     const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
-    if (flags.view === 'json-file') {
-      await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
-    }
     const userId = session?.account?.id
     setActiveProject(projectToBeActive)
     const analyticsData: EventDTO = {

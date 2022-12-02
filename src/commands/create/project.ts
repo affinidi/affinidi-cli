@@ -12,6 +12,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -25,7 +26,7 @@ export default class Project extends Command {
   static args = [{ name: 'projectName' }]
 
   static flags = {
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],

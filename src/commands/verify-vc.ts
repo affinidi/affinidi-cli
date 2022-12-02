@@ -10,7 +10,7 @@ import { CliError, getErrorOutput, JsonFileSyntaxError, Unauthorized } from '../
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
-import { anonymous } from '../constants'
+import { anonymous, ViewFormat } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
 import { displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
@@ -30,9 +30,9 @@ export default class VerifyVc extends Command {
       description: 'source JSON file with credentials to be verified',
       required: true,
     }),
-    view: Flags.enum<'plaintext' | 'json' | 'json-file'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
-      options: ['plaintext', 'json', 'json-file'],
+      options: ['plaintext', 'json'],
       description: 'set flag to override default output format view',
     }),
   }

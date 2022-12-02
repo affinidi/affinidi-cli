@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 import { stringify as csv_stringify } from 'csv-stringify'
 import { StatusCodes } from 'http-status-codes'
 
-import { iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
@@ -11,7 +11,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
 
-type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
+type ListProjectsOutputType = 'json' | 'table' | 'csv'
 
 export default class Projects extends Command {
   static command = 'affinidi list projects'
@@ -36,10 +36,10 @@ export default class Projects extends Command {
       description: 'Maximum number of projects which will be listed',
       default: 10,
     }),
-    output: Flags.enum<ListProjectsOutputType>({
-      char: 'o',
+    view: Flags.enum<ListProjectsOutputType>({
+      char: 'v',
       description: 'Project listing output format',
-      options: ['json', 'table', 'json-file', 'csv-file'],
+      options: ['json', 'table', 'csv'],
     }),
   }
 
@@ -84,11 +84,8 @@ export default class Projects extends Command {
           { projectId: {}, name: {}, createdAt: {} },
         )
         break
-      case 'json-file':
-        await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
-        break
-      case 'csv-file':
-        await fs.writeFile('projects.csv', csv_stringify(projectData, { header: true }))
+      case 'csv':
+        csv_stringify(projectData, { header: true }).pipe(process.stdout)
         break
       case 'json':
         CliUx.ux.info(JSON.stringify(projectData, null, '  '))

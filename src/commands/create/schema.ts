@@ -28,6 +28,7 @@ import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -52,7 +53,7 @@ export default class Schema extends Command {
       description: 'path to the json file with schema properties',
       required: true,
     }),
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],

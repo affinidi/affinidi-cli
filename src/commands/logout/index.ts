@@ -10,6 +10,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class Logout extends Command {
   static command = 'affinidi logout'
@@ -19,7 +20,7 @@ export default class Logout extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],

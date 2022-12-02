@@ -1,6 +1,6 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
-import { anonymous } from '../../constants'
+import { anonymous, ViewFormat } from '../../constants'
 
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { VAULT_KEYS, vaultService } from '../../services/vault'
@@ -43,7 +43,7 @@ export default class Schema extends Command {
       description: 'The details of the schema to show',
       default: 'info',
     }),
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],

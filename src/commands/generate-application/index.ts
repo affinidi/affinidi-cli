@@ -16,6 +16,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
+import { ViewFormat } from '../../constants'
 
 export enum Platforms {
   web = 'web',
@@ -73,7 +74,7 @@ export default class GenerateApplication extends Command {
       description: 'Add BE-proxy to protect credentials',
       default: false,
     }),
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],

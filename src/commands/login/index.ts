@@ -10,6 +10,7 @@ import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { displayOutput } from '../../middleware/display'
+import { ViewFormat } from '../../constants'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -26,7 +27,7 @@ export default class Login extends Command {
   static args = [{ name: 'email' }]
 
   static flags = {
-    view: Flags.enum<'plaintext' | 'json'>({
+    view: Flags.enum<ViewFormat>({
       char: 'v',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
@@ -92,11 +93,11 @@ export default class Login extends Command {
 
     if (projectsList.length === 1) {
       const projectId = projectsList.shift()?.projectId
-      await UseProject.run([projectId])
+      await UseProject.run([projectId, `--view=${flags.view}`])
       return
     }
 
-    await UseProject.run([])
+    await UseProject.run([`-v ${flags.view}`])
   }
 
   async catch(error: CliError) {
