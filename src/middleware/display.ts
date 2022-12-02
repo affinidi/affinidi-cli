@@ -33,10 +33,14 @@ export const jsonToPlainText = (jsonObject: any, result: string[]): string => {
 }
 
 const buildJSONMessage = (message: string): string => {
+  let messageSplit: string[]
   const ansiCodeRegex = new RegExp(
     /(\\u001b)(8|7|H|>|\[(\?\d+(h|l)|[0-2]?(K|J)|\d*(A|B|C|D\D|E|F|G|g|i|m|n|S|s|T|u)|1000D\d+|\d*;\d*(f|H|r|m)|\d+;\d+;\d+m))/g,
   )
-  const jsonMessage = JSON.stringify({ Message: message }, null, ' ')
+  if (message.includes('\n')) {
+    messageSplit = message.split('\n')
+  }
+  const jsonMessage = JSON.stringify({ Message: messageSplit || message }, null, ' ')
   const jsonCleanMessage = jsonMessage.replace(ansiCodeRegex, '')
   return jsonCleanMessage
 }

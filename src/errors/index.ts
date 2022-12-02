@@ -96,12 +96,15 @@ const handleResponseErrors = (error: CliError): string => {
   }
 }
 export const errorToJSON = (err: string): string => {
+  let errSplit: string[]
   const ansiCodeRegex = new RegExp(
     /(\\u001b)(8|7|H|>|\[(\?\d+(h|l)|[0-2]?(K|J)|\d*(A|B|C|D\D|E|F|G|g|i|m|n|S|s|T|u)|1000D\d+|\d*;\d*(f|H|r|m)|\d+;\d+;\d+m))/g,
   )
-
+  if (err.includes('\n')) {
+    errSplit = err.split('\n')
+  }
   const jsonError = {
-    error: err,
+    error: errSplit || err,
   }
   const jsonErroString = JSON.stringify(jsonError, null, ' ')
   const cleanErr = jsonErroString.replace(ansiCodeRegex, '')
