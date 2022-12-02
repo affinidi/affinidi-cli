@@ -8,6 +8,7 @@ export interface DisplayOptions {
   err?: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const jsonToPlainText = (jsonObject: any, result: string[]): string => {
   if (typeof jsonObject !== 'object') {
     return result.join('\n')
