@@ -2,6 +2,7 @@ export {
   AnswerNo,
   AnswerYes,
   acceptConditionsAndPolicy,
+  analyticsConsentPrompt,
   confirmSignOut,
   enterEmailPrompt,
   enterOTPPrompt,

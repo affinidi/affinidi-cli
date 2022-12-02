@@ -1,4 +1,3 @@
-import { analyticsConsent } from '../../user-actions/prompts'
 import { CliError } from '../../errors'
 import { vaultService, VAULT_KEYS } from '../vault'
 import { Api as AnalyticsApi, EventDTO } from './analytics.api'
@@ -33,17 +32,17 @@ class AnalyticsService {
     }),
   ) {}
 
-  public async hasAnalyticsOptIn(): Promise<boolean> {
-    const optIn = vaultService.get(VAULT_KEYS.analyticsOptIn)
-    if (optIn == null) {
-      if (process.env.NODE_ENV === 'test') {
-        return true
-      }
+  public hasOptedInOrOut(): boolean {
+    return ['true', 'false'].includes(vaultService.get(VAULT_KEYS.analyticsOptIn))
+  }
 
-      this.setAnalyticsOptIn(await analyticsConsent())
+  public hasAnalyticsOptIn(): boolean {
+    // TODO: modify test createSession to add opt-in true by default
+    if (process.env.NODE_ENV === 'test') {
+      return true
     }
 
-    return optIn === 'true'
+    return vaultService.get(VAULT_KEYS.analyticsOptIn) === 'true'
   }
 
   public setAnalyticsOptIn(value: boolean) {
@@ -51,7 +50,7 @@ class AnalyticsService {
   }
 
   public eventsControllerSend = async (data: EventDTO) => {
-    if (!await this.hasAnalyticsOptIn()) {
+    if (!this.hasAnalyticsOptIn()) {
       return
     }
 
