@@ -84,7 +84,7 @@ export default class Schema extends Command {
       throw new CliError(InvalidSchemaName, 0, 'schema')
     }
 
-    const scope = flags.public ? 'public' : 'unlisted'
+    const scope = flags.public === 'true' ? 'public' : 'unlisted'
     const params = {
       apiKey: apiKeyhash,
       authorDid: did,
@@ -96,9 +96,8 @@ export default class Schema extends Command {
       { type: schemaName, scope },
       params,
     )
-
     const generateIdInput: Options = {
-      namespace: flags.public ? undefined : did,
+      namespace: !flags.public ? undefined : did,
       type: schemaName,
       version,
       revision,
