@@ -91,9 +91,10 @@ export default class ShowProject extends Command {
     }
     if (projectData.wallet?.didUrl) {
       projectData.wallet.didUrl = ''.padEnd(projectData.wallet.didUrl?.length, '*')
-    } else {
-      displayOutput(JSON.stringify(projectData, null, '  '), flags.view)
     }
+
+    displayOutput(JSON.stringify(projectData, null, '  '), flags.view)
+
     CliUx.ux.action.stop('')
   }
 

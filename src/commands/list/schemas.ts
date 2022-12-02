@@ -16,14 +16,14 @@ type OutputType = 'csv' | 'table' | 'json'
 
 const printData = (
   data: Record<string, unknown>[],
-  { extended, output }: { extended: boolean; output: OutputType },
+  { extended, view }: { extended: boolean; view: OutputType },
 ): void => {
   let outputFormat = configService.getOutputFormat()
   outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
-  let confOutput = output
-  if (!output && outputFormat === 'plaintext') {
+  let confOutput = view
+  if (!view && outputFormat === 'plaintext') {
     confOutput = 'table'
-  } else if (!output) {
+  } else if (!view) {
     confOutput = 'json'
   }
   switch (confOutput) {
@@ -105,7 +105,7 @@ export default class Schemas extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(Schemas)
 
-    const { extended, limit, public: publicFlag, output, scope, skip } = flags
+    const { extended, limit, public: publicFlag, view, scope, skip } = flags
     if (!isAuthenticated() && (scope === 'unlisted' || publicFlag === 'false')) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
@@ -151,7 +151,7 @@ export default class Schemas extends Command {
       })
       .slice(skip, skip + limit)
 
-    printData(data, { extended, output })
+    printData(data, { extended, view })
   }
 
   protected async catch(error: CliError): Promise<void> {
