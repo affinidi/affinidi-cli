@@ -2,7 +2,7 @@ import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
-import { GitService, Writer } from '../../../src/services'
+import { GitService, Writer, VAULT_KEYS, vaultService } from '../../../src/services'
 import {
   defaultAppName,
   Platforms,
@@ -14,8 +14,20 @@ import { ANALYTICS_URL } from '../../../src/services/analytics'
 import * as authentication from '../../../src/middleware/authentication'
 
 const doNothing = () => {}
+const testApiKey = 'Awesome-API-Key-Hash'
+const testProjectId = 'did:elem:AwesomeDID'
+const testProjectDid = 'did:elem:AwesomeDID'
 
 describe('generate-application command', () => {
+  before(() => {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+    vaultService.set(VAULT_KEYS.projectAPIKey, testApiKey)
+    vaultService.set(VAULT_KEYS.projectDID, testProjectDid)
+    vaultService.set(VAULT_KEYS.projectId, testProjectId)
+  })
+  after(() => {
+    vaultService.clear()
+  })
   describe('Given a non supported platform flag --platform mobile', () => {
     test
       .stdout()

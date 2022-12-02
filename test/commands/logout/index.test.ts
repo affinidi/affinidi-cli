@@ -19,6 +19,7 @@ describe('logout command', () => {
   before(() => {
     createSession('email', testUserId, 'sessionToken')
     createConfig({ userId: testUserId, projectId: testProjectId })
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
   })
   test
     .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))

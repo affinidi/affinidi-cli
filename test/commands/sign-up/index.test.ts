@@ -7,7 +7,7 @@ import { WrongEmailError } from '../../../src/errors'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { vaultService } from '../../../src/services'
+import { VAULT_KEYS, vaultService } from '../../../src/services'
 import { configService, getMajorVersion, testStore } from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
@@ -22,9 +22,8 @@ const clearSessionAndConfig = () => {
   testStore.clear()
 }
 
-after(clearSessionAndConfig)
-
 describe('sign-up command', () => {
+  after(clearSessionAndConfig)
   test
     .stdout()
     .stub(prompts, 'enterEmailPrompt', () => async () => 'invalid.email.address')
@@ -48,7 +47,10 @@ describe('sign-up command', () => {
     })
 
     describe('When user accepts the conditions and policy', () => {
-      before(clearSessionAndConfig)
+      before(() => {
+        clearSessionAndConfig()
+        vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+      })
       test
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
           api.post('/auth/signup').reply(StatusCodes.OK, { token: 'some-valid-token' }),

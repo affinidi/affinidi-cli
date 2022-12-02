@@ -11,6 +11,12 @@ import * as authentication from '../../../src/middleware/authentication'
 
 const doNothing = () => {}
 describe('project', () => {
+  before(() => {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+  })
+  after(() => {
+    vaultService.clear()
+  })
   test
     .nock(`${IAM_URL}`, (api) =>
       api

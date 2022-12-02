@@ -14,7 +14,7 @@ import {
   notFoundProject,
 } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { vaultService } from '../../../src/services'
+import { VAULT_KEYS, vaultService } from '../../../src/services'
 import { configService, getMajorVersion, testStore } from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
@@ -94,6 +94,12 @@ describe('login command', () => {
       }
 
       describe('And When the user has no project', () => {
+        before(() => {
+          vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+        })
+        after(() => {
+          vaultService.clear()
+        })
         setupTest()
           .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, { projects: [] }))
           .command(['login'])
@@ -112,6 +118,9 @@ describe('login command', () => {
 
       describe('And When the user has 1 project', () => {
         before(() => {
+          vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+        })
+        after(() => {
           clearSessionAndConfig()
         })
         setupTest()
@@ -158,6 +167,9 @@ describe('login command', () => {
 
       describe('And When the user has several projects', () => {
         before(() => {
+          vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+        })
+        after(() => {
           clearSessionAndConfig()
         })
         const projectId3 = projectSummary3.project.projectId

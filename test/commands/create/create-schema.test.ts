@@ -19,16 +19,24 @@ import {
 } from '../../../src/fixtures/mock-schemas'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
+import { vaultService, VAULT_KEYS } from '../../../src/services'
 
 const SCHEMA_NAME = 'schemaName'
 const schemaFile = 'some/file.json'
 const doNothing = () => {}
 const description = 'Some description'
+const testProjectDid = 'did:elem:AwesomeDID'
 
 describe('Create Schema', () => {
+  before(() => {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+    vaultService.set(VAULT_KEYS.projectDID, testProjectDid)
+  })
+  after(() => {
+    vaultService.clear()
+  })
   describe('Creating schema unlisted', () => {
     test
-
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api
           .get('/schemas?scope=public&skip=0&limit=1&type=schemaName&did=did:elem:AwesomeDID')

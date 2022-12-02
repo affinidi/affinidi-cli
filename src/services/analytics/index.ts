@@ -37,11 +37,6 @@ class AnalyticsService {
   }
 
   public hasAnalyticsOptIn(): boolean {
-    // TODO: modify test createSession to add opt-in true by default
-    if (process.env.NODE_ENV === 'test') {
-      return true
-    }
-
     return vaultService.get(VAULT_KEYS.analyticsOptIn) === 'true'
   }
 

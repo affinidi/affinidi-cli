@@ -5,8 +5,15 @@ import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { projectList } from '../../../src/fixtures/mock-projects'
 import * as authentication from '../../../src/middleware/authentication'
 import { IAM_URL } from '../../../src/services/iam'
+import { VAULT_KEYS, vaultService } from '../../../src/services'
 
 describe('projects', () => {
+  before(() => {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+  })
+  after(() => {
+    vaultService.clear()
+  })
   test
     .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))

@@ -6,12 +6,19 @@ import { mockSchemaDtoOne, mockSchemaDtoUnlisted } from '../../../src/fixtures/m
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import * as authentication from '../../../src/middleware/authentication'
+import { VAULT_KEYS, vaultService } from '../../../src/services'
 
 const getSchemaOK = (id: string) => async (api: FancyTypes.NockScope) =>
   api.get(`/schemas/${id}`).reply(StatusCodes.OK, mockSchemaDtoOne)
 
 describe('schema', () => {
-  describe('Given a FORBIDDEN response from the schema-manager-api', () => {
+  before(() => {
+    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+  })
+  after(() => {
+    vaultService.clear()
+  })
+  describe('Given a non authenticated user', () => {
     test
       .stdout()
       .command(['show schema', mockSchemaDtoUnlisted.id])

@@ -2,7 +2,7 @@ import { CliUx, Command, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import path from 'path'
 
-import { vaultService, GitService, Writer } from '../../services'
+import { vaultService, GitService, Writer, VAULT_KEYS } from '../../services'
 import {
   CliError,
   InvalidUseCase,
@@ -151,9 +151,9 @@ export default class GenerateApplication extends Command {
   }
 
   private setUpProject(name: string, withProxy: boolean) {
-    const activeProjectApiKey = vaultService.get('active-project-api-key')
-    const activeProjectDid = vaultService.get('active-project-did')
-    const activeProjectId = vaultService.get('active-project-id')
+    const activeProjectApiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
+    const activeProjectDid = vaultService.get(VAULT_KEYS.projectDID)
+    const activeProjectId = vaultService.get(VAULT_KEYS.projectId)
 
     if (!activeProjectApiKey || !activeProjectDid || !activeProjectId) {
       throw Error(Unauthorized)
