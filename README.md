@@ -1,22 +1,56 @@
 # Affinidi CLI
+[Introduction](#introduction)   
+[Features](#features)    
+[Installation](#installation)  
+[Quick Start](#quick-start)  
+[CLI Commands](#cli-commands)  
+[About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials)  
+[Feedback & Support](#feedback--support)   
+[FAQ](#faq)
 
-## Context
-
+# 
+## Introduction
 Affinidi’s vision is to empower communities with control and ownership of their data,
 creating new business models and greater trust.
 
-As the customer demand for control and ownership of data continues to increase, it is
+As the customer demand for control and ownership of data continues to grow, it is
 becoming increasingly important for developers to better manage data privacy and portability
 within their apps. With our tooling, you can start creating a privacy-preserving app within minutes.
 
-## What are privacy-preserving apps?
-
+### What are privacy-preserving apps?
 Privacy-preserving apps make it easy to manage and store customer information while giving your customers more control over how this information is used and shared. We enable this data ownership and control through Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs).
 
 Learn more about [VCs](https://academy.affinidi.com/what-are-verifiable-credentials-79f1846a7b9), [trust triangle](https://academy.affinidi.com/what-is-the-trust-triangle-9a9caf36b321), [Decentralized Identifiers (DIDs)](https://academy.affinidi.com/demystifying-decentralized-identifiers-dids-2dc6fc3148fd), and [selective disclosure](https://academy.affinidi.com/a-detailed-guide-on-selective-disclosure-87b89cea1602).
+&nbsp;
 
+&nbsp;
+
+## Features
+The folowing features are available through Affinidi CLI:
+### Affinidi account
+* create and manage your Affinidi account
+* create projects, to better organise and manage what you are building
+* access your API keys
+
+### Schemas
+* create and manage schemas, which serve as templates to issue credentials
+
+### Verifiable Credentials (VCs)
+VCs are tamper-evident credentials that can be verified cryptographically. 
+With Affinidi CLI you can:
+* issue VCs in bulk or individually
+* verify VCs
+
+### Reference App
+Generate a ready-to-use application that provides a web interface for:
+* issuing VCs
+* claiming and managing VCs
+* verifying VCs
+&nbsp;
+
+&nbsp;
+#
 ## Installation
-
 ### Prerequisites:
 
 You need to have installed on your machine:
@@ -28,94 +62,470 @@ Run the installation command:
 ```
 npm install -g @affinidi/cli
 ```
+&nbsp;
 
-## Quick start
 
-### Sign up:
+## Quick Start
+To start using our privacy preserving tools, please follow the next two steps:
+1. authenticate by creating an account, or logging in to your account if you already have one 
+2. create a project, or activate a project if you already created one
+### Authentication:
+You will need your email address, and then the code sent to your email to confirm authentication.
 
+To create an account:
 ```
 affinidi sign-up
 ```
-use `affinidi login` instead if you already have an Affinidi Account
+If you already have an account:
+```
+affinidi login
+```
 
-### Create a project:
+Full reference for each command can be found here:     
+[`sign-up`](#affinidi-sign-up)    
+[`login`](#affinidi-login)
 
+
+### Create or activate a project:
+The `create` command creates and activates a project. Follow the prompts to choose a name or add a name directly after the command.
 ```
 affinidi create project
 ```
 
+The `use` command activates an already existing project:
+```
+affinidi use project [<project-id>]
+```
+
+You can also simply type this and follow the prompts to choose from a list of existing projects: 
+```
+affinidi use project
+```
+Full reference for each command can be found here:    
+[`create`](#affinidi-create)   
+[`use`](#affinidi-use)
+
+### Schemas
+To issue a VC you first have to create a schema or choose an existing one:
+
+1. A schema can be created using the `create` command. You will need to provide a *schemaName* and a *description* in text format as well as a *source* with the path to the json file with the schema properties.
+
+```
+ $ affinidi create schema [schemaName] --description=<value> --source=<value>
+```
+
+
+2. To see available schemas:
+
+```
+ $ affinidi list schemas
+```
+
+You will need the value of the property `jsonSchemaUrl` of the created or chosen schema to issue VCs.
+
+Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).   
+Full reference for each command can be found here:    
+[`create`](#affinidi-create)    
+[`list`](#affinidi-list)
+
+
+### Verifiable Credentials
+You can issue and verify VCs within Affinidi CLI.
+
+1. To issue a VC you need to provide the *email* of the VC's owner, the `jsonSchemaUrl` of the *schema* on which the VC is based, and a path to the json file with credential *data*.
+
+```
+$ affinidi issue-vc [EMAIL] --schema=<value> --data <value>
+```
+
+Please see [How to structure a JSON file to issue a VC](#how-to-structure-a-json-file-to-issue-a-vc) for more details.
+
+2. To verify a VC you need to provide a path to the json file with the credential *data* to be verified.
+
+```
+$ affinidi verify-vc--data=<value> 
+```
+Full reference for each command can be found here:    
+[issue-vc](#affinidi-issue-vc)  
+[verify-vc](#affinidi-verify-vc)  
+
 ### Generate an application
+The [Affinidi Reference App](https://github.com/affinidi/elements-reference-app-frontend) provides a simple web interface for issuing, claiming and verifying VCs. It can be quickly generated by typing: 
 
 ```
-affinidi generate-application -n "My application"
+$ affinidi generate-application
+```
+You can also specify a name with:
+```
+$ affinidi generate-application --name=<value>
 ```
 
-### Issue a VC for an example schema
+For the full reference, please see the [`affinidi generate-application`](#affinidi-generate-application) command below.
 
-- create a file vc.json:
-```
-{
-    "date": "2022-12-11T23:12:00Z",
-    "place": "Awesome Location",
-    "eventName": "Awesome Event",
-    "eventDescription": "Awesome Description",
-    "name": "John Snow",
-    "email": "mail@example.com"
-}
-```
+&nbsp;
 
-- run a command:
+&nbsp;
+
+#
+## CLI Commands 
+### **autocomplete**
+Display autocomplete installation instructions.
+
+USAGE
 ```
-affinidi issue-vc <REPLACE WITH YOUR EMAIL> -s=https://schema.affinidi.com/TestSchemaV1-4.json -d=vc.json -w=https://holder-reference-app.stg.affinidi.com/holder
+  $ affinidi autocomplete [SHELL] [FLAGS]
 ```
 
-- find an email with credential subject and follow the link to view and claim a credential.
+ARGUMENTS
+```
+  SHELL  Shell type
+```
 
-## Schema manager
+FLAGS
+```
+  -r, --refresh-cache  Refresh cache (ignores displaying instructions)
+```
 
-### What is Schema manager?
+EXAMPLES
+```
+  $ affinidi autocomplete
 
-If you want to build an app using Affinidi components, you should start here.
-Schema Manager helps you to find the right schema for your verifiable credential
-or to create a new one - either on the basis of an already existing schema,
-or completely from scratch.
+  $ affinidi autocomplete bash
 
-### How to use Schema manager?
+  $ affinidi autocomplete zsh
 
-Schema Manager provides URLs for two kinds of schema representations:
-JSON Schema and JSON-LD context.
-Any schema can be referenced in a verifiable credentials or an application by these URLs.
+  $ affinidi autocomplete --refresh-cache
+```
 
-Before creating a new schema for your verifiable credentials,
-it is recommended to search for an existing one, which may fit your purpose.
-There are both a number of standard schemas and some user-generated schemas
-already available in the Schema Manager for your disposal,
-and you can search for them by “Credential schema type”.
-That is why it is important to provide a meaningful and expressive type
-for your newly created schemas.
+You can also see the help for the command in the CLI:
+```
+$ affinidi autocomplete --help
+```
+### **affinidi create**
+Use this command to create a new resource. Current supported resource types are:
+- Affinidi project
+- schema
 
-### What is the difference between a version and a revision?
+USAGE
+```
+$ affinidi create SUBCOMMAND [ARGS...] [FLAGS]
+```
 
-Essentially, all the revisions of the single version should be compatible with each other,
-whereas new versions could feature breaking changes, e.g. new mandatory fields.
+SUBCOMMANDS
+```
+project          Creates a new Affinidi project.
+schema          Creates a new schema for a verifiable credential.
+```
 
-Currently, adherence to this principle is not enforced,
-but it is good to keep in mind when choosing between new version or revision for your forked schema.
+To create a project:
+```
+$ affinidi create project [projectName]
+```
+Or simply type this and follow the prompts:
+```
+$ affinidi create project
+```
+Note: When a project is created, its API keys are displayed only once. Full project details are stored locally in `~/.affinidi/credentials.json`. This file is deleted at the end of the authenticated session.
 
-### What does it mean to “publish as searchable schema”?
 
-Schemas can be either public (visible and searchable for everyone ) or
-private (unlisted, visible and searchable only for you).
-When you “publish as searchable schema” (using flag `-p`), you make your schema public.
+To create a schema:
+```
+ $ affinidi create schema [schemaName] [FLAGS]
+```
+SCHEMA FLAGS
+```
+  -d, --description=<value>  (required) Description of schema
+  -p, --public=(true|false)  [default: false] To specify if you want to create public or private schemas
+  -s, --source=<value>       (required) Path to the json file with schema properties
+  ```
+Please see [How to structure a schema](#how-to-structure-a-schema) for guidance on how to create the *source* file.   
+EXAMPLES
+```
+$ affinidi create project "Example Project"
 
-It is important to remember, that versions and revisions of public and private
-(unlisted) schema are independent of each other,
-and are maintained by the system in parallel.
-However, you can always fork your private (unlisted) schema in order to make it public and vice versa.
+$ affinidi create schema "Example Name" -d "An example description" -s "/exampleSchema.json"
+```
 
-### How to create a schema
+You can also see the help for the command in the CLI:
+```
+$ affinidi create --help
+$ affinidi create project --help
+$ affinidi create schema --help
+```
 
-#### 1 Prepare a json file with schema details:
+### **affinidi generate-application**
+Use this command to generate a privacy preserving app. Please see [Affinidi Reference App](https://github.com/affinidi/elements-reference-app-frontend) for more details.
+
+USAGE
+```
+$ affinidi generate-application [-n <value>] [-w]
+```
+FLAGS
+```
+-n, --name=<value>                                                                                            [default: my-app] Name of the application
+-w, --with-proxy                                                                                              Add backend-proxy to protect credentials
+```
+
+You can use this to generate the application with the default values:
+```
+$ affinidi generate-application
+```
+
+EXAMPLES
+```
+$ affinidi generate-application -n ExampleApp
+```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi generate-application --help
+```
+### **affinidi help**
+Display help for affinidi
+
+USAGE
+```
+affinidi help
+```
+
+
+### **affinidi issue-vc**
+Issues a verifiable credential based on a given schema
+
+USAGE
+```
+$ affinidi issue-vc [EMAIL] [FLAGS]
+```
+
+FLAGS
+```
+-b, --bulk            Defines that issuance happens in bulk
+-d, --data=<value>    (required) The source file with credential data, either .json or .csv
+-s, --schema=<value>  (required) Json schema url
+-w, --wallet=<value>  [default: https://wallet.affinidi.com/claim] Configure your own wallet to store VCs
+```
+
+EXAMPLES
+```
+$ affinidi issue-vc example@email.com -s "https://example.org/exampleSchema.json" -d "/exampleCredential.json"
+
+```
+You can also see the help for the command in the CLI:
+```
+$ affinidi issue-vc --help
+```
+### **affinidi list**
+Use the list command to display resources that you have created or are available. 
+The current types of resources are:
+- schemas
+- projects
+
+USAGE
+```
+$ affinidi list [SUBCOMMAND] [ARGS...] [FLAGS]
+```
+
+SUBCOMMANDS 
+``` 
+projects          Shows you the list of your projects
+schemas           Shows a list of available schemas
+```
+
+FLAGS for project listing
+```
+-l, --limit=<value>                           [default: 10] Maximum number of projects which will be listed
+-o, --output=(json|table|json-file|csv-file)  [default: json] Project listing output format
+-s, --skip=<value>                            Index into projects list from which to start the listing
+--json  Format output as json.
+```
+
+FLAGS for schema listing
+  ```
+-c, --scope=(default|public|unlisted)  [default: default] The type of scope
+-l, --limit=<value>                    [default: 10] The number of schemas to display
+-o, --output=(csv|json|table)          [default: json] The type of output
+-p, --public=(true|false)              [default: true] To specify if you want to get public or private schemas
+-s, --skip=<value>                     The number of schemas to skip
+-x, --extended                         show extra columns
+--columns=<value>                      only show provided columns (comma-separated)
+--csv                                  output is csv format [alias: --output=csv]
+--filter=<value>                       filter property by partial string matching, ex: name=foo
+--no-header                            hide table header from output
+--no-truncate                          do not truncate output to fit screen
+--sort=<value>                         property to sort by (prepend '-' for descending)
+```
+
+EXAMPLES 
+```
+    $ affinidi list projects
+
+    $ affinidi list schemas
+```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi list --help
+$ affinidi list projects --help
+$ affinidi list schemas --help
+```
+
+
+### **affinidi login**
+Log in with your email address to use Affinidi privacy preserving services. You will receive a confirmation code via email, which you will need to complete the authentication.
+
+USAGE
+```
+$ affinidi login [EMAIL]
+```
+
+You can also simply type this and follow the prompts: 
+```
+$ affinidi login
+```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi login --help
+```
+### **affinidi logout**
+Use this command to end your affinidi session
+
+USAGE
+```
+$ affinidi logout
+```
+
+You can also see the help for the command in the CLI:
+```
+affinidi logout --help
+```
+
+ ### **affinidi show**
+This command displays the details of a resource. The current available resource types are:
+- project
+- schema
+
+USAGE
+```
+$ affinidi show [SUBCOMMAND] [ARG...] [FLAGS]
+```
+
+SUBCOMMANDS
+```
+project         Shows information about a given project
+schema          Shows the details of a schema
+```
+
+FLAGS
+```
+--output json     Overrides default plain text view and shows details in json format
+```
+
+To show a project:
+```
+$ affinidi show [<project-id>] 
+```
+if you simply type this, the CLI will prompt you to choose from a list of available projects: 
+```
+$ affinidi show project
+```
+To show a schema:
+```
+$ affinidi show schema [<schema-id>] [--output json]
+```
+
+EXAMPLES
+```
+$ affinidi show project example-id
+$ affinidi show schema example-id
+  ```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi show --help
+$ affinidi show project --help
+$ affinidi show schema --help
+```
+  ### **affinidi sign-up**
+Create an Affinidi account with this command to use our privacy preserving tools. You will need your email adress, and then confirm the authentication with the code sent to your email.
+
+USAGE
+```
+$ affinidi sign-up [EMAIL]
+```
+
+You can also simply type this and follow the prompts: 
+```
+$ affinidi sign-up
+```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi sign-up --help
+```
+
+ ### **affinidi use**
+The Use command lets you choose and activate a project. An active project is a prerequisite for executing most commands.
+
+USAGE
+```
+$ affinidi use project [<project-id>] [FLAGS]
+```
+
+FLAGS
+```
+-o, --output=(json|json-file)  [default: json] print details of the project to use as JSON
+```  
+
+
+EXAMPLES    
+```
+    $ affinidi use project example-id
+```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi use --help
+$ affinidi use project --help
+```
+
+ ### **affinidi verify-vc**
+Verifies a verifiable credential
+
+USAGE
+```
+$ affinidi verify-vc -d <value>
+```
+FLAGS
+```
+-d, --data=<value>  (required) Source json file with credentials to be verified
+```
+EXAMPLES
+```
+$ affinidi verify-vc -d "/exampleVc.json"
+```
+
+You can also see the help for the command in the CLI:
+```
+$ affinidi verify-vc --help
+```
+&nbsp;
+
+&nbsp;
+
+
+#
+## About Schemas and Verifiable Credentials
+
+Schemas are representations of the properties that define a VC. They are a composite of [JSON Schema](https://json-schema.org/specification.html), [JSON-LD](https://www.w3.org/TR/json-ld11/) context and metadata (description, version and ownership). You can use Affinidi's [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs) to find the right schema for your verifiable credential or to create a new one – either on the basis of an already existing schema,
+or completely from scratch. 
+
+### What is Affinidi's Schema Manager?
+The Schema Manager provides URLs for two kinds of schema representations: JSON Schema and JSON-LD context.
+Any schema can be referenced in a verifiable credential or an application by these URLs. Before creating a new schema for your verifiable credentials, it is recommended to search for an existing one, which may fit your purpose. There are both a number of standard schemas and some user-generated schemas already available in the Schema Manager, and you can search for them by “Credential schema type”. That is why it is important to provide a meaningful and expressive type for your newly created schemas.
+
+### How to structure a schema
+The JSON representation of a schema must follow this structure:
 
 ```
 {
@@ -132,9 +542,9 @@ However, you can always fork your private (unlisted) schema in order to make it 
     <list of required properties>
   ]
 }
-
 ```
-Example:
+
+And here is an example of that structure used to represent a simple form with two fields (`First Name` and `Last Name`):
 ```
 {
   "type": "object",
@@ -156,16 +566,8 @@ Example:
 }
 ```
 
-#### 2 Run a command:
-
-```
-affinidi create schema -d <Description of your schema> -p=<true if public, false if private> -s=<schema.json>
-```
-
-#### 3 In the response you will receive "jsonSchemaUrl" which you should use to issue a verifiable credential.
 
 ### What attribute types are available?
-
 - Nested attribute – a container for attributes
 - DID – a decentralized identifier
   - Example of VC value: "did:example:123"
@@ -245,13 +647,30 @@ Example of schema source with all the types:
 }
 
 ```
+### How to create or find a schema
+1. You can directly create a schema in the CLI with the [`create`](#affinidi-create) command or using the [Schema Manager API](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#/Schema/CreateSchema).
 
-## Issuing a VC
+2. You can list available schemas with the [`list`](#affinidi-list) command or search via the [Schema Manager API](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#/Schema/SearchSchemas) specifying `scope`, `type` or `authorDID`.
 
-### 1 Create a json file with credential subject matching the corresponding schema.
-(refer to properties->credential subject of the schema to figure out the json structure)
+### What is the difference between a version and a revision?
+Essentially, all the revisions of the single version should be compatible with each other,
+whereas new versions could feature breaking changes, e.g. new mandatory fields. Currently, adherence to this principle is not enforced, but it is good to keep in mind when choosing between new version or revision for your forked schema.
 
-Example for https://schema.affinidi.com/EventElegibilityV1-0.json:
+### What does it mean to “publish as searchable schema”?
+
+Schemas can be either public (visible and searchable for everyone ) or
+private (unlisted, visible and searchable only for you).
+When you “publish as searchable schema” (using flag `-p`), you make your schema public.
+
+It is important to remember, that versions and revisions of public and private
+(unlisted) schema are independent of each other,
+and are maintained by the system in parallel.
+However, you can always fork your private (unlisted) schema in order to make it public and vice versa.
+
+### How to structure a JSON file to issue a VC:
+The JSON file that is the source for the VC to be issued must follow the structure of the schema on which the VC is based. Use the properties of the schema's `credentialSubject` as the template for the new VC.
+
+Example for [Event Elegibility Schema](https://schema.affinidi.com/EventElegibilityV1-0.json):
 
 ```
 {
@@ -264,217 +683,51 @@ Example for https://schema.affinidi.com/EventElegibilityV1-0.json:
 }
 ```
 
-### 2 Run the command:
+&nbsp;
 
-```
-affinidi issue-vc <holder-email@example.com> -s=<Schema Url> -d=credential.json -w=<path to holder wallet>
-```
+&nbsp;
 
-where
- - holder-email - email, where a holder will receive a link to VC offer
- - Schema Url - schema url, example: https://schema.affinidi.com/EventElegibilityV1-0.json
- - `<path to holder wallet>` - path to web UI of holder wallet, example: https://holder-reference-app.stg.affinidi.com/holder/claim
+#
+## Feedback & Support
+Click [here](https://github.com/affinidi/affinidi-cli/issues) to create a ticket and we will get on it right away. If you are facing technical or other issues, you can reach out to us on [Discord](https://discord.com/invite/jx2hGBk5xE).
 
-## CLI Commands
-
-## affinidi generate-application
-
-Use this command to generate a Privacy Preserving app
-
-USAGE
-```
-$ affinidi generate-application [-p web|mobile] [-n <value>] [-u portable-reputation|access-without-ownership-of-data|certification-and-verification|kyc-kyb] [-w]
-
-FLAGS
--n, --name=<value>                                                                                            [default: my-app] Name of the application
--p, --platform=(web|mobile)                                                                                   [default: web] Platform
--u, --use-case=(portable-reputation|access-without-ownership-of-data|certification-and-verification|kyc-kyb)  [default: certification-and-verification] Use case
--w, --with-proxy                                                                                              Add backend-proxy to protect credentials
-
-DESCRIPTION
-Use this command to generate a Privacy Preserving app
-
-EXAMPLES
-$ affinidi generate-application
-```
-
-## affinidi help
-Display help for affinidi.
-
-## affinidi login
-
-Log-in with your email address to use Affinidi privacy preserving services.
-
-USAGE
-```
-$ affinidi login [EMAIL]
-```
-
-EXAMPLES
-```
-$ affinidi login
-```
-
-## affinidi sign-up
-
-Use this command to log-in with your email address to use Affinidi privacy preserving services.
-
-USAGE
-```
-$ affinidi sign-up [EMAIL]
-
-```
-EXAMPLES
-```
-$ affinidi sign-up
-```
-
-## affinidi logout
-
-Use this command to end your affinidi session
-
-USAGE
-```
-$ affinidi logout
-```
-
-EXAMPLES
-```
-$ affinidi logout
-```
-
-## affinidi list
-
-The list command to display various resources
-
-USAGE
-```
-$ affinidi list
-```
+&nbsp;
 
 
-Use the list command if you want to display some of your resources
-like the schemas or projects that you've created.
 
-The current available resources are:
-- schemas
-- projects
-  See the command examples in the help:
+## FAQ
+### A note from Affinidi
+Affinidi Developer Tools are currently in the open beta phase and we are refining our product every day. The Affinidi Developer Tools may be incomplete and may contain errors – they may be unstable and may cause a loss of functionality and data. Use of the Affinidi Developer Tools will be at your own risk. As our engineers seek to improve our platform, we would not have the resources to provide any maintenance or tech support at this time. Please bear with us as we continue to improve the platform.
 
-```
-$ affinidi list --help
-```
+### What can I develop?
+You are only limited by your imagination! Affinidi Developer Tools is a toolbox with which you can build software applications for personal or commercial use.
 
-EXAMPLES
-```
-Shows you the list of your projects
+### Is there anything I should not develop?
+We only provide the tools - how you use them is largely up to you. We have no control over what you develop with our tools - but please use our tools responsibly!
 
-    $ affinidi list projects
+We hope that you would not develop anything that contravenes any applicable laws or regulations. Your projects should also not infringe on Affinidi’s or any third party’s intellectual property (for instance, misusing other parties’ data, code, logos, etc).
 
-Shows a list of available schemas
+### What responsibilities do I have to my end-users?
+Please ensure that you have in place your own terms and conditions, privacy policies, and other safeguards to ensure that the projects you build are secure for your end users.
 
-    $ affinidi list schemas
-```
+If you are processing personal data, please protect the privacy and other legal rights of your end-users and store their personal or sensitive information securely.
 
-COMMANDS
-```
-list projects  Perform the action of listing all the projects you created
-list schemas
-```
+Some of our components would also require you to incorporate our end-user notices into your terms and conditions.
 
-## affinidi show
+### Are Affinidi Developer Tools free for use?
+Affinidi Developer Tools are free during the open beta phase, so come onboard and experiment with our tools and see what you can build! We may bill for certain components in the future, but we will inform you beforehand.
 
-The Show command to display the details of a resource
+### Is there any limit or cap to my usage of the Affinidi Developer Tools?
+We may from time to time impose limits on your use of the Affinidi Developer Tools, such as limiting the number of API requests that you may make in a given duration. This is to ensure the smooth operation of the Affinidi Developer Tools so that you and all our other users can have a pleasant experience as we continue to scale and improve the Affinidi Developer Tools.
 
-USAGE
-```
-$ affinidi show
-```
+### Do I need to provide you with anything?
+From time to time, we may request certain information from you to ensure that you are complying with the [Terms of Use](https://build.affinidi.com/dev-tools/terms-of-use.pdf).
 
-Use the show command if you want to display some of your resources
-like the schema or project that you've created.
+### Can I share my developer’s account with others?
+When you create a developer’s account with us, we will issue you your private login credentials. Please do not share this with anyone else, as you would be responsible for activities that happen under your account. If you have friends who are interested, ask them to sign up – let's build together!
 
-The current available resources are:
-- schema
-- project
-  See the command examples in the help:
-```
-$ affinidi show --help
-```
+### Telemetry
+Affinidi collects usage data to improve our products and services. For information on what data we collect and how we use your data, please refer to our [Privacy Policy](https://build.affinidi.com/dev-tools/privacy-policy.pdf).
 
-EXAMPLES
-```
-Shows the details of a schema
-
-    $ affinidi show schema [<schema-id>] [--output json]
-
-Shows information about a specific project that you own.
-
-    $ affinidi show [<project-id>] [--output json]
-```
-COMMANDS
-```
-show project
-show schema
-```
-
-## affinidi use
-
-The Use command selects an entity to work with
-
-USAGE
-```
-$ affinidi use
-```
-
-
-Use the use command if you want to select a project you want to work on.
-
-See the command examples in the help:
-```
-$ affinidi use --help
-```
-
-EXAMPLES
-```
-Use a given project
-
-    $ affinidi use [<project-id>]
-```
-
-## affinidi issue-vc
-
-Issues a verifiable credential based on an given schema
-
-USAGE
-```
-$ affinidi issue-vc [EMAIL] -s <value> -d <value>
-```
-
-FLAGS
-```
--d, --data=<value>    (required) source json file with credential data
--s, --schema=<value>  (required) json schema url
-```
-
-EXAMPLES
-```
-$ affinidi issue-vc
-```
-
-## affinidi verify-vc
-
-Verifies a verifiable credential
-
-USAGE
-```
-$ affinidi verify-vc -d <value>
-```
-FLAGS
-```
--d, --data=<value>  (required) source json file with credentials to be verified
-```
-EXAMPLES
-```
-$ affinidi verify-vc
-```
+Disclaimer:
+Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi Developer Tools, please refer to our [Terms of Use](https://build.affinidi.com/dev-tools/terms-of-use.pdf).
