@@ -5,6 +5,9 @@ import { configService } from '../../services/config'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { getSession } from '../../services/user-management'
 
 export default class View extends Command {
   static command = 'affinidi config view'
@@ -30,9 +33,22 @@ export default class View extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
+    const session = getSession()
 
     configService.setOutputFormat(format)
     displayOutput({ itemToDisplay: `Default output format view is set to ${format}` })
+    const analyticsData: EventDTO = {
+      name: 'CLI_VIEW_FORMAT_CONFIGURED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        format,
+        commandId: 'affinidi.configView',
+        ...generateUserMetadata(session?.account?.label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
   }
 
   async catch(error: CliError) {

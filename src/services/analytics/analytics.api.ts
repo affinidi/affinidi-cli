@@ -112,6 +112,7 @@ export interface EventDTO {
     | 'EXTENSION_INITIALIZED'
     | 'APPLICATION_GENERATION_STARTED'
     | 'APPLICATION_GENERATION_COMPLETED'
+    | 'CLI_VIEW_FORMAT_CONFIGURED'
   /** @example APPLICATION */
   category: 'DID' | 'VC' | 'VP' | 'APPLICATION' | 'JWT'
   subCategory?: string
