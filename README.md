@@ -50,6 +50,27 @@ affinidi create project
 affinidi generate-application -n "My application"
 ```
 
+### Issue a VC for an example schema
+
+- create a file vc.json:
+```
+{
+    "date": "2022-12-11T23:12:00Z",
+    "place": "Awesome Location",
+    "eventName": "Awesome Event",
+    "eventDescription": "Awesome Description",
+    "name": "John Snow",
+    "email": "mail@example.com"
+}
+```
+
+- run a command:
+```
+affinidi issue-vc <REPLACE WITH YOUR EMAIL> -s=https://schema.affinidi.com/TestSchemaV1-4.json -d=vc.json -w=https://holder-reference-app.stg.affinidi.com/holder
+```
+
+- find an email with credential subject and follow the link to view and claim a credential.
+
 ## Schema manager
 
 ### What is Schema manager?
@@ -94,7 +115,7 @@ However, you can always fork your private (unlisted) schema in order to make it 
 
 ### How to create a schema
 
-1 Prepare a json file with schema details:
+#### 1 Prepare a json file with schema details:
 
 ```
 {
@@ -135,13 +156,13 @@ Example:
 }
 ```
 
-2 Run a command:
+#### 2 Run a command:
 
 ```
 affinidi create schema -d <Description of your schema> -p=<true if private, false id public) -s=<schema.json>
 ```
 
-3 In the response you will receive "jsonSchemaUrl" which you should use to issue a verifiable credential.
+#### 3 In the response you will receive "jsonSchemaUrl" which you should use to issue a verifiable credential.
 
 ### What attribute types are available?
 
@@ -225,9 +246,9 @@ Example of schema source with all the types:
 
 ```
 
-### Issuing a VC
+## Issuing a VC
 
-1 Create a json file with credential subject matching the corresponding schema.
+### 1 Create a json file with credential subject matching the corresponding schema.
 (refer to properties->credential subject of the schema to figure out the json structure)
 
 Example for https://schema.affinidi.com/EventElegibilityV1-0.json:
@@ -243,7 +264,7 @@ Example for https://schema.affinidi.com/EventElegibilityV1-0.json:
 }
 ```
 
-2 Run the command:
+### 2 Run the command:
 
 ```
 affinidi issue-vc <holder-email@example.com> -s=<Schema Url> -d=credential.json -w=<path to holder wallet>
@@ -254,7 +275,7 @@ where
  - Schema Url - schema url, example: https://schema.affinidi.com/EventElegibilityV1-0.json
  - `<path to holder wallet>` - path to web UI of holder wallet, example: https://holder-reference-app.stg.affinidi.com/holder/
 
-## Usage
+## CLI Commands
 
 ## affinidi generate-application
 
