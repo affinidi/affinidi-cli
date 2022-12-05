@@ -159,7 +159,7 @@ Example:
 #### 2 Run a command:
 
 ```
-affinidi create schema -d <Description of your schema> -p=<true if private, false id public) -s=<schema.json>
+affinidi create schema -d <Description of your schema> -p=<true if public, false if private> -s=<schema.json>
 ```
 
 #### 3 In the response you will receive "jsonSchemaUrl" which you should use to issue a verifiable credential.
