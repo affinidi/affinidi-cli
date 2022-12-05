@@ -5,8 +5,10 @@ import { StatusCodes } from 'http-status-codes'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { mockSchemaDto } from '../../../src/fixtures/mock-schemas'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
-import { VAULT_KEYS, vaultService } from '../../../src/services'
+import { VAULT_KEYS, configService, vaultService } from '../../../src/services'
 
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const testProjectDid = 'did:elem:AwesomeDID'
 
 const getSchemasOK = async (api: FancyTypes.NockScope) =>
@@ -16,10 +18,12 @@ const getSchemasOK = async (api: FancyTypes.NockScope) =>
 
 describe('list schemas command', () => {
   before(() => {
-    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
     vaultService.set(VAULT_KEYS.projectDID, testProjectDid)
   })
   after(() => {
+    configService.clear()
     vaultService.clear()
   })
   describe('--output json', () => {
