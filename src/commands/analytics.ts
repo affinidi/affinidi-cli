@@ -1,7 +1,7 @@
 import { CliUx, Command } from '@oclif/core'
 
 import { analyticsConsentPrompt } from '../user-actions'
-import { analyticsService } from '../services/analytics'
+import { analyticsService } from '../services'
 
 export const OPTIN_MESSAGE = 'You have opted in to analytics'
 export const OPTOUT_MESSAGE = 'You have not opted in to analytics'

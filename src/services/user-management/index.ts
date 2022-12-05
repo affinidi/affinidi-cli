@@ -56,11 +56,13 @@ export const createSession = (
 export const createConfig = ({
   userId,
   projectId = '',
+  analyticsOptIn,
 }: {
   userId: string
   projectId?: string
+  analyticsOptIn?: boolean
 }): void => {
-  configService.create(userId, projectId)
+  configService.create(userId, projectId, analyticsOptIn)
 }
 
 class UserManagementService {

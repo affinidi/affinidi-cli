@@ -14,11 +14,12 @@ import {
   notFoundProject,
 } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { VAULT_KEYS, vaultService } from '../../../src/services'
-import { configService, getMajorVersion, testStore } from '../../../src/services/config'
+import { configService, vaultService } from '../../../src/services'
+import { getMajorVersion, testStore } from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const testOTP = '123456'
 const validCookie =
   'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOGVmY2M3MC1iYmUxLTQ1N2EtYTZjNy1iMjlhZDk5MTM2NDgiLCJ1c2VybmFtZSI6InZhbGlkQGVtYWlsLWFkZHJlc3MuY29tIiwiYWNjZXNzVG9rZW4iOiJtb2NrZWQtYWNjZXNzLXRva2VuIiwiZXhwIjoxNjY4MDA0Njk3LCJpYXQiOjE2Njc5MTgyOTd9.WDOeDB6PwFkmXWhe4zmMnltJGB44ayvDYaHDKJlcZEQ; Domain=affinidi.com; Path=/; Expires=Wed, 09 Nov 2022 14:38:17 GMT; HttpOnly; Secure; SameSite=Lax'
@@ -95,7 +96,8 @@ describe('login command', () => {
 
       describe('And When the user has no project', () => {
         before(() => {
-          vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+          configService.create(testUserId, testProjectId)
+          configService.optInOrOut(true)
         })
         after(() => {
           vaultService.clear()
@@ -118,7 +120,8 @@ describe('login command', () => {
 
       describe('And When the user has 1 project', () => {
         before(() => {
-          vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+          configService.create(testUserId, testProjectId)
+          configService.optInOrOut(true)
         })
         after(() => {
           clearSessionAndConfig()
@@ -167,7 +170,8 @@ describe('login command', () => {
 
       describe('And When the user has several projects', () => {
         before(() => {
-          vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+          configService.create(testUserId, testProjectId)
+          configService.optInOrOut(true)
         })
         after(() => {
           clearSessionAndConfig()

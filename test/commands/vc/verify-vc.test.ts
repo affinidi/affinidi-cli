@@ -11,9 +11,11 @@ import {
   WrongFileType,
 } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { VAULT_KEYS, vaultService } from '../../../src/services'
+import { configService } from '../../../src/services'
 import * as authentication from '../../../src/middleware/authentication'
 
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const doNothing = () => {}
 const vcFile = 'som/vs/file.json'
 const verifyVcResponse = {
@@ -22,10 +24,11 @@ const verifyVcResponse = {
 }
 describe('verify-vc', () => {
   before(() => {
-    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
   })
   after(() => {
-    vaultService.clear()
+    configService.clear()
   })
   test
     .nock(`${VERIFIER_URL}`, (api) =>

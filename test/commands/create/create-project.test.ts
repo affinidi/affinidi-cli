@@ -8,16 +8,19 @@ import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { IAM_URL } from '../../../src/services/iam'
 import * as prompts from '../../../src/user-actions'
 import * as authentication from '../../../src/middleware/authentication'
-import { vaultService, VAULT_KEYS } from '../../../src/services'
+import { configService } from '../../../src/services'
 
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const doNothing = () => {}
 
 describe('create project command', () => {
-  before(() => {
-    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+  beforeEach(() => {
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
   })
-  after(() => {
-    vaultService.clear()
+  afterEach(() => {
+    configService.clear()
   })
   test
     .nock(`${IAM_URL}`, (api) =>

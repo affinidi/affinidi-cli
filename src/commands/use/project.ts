@@ -88,7 +88,8 @@ export default class Project extends Command {
         ...generateUserMetadata(session?.account?.label),
       },
     }
-    configService.create(userId, projectToBeActive?.project?.projectId)
+
+    configService.setCurrentProjectId(projectToBeActive?.project?.projectId)
     await analyticsService.eventsControllerSend(analyticsData)
     if (projectToBeActive.apiKey?.apiKeyHash) {
       projectToBeActive.apiKey.apiKeyHash = ''.padEnd(

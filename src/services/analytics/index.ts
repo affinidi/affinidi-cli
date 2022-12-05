@@ -1,5 +1,5 @@
 import { CliError } from '../../errors'
-import { vaultService, VAULT_KEYS } from '../vault'
+import { configService } from '../config'
 import { Api as AnalyticsApi, EventDTO } from './analytics.api'
 
 export const ANALYTICS_URL = 'https://analytics-stream.prod.affinity-project.org'
@@ -33,15 +33,15 @@ class AnalyticsService {
   ) {}
 
   public hasOptedInOrOut(): boolean {
-    return ['true', 'false'].includes(vaultService.get(VAULT_KEYS.analyticsOptIn))
+    return [false, true].includes(configService.hasAnalyticsOptIn())
   }
 
   public hasAnalyticsOptIn(): boolean {
-    return vaultService.get(VAULT_KEYS.analyticsOptIn) === 'true'
+    return configService.hasAnalyticsOptIn()
   }
 
-  public setAnalyticsOptIn(value: boolean) {
-    vaultService.set(VAULT_KEYS.analyticsOptIn, value.toString())
+  public setAnalyticsOptIn(value: boolean): void {
+    return configService.optInOrOut(value)
   }
 
   public eventsControllerSend = async (data: EventDTO) => {

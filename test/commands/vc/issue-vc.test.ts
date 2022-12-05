@@ -6,7 +6,7 @@ import { CliUx } from '@oclif/core'
 import { ServiceDownError, Unauthorized, WrongFileType } from '../../../src/errors'
 import * as prompts from '../../../src/user-actions'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { VAULT_KEYS, vaultService } from '../../../src/services'
+import { configService } from '../../../src/services'
 import * as authentication from '../../../src/middleware/authentication'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
@@ -43,16 +43,19 @@ const offerResponse = {
   },
 }
 const EXAMPLE_EMAIL = 'example@email.com'
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const doNothing = () => {}
 const jsonFile = 'some-user/some-folder/someFile.json'
 const csvFile = 'some-user/some-folder/someFile.csv'
 
 describe('issue-vc', () => {
   before(() => {
-    vaultService.set(VAULT_KEYS.analyticsOptIn, 'true')
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
   })
   after(() => {
-    vaultService.clear()
+    configService.clear()
   })
   test
     .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').reply(StatusCodes.OK, issuanceRespnse))

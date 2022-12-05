@@ -50,7 +50,6 @@ export default class SignUp extends Command {
     }
 
     const wantsToOptIn = await analyticsConsentPrompt()
-    analyticsService.setAnalyticsOptIn(wantsToOptIn)
 
     // http request to affinidi sign-up endpoint
     CliUx.ux.action.start('Start signing-up to Affinidi')
@@ -73,7 +72,7 @@ export default class SignUp extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
-    createConfig({ userId })
+    createConfig({ userId, analyticsOptIn: wantsToOptIn })
 
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_UP',
