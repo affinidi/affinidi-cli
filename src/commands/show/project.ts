@@ -115,7 +115,7 @@ export default class ShowProject extends Command {
       const { flags } = await this.parse(ShowProject)
       optionsDisplay.flag = flags.view
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }

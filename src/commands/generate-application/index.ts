@@ -170,7 +170,7 @@ export default class GenerateApplication extends Command {
       const { flags } = await this.parse(GenerateApplication)
       optionsDisplay.flag = flags.view
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }

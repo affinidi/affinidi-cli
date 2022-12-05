@@ -114,7 +114,7 @@ export default class Schema extends Command {
       const { flags } = await this.parse(Schema)
       optionsDisplay.flag = flags.view
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }

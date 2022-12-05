@@ -76,7 +76,7 @@ export default class Logout extends Command {
       const { flags } = await this.parse(Logout)
       optionsDisplay.flag = flags.view
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }

@@ -37,7 +37,7 @@ export const conditionsAndPolicyMessage = `
 `
 
 export const listCommandDescription = buildCommandDescription('list', ['schemas', 'projects'])
-export const configCommandDescription = buildCommandDescription('config', ['output', 'error'])
+export const configCommandDescription = buildCommandDescription('config', ['view'])
 export const showCommandDescription = buildCommandDescription('show', ['schema', 'project'])
 
 export const useCommandDescription = chalk`

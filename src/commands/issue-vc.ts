@@ -174,7 +174,7 @@ export default class IssueVc extends Command {
       const { flags } = await this.parse(IssueVc)
       optionsDisplay.flag = flags.view
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }

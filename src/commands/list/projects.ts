@@ -117,7 +117,7 @@ export default class Projects extends Command {
         optionsDisplay.flag = 'json'
       }
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }

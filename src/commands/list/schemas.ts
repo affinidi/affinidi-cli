@@ -176,7 +176,7 @@ export default class Schemas extends Command {
         optionsDisplay.flag = 'json'
       }
       displayOutput(optionsDisplay)
-    } catch (error2) {
+    } catch (_) {
       displayOutput(optionsDisplay)
     }
   }
