@@ -32,7 +32,8 @@ export default class Schema extends Command {
 
   static usage = 'create schema [schemaName] [FLAGS]'
 
-  static description = 'Use this command to create a new Schema for your verifiable credential.'
+  static description =
+    'Use this command to create a new Schema for your verifiable credential. Refer to https://github.com/affinidi/affinidi-cli/blob/main/README.md#schema-manager for more details and examples.'
 
   static flags = {
     public: Flags.enum<'true' | 'false'>({
