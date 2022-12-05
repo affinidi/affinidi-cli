@@ -273,7 +273,7 @@ affinidi issue-vc <holder-email@example.com> -s=<Schema Url> -d=credential.json 
 where
  - holder-email - email, where a holder will receive a link to VC offer
  - Schema Url - schema url, example: https://schema.affinidi.com/EventElegibilityV1-0.json
- - `<path to holder wallet>` - path to web UI of holder wallet, example: https://holder-reference-app.stg.affinidi.com/holder/
+ - `<path to holder wallet>` - path to web UI of holder wallet, example: https://holder-reference-app.stg.affinidi.com/holder/claim
 
 ## CLI Commands
 
