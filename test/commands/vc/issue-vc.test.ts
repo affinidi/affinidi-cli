@@ -6,6 +6,8 @@ import { CliUx } from '@oclif/core'
 import { ServiceDownError, Unauthorized, WrongFileType } from '../../../src/errors'
 import * as prompts from '../../../src/user-actions'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
+import { configService } from '../../../src/services'
+import * as authentication from '../../../src/middleware/authentication'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
 const issuanceRespnse = {
@@ -41,12 +43,20 @@ const offerResponse = {
   },
 }
 const EXAMPLE_EMAIL = 'example@email.com'
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const doNothing = () => {}
 const jsonFile = 'some-user/some-folder/someFile.json'
 const csvFile = 'some-user/some-folder/someFile.csv'
-const projectId = 'some-project-id'
 
 describe('issue-vc', () => {
+  before(() => {
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
+  })
+  after(() => {
+    configService.clear()
+  })
   test
     .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').reply(StatusCodes.OK, issuanceRespnse))
     .nock(`${ISSUANCE_URL}`, (api) =>
@@ -57,6 +67,7 @@ describe('issue-vc', () => {
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
+    .stub(authentication, 'isAuthenticated', () => true)
     .stdout()
     .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
     .it('runs issue-vc single issuance', (ctx) => {
@@ -71,6 +82,7 @@ describe('issue-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
       .it('runs issue-vc bulk issuance', (ctx) => {
@@ -86,6 +98,7 @@ describe('issue-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
       .it('runs issue-vc when not authenticated bulk flag is true', (ctx) => {
@@ -100,6 +113,7 @@ describe('issue-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
       .it('runs issue-vc when not authenticated', (ctx) => {
@@ -115,6 +129,7 @@ describe('issue-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
       .it('runs issue-vc when not authenticated bulk flag true', (ctx) => {
@@ -130,6 +145,7 @@ describe('issue-vc', () => {
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
       .it('runs issue-vc when not authenticated', (ctx) => {
@@ -144,6 +160,7 @@ describe('issue-vc', () => {
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, '-d file/system', '-b'])
       .it('runs issue-vc with invalid directory provided bulk flag is true', (ctx) => {
@@ -159,6 +176,7 @@ describe('issue-vc', () => {
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, '-d file/system'])
       .it('runs issue-vc with invalid directory provided', (ctx) => {

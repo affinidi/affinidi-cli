@@ -6,6 +6,7 @@ import {
   enterEmailPrompt,
   enterOTPPrompt,
   AnswerYes,
+  analyticsConsentPrompt,
 } from '../../user-actions'
 import { userManagementService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
@@ -48,6 +49,8 @@ export default class SignUp extends Command {
       return
     }
 
+    const wantsToOptIn = await analyticsConsentPrompt()
+
     // http request to affinidi sign-up endpoint
     CliUx.ux.action.start('Start signing-up to Affinidi')
     const token = await userManagementService.signUp(email)
@@ -69,7 +72,7 @@ export default class SignUp extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
-    createConfig({ userId })
+    createConfig({ userId, analyticsOptIn: wantsToOptIn })
 
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_UP',

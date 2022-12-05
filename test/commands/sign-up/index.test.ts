@@ -6,25 +6,25 @@ import { getWelcomeUserRawMessages } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
 import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
-import { ANALYTICS_URL } from '../../../src/services/analytics'
-import { vaultService } from '../../../src/services'
-import { configService, getMajorVersion, testStore } from '../../../src/services/config'
+import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
+import { configService, vaultService } from '../../../src/services'
+import { getMajorVersion } from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
 const validCookie =
   'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOGVmY2M3MC1iYmUxLTQ1N2EtYTZjNy1iMjlhZDk5MTM2NDgiLCJ1c2VybmFtZSI6InZhbGlkQGVtYWlsLWFkZHJlc3MuY29tIiwiYWNjZXNzVG9rZW4iOiJtb2NrZWQtYWNjZXNzLXRva2VuIiwiZXhwIjoxNjY4MDA0Njk3LCJpYXQiOjE2Njc5MTgyOTd9.WDOeDB6PwFkmXWhe4zmMnltJGB44ayvDYaHDKJlcZEQ; Domain=affinidi.com; Path=/; Expires=Wed, 09 Nov 2022 14:38:17 GMT; HttpOnly; Secure; SameSite=Lax'
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const testOTP = '123456'
 const doNothing = () => {}
 
 const clearSessionAndConfig = () => {
   vaultService.clear()
-  testStore.clear()
+  configService.clear()
 }
 
-after(clearSessionAndConfig)
-
 describe('sign-up command', () => {
+  after(clearSessionAndConfig)
   test
     .stdout()
     .stub(prompts, 'enterEmailPrompt', () => async () => 'invalid.email.address')
@@ -48,7 +48,10 @@ describe('sign-up command', () => {
     })
 
     describe('When user accepts the conditions and policy', () => {
-      before(clearSessionAndConfig)
+      before(() => {
+        clearSessionAndConfig()
+        configService.create(testUserId, testProjectId)
+      })
       test
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
           api.post('/auth/signup').reply(StatusCodes.OK, { token: 'some-valid-token' }),
@@ -63,6 +66,7 @@ describe('sign-up command', () => {
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
         .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
+        .stub(prompts, 'analyticsConsentPrompt', () => async () => true)
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['sign-up'])
@@ -78,6 +82,8 @@ describe('sign-up command', () => {
           expect(config.configs).to.haveOwnProperty(testUserId)
           expect(config.configs[testUserId].activeProjectId).to.equal('')
           expect(config.configs[testUserId].outputFormat).to.equal('plaintext')
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          expect(analyticsService.hasAnalyticsOptIn()).to.be.true
         })
     })
   })

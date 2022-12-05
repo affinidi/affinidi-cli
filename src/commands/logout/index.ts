@@ -43,8 +43,8 @@ export default class Logout extends Command {
     }
 
     await userManagementService.signout({ token })
-    vaultService.clear()
     await analyticsService.eventsControllerSend(analyticsData)
+    vaultService.clear()
     CliUx.ux.info("Thank you for using Affinidi's services")
   }
 

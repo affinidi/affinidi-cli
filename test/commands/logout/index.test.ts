@@ -3,11 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { expect } from 'chai'
 
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import {
-  createConfig,
-  createSession,
-  USER_MANAGEMENT_URL,
-} from '../../../src/services/user-management'
+import { createSession, USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 import { vaultService, VAULT_KEYS } from '../../../src/services'
 import { configService, getMajorVersion } from '../../../src/services/config'
@@ -18,7 +14,11 @@ const testProjectId = 'random-test-project-id'
 describe('logout command', () => {
   before(() => {
     createSession('email', testUserId, 'sessionToken')
-    createConfig({ userId: testUserId, projectId: testProjectId })
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
+  })
+  after(() => {
+    configService.clear()
   })
   test
     .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))

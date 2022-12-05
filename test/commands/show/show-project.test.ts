@@ -5,12 +5,22 @@ import { CliUx } from '@oclif/core'
 import { IAM_URL } from '../../../src/services/iam'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
-import { vaultService, VAULT_KEYS } from '../../../src/services'
+import { configService, vaultService, VAULT_KEYS } from '../../../src/services'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import * as authentication from '../../../src/middleware/authentication'
 
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 const doNothing = () => {}
+
 describe('project', () => {
+  before(() => {
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
+  })
+  after(() => {
+    configService.clear()
+  })
   test
     .nock(`${IAM_URL}`, (api) =>
       api

@@ -91,7 +91,6 @@ export default class Login extends Command {
   }
 
   async catch(error: CliError) {
-    console.log(error)
     CliUx.ux.action.stop('failed')
     CliUx.ux.info(getErrorOutput(error, Login.command, Login.usage, Login.description))
   }

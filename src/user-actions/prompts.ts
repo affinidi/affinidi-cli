@@ -44,3 +44,10 @@ export const enterSchemaName = async (
 ): Promise<string> => {
   return CliUx.ux.prompt(text, { required: true })
 }
+
+export const analyticsConsentPrompt = async (
+  text: string = 'Help us make Affinidi CLI better! Do you accept to send anonymous usage data? [y/N]',
+): Promise<boolean> => {
+  const prompt = await CliUx.ux.prompt(text, { default: 'n' })
+  return prompt.toLowerCase() === 'y'
+}

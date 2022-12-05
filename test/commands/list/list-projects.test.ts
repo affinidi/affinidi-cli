@@ -5,8 +5,19 @@ import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { projectList } from '../../../src/fixtures/mock-projects'
 import * as authentication from '../../../src/middleware/authentication'
 import { IAM_URL } from '../../../src/services/iam'
+import { configService } from '../../../src/services'
+
+const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const testProjectId = 'random-test-project-id'
 
 describe('projects', () => {
+  before(() => {
+    configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
+  })
+  after(() => {
+    configService.clear()
+  })
   test
     .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))

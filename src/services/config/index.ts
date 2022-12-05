@@ -2,6 +2,7 @@ import Conf from 'conf'
 import * as os from 'os'
 import * as path from 'path'
 
+import { NoUserConfigFound } from '../../errors'
 import { version } from '../../constants'
 
 export const getMajorVersion = (): number => {
@@ -13,6 +14,7 @@ type UserId = string
 type UserConfig = {
   activeProjectId: string
   outputFormat: string
+  analyticsOptIn?: boolean
 }
 
 type ConfigStoreFormat = {
@@ -23,10 +25,11 @@ type ConfigStoreFormat = {
 
 interface IConfigStorer {
   save(params: ConfigStoreFormat): void
-  // clear(): void
+  clear(): void
   getVersion: () => number
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
+  setCurrentProjectId: (id: string) => void
 }
 
 class ConfigService {
@@ -34,6 +37,10 @@ class ConfigService {
 
   constructor(store: IConfigStorer) {
     this.store = store
+  }
+
+  public clear = (): void => {
+    this.store.clear()
   }
 
   public getVersion = (): number => {
@@ -47,7 +54,11 @@ class ConfigService {
     return { version: configVersion, currentUserId, configs }
   }
 
-  public create = (userId: string, activeProjectId: string = ''): void => {
+  public create = (
+    userId: string,
+    activeProjectId: string = '',
+    analyticsOptIn: boolean | undefined = undefined,
+  ): void => {
     this.store.save({
       currentUserId: userId,
       version: getMajorVersion(),
@@ -55,13 +66,45 @@ class ConfigService {
         [userId]: {
           activeProjectId,
           outputFormat: 'plaintext',
+          analyticsOptIn,
         },
       },
     })
   }
+
+  public currentUserConfig = (): UserConfig => {
+    const user = this.store.getCurrentUser()
+    const configs = this.store.getAllUserConfigs()
+    if (!configs[user]) {
+      throw Error(NoUserConfigFound)
+    }
+
+    return configs[user]
+  }
+
+  public hasAnalyticsOptIn = (): boolean | undefined => {
+    const config = this.currentUserConfig()
+    return config.analyticsOptIn
+  }
+
+  public optInOrOut = (inOrOut: boolean) => {
+    const userConfig = this.currentUserConfig()
+    userConfig.analyticsOptIn = inOrOut
+    const all = this.show()
+    const user = all.currentUserId
+    const updateConfigFile = {
+      ...all,
+      configs: Object.assign(all.configs, { [user]: { ...userConfig } }),
+    }
+    this.store.save(updateConfigFile)
+  }
+
+  public setCurrentProjectId = (id: string): void => {
+    this.store.setCurrentProjectId(id)
+  }
 }
 
-const configConf = new Conf({
+const configConf = new Conf<ConfigStoreFormat>({
   cwd: path.join(os.homedir(), '.affinidi'),
   configName: 'config',
 })
@@ -74,18 +117,28 @@ const store: IConfigStorer = {
     configConf.set('configs', params.configs)
   },
 
+  clear: (): void => {
+    configConf.clear()
+  },
+
   getVersion: (): number | null => {
     const v = Number(configConf.get('version'))
     return Number.isNaN(v) ? null : v
   },
 
-  getCurrentUser: (): string => {
+  getCurrentUser: function getCurrentUser(): string {
     const value = configConf.get('currentUserID')
     return typeof value === 'string' ? value : ''
   },
 
   getAllUserConfigs: (): Record<string, UserConfig> => {
-    throw new Error('Function not implemented.')
+    return configConf.get('configs')
+  },
+
+  setCurrentProjectId: function setCurrentProjectId(id: string): void {
+    const configs = configConf.get('configs')
+    configs[this.getCurrentUser()].activeProjectId = id
+    configConf.set('configs', configs)
   },
 }
 
@@ -96,15 +149,25 @@ const testStorer: IConfigStorer = {
     testStore.set('currentUserID', params.currentUserId)
     testStore.set('configs', params.configs)
   },
+
+  clear: (): void => {
+    testStore.clear()
+  },
+
   getVersion: (): number => {
     return testStore.get('version')
   },
 
-  getCurrentUser: (): string => {
+  getCurrentUser: function getCurrentUser(): string {
     return testStore.get('currentUserID')
   },
-  getAllUserConfigs: (): Record<string, UserConfig> => {
+  getAllUserConfigs: function getAllUserConfigs(): Record<string, UserConfig> {
     return testStore.get('configs')
+  },
+  setCurrentProjectId: function setCurrentProjectId(id: string): void {
+    const configs = this.getAllUserConfigs()
+    configs[this.getCurrentUser()].activeProjectId = id
+    testStore.set('configs', configs)
   },
 }
 

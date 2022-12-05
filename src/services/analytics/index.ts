@@ -1,4 +1,5 @@
 import { CliError } from '../../errors'
+import { configService } from '../config'
 import { Api as AnalyticsApi, EventDTO } from './analytics.api'
 
 export const ANALYTICS_URL = 'https://analytics-stream.prod.affinity-project.org'
@@ -31,7 +32,23 @@ class AnalyticsService {
     }),
   ) {}
 
+  public hasOptedInOrOut(): boolean {
+    return [false, true].includes(configService.hasAnalyticsOptIn())
+  }
+
+  public hasAnalyticsOptIn(): boolean {
+    return configService.hasAnalyticsOptIn()
+  }
+
+  public setAnalyticsOptIn(value: boolean): void {
+    return configService.optInOrOut(value)
+  }
+
   public eventsControllerSend = async (data: EventDTO) => {
+    if (!this.hasAnalyticsOptIn()) {
+      return
+    }
+
     try {
       // TODO: this toke is going to expire in 180 days, generate new one before it expires. Created on 22/11/2022.
       const JWT_TOKEN =
