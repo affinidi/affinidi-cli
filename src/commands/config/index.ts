@@ -1,5 +1,4 @@
 import { Command, Interfaces } from '@oclif/core'
-import { getSession } from '../../services/user-management'
 import { displayOutput } from '../../middleware/display'
 
 import { buildInvalidCommandUsage, configCommandDescription } from '../../render/texts'

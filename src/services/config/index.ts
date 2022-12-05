@@ -26,7 +26,7 @@ type ConfigStoreFormat = {
 interface IConfigStorer {
   save(params: ConfigStoreFormat): void
   clear(): void
-  setOutputFormat(userId: string, outputFormat: string): void
+  setOutputFormat(outputFormat: string): void
   getVersion: () => number
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
@@ -63,6 +63,7 @@ class ConfigService {
   public getOutputFormat = (): string => {
     return this.store.getOutputFormat()
   }
+
   public create = (
     userId: string,
     activeProjectId: string = '',

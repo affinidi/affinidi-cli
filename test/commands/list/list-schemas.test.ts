@@ -33,7 +33,8 @@ describe('list schemas command', () => {
       .stdout()
       .command(['list schemas'])
       .it('runs list schemas and shows schemas in json format', (ctx) => {
-        expect(() => JSON.parse(ctx.stdout)).not.to.throw()
+        expect(ctx.stdout).to.contain(mockSchemaDto.schemas[0].id)
+        expect(ctx.stdout).to.contain(mockSchemaDto.schemas[1].id)
       })
 
     test

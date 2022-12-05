@@ -19,7 +19,6 @@ describe('view', () => {
       createConfig({ userId: testUserId, projectId: testProjectId })
     })
     test
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['config view', 'json'])
       .it('it runs config view to change default output view to json', (ctx) => {
@@ -35,7 +34,6 @@ describe('view', () => {
       configService.setOutputFormat('json')
     })
     test
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['config view', 'plaintext'])
       .it('it runs config view to change default output view to plaintext', (ctx) => {
