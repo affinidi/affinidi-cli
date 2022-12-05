@@ -16,11 +16,7 @@ export default class Config extends Command {
   static examples: Interfaces.Example[] = [
     {
       description: 'Configures output format view:',
-      command: '$ <%= config.bin %> <%= command.id %> output',
-    },
-    {
-      description: 'Configures errors format view:',
-      command: '$ <%= config.bin %> <%= command.id %> error',
+      command: '$ <%= config.bin %> <%= command.id %> view',
     },
   ]
 
