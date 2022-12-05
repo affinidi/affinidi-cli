@@ -28,12 +28,18 @@ export default class IssueVc extends Command {
 
   static usage = 'issue-vc [email] [FLAGS]'
 
-  static description = 'Issues a verifiable credential based on an given schema.'
+  static description =
+    'Issues a verifiable credential based on an given schema. Refer to https://github.com/affinidi/affinidi-cli/blob/main/README.md#issuing-a-vc for more details and examples.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    schema: Flags.string({ char: 's', description: 'json schema url', required: true }),
+    schema: Flags.string({
+      char: 's',
+      description:
+        'json schema url. Example: https://schema.affinidi.com/EventElegibilityV1-0.json',
+      required: true,
+    }),
     data: Flags.string({
       char: 'd',
       description: 'the source file with credential data, either .json or .csv',
