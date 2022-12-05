@@ -1,4 +1,6 @@
 import { expect, test } from '@oclif/test'
+import { StatusCodes } from 'http-status-codes'
+import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { Unauthorized } from '../../../src/errors'
 import { vaultService } from '../../../src/services'
 import { configService } from '../../../src/services/config'
@@ -17,6 +19,7 @@ describe('view', () => {
       createConfig({ userId: testUserId, projectId: testProjectId })
     })
     test
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['config view', 'json'])
       .it('it runs config view to change default output view to json', (ctx) => {
@@ -32,6 +35,7 @@ describe('view', () => {
       configService.setOutputFormat('json')
     })
     test
+      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['config view', 'plaintext'])
       .it('it runs config view to change default output view to plaintext', (ctx) => {
