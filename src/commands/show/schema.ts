@@ -43,8 +43,8 @@ export default class Schema extends Command {
       description: 'The details of the schema to show',
       default: 'info',
     }),
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -94,7 +94,7 @@ export default class Schema extends Command {
     }
 
     CliUx.ux.action.stop('')
-    displayOutput({ itemToDisplay: output, flag: flags.view })
+    displayOutput({ itemToDisplay: output, flag: flags.output })
   }
 
   protected async catch(error: CliError): Promise<void> {
@@ -112,7 +112,7 @@ export default class Schema extends Command {
     }
     try {
       const { flags } = await this.parse(Schema)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

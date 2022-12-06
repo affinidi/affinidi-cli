@@ -75,8 +75,8 @@ export default class GenerateApplication extends Command {
       description: 'Add BE-proxy to protect credentials',
       default: false,
     }),
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -116,7 +116,7 @@ export default class GenerateApplication extends Command {
         case UseCasesAppNames.accessWithoutOwnershipOfData:
         case UseCasesAppNames.portableReputation:
         case UseCasesAppNames.kycKyb:
-          displayOutput({ itemToDisplay: 'Not implemented yet', flag: flags.view })
+          displayOutput({ itemToDisplay: 'Not implemented yet', flag: flags.output })
           break
         default:
           throw new CliError(InvalidUseCase, 0, 'reference-app')
@@ -135,7 +135,7 @@ export default class GenerateApplication extends Command {
     } catch (error) {
       displayOutput({
         itemToDisplay: `Failed to generate an application: ${error.message}`,
-        flag: flags.view,
+        flag: flags.output,
         err: true,
       })
       return
@@ -149,7 +149,7 @@ export default class GenerateApplication extends Command {
     const appPath = path.resolve(`${process.cwd()}/${name}`)
     displayOutput({
       itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, withProxy),
-      flag: flags.view,
+      flag: flags.output,
     })
   }
 
@@ -168,7 +168,7 @@ export default class GenerateApplication extends Command {
     }
     try {
       const { flags } = await this.parse(GenerateApplication)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)
@@ -185,7 +185,7 @@ export default class GenerateApplication extends Command {
       throw Error(Unauthorized)
     }
 
-    displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.view })
+    displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.output })
 
     try {
       if (withProxy) {
@@ -225,7 +225,7 @@ export default class GenerateApplication extends Command {
     } catch (error) {
       displayOutput({
         itemToDisplay: `Failed to set up project: ${error.message}`,
-        flag: flags.view,
+        flag: flags.output,
         err: true,
       })
     }

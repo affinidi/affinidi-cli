@@ -36,8 +36,8 @@ export default class Projects extends Command {
       description: 'Maximum number of projects which will be listed',
       default: 10,
     }),
-    view: Flags.enum<ListProjectsOutputType>({
-      char: 'v',
+    output: Flags.enum<ListProjectsOutputType>({
+      char: 'o',
       description: 'Project listing output format',
       options: ['json', 'table', 'csv'],
     }),
@@ -46,7 +46,7 @@ export default class Projects extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
     const { skip, limit } = flags
-    let output = flags.view
+    let { output } = flags
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
@@ -71,7 +71,7 @@ export default class Projects extends Command {
     const outputFormat = configService.getOutputFormat()
     if (!output && outputFormat === 'plaintext') {
       output = 'table'
-    } else if (!flags.view) {
+    } else if (!flags.output) {
       output = 'json'
     }
     switch (output) {
@@ -111,9 +111,9 @@ export default class Projects extends Command {
     }
     try {
       const { flags } = await this.parse(Projects)
-      if (flags.view === 'table') {
+      if (flags.output === 'table') {
         optionsDisplay.flag = 'plaintext'
-      } else if (flags.view === 'json') {
+      } else if (flags.output === 'json') {
         optionsDisplay.flag = 'json'
       }
       displayOutput(optionsDisplay)

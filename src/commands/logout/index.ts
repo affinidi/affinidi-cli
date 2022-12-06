@@ -20,8 +20,8 @@ export default class Logout extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -57,7 +57,7 @@ export default class Logout extends Command {
     await userManagementService.signout({ token })
     vaultService.clear()
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput({ itemToDisplay: "Thank you for using Affinidi's services", flag: flags.view })
+    displayOutput({ itemToDisplay: "Thank you for using Affinidi's services", flag: flags.output })
   }
 
   async catch(error: CliError) {
@@ -74,7 +74,7 @@ export default class Logout extends Command {
     }
     try {
       const { flags } = await this.parse(Logout)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

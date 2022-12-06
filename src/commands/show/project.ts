@@ -27,8 +27,8 @@ export default class ShowProject extends Command {
     active: Flags.boolean({
       char: 'a',
     }),
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -61,7 +61,7 @@ export default class ShowProject extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.view })
+        displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -93,7 +93,7 @@ export default class ShowProject extends Command {
       projectData.wallet.didUrl = ''.padEnd(projectData.wallet.didUrl?.length, '*')
     }
 
-    displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.view })
+    displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.output })
 
     CliUx.ux.action.stop('')
   }
@@ -113,7 +113,7 @@ export default class ShowProject extends Command {
     }
     try {
       const { flags } = await this.parse(ShowProject)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

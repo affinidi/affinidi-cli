@@ -53,8 +53,8 @@ export default class Schema extends Command {
       description: 'path to the json file with schema properties',
       required: true,
     }),
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -153,7 +153,7 @@ export default class Schema extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput({ itemToDisplay: JSON.stringify(schemaInfo, null, '  '), flag: flags.view })
+    displayOutput({ itemToDisplay: JSON.stringify(schemaInfo, null, '  '), flag: flags.output })
   }
 
   async catch(error: CliError) {
@@ -174,7 +174,7 @@ export default class Schema extends Command {
     }
     try {
       const { flags } = await this.parse(Schema)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

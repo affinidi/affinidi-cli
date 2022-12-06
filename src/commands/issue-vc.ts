@@ -65,8 +65,8 @@ export default class IssueVc extends Command {
       description: 'configure your own wallet to store VCs',
       default: 'https://wallet.affinidi.com/claim',
     }),
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       options: ['plaintext', 'json'],
       description: 'set flag to override default output format view',
     }),
@@ -138,7 +138,7 @@ export default class IssueVc extends Command {
       throw new CliError(`${WrongFileType}${expectedExtension} file`, 0, 'issuance')
     }
     CliUx.ux.action.stop('')
-    displayOutput({ itemToDisplay: JSON.stringify(issuanceId), flag: flags.view })
+    displayOutput({ itemToDisplay: JSON.stringify(issuanceId), flag: flags.output })
 
     const analyticsData: EventDTO = {
       name: 'BULK_VC_ISSUED',
@@ -172,7 +172,7 @@ export default class IssueVc extends Command {
     }
     try {
       const { flags } = await this.parse(IssueVc)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

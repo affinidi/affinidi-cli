@@ -28,8 +28,8 @@ export default class Login extends Command {
   static args = [{ name: 'email' }]
 
   static flags = {
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -85,24 +85,24 @@ export default class Login extends Command {
     await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
-    displayOutput({ itemToDisplay: 'You are authenticated', flag: flags.view })
-    displayOutput({ itemToDisplay: `Welcome back to Affinidi ${email}!`, flag: flags.view })
+    displayOutput({ itemToDisplay: 'You are authenticated', flag: flags.output })
+    displayOutput({ itemToDisplay: `Welcome back to Affinidi ${email}!`, flag: flags.output })
     if (projectsList.length === 0) {
-      displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.view })
+      displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
       return
     }
 
     if (projectsList.length === 1) {
       const projectId = projectsList.shift()?.projectId
-      if (flags.view) {
-        await UseProject.run([projectId, `--view=${flags.view}`])
+      if (flags.output) {
+        await UseProject.run([projectId, `--view=${flags.output}`])
         return
       }
       await UseProject.run([projectId])
       return
     }
 
-    await UseProject.run([flags.view ? `--view=${flags.view}` : ''])
+    await UseProject.run([flags.output ? `--view=${flags.output}` : ''])
   }
 
   async catch(error: CliError) {
@@ -120,7 +120,7 @@ export default class Login extends Command {
     }
     try {
       const { flags } = await this.parse(Login)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

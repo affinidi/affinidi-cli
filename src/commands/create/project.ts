@@ -26,8 +26,8 @@ export default class Project extends Command {
   static args = [{ name: 'projectName' }]
 
   static flags = {
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
@@ -73,9 +73,9 @@ export default class Project extends Command {
       itemToDisplay: chalk.red.bold(
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
-      flag: flags.view,
+      flag: flags.output,
     })
-    displayOutput({ itemToDisplay: JSON.stringify(projectDetails, null, '  '), flag: flags.view })
+    displayOutput({ itemToDisplay: JSON.stringify(projectDetails, null, '  '), flag: flags.output })
   }
 
   async catch(error: CliError) {
@@ -93,7 +93,7 @@ export default class Project extends Command {
     }
     try {
       const { flags } = await this.parse(Project)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)

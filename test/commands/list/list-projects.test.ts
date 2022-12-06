@@ -67,8 +67,8 @@ describe('projects', () => {
       .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
-      .command(['list projects', '--view=table'])
-      .it('it runs list projects with view=table', (ctx) => {
+      .command(['list projects', '--output=table'])
+      .it('it runs list projects with output=table', (ctx) => {
         expect(ctx.stdout).to.contain('some-project1-id Awesome project   2022-09-06T20:31:20.467Z')
       })
   })

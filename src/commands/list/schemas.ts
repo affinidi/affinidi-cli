@@ -17,14 +17,14 @@ type OutputType = 'csv' | 'table' | 'json'
 
 const printData = (
   data: Record<string, unknown>[],
-  { extended, view }: { extended: boolean; view: OutputType },
+  { extended, output }: { extended: boolean; output: OutputType },
 ): void => {
   let outputFormat = configService.getOutputFormat()
   outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
-  let confOutput = view
-  if (!view && outputFormat === 'plaintext') {
+  let confOutput = output
+  if (!output && outputFormat === 'plaintext') {
     confOutput = 'table'
-  } else if (!view) {
+  } else if (!output) {
     confOutput = 'json'
   }
   switch (confOutput) {
@@ -80,8 +80,8 @@ export default class Schemas extends Command {
       description: 'The number of schemas to display',
       default: 10,
     }),
-    view: Flags.enum<OutputType>({
-      char: 'v',
+    output: Flags.enum<OutputType>({
+      char: 'o',
       options: ['csv', 'json', 'table'],
       description: 'The type of output',
     }),
@@ -106,7 +106,7 @@ export default class Schemas extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(Schemas)
 
-    const { extended, limit, public: publicFlag, view, scope, skip } = flags
+    const { extended, limit, public: publicFlag, output, scope, skip } = flags
     if (!isAuthenticated() && (scope === 'unlisted' || publicFlag === 'false')) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
@@ -152,7 +152,7 @@ export default class Schemas extends Command {
       })
       .slice(skip, skip + limit)
 
-    printData(data, { extended, view })
+    printData(data, { extended, output })
   }
 
   protected async catch(error: CliError): Promise<void> {
@@ -170,9 +170,9 @@ export default class Schemas extends Command {
     }
     try {
       const { flags } = await this.parse(Schemas)
-      if (flags.view === 'table') {
+      if (flags.output === 'table') {
         optionsDisplay.flag = 'plaintext'
-      } else if (flags.view === 'json') {
+      } else if (flags.output === 'json') {
         optionsDisplay.flag = 'json'
       }
       displayOutput(optionsDisplay)

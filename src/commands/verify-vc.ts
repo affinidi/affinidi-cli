@@ -30,8 +30,8 @@ export default class VerifyVc extends Command {
       description: 'source JSON file with credentials to be verified',
       required: true,
     }),
-    view: Flags.enum<ViewFormat>({
-      char: 'v',
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
       options: ['plaintext', 'json'],
       description: 'set flag to override default output format view',
     }),
@@ -61,7 +61,7 @@ export default class VerifyVc extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput({ itemToDisplay: JSON.stringify(verification, null, ' '), flag: flags.view })
+    displayOutput({ itemToDisplay: JSON.stringify(verification, null, ' '), flag: flags.output })
   }
 
   async catch(error: CliError) {
@@ -83,7 +83,7 @@ export default class VerifyVc extends Command {
     }
     try {
       const { flags } = await this.parse(VerifyVc)
-      optionsDisplay.flag = flags.view
+      optionsDisplay.flag = flags.output
       displayOutput(optionsDisplay)
     } catch (_) {
       displayOutput(optionsDisplay)
