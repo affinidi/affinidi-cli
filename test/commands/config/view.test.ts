@@ -1,6 +1,4 @@
 import { expect, test } from '@oclif/test'
-import { StatusCodes } from 'http-status-codes'
-import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { Unauthorized } from '../../../src/errors'
 import { vaultService } from '../../../src/services'
 import { configService } from '../../../src/services/config'

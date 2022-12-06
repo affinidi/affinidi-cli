@@ -70,6 +70,10 @@ class ConfigService {
     return this.store.getOutputFormat()
   }
 
+  public getUsername = (): string => {
+    return this.store.getUsername()
+  }
+
   public create = (
     userId: string,
     activeProjectId: string = '',
@@ -78,6 +82,7 @@ class ConfigService {
     this.store.save({
       currentUserID: userId,
       version: getMajorVersion(),
+      username: '',
       configs: {
         [userId]: {
           activeProjectId,
@@ -85,7 +90,6 @@ class ConfigService {
           analyticsOptIn,
         },
       },
-      username: '',
     })
   }
 

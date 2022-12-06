@@ -47,8 +47,11 @@ export default class Login extends Command {
     const { args, flags } = await this.parse(Login)
 
     let { email } = args
-    if (!email) {
+    if (!email && !configService.getUsername()) {
       email = await enterEmailPrompt()
+    }
+    if (!email) {
+      email = configService.getUsername()
     }
 
     let wrongEmailCount = 0

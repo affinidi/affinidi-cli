@@ -1,11 +1,13 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
+import { StatusCodes } from 'http-status-codes'
 
 import { enterEmailPrompt } from '../../user-actions'
 import { ViewFormat } from '../../constants'
-import { WrongEmailError } from '../../errors'
+import { CliError, getErrorOutput, Unauthorized, WrongEmailError } from '../../errors'
 import { configService } from '../../services/config'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { isAuthenticated } from '../../middleware/authentication'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -14,6 +16,10 @@ export default class Username extends Command {
     'is used to save a username to be used when not specifying a username when loggin in'
 
   static examples = ['<%= config.bin %> <%= command.id %> example@email.com']
+
+  static command = 'affinidi config username'
+
+  static usage = 'config username [email]'
 
   static flags = {
     unset: Flags.boolean({
@@ -32,10 +38,15 @@ export default class Username extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Username)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
+    }
 
-    // if (flags.unset) {
-
-    // }
+    if (flags.unset) {
+      configService.setUsername('')
+      displayOutput({ itemToDisplay: 'Your username is unset', flag: flags.output })
+      return
+    }
     let { email } = args
     if (!email) {
       email = await enterEmailPrompt()
@@ -50,6 +61,28 @@ export default class Username extends Command {
       }
     }
     configService.setUsername(email)
-    displayOutput({ itemToDisplay: 'Your username is now saved', flag: flags.output })
+    displayOutput({ itemToDisplay: 'Your username is set', flag: flags.output })
+  }
+
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Username.command,
+        Username.usage,
+        Username.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Username)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

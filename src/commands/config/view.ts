@@ -34,7 +34,7 @@ export default class View extends Command {
     const { args } = await this.parse(View)
     const { format } = args
     if (!isAuthenticated()) {
-      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
     }
     const session = getSession()
 

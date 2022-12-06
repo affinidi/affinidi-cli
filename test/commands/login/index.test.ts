@@ -14,7 +14,7 @@ import {
   notFoundProject,
   UnsuportedConfig,
 } from '../../../src/errors'
-import { ANALYTICS_URL } from '../../../src/services/analytics'
+import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService, vaultService } from '../../../src/services'
 import * as config from '../../../src/services/config'
 
@@ -228,6 +228,8 @@ describe('login command', () => {
             const output = ctx.stdout
             expect(output).to.contain('You are authenticated')
             expect(output).to.contain(`Welcome back to Affinidi ${validEmailAddress}!`)
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            expect(analyticsService.hasAnalyticsOptIn()).to.be.true
           })
 
         test
