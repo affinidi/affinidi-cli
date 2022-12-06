@@ -14,7 +14,10 @@ export default class View extends Command {
 
   static description = 'Use this command to configure the format of output'
 
-  static examples = ['<%= config.bin %> <%= command.id %>']
+  static examples = [
+    '<%= config.bin %> <%= command.id %> json',
+    '<%= config.bin %> <%= command.id %> plaintext',
+  ]
 
   static usage = 'config view [plaintext | json]'
 
