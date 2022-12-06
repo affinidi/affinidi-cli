@@ -20,6 +20,7 @@ type UserConfig = {
 }
 
 type ConfigStoreFormat = {
+  username: string
   version: number
   currentUserID: string
   configs: Record<UserId, UserConfig>
@@ -29,11 +30,13 @@ interface IConfigStorer {
   save(params: ConfigStoreFormat): void
   clear(): void
   setOutputFormat(outputFormat: string): void
+  getUsername: () => string
   getVersion: () => number
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
   getOutputFormat: () => string
   setCurrentProjectId: (id: string) => void
+  setUsername: (username: string) => void
 }
 
 class ConfigService {
@@ -55,7 +58,8 @@ class ConfigService {
     const currentUserID = this.getCurrentUser()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
-    return { version: configVersion, currentUserID, configs }
+    const username = this.store.getUsername()
+    return { version: configVersion, currentUserID, configs, username }
   }
 
   public getCurrentUser = (): string => {
@@ -81,6 +85,7 @@ class ConfigService {
           analyticsOptIn,
         },
       },
+      username: '',
     })
   }
 
@@ -120,6 +125,10 @@ class ConfigService {
 
   public setCurrentProjectId = (id: string): void => {
     this.store.setCurrentProjectId(id)
+  }
+
+  public setUsername = (username: string): void => {
+    this.store.setUsername(username)
   }
 }
 
@@ -177,6 +186,12 @@ const store: IConfigStorer = {
     configs[userId] = newUserConfig
     configConf.set('configs', configs)
   },
+  getUsername: function getUsername(): string {
+    return configConf.get('username')
+  },
+  setUsername: function setUsername(username: string): void {
+    configConf.set('username', username)
+  },
 }
 
 export const testStore = new Map()
@@ -224,6 +239,12 @@ const testStorer: IConfigStorer = {
     }
     configs[userId] = newUserConfig
     testStore.set('configs', configs)
+  },
+  getUsername: function getUsername(): string {
+    return testStore.get('username')
+  },
+  setUsername: function setUsername(username: string): void {
+    testStore.set('username', username)
   },
 }
 
