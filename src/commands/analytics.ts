@@ -1,4 +1,4 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { Command, Flags } from '@oclif/core'
 
 import { analyticsConsentPrompt } from '../user-actions'
 import { analyticsService } from '../services'
