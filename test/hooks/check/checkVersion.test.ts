@@ -12,9 +12,9 @@ const testProjectId = 'random-test-project-id'
 
 const unsuportedVersion = -1
 
-describe('hooks', () => {
-  describe('checkVersion for the config.json file', () => {
-    describe('Given an unsuported version in the config file', () => {
+describe('checkVersion hooks', () => {
+  describe('Given config.json file', () => {
+    describe('And an unsuported version in the config file', () => {
       before(() => {
         Sinon.stub(config, 'getMajorVersion').returns(unsuportedVersion)
         createConfig({ userId: testUserId, projectId: testProjectId })
@@ -34,7 +34,7 @@ describe('hooks', () => {
         .it(`shows an ${UnsuportedConfig} error message`)
     })
 
-    describe('Given a suported version in the config file', () => {
+    describe('And a suported version in the config file', () => {
       before(() => {
         createConfig({ userId: testUserId, projectId: testProjectId })
       })

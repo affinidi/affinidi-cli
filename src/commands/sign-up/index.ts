@@ -8,14 +8,13 @@ import {
   AnswerYes,
   analyticsConsentPrompt,
 } from '../../user-actions'
-import { userManagementService, vaultService, VAULT_KEYS } from '../../services'
+import { userManagementService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
-import { configService } from '../../services/config'
 
 const MAX_EMAIL_ATTEMPT = 3
 
