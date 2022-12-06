@@ -30,7 +30,7 @@ describe('schema', () => {
         expect(ctx.stdout).to.contain(Unauthorized)
       })
   })
-  describe('Given a FORBIDDEN response from the schema-manager-api', () => {
+  describe('Given a INTERNALSERVERERROR response from the schema-manager-api ', () => {
     test
       .nock(`${SCHEMA_MANAGER_URL}`, async (api: FancyTypes.NockScope) =>
         api.get(`/schemas/${mockSchemaDtoOne.id}`).reply(StatusCodes.INTERNAL_SERVER_ERROR),
@@ -50,8 +50,10 @@ describe('schema', () => {
     .stub(authentication, 'isAuthenticated', () => true)
     .command(['show schema', mockSchemaDtoOne.id])
     .it('runs show schema and displays the detailed schema', (ctx) => {
-      expect(() => JSON.parse(ctx.stdout)).not.to.throw()
-      expect(JSON.parse(ctx.stdout)).to.include(mockSchemaDtoOne)
+      expect(ctx.stdout).to.include(mockSchemaDtoOne.id)
+      expect(ctx.stdout).to.include(mockSchemaDtoOne.authorDid)
+      expect(ctx.stdout).to.include(mockSchemaDtoOne.jsonLdContextUrl)
+      expect(ctx.stdout).to.include(mockSchemaDtoOne.jsonSchemaUrl)
     })
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))

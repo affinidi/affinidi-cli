@@ -14,12 +14,22 @@ import {
   VerificationMethod,
 } from '../services/issuance/issuance.api'
 import { issuanceService } from '../services/issuance'
-import { CliError, WrongEmailError, WrongFileType, getErrorOutput, Unauthorized } from '../errors'
+import {
+  CliError,
+  WrongEmailError,
+  WrongFileType,
+  getErrorOutput,
+  Unauthorized,
+  JsonFileSyntaxError,
+} from '../errors'
 import { enterIssuanceEmailPrompt } from '../user-actions'
 import { getSession } from '../services/user-management'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { isAuthenticated } from '../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../middleware/display'
+import { configService } from '../services/config'
+import { ViewFormat } from '../constants'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -54,6 +64,11 @@ export default class IssueVc extends Command {
       char: 'w',
       description: 'configure your own wallet to store VCs',
       default: 'https://wallet.affinidi.com/claim',
+    }),
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      options: ['plaintext', 'json'],
+      description: 'set flag to override default output format view',
     }),
   }
 
@@ -104,7 +119,7 @@ export default class IssueVc extends Command {
         email = await enterIssuanceEmailPrompt()
         wrongEmailCount += 1
         if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-          CliUx.ux.error(WrongEmailError)
+          throw new CliError(WrongEmailError, 0, 'issuance')
         }
       }
       const offerInput: CreateIssuanceOfferInput = {
@@ -120,16 +135,16 @@ export default class IssueVc extends Command {
       await issuanceService.createOffer(apiKeyHash, issuanceId.id, offerInput)
     } else {
       const expectedExtension = flags.bulk ? '.csv' : '.json'
-      CliUx.ux.error(`${WrongFileType}${expectedExtension} file`)
+      throw new CliError(`${WrongFileType}${expectedExtension} file`, 0, 'issuance')
     }
     CliUx.ux.action.stop('')
-    CliUx.ux.info(issuanceId.id)
+    displayOutput({ itemToDisplay: JSON.stringify(issuanceId), flag: flags.output })
 
     const analyticsData: EventDTO = {
       name: 'BULK_VC_ISSUED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.issue-vc',
         ...generateUserMetadata(session?.account?.label),
@@ -139,7 +154,28 @@ export default class IssueVc extends Command {
   }
 
   async catch(error: CliError) {
+    const err = error
+    if (error instanceof SyntaxError) {
+      err.message = JsonFileSyntaxError
+    }
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, IssueVc.command, IssueVc.usage, IssueVc.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        IssueVc.command,
+        IssueVc.usage,
+        IssueVc.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(IssueVc)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

@@ -15,6 +15,9 @@ import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { ViewFormat } from '../../constants'
+import { configService } from '../../services/config'
 
 export enum Platforms {
   web = 'web',
@@ -72,6 +75,11 @@ export default class GenerateApplication extends Command {
       description: 'Add BE-proxy to protect credentials',
       default: false,
     }),
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
   }
 
   public async run(): Promise<void> {
@@ -80,21 +88,21 @@ export default class GenerateApplication extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'generator')
     }
-    const session = getSession()
+    const userId = getSession()?.account?.id
     const analyticsData: EventDTO = {
       name: 'APPLICATION_GENERATION_STARTED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account.id,
+      uuid: userId,
       metadata: {
         appName: name,
         commandId: 'affinidi.generate-application',
-        ...generateUserMetadata(session?.account.label),
+        ...generateUserMetadata(userId),
       },
     }
 
     if (platform === Platforms.mobile) {
-      CliUx.ux.error(NotSupportedPlatform)
+      throw new CliError(NotSupportedPlatform, 0, 'reference-app')
     }
 
     CliUx.ux.action.start('Generating an application')
@@ -108,13 +116,13 @@ export default class GenerateApplication extends Command {
         case UseCasesAppNames.accessWithoutOwnershipOfData:
         case UseCasesAppNames.portableReputation:
         case UseCasesAppNames.kycKyb:
-          CliUx.ux.info('Not implemented yet')
+          displayOutput({ itemToDisplay: 'Not implemented yet', flag: flags.output })
           break
         default:
-          CliUx.ux.error(InvalidUseCase)
+          throw new CliError(InvalidUseCase, 0, 'reference-app')
       }
     } catch (error) {
-      CliUx.ux.error(`Failed to generate an application: ${error.message}`)
+      throw new CliError(`Failed to generate an application: ${error.message}`, 0, 'reference-app')
     }
 
     try {
@@ -125,7 +133,11 @@ export default class GenerateApplication extends Command {
         )
       }
     } catch (error) {
-      CliUx.ux.info(`Failed to generate an application: ${error.message}`)
+      displayOutput({
+        itemToDisplay: `Failed to generate an application: ${error.message}`,
+        flag: flags.output,
+        err: true,
+      })
       return
     }
 
@@ -135,31 +147,45 @@ export default class GenerateApplication extends Command {
     CliUx.ux.action.stop('\nApplication generated')
 
     const appPath = path.resolve(`${process.cwd()}/${name}`)
-    CliUx.ux.info(buildGeneratedAppNextStepsMessage(name, appPath, withProxy))
+    displayOutput({
+      itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, withProxy),
+      flag: flags.output,
+    })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(
-      getErrorOutput(
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
         error,
         GenerateApplication.command,
         GenerateApplication.usage,
         GenerateApplication.description,
+        outputFormat !== 'plaintext',
       ),
-    )
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(GenerateApplication)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 
-  private setUpProject(name: string, withProxy: boolean) {
+  private async setUpProject(name: string, withProxy: boolean) {
     const activeProjectApiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
     const activeProjectDid = vaultService.get(VAULT_KEYS.projectDID)
     const activeProjectId = vaultService.get(VAULT_KEYS.projectId)
+    const { flags } = await this.parse(GenerateApplication)
 
     if (!activeProjectApiKey || !activeProjectDid || !activeProjectId) {
       throw Error(Unauthorized)
     }
 
-    CliUx.ux.info(`Setting up the project`)
+    displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.output })
 
     try {
       if (withProxy) {
@@ -197,7 +223,11 @@ export default class GenerateApplication extends Command {
         `REACT_APP_PROJECT_ID=${activeProjectId}`,
       ])
     } catch (error) {
-      CliUx.ux.info(`Failed to set up project: ${error.message}`)
+      displayOutput({
+        itemToDisplay: `Failed to set up project: ${error.message}`,
+        flag: flags.output,
+        err: true,
+      })
     }
   }
 

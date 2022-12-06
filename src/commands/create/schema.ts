@@ -26,6 +26,9 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -44,10 +47,16 @@ export default class Schema extends Command {
     }),
 
     description: Flags.string({ char: 'd', description: 'description of schema', required: true }),
+
     source: Flags.string({
       char: 's',
       description: 'path to the json file with schema properties',
       required: true,
+    }),
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
     }),
   }
 
@@ -72,10 +81,10 @@ export default class Schema extends Command {
     }
     const regex = new RegExp(/^[0-9a-zA-Z]+$/)
     if (!regex.test(schemaName)) {
-      CliUx.ux.error(new Error(InvalidSchemaName))
+      throw new CliError(InvalidSchemaName, 0, 'schema')
     }
 
-    const scope = flags.public ? 'public' : 'unlisted'
+    const scope = flags.public === 'true' ? 'public' : 'unlisted'
     const params = {
       apiKey: apiKeyhash,
       authorDid: did,
@@ -87,9 +96,8 @@ export default class Schema extends Command {
       { type: schemaName, scope },
       params,
     )
-
     const generateIdInput: Options = {
-      namespace: flags.public ? undefined : did,
+      namespace: !flags.public ? undefined : did,
       type: schemaName,
       version,
       revision,
@@ -137,7 +145,7 @@ export default class Schema extends Command {
       name: 'VC_SCHEMA_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         schemaId: schemaInfo?.id,
         commandId: 'affinidi.createSchema',
@@ -145,14 +153,31 @@ export default class Schema extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.info(JSON.stringify(schemaInfo, null, ' '))
+    displayOutput({ itemToDisplay: JSON.stringify(schemaInfo, null, '  '), flag: flags.output })
   }
 
   async catch(error: CliError) {
+    const err = error
     if (error instanceof SyntaxError) {
-      CliUx.ux.info(JsonFileSyntaxError)
-    } else {
-      CliUx.ux.info(getErrorOutput(error, Schema.command, Schema.usage, Schema.description))
+      err.message = JsonFileSyntaxError
+    }
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Schema.command,
+        Schema.usage,
+        Schema.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Schema)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
     }
   }
 }

@@ -6,12 +6,14 @@ import { verfierService } from '../services/verification'
 
 import { vaultService, VAULT_KEYS } from '../services/vault'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
-import { CliError, getErrorOutput, Unauthorized } from '../errors'
+import { CliError, getErrorOutput, JsonFileSyntaxError, Unauthorized } from '../errors'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
-import { anonymous } from '../constants'
+import { anonymous, ViewFormat } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../middleware/display'
+import { configService } from '../services/config'
 
 export default class VerifyVc extends Command {
   static command = 'affinidi verify-vc'
@@ -28,6 +30,11 @@ export default class VerifyVc extends Command {
       description: 'source JSON file with credentials to be verified',
       required: true,
     }),
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      options: ['plaintext', 'json'],
+      description: 'set flag to override default output format view',
+    }),
   }
 
   public async run(): Promise<void> {
@@ -39,24 +46,47 @@ export default class VerifyVc extends Command {
     const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
 
     const credentialData = await fs.readFile(flags.data, 'utf-8')
+    CliUx.ux.action.start('verifying')
     const verifyCredentialInput: VerifyCredentialInput = JSON.parse(credentialData)
     const verification = await verfierService.verifyVC(apiKey, verifyCredentialInput)
+    CliUx.ux.action.stop()
     const analyticsData: EventDTO = {
       name: 'VC Verified',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session.account?.id : anonymous,
+      uuid: session ? configService.getCurrentUser() : anonymous,
       metadata: {
         commandId: 'affinidi.verify-vc',
         ...generateUserMetadata(session?.account?.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.info(JSON.stringify(verification, null, ' '))
+    displayOutput({ itemToDisplay: JSON.stringify(verification, null, ' '), flag: flags.output })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, VerifyVc.command, VerifyVc.usage, VerifyVc.description))
+    const err = error
+    if (error instanceof SyntaxError) {
+      err.message = JsonFileSyntaxError
+    }
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        VerifyVc.command,
+        VerifyVc.usage,
+        VerifyVc.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(VerifyVc)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

@@ -26,14 +26,15 @@ describe('list schemas command', () => {
     configService.clear()
     vaultService.clear()
   })
-  describe('--output json', () => {
+  describe('--view json', () => {
     test
       .nock(SCHEMA_MANAGER_URL, getSchemasOK)
       .nock(ANALYTICS_URL, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .command(['list schemas'])
       .it('runs list schemas and shows schemas in json format', (ctx) => {
-        expect(() => JSON.parse(ctx.stdout)).not.to.throw()
+        expect(ctx.stdout).to.contain(mockSchemaDto.schemas[0].id)
+        expect(ctx.stdout).to.contain(mockSchemaDto.schemas[1].id)
       })
 
     test
@@ -55,7 +56,7 @@ describe('list schemas command', () => {
       })
   })
 
-  describe('--output table', () => {
+  describe('--view table', () => {
     const tableHeaders = ['ID', 'DESC', 'Version', 'Type']
     test
       .nock(SCHEMA_MANAGER_URL, getSchemasOK)

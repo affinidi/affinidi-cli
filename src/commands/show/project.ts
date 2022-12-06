@@ -10,8 +10,9 @@ import { NextStepsRawMessage } from '../../render/functions'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
-
-type UseFieldType = 'json' | 'json-file'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class ShowProject extends Command {
   static command = 'affinidi show project'
@@ -23,14 +24,13 @@ export default class ShowProject extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    output: Flags.enum<UseFieldType>({
-      char: 'o',
-      options: ['json', 'json-file'],
-      description: 'The details of the schema to show',
-      default: 'json',
-    }),
     active: Flags.boolean({
       char: 'a',
+    }),
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
     }),
   }
 
@@ -61,7 +61,7 @@ export default class ShowProject extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        CliUx.ux.info(NextStepsRawMessage)
+        displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -78,7 +78,7 @@ export default class ShowProject extends Command {
       name: 'CONSOLE_PROJECT_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         projectId: projectData?.project?.projectId,
         commandId: 'affinidi.showProject',
@@ -92,18 +92,31 @@ export default class ShowProject extends Command {
     if (projectData.wallet?.didUrl) {
       projectData.wallet.didUrl = ''.padEnd(projectData.wallet.didUrl?.length, '*')
     }
-    if (flags.output === 'json-file') {
-      await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
-    } else {
-      CliUx.ux.info(JSON.stringify(projectData, null, '  '))
-    }
+
+    displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.output })
+
     CliUx.ux.action.stop('')
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(
-      getErrorOutput(error, ShowProject.command, ShowProject.usage, ShowProject.description),
-    )
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        ShowProject.command,
+        ShowProject.usage,
+        ShowProject.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(ShowProject)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

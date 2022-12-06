@@ -1,4 +1,4 @@
-import { Command, CliUx } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import chalk from 'chalk'
 
@@ -10,6 +10,9 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -22,8 +25,16 @@ export default class Project extends Command {
 
   static args = [{ name: 'projectName' }]
 
+  static flags = {
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
+  }
+
   public async run(): Promise<void> {
-    const { args } = await this.parse(Project)
+    const { args, flags } = await this.parse(Project)
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
@@ -50,7 +61,7 @@ export default class Project extends Command {
       name: 'CONSOLE_PROJECT_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         projectId: projectData?.projectId,
         commandId: 'affinidi.createProject',
@@ -58,16 +69,34 @@ export default class Project extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    CliUx.ux.info(
-      chalk.red.bold(
+    displayOutput({
+      itemToDisplay: chalk.red.bold(
         'Please save the API key hash and DID URL somewhere safe. You would not be able to view them again.',
       ),
-    )
-    CliUx.ux.info(JSON.stringify(projectDetails, null, '  '))
+      flag: flags.output,
+    })
+    displayOutput({ itemToDisplay: JSON.stringify(projectDetails, null, '  '), flag: flags.output })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Project.command, Project.usage, Project.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Project.command,
+        Project.usage,
+        Project.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Project)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

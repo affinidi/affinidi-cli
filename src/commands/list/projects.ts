@@ -1,5 +1,4 @@
 import { Command, CliUx, Flags } from '@oclif/core'
-import * as fs from 'fs/promises'
 import { stringify as csv_stringify } from 'csv-stringify'
 import { StatusCodes } from 'http-status-codes'
 
@@ -9,12 +8,12 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
+import { configService } from '../../services/config'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 
-type ListProjectsOutputType = 'json' | 'table' | 'json-file' | 'csv-file'
+type ListProjectsOutputType = 'json' | 'table' | 'csv'
 
 export default class Projects extends Command {
-  public static enableJsonFlag = true
-
   static command = 'affinidi list projects'
 
   static usage = 'show projects [FLAGS]'
@@ -40,13 +39,14 @@ export default class Projects extends Command {
     output: Flags.enum<ListProjectsOutputType>({
       char: 'o',
       description: 'Project listing output format',
-      default: 'json',
-      options: ['json', 'table', 'json-file', 'csv-file'],
+      options: ['json', 'table', 'csv'],
     }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Projects)
+    const { skip, limit } = flags
+    let { output } = flags
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
@@ -57,7 +57,7 @@ export default class Projects extends Command {
       name: 'CONSOLE_PROJECTS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.listProjects',
         ...generateUserMetadata(session?.account?.label),
@@ -65,11 +65,16 @@ export default class Projects extends Command {
     }
 
     CliUx.ux.action.start('Fetching list of projects')
-    const projectData = await iAmService.listProjects(token, flags.skip, flags.limit)
+    const projectData = await iAmService.listProjects(token, skip, limit)
     await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop()
-
-    switch (flags.output) {
+    const outputFormat = configService.getOutputFormat()
+    if (!output && outputFormat === 'plaintext') {
+      output = 'table'
+    } else if (!flags.output) {
+      output = 'json'
+    }
+    switch (output) {
       case 'table':
         CliUx.ux.table(
           projectData.map((data) => ({
@@ -80,22 +85,40 @@ export default class Projects extends Command {
           { projectId: {}, name: {}, createdAt: {} },
         )
         break
-      case 'json-file':
-        await fs.writeFile('projects.json', JSON.stringify(projectData, null, '  '))
-        break
-      case 'csv-file':
-        await fs.writeFile('projects.csv', csv_stringify(projectData, { header: true }))
+      case 'csv':
+        csv_stringify(projectData, { header: true }).pipe(process.stdout)
         break
       case 'json':
         CliUx.ux.info(JSON.stringify(projectData, null, '  '))
         break
       default:
-        CliUx.ux.error('Unknown output format')
+        throw new CliError('Unknown output format', 0, 'schema')
     }
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Projects.command, Projects.usage, Projects.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Projects.command,
+        Projects.usage,
+        Projects.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Projects)
+      if (flags.output === 'table') {
+        optionsDisplay.flag = 'plaintext'
+      } else if (flags.output === 'json') {
+        optionsDisplay.flag = 'json'
+      }
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { buildInvalidCommandUsage, wrapError } from '../render/texts'
+import { buildInvalidCommandUsage } from '../render/texts'
 
 const pleaseTryAgain = 'Please try again later.'
 const somethingWentWrong = `Something went wrong. ${pleaseTryAgain}`
@@ -62,7 +62,7 @@ const handleBadRequest = (service: string): string => {
     case 'schema':
       return schemaBadrequest
     default:
-      return 'IAm service bad request'
+      return `${service} service bad request`
   }
 }
 const handleNotFound = (service: string): string => {
@@ -95,12 +95,28 @@ const handleResponseErrors = (error: CliError): string => {
       return error?.message
   }
 }
+export const errorToJSON = (err: string): string => {
+  let errSplit: string[]
+  const ansiCodeRegex = new RegExp(
+    /(\\u001b)(8|7|H|>|\[(\?\d+(h|l)|[0-2]?(K|J)|\d*(A|B|C|D\D|E|F|G|g|i|m|n|S|s|T|u)|1000D\d+|\d*;\d*(f|H|r|m)|\d+;\d+;\d+m))/g,
+  )
+  if (err.includes('\n')) {
+    errSplit = err.split('\n')
+  }
+  const jsonError = {
+    error: errSplit || err,
+  }
+  const jsonErroString = JSON.stringify(jsonError, null, ' ')
+  const cleanErr = jsonErroString.replace(ansiCodeRegex, '')
+  return cleanErr
+}
 
 export const getErrorOutput = (
   error: CliError,
   command: string,
   usage: string,
   summary: string,
+  json: boolean,
 ): string => {
   if (error.args) {
     const missingArgs: string[] = []
@@ -111,5 +127,8 @@ export const getErrorOutput = (
     }
     return buildInvalidCommandUsage(command, usage, summary, missingArgs)
   }
-  return wrapError(handleResponseErrors(error))
+  if (json) {
+    return errorToJSON(handleResponseErrors(error))
+  }
+  return handleResponseErrors(error)
 }

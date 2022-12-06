@@ -1,4 +1,4 @@
-import { Command, CliUx } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
@@ -8,6 +8,9 @@ import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 
 export default class Logout extends Command {
   static command = 'affinidi logout'
@@ -16,7 +19,16 @@ export default class Logout extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
+  static flags = {
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
+  }
+
   public async run(): Promise<void> {
+    const { flags } = await this.parse(Logout)
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'iAm')
     }
@@ -31,7 +43,7 @@ export default class Logout extends Command {
       name: 'CONSOLE_USER_SIGN_OUT',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.logout',
         ...generateUserMetadata(session?.account?.label),
@@ -39,16 +51,33 @@ export default class Logout extends Command {
     }
 
     if (!token) {
-      CliUx.ux.error(SignoutError)
+      throw new CliError(SignoutError, 0, 'userManagement')
     }
 
     await userManagementService.signout({ token })
-    await analyticsService.eventsControllerSend(analyticsData)
     vaultService.clear()
-    CliUx.ux.info("Thank you for using Affinidi's services")
+    await analyticsService.eventsControllerSend(analyticsData)
+    displayOutput({ itemToDisplay: "Thank you for using Affinidi's services", flag: flags.output })
   }
 
   async catch(error: CliError) {
-    CliUx.ux.info(getErrorOutput(error, Logout.command, Logout.command, Logout.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Logout.command,
+        Logout.command,
+        Logout.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Logout)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

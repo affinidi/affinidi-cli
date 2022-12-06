@@ -1,5 +1,4 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import * as fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
 import { ProjectSummary } from '../../services/iam/iam.api'
@@ -12,8 +11,8 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
-
-type UseFieldType = 'json' | 'json-file'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { ViewFormat } from '../../constants'
 
 const setActiveProject = (projectToBeActive: ProjectSummary): void => {
   vaultService.set(VAULT_KEYS.projectId, projectToBeActive.project.projectId)
@@ -31,11 +30,10 @@ export default class Project extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    output: Flags.enum<UseFieldType>({
+    output: Flags.enum<ViewFormat>({
       char: 'o',
-      options: ['json', 'json-file'],
-      description: 'print details of the project to use as JSON',
-      default: 'json',
+      options: ['plaintext', 'json'],
+      description: 'set flag to override default output format view',
     }),
   }
 
@@ -49,7 +47,7 @@ export default class Project extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Project)
     if (!isAuthenticated()) {
-      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+      throw new CliError(`${Unauthorized}`, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
 
     let projectId = args['project-id']
@@ -61,7 +59,7 @@ export default class Project extends Command {
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
         CliUx.ux.action.stop('No Projects were found')
-        CliUx.ux.info(NextStepsRawMessage)
+        displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
         return
       }
       CliUx.ux.action.stop('List of projects: ')
@@ -72,9 +70,6 @@ export default class Project extends Command {
       projectId = await selectProject(projectData, maxNameLength)
     }
     const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
-    if (flags.output === 'json-file') {
-      await fs.writeFile('projects.json', JSON.stringify(projectToBeActive, null, '  '))
-    }
     const userId = session?.account?.id
     setActiveProject(projectToBeActive)
     const analyticsData: EventDTO = {
@@ -101,11 +96,31 @@ export default class Project extends Command {
       projectToBeActive.wallet.didUrl = ''.padEnd(projectToBeActive.wallet.didUrl?.length, '*')
     }
 
-    CliUx.ux.info(JSON.stringify(projectToBeActive, null, '  '))
+    displayOutput({
+      itemToDisplay: JSON.stringify(projectToBeActive, null, '  '),
+      flag: flags.output,
+    })
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Project.command, Project.usage, Project.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Project.command,
+        Project.usage,
+        Project.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Project)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

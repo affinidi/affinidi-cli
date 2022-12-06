@@ -42,7 +42,7 @@ describe('verify-vc', () => {
     .stdout()
     .command(['verify-vc', `-d ${vcFile}`])
     .it('runs verify-vc', (ctx) => {
-      expect(ctx.stdout).to.contain(`"isValid": true`)
+      expect(ctx.stdout).to.contain(`isValid : true`)
     })
 
   describe('Bad request', () => {

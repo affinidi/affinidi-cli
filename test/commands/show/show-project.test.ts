@@ -34,9 +34,9 @@ describe('project', () => {
     .stub(authentication, 'isAuthenticated', () => true)
     .command(['show project', projectSummary.project.projectId])
     .it('runs show project with a specific project-id', (ctx) => {
-      expect(ctx.stdout).to.contain('"name": "Awesome project"')
-      expect(ctx.stdout).to.contain('"projectId": "some-project1-id"')
-      expect(ctx.stdout).to.contain('"apiKeyHash": "********************"')
+      expect(ctx.stdout).to.contain('name : Awesome project')
+      expect(ctx.stdout).to.contain('projectId : some-project1-id')
+      expect(ctx.stdout).to.contain('apiKeyHash : ********************')
     })
   describe('Showing active project', () => {
     before(() => {
@@ -59,9 +59,9 @@ describe('project', () => {
       .stub(authentication, 'isAuthenticated', () => true)
       .command(['show project', '--active'])
       .it('runs show project with active project', (ctx) => {
-        expect(ctx.stdout).to.contain('"name": "Awesome project"')
-        expect(ctx.stdout).to.contain('"projectId": "some-project1-id"')
-        expect(ctx.stdout).to.contain('"apiKeyHash": "********************"')
+        expect(ctx.stdout).to.contain('name : Awesome project')
+        expect(ctx.stdout).to.contain('projectId : some-project1-id')
+        expect(ctx.stdout).to.contain('apiKeyHash : ********************')
       })
   })
   describe('Showing a project while not authorized', () => {

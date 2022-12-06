@@ -10,6 +10,8 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { anonymous } from '../../constants'
+import { configService } from '../../services/config'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -17,7 +19,18 @@ const printData = (
   data: Record<string, unknown>[],
   { extended, output }: { extended: boolean; output: OutputType },
 ): void => {
-  switch (output) {
+  let outputFormat = configService.getOutputFormat()
+  outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
+  let confOutput = output
+  if (!output && outputFormat === 'plaintext') {
+    confOutput = 'table'
+  } else if (!output) {
+    confOutput = 'json'
+  }
+  switch (confOutput) {
+    case 'json':
+      CliUx.ux.info(JSON.stringify(data, null, ' '))
+      break
     case 'csv':
       csvStringify(data, { header: true }).pipe(process.stdout)
       break
@@ -42,7 +55,7 @@ const printData = (
       )
       break
     default:
-      CliUx.ux.info(JSON.stringify(data, null, '  '))
+      throw new CliError('Unknown output format', 0, 'schema')
   }
 }
 
@@ -71,7 +84,6 @@ export default class Schemas extends Command {
       char: 'o',
       options: ['csv', 'json', 'table'],
       description: 'The type of output',
-      default: 'json',
     }),
     scope: Flags.enum<ScopeType>({
       char: 'c',
@@ -103,7 +115,7 @@ export default class Schemas extends Command {
       name: 'VC_SCHEMAS_SEARCHED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session.account?.id : anonymous,
+      uuid: session ? configService.getCurrentUser() : anonymous,
       metadata: {
         commandId: 'affinidi.listSchemas',
         ...generateUserMetadata(session?.account?.label),
@@ -145,6 +157,27 @@ export default class Schemas extends Command {
 
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Schemas.command, Schemas.usage, Schemas.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Schemas.command,
+        Schemas.usage,
+        Schemas.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Schemas)
+      if (flags.output === 'table') {
+        optionsDisplay.flag = 'plaintext'
+      } else if (flags.output === 'json') {
+        optionsDisplay.flag = 'json'
+      }
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

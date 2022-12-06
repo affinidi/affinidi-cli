@@ -1,6 +1,6 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
-import { anonymous } from '../../constants'
+import { anonymous, ViewFormat } from '../../constants'
 
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { VAULT_KEYS, vaultService } from '../../services/vault'
@@ -9,6 +9,8 @@ import { getSession } from '../../services/user-management'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { configService } from '../../services/config'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
@@ -41,6 +43,11 @@ export default class Schema extends Command {
       description: 'The details of the schema to show',
       default: 'info',
     }),
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
   }
 
   static args: Interfaces.Arg[] = [
@@ -66,7 +73,7 @@ export default class Schema extends Command {
       name: 'VC_SCHEMAS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? session?.account?.id : anonymous,
+      uuid: session ? configService.getCurrentUser() : anonymous,
       metadata: {
         schemaId: schema?.id,
         commandId: 'affinidi.showSchema',
@@ -87,11 +94,28 @@ export default class Schema extends Command {
     }
 
     CliUx.ux.action.stop('')
-    CliUx.ux.log(output)
+    displayOutput({ itemToDisplay: output, flag: flags.output })
   }
 
   protected async catch(error: CliError): Promise<void> {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Schema.command, Schema.usage, Schema.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Schema.command,
+        Schema.usage,
+        Schema.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Schema)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

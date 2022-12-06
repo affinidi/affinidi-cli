@@ -1,4 +1,4 @@
-import { CouldNotParseSchema } from '../../errors/index'
+import { CliError, CouldNotParseSchema } from '../../errors/index'
 
 const SCHEMA_TYPE_UI_VIEW_REGEX = /\/schemas\/(.*)V([0-9]+)-([0-9]+)/
 const SCHEMA_TYPE_CONTEXT_OR_SCHEMA_REGEX =
@@ -95,6 +95,6 @@ export function parseSchemaURL(schemaURL: string): {
       jsonSchema: new URL(`${base}/${fullSchemaType}.json`),
     }
   } catch (_) {
-    throw CouldNotParseSchema
+    throw new CliError(CouldNotParseSchema, 0, 'issuance')
   }
 }

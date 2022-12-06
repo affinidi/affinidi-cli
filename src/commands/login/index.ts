@@ -1,4 +1,4 @@
-import { Command, CliUx } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import UseProject from '../use/project'
@@ -9,6 +9,9 @@ import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { ViewFormat } from '../../constants'
+import { configService } from '../../services/config'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -24,8 +27,16 @@ export default class Login extends Command {
 
   static args = [{ name: 'email' }]
 
+  static flags = {
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
+  }
+
   public async run(): Promise<void> {
-    const { args } = await this.parse(Login)
+    const { args, flags } = await this.parse(Login)
 
     let { email } = args
     if (!email) {
@@ -74,24 +85,45 @@ export default class Login extends Command {
     await analyticsService.eventsControllerSend(analyticsData)
 
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
-    CliUx.ux.info('You are authenticated')
-    CliUx.ux.info(`Welcome back to Affinidi ${email}!`)
+    displayOutput({ itemToDisplay: 'You are authenticated', flag: flags.output })
+    displayOutput({ itemToDisplay: `Welcome back to Affinidi ${email}!`, flag: flags.output })
     if (projectsList.length === 0) {
-      CliUx.ux.info(NextStepsRawMessage)
+      displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
       return
     }
 
     if (projectsList.length === 1) {
       const projectId = projectsList.shift()?.projectId
+      if (flags.output) {
+        await UseProject.run([projectId, `--view=${flags.output}`])
+        return
+      }
       await UseProject.run([projectId])
       return
     }
 
-    await UseProject.run([])
+    await UseProject.run([flags.output ? `--view=${flags.output}` : ''])
   }
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    CliUx.ux.info(getErrorOutput(error, Login.command, Login.usage, Login.description))
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Login.command,
+        Login.usage,
+        Login.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Login)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }
