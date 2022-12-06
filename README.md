@@ -143,7 +143,7 @@ Please see [How to structure a JSON file to issue a VC](#how-to-structure-a-json
 2. To verify a VC you need to provide a path to the json file with the credential *data* to be verified.
 
 ```
-$ affinidi verify-vc--data=<value> 
+$ affinidi verify-vc --data=<value> 
 ```
 Full reference for each command can be found here:    
 [issue-vc](#affinidi-issue-vc)  
@@ -201,6 +201,30 @@ You can also see the help for the command in the CLI:
 ```
 $ affinidi autocomplete --help
 ```
+
+### **affinidi config***
+Use this command to configure the format of the output. Supported options are: `plaintext` and `json`.
+
+USAGE
+```
+  $ affinidi config SUBCOMMAND [ARGS]
+```
+
+SUBCOMMAND
+```
+  view
+```  
+
+EXAMPLES
+Configures output in json format:
+```
+ affinidi config view json
+```
+
+You can also see the help for the command in the CLI:
+```
+affinidi config --help
+```
 ### **affinidi create**
 Use this command to create a new resource. Current supported resource types are:
 - Affinidi project
@@ -227,6 +251,10 @@ $ affinidi create project
 ```
 Note: When a project is created, its API keys are displayed only once. Full project details are stored locally in `~/.affinidi/credentials.json`. This file is deleted at the end of the authenticated session.
 
+PROJECT FLAGS
+```
+  -o, --output=(plaintext|json)   [default: plaintext] Formats output view     
+```
 
 To create a schema:
 ```
@@ -234,9 +262,10 @@ To create a schema:
 ```
 SCHEMA FLAGS
 ```
-  -d, --description=<value>  (required) Description of schema
-  -p, --public=(true|false)  [default: false] To specify if you want to create public or private schemas
-  -s, --source=<value>       (required) Path to the json file with schema properties
+  -d, --description=<value>       (required) Description of schema
+  -o, --output=(plaintext|json)   [default: plaintext] Formats output view     
+  -p, --public=(true|false)       [default: false] To specify if you want to create public or private schemas
+  -s, --source=<value>            (required) Path to the json file with schema properties      
   ```
 Please see [How to structure a schema](#how-to-structure-a-schema) for guidance on how to create the *source* file.   
 EXAMPLES
@@ -262,8 +291,9 @@ $ affinidi generate-application [-n <value>] [-w]
 ```
 FLAGS
 ```
--n, --name=<value>                                                                                            [default: my-app] Name of the application
--w, --with-proxy                                                                                              Add backend-proxy to protect credentials
+-n, --name=<value>              [default: my-app] Name of the application
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view    
+-w, --with-proxy                Add backend-proxy to protect credentials
 ```
 
 You can use this to generate the application with the default values:
@@ -301,6 +331,7 @@ FLAGS
 ```
 -b, --bulk            Defines that issuance happens in bulk
 -d, --data=<value>    (required) The source file with credential data, either .json or .csv
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view     
 -s, --schema=<value>  (required) Json schema url
 -w, --wallet=<value>  [default: https://wallet.affinidi.com/claim] Configure your own wallet to store VCs
 ```
@@ -334,7 +365,7 @@ schemas           Shows a list of available schemas
 FLAGS for project listing
 ```
 -l, --limit=<value>                           [default: 10] Maximum number of projects which will be listed
--o, --output=(json|table|json-file|csv-file)  [default: json] Project listing output format
+-o, --output=(json|table|csv)  [default: json] Project listing output format
 -s, --skip=<value>                            Index into projects list from which to start the listing
 --json  Format output as json.
 ```
@@ -343,7 +374,7 @@ FLAGS for schema listing
   ```
 -c, --scope=(default|public|unlisted)  [default: default] The type of scope
 -l, --limit=<value>                    [default: 10] The number of schemas to display
--o, --output=(csv|json|table)          [default: json] The type of output
+-o, --output=(json|table|csv)          [default: json] The type of output
 -p, --public=(true|false)              [default: true] To specify if you want to get public or private schemas
 -s, --skip=<value>                     The number of schemas to skip
 -x, --extended                         show extra columns
@@ -383,6 +414,11 @@ You can also simply type this and follow the prompts:
 $ affinidi login
 ```
 
+FLAGS
+```
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view    
+```
+
 You can also see the help for the command in the CLI:
 ```
 $ affinidi login --help
@@ -398,6 +434,11 @@ $ affinidi logout
 You can also see the help for the command in the CLI:
 ```
 affinidi logout --help
+```
+
+FLAGS
+```
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view    
 ```
 
  ### **affinidi show**
@@ -418,7 +459,7 @@ schema          Shows the details of a schema
 
 FLAGS
 ```
---output json     Overrides default plain text view and shows details in json format
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view    
 ```
 
 To show a project:
@@ -474,7 +515,7 @@ $ affinidi use project [<project-id>] [FLAGS]
 
 FLAGS
 ```
--o, --output=(json|json-file)  [default: json] print details of the project to use as JSON
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view of the chosen project's details   
 ```  
 
 
@@ -499,6 +540,7 @@ $ affinidi verify-vc -d <value>
 FLAGS
 ```
 -d, --data=<value>  (required) Source json file with credentials to be verified
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view    
 ```
 EXAMPLES
 ```
