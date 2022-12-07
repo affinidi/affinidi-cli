@@ -13,6 +13,20 @@ const testProjectId = 'random-test-project-id'
 const unsuportedVersion = -1
 
 describe('checkVersion hooks', () => {
+  describe('Given no config.json file', () => {
+    before(() => {
+      config.configService.clear()
+    })
+    test
+      .stdout()
+      .hook('check', { id: CHECK_OPERATION.CONFIG })
+      .do((output: { returned: Hook.Result<undefined> }) => {
+        expect(output.returned.successes).to.have.lengthOf(1)
+        expect(output.returned.failures).to.have.lengthOf(0)
+      })
+      .it(`shows an ${UnsuportedConfig} error message`)
+  })
+
   describe('Given config.json file', () => {
     describe('And an unsuported version in the config file', () => {
       before(() => {
