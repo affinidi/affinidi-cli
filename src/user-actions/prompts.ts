@@ -16,7 +16,7 @@ export const enterOTPPrompt = async (): Promise<string> => {
 }
 
 export const confirmSignOut = async (): Promise<string> => {
-  return CliUx.ux.prompt('Please confirm that you want to sign-out from Affinidi [Y/n]', {
+  return CliUx.ux.prompt('Please confirm that you want to sign-out from Affinidi [y/n]', {
     default: 'y',
   })
 }
@@ -46,7 +46,7 @@ export const enterSchemaName = async (
 }
 
 export const analyticsConsentPrompt = async (
-  text: string = 'Help us make Affinidi CLI better! Do you accept to send anonymous usage data? [y/N]',
+  text: string = 'Help us make Affinidi CLI better! Do you accept to send anonymous usage data? [y/n]',
 ): Promise<boolean> => {
   const prompt = await CliUx.ux.prompt(text, { default: 'n' })
   return prompt.toLowerCase() === 'y'

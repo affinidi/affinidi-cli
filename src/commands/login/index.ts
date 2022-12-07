@@ -73,7 +73,7 @@ export default class Login extends Command {
     }
 
     // http request to affinidi sign-up endpoint
-    CliUx.ux.action.start('Start loging in to Affinidi')
+    CliUx.ux.action.start('Start logging in to Affinidi')
     const token = await userManagementService.login(email)
 
     // mask input after enter is pressed
