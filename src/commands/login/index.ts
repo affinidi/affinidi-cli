@@ -5,9 +5,9 @@ import UseProject from '../use/project'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { NextStepsRawMessage } from '../../render/functions'
 import { iAmService, userManagementService } from '../../services'
-import { enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
+import { analyticsConsentPrompt, enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
-import { createSession, parseJwt } from '../../services/user-management'
+import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
@@ -72,6 +72,10 @@ export default class Login extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
+    if (configService.show().version === null) {
+      const wantsToOptIn = await analyticsConsentPrompt()
+      createConfig({ userId, analyticsOptIn: wantsToOptIn })
+    }
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_IN',
       category: 'APPLICATION',
