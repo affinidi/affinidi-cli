@@ -5,6 +5,8 @@ import * as path from 'path'
 import { NoUserConfigFound } from '../../errors'
 import { version } from '../../constants'
 
+export const validVersions = [1]
+
 export const getMajorVersion = (): number => {
   return version
 }

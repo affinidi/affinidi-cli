@@ -56,7 +56,7 @@
     "@oclif/plugin-help": "^5.1.16",
     "@oclif/plugin-warn-if-update-available": "^2.0.15",
     "app-root-path": "^3.1.0",
-    "axios": "^1.1.3",
+    "axios": "^1.2.1",
     "chalk": "^4.1.2",
     "conf": "^10.2.0",
     "csv-stringify": "^6.2.0",
@@ -77,7 +77,7 @@
     "@semantic-release/npm": "^9.0.1",
     "@types/chai": "4.3.4",
     "@types/inquirer": "^8.2.3",
-    "@types/mocha": "10.0.0",
+    "@types/mocha": "10.0.1",
     "@types/node": "18.11.10",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
@@ -98,6 +98,7 @@
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.5",
     "shx": "^0.3.4",
+    "sinon": "^15.0.0",
     "swagger-typescript-api": "^10.0.3",
     "ts-mockito": "^2.6.1",
     "ts-node": "^10.9.1",
@@ -117,6 +118,9 @@
     "topics": {},
     "warn-if-update-available": {
       "timeoutInDays": 7
+    },
+    "hooks": {
+      "check": "./dist/hooks/check/checkVersion"
     }
   },
   "engines": {

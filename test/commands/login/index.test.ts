@@ -12,10 +12,11 @@ import {
   ServiceDownError,
   WrongEmailError,
   notFoundProject,
+  UnsuportedConfig,
 } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService, vaultService } from '../../../src/services'
-import { getMajorVersion, testStore } from '../../../src/services/config'
+import * as config from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
@@ -24,20 +25,40 @@ const testOTP = '123456'
 const validCookie =
   'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOGVmY2M3MC1iYmUxLTQ1N2EtYTZjNy1iMjlhZDk5MTM2NDgiLCJ1c2VybmFtZSI6InZhbGlkQGVtYWlsLWFkZHJlc3MuY29tIiwiYWNjZXNzVG9rZW4iOiJtb2NrZWQtYWNjZXNzLXRva2VuIiwiZXhwIjoxNjY4MDA0Njk3LCJpYXQiOjE2Njc5MTgyOTd9.WDOeDB6PwFkmXWhe4zmMnltJGB44ayvDYaHDKJlcZEQ; Domain=affinidi.com; Path=/; Expires=Wed, 09 Nov 2022 14:38:17 GMT; HttpOnly; Secure; SameSite=Lax'
 const doNothing = () => {}
+const invalidCliVersion = -1
 
 const clearSessionAndConfig = () => {
   vaultService.clear()
-  testStore.clear()
+  configService.clear()
 }
 
 describe('login command', () => {
-  test
-    .stdout()
-    .stub(userActions, 'enterEmailPrompt', () => async () => 'invalid.email.address')
-    .command(['login'])
-    .it('runs login with an invalid email address', (ctx) => {
-      expect(ctx.stdout).to.contain(WrongEmailError)
-    })
+  before(() => {
+    configService.create(testUserId, testProjectId)
+  })
+  after(() => {
+    configService.clear()
+  })
+  describe('Given an unsuported cli config version', () => {
+    test
+      .stdout()
+      .stub(userActions, 'enterEmailPrompt', () => async () => 'invalid.email.address')
+      .stub(configService, 'getVersion', () => () => invalidCliVersion)
+      .command(['login'])
+      .it('runs login and throws and unsuported version error', (ctx) => {
+        expect(ctx.stdout).to.contain(UnsuportedConfig)
+      })
+  })
+
+  describe('Given an invalid email address', () => {
+    test
+      .stdout()
+      .stub(userActions, 'enterEmailPrompt', () => async () => 'invalid.email.address')
+      .command(['login'])
+      .it('runs login with an invalid email address', (ctx) => {
+        expect(ctx.stdout).to.contain(WrongEmailError)
+      })
+  })
 
   describe('Given a valid email address', () => {
     describe('When the user-management service is down', () => {
@@ -157,14 +178,14 @@ describe('login command', () => {
           })
 
         it('checks that the config contains some data', () => {
-          const config = configService.show()
-          expect(config.currentUserID).to.equal(testUserId)
-          expect(config.version).to.equal(getMajorVersion())
-          expect(config.configs).to.haveOwnProperty(testUserId)
-          expect(config.configs[testUserId].activeProjectId).to.equal(
+          const currentConfig = configService.show()
+          expect(currentConfig.currentUserID).to.equal(testUserId)
+          expect(currentConfig.version).to.equal(config.getMajorVersion())
+          expect(currentConfig.configs).to.haveOwnProperty(testUserId)
+          expect(currentConfig.configs[testUserId].activeProjectId).to.equal(
             projectSummary.project.projectId,
           )
-          expect(config.configs[testUserId].outputFormat).to.equal('plaintext')
+          expect(currentConfig.configs[testUserId].outputFormat).to.equal('plaintext')
         })
       })
 
@@ -224,14 +245,14 @@ describe('login command', () => {
           })
 
         it('checks that the config contains some data', () => {
-          const config = configService.show()
-          expect(config.currentUserID).to.equal(testUserId)
-          expect(config.version).to.equal(getMajorVersion())
-          expect(config.configs).to.haveOwnProperty(testUserId)
-          expect(config.configs[testUserId].activeProjectId).to.equal(
+          const currentConfig = configService.show()
+          expect(currentConfig.currentUserID).to.equal(testUserId)
+          expect(currentConfig.version).to.equal(config.getMajorVersion())
+          expect(currentConfig.configs).to.haveOwnProperty(testUserId)
+          expect(currentConfig.configs[testUserId].activeProjectId).to.equal(
             projectSummary3.project.projectId,
           )
-          expect(config.configs[testUserId].outputFormat).to.equal('plaintext')
+          expect(currentConfig.configs[testUserId].outputFormat).to.equal('plaintext')
         })
       })
     })

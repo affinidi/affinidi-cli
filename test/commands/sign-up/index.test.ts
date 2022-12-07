@@ -8,7 +8,7 @@ import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService, vaultService } from '../../../src/services'
-import { getMajorVersion } from '../../../src/services/config'
+import * as config from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
 const validCookie =
@@ -24,12 +24,16 @@ const clearSessionAndConfig = () => {
 }
 
 describe('sign-up command', () => {
+  before(() => {
+    configService.create(testUserId, testProjectId)
+  })
   after(clearSessionAndConfig)
   test
     .stdout()
+    .stub(config, 'getMajorVersion', () => () => 5)
     .stub(prompts, 'enterEmailPrompt', () => async () => 'invalid.email.address')
     .command(['sign-up'])
-    .it('runs signup with an invalid email address', (ctx) => {
+    .it('runs signup and throws a wrong config version message', (ctx) => {
       expect(ctx.stdout).to.contain(WrongEmailError)
     })
 
@@ -76,12 +80,12 @@ describe('sign-up command', () => {
             expect(output).to.contain(b)
           })
 
-          const config = configService.show()
-          expect(config.currentUserID).to.equal(testUserId)
-          expect(config.version).to.equal(getMajorVersion())
-          expect(config.configs).to.haveOwnProperty(testUserId)
-          expect(config.configs[testUserId].activeProjectId).to.equal('')
-          expect(config.configs[testUserId].outputFormat).to.equal('plaintext')
+          const currentConf = configService.show()
+          expect(currentConf.currentUserID).to.equal(testUserId)
+          expect(currentConf.version).to.equal(config.getMajorVersion())
+          expect(currentConf.configs).to.haveOwnProperty(testUserId)
+          expect(currentConf.configs[testUserId].activeProjectId).to.equal('')
+          expect(currentConf.configs[testUserId].outputFormat).to.equal('plaintext')
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           expect(analyticsService.hasAnalyticsOptIn()).to.be.true
         })

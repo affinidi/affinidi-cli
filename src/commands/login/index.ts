@@ -12,6 +12,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
+import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -36,6 +37,13 @@ export default class Login extends Command {
   }
 
   public async run(): Promise<void> {
+    const { failures } = await this.config.runHook('check', { id: CHECK_OPERATION.CONFIG })
+    if (failures.length) {
+      const failure = failures.shift()
+      const { error } = failure
+      CliUx.ux.error(error.message)
+    }
+
     const { args, flags } = await this.parse(Login)
 
     let { email } = args

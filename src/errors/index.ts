@@ -33,6 +33,9 @@ export const InvalidSchemaName = 'Please, enter a schema name using only alpha n
 export const NotSupportedPlatform = 'This platform is not supported.'
 export const InvalidUseCase = 'Invalid use-case'
 export const NoUserConfigFound = 'No user configurations were found'
+export const UnsuportedConfig = 'Unsuported configuration version'
+export const UnsuportedCredential = 'Unsuported credential version'
+
 export class CliError extends Error {
   code: number
 
