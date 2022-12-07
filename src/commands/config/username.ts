@@ -8,6 +8,9 @@ import { CliError, getErrorOutput, Unauthorized, WrongEmailError } from '../../e
 import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { isAuthenticated } from '../../middleware/authentication'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { getSession } from '../../services/user-management'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -41,10 +44,23 @@ export default class Username extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
     }
+    const session = getSession()
+    const analyticsData: EventDTO = {
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: session?.account?.id,
+      metadata: {
+        commandId: 'affinidi.configUsername',
+        ...generateUserMetadata(session?.account?.label),
+      },
+      name: 'CLI_CONFIG_USERNAME_SET',
+    }
 
     if (flags.unset) {
+      analyticsData.name = 'CLI_CONFIG_USERNAME_UNSET'
       configService.setUsername('')
       displayOutput({ itemToDisplay: 'Your username is unset', flag: flags.output })
+      await analyticsService.eventsControllerSend(analyticsData)
       return
     }
     let { email } = args
@@ -62,6 +78,7 @@ export default class Username extends Command {
     }
     configService.setUsername(email)
     displayOutput({ itemToDisplay: 'Your username is set', flag: flags.output })
+    await analyticsService.eventsControllerSend(analyticsData)
   }
 
   async catch(error: CliError) {

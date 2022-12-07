@@ -38,20 +38,29 @@ export default class Login extends Command {
 
   public async run(): Promise<void> {
     const { failures } = await this.config.runHook('check', { id: CHECK_OPERATION.CONFIG })
+    const { args, flags } = await this.parse(Login)
     if (failures.length) {
       const failure = failures.shift()
       const { error } = failure
-      CliUx.ux.error(error.message)
+      displayOutput({ itemToDisplay: error.message, err: true, flag: flags.output })
     }
-
-    const { args, flags } = await this.parse(Login)
 
     let { email } = args
     if (!email && !configService.getUsername()) {
+      displayOutput({
+        itemToDisplay: `Now you can save your username using "affinidi configure username" command, so you don't have to enter your username each time you log-in`,
+        flag: flags.output,
+      })
       email = await enterEmailPrompt()
     }
     if (!email) {
-      email = configService.getUsername()
+      try {
+        email = configService.getUsername()
+      } catch (_) {
+        displayOutput({
+          itemToDisplay: `Config file doesn't exist, after logging in there will be one created and you can then use the configured username feature`,
+        })
+      }
     }
 
     let wrongEmailCount = 0
@@ -59,7 +68,7 @@ export default class Login extends Command {
       email = await enterEmailPrompt()
       wrongEmailCount += 1
       if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-        CliUx.ux.error(WrongEmailError)
+        displayOutput({ itemToDisplay: WrongEmailError, err: true, flag: flags.output })
       }
     }
 
@@ -83,7 +92,7 @@ export default class Login extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
-    if (configService.show().version === null) {
+    if (configService.show().version === null || !configService.show().configs[userId]) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createConfig({ userId, analyticsOptIn: wantsToOptIn })
     }

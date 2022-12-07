@@ -1,10 +1,12 @@
 import { Command, Flags, Interfaces } from '@oclif/core'
+import { StatusCodes } from 'http-status-codes'
 
 import { configService } from '../../services'
 import { ViewFormat } from '../../constants'
 import { displayOutput } from '../../middleware/display'
-
 import { buildInvalidCommandUsage, configCommandDescription } from '../../render/texts'
+import { isAuthenticated } from '../../middleware/authentication'
+import { CliError, Unauthorized } from '../../errors'
 
 export default class Config extends Command {
   static command = 'affinidi config'
@@ -19,6 +21,11 @@ export default class Config extends Command {
     {
       description: 'Configures output format view:',
       command: '$ <%= config.bin %> <%= command.id %> view',
+    },
+    {
+      description:
+        'Persist username in config file, to login afterwards without providing your username:',
+      command: '$ <%= config.bin %> <%= command.id %> username',
     },
   ]
 
@@ -37,10 +44,14 @@ export default class Config extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Config)
+    if (!isAuthenticated()) {
+      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
+    }
     const { 'unset-all': unsetAll, output } = flags
     if (unsetAll) {
       configService.deleteUserConfig()
       displayOutput({ itemToDisplay: 'Your configuration is unset', flag: output })
+      return
     }
     displayOutput({
       itemToDisplay: buildInvalidCommandUsage(Config.command, Config.usage, Config.summary),
