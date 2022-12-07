@@ -97,9 +97,13 @@ class ConfigService {
     return configs[user]
   }
 
-  public hasAnalyticsOptIn = (): boolean | undefined => {
-    const config = this.currentUserConfig()
-    return config.analyticsOptIn
+  public hasAnalyticsOptIn = (): boolean => {
+    try {
+      const config = this.currentUserConfig()
+      return config.analyticsOptIn
+    } catch (_) {
+      return false
+    }
   }
 
   public optInOrOut = (inOrOut: boolean) => {
