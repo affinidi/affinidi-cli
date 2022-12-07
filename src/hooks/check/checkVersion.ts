@@ -22,6 +22,11 @@ const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function (
     version = configService.getVersion()
     message = UnsuportedConfig
   }
+
+  // the version was either not found in the config, or there was no config file.
+  if (!version) {
+    return
+  }
   // if (opts.id === CHECK_OPERATION.CREDENTIALS) {
   //   version = vaultService.getVersion()
   //   message = UnsuportedCredential
