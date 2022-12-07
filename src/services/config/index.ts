@@ -37,6 +37,7 @@ interface IConfigStorer {
   getOutputFormat: () => string
   setCurrentProjectId: (id: string) => void
   setUsername: (username: string) => void
+  deleteUserConfig: () => void
 }
 
 class ConfigService {
@@ -134,6 +135,10 @@ class ConfigService {
   public setUsername = (username: string): void => {
     this.store.setUsername(username)
   }
+
+  public deleteUserConfig = (): void => {
+    this.store.deleteUserConfig()
+  }
 }
 
 const configConf = new Conf<ConfigStoreFormat>({
@@ -196,6 +201,12 @@ const store: IConfigStorer = {
   setUsername: function setUsername(username: string): void {
     configConf.set('username', username)
   },
+  deleteUserConfig: function deleteUserConfig(): void {
+    const userId = this.getCurrentUser()
+    const configs = configConf.get('configs')
+    delete configs[userId]
+    configConf.set('configs', configs)
+  },
 }
 
 export const testStore = new Map()
@@ -249,6 +260,12 @@ const testStorer: IConfigStorer = {
   },
   setUsername: function setUsername(username: string): void {
     testStore.set('username', username)
+  },
+  deleteUserConfig: function deleteUserConfig(): void {
+    const configs = testStore.get('configs')
+    const userId = this.getCurrentUser()
+    delete configs[userId]
+    testStore.set('configs', configs)
   },
 }
 

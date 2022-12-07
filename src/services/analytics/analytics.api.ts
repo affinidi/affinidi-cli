@@ -113,6 +113,8 @@ export interface EventDTO {
     | 'APPLICATION_GENERATION_STARTED'
     | 'APPLICATION_GENERATION_COMPLETED'
     | 'CLI_VIEW_FORMAT_CONFIGURED'
+    | 'CLI_CONFIG_USERNAME_SET'
+    | 'CLI_CONFIG_USERNAME_UNSET'
   /** @example APPLICATION */
   category: 'DID' | 'VC' | 'VP' | 'APPLICATION' | 'JWT'
   subCategory?: string

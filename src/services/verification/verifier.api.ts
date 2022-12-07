@@ -279,7 +279,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title affinity-verifier
- * @version 0.28.1
+ * @version 0.34.1
  * @license ISC
  * @baseUrl /api/v1
  * @contact Denis Popov  <denis.p@affinity-project.org>
