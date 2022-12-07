@@ -35,6 +35,7 @@ const clearSessionAndConfig = () => {
 describe('login command', () => {
   before(() => {
     configService.create(testUserId, testProjectId)
+    configService.optInOrOut(true)
   })
   after(() => {
     configService.clear()

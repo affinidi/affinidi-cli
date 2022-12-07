@@ -7,7 +7,7 @@ const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
 const testProjectId = 'random-test-project-id'
 const testEmail = 'example@email.com'
 
-describe.only('username', () => {
+describe('username', () => {
   after(() => {
     vaultService.clear()
   })

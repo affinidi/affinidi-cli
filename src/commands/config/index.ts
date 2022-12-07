@@ -1,12 +1,12 @@
-import { Command, Flags, Interfaces } from '@oclif/core'
+import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { configService } from '../../services'
 import { ViewFormat } from '../../constants'
-import { displayOutput } from '../../middleware/display'
+import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { buildInvalidCommandUsage, configCommandDescription } from '../../render/texts'
 import { isAuthenticated } from '../../middleware/authentication'
-import { CliError, Unauthorized } from '../../errors'
+import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 
 export default class Config extends Command {
   static command = 'affinidi config'
@@ -56,5 +56,27 @@ export default class Config extends Command {
     displayOutput({
       itemToDisplay: buildInvalidCommandUsage(Config.command, Config.usage, Config.summary),
     })
+  }
+
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Config.command,
+        Config.usage,
+        Config.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Config)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

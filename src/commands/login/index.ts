@@ -42,7 +42,7 @@ export default class Login extends Command {
     if (failures.length) {
       const failure = failures.shift()
       const { error } = failure
-      displayOutput({ itemToDisplay: error.message, err: true, flag: flags.output })
+      throw new Error(error.message)
     }
 
     let { email } = args
@@ -68,7 +68,7 @@ export default class Login extends Command {
       email = await enterEmailPrompt()
       wrongEmailCount += 1
       if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-        displayOutput({ itemToDisplay: WrongEmailError, err: true, flag: flags.output })
+        throw new Error(WrongEmailError)
       }
     }
 
