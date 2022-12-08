@@ -254,7 +254,8 @@ USAGE
 SUBCOMMAND
 
 ```
-  view
+  view Configures the output view format
+  username Persists a username in config file to be used in the future when not providing a username when loggin in
 ```
 
 EXAMPLES
@@ -262,6 +263,14 @@ Configures output in json format:
 
 ```
  affinidi config view json
+ affinidi config username email@example.com
+```
+
+USERNAME FLAGS
+
+```
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view
+-u, --unset-all remove username from config
 ```
 
 You can also see the help for the command in the CLI:
