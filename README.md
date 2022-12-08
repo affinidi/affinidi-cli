@@ -83,7 +83,7 @@ npm install -g @affinidi/cli
 
 ## Quick Start
 
-To start using our privacy preserving tools, please follow the next two steps:
+To start using our privacy-preserving tools, please follow the next two steps:
 
 1. authenticate by creating an account, or logging in to your account if you already have one
 2. create a project, or activate a project if you already created one
@@ -353,7 +353,7 @@ $ affinidi create schema --help
 
 ### **affinidi generate-application**
 
-Use this command to generate a privacy preserving app. Please see [Affinidi Reference App](https://github.com/affinidi/elements-reference-app-frontend) for more details.
+Use this command to generate a privacy-preserving app. Please see [Affinidi Reference App](https://github.com/affinidi/elements-reference-app-frontend) for more details.
 
 USAGE
 
@@ -495,7 +495,7 @@ $ affinidi list schemas --help
 
 ### **affinidi login**
 
-Log in with your email address to use Affinidi privacy preserving services. You will receive a confirmation code via email, which you will need to complete the authentication.
+Log in with your email address to use Affinidi privacy-preserving services. You will receive a confirmation code via email, which you will need to complete the authentication.
 
 USAGE
 
@@ -604,7 +604,7 @@ $ affinidi show schema --help
 
 ### **affinidi sign-up**
 
-Create an Affinidi account with this command to use our privacy preserving tools. You will need your email address, and then confirm the authentication with the code sent to your email.
+Create an Affinidi account with this command to use our privacy-preserving tools. You will need your email address, and then confirm the authentication with the code sent to your email.
 
 USAGE
 
