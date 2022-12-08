@@ -22,7 +22,7 @@ const verifyVcResponse = {
   isValid: true,
   errors: '[]',
 }
-describe('verify-vc', () => {
+describe('verify-vc command', () => {
   before(() => {
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)

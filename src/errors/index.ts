@@ -32,7 +32,9 @@ export const notFoundSchema = 'Please provide an existing schema ID.'
 export const InvalidSchemaName = 'Please, enter a schema name using only alpha numeric characters'
 export const NotSupportedPlatform = 'This platform is not supported.'
 export const InvalidUseCase = 'Invalid use-case'
-export const NoUserConfigFound = 'No user configurations were found'
+export const NoUserConfigFound =
+  'No user configurations were found, to create a configuration please log-in again.'
+export const NoConfigFile = "The config file doesn't exist, please log-in again"
 export const UnsuportedConfig = 'Unsuported configuration version'
 export const UnsuportedCredential = 'Unsuported credential version'
 

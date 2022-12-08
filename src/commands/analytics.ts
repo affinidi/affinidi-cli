@@ -1,15 +1,20 @@
-import { Command, Flags } from '@oclif/core'
+import { CliUx, Command, Flags } from '@oclif/core'
 
 import { analyticsConsentPrompt } from '../user-actions'
-import { analyticsService } from '../services'
+import { analyticsService, configService } from '../services'
 import { ViewFormat } from '../constants'
-import { displayOutput } from '../middleware/display'
+import { DisplayOptions, displayOutput } from '../middleware/display'
+import { CliError, getErrorOutput } from '../errors'
 
 export const OPTIN_MESSAGE = 'You have opted in to analytics'
 export const OPTOUT_MESSAGE = 'You have not opted in to analytics'
 
 export default class Analytics extends Command {
   static description = 'Opt-in or opt-out of analytics'
+
+  static command = 'affinidi analytics'
+
+  static usage = 'analytics [ true | false ]'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
@@ -32,7 +37,6 @@ export default class Analytics extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Analytics)
-
     if (args.newValue != null) {
       const wantsToOptIn = args.newValue === 'true'
       analyticsService.setAnalyticsOptIn(wantsToOptIn)
@@ -57,5 +61,27 @@ export default class Analytics extends Command {
       itemToDisplay: wantsToOptIn ? OPTIN_MESSAGE : OPTOUT_MESSAGE,
       flag: flags.output,
     })
+  }
+
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    const outputFormat = configService.getOutputFormat()
+    const optionsDisplay: DisplayOptions = {
+      itemToDisplay: getErrorOutput(
+        error,
+        Analytics.command,
+        Analytics.usage,
+        Analytics.description,
+        outputFormat !== 'plaintext',
+      ),
+      err: true,
+    }
+    try {
+      const { flags } = await this.parse(Analytics)
+      optionsDisplay.flag = flags.output
+      displayOutput(optionsDisplay)
+    } catch (_) {
+      displayOutput(optionsDisplay)
+    }
   }
 }

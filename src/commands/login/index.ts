@@ -38,17 +38,29 @@ export default class Login extends Command {
 
   public async run(): Promise<void> {
     const { failures } = await this.config.runHook('check', { id: CHECK_OPERATION.CONFIG })
+    const { args, flags } = await this.parse(Login)
     if (failures.length) {
       const failure = failures.shift()
       const { error } = failure
-      CliUx.ux.error(error.message)
+      throw new Error(error.message)
     }
 
-    const { args, flags } = await this.parse(Login)
-
     let { email } = args
-    if (!email) {
+    if (!email && !configService.getUsername()) {
+      displayOutput({
+        itemToDisplay: `Now you can save your username using "affinidi configure username" command, so you don't have to enter your username each time you log-in`,
+        flag: flags.output,
+      })
       email = await enterEmailPrompt()
+    }
+    if (!email) {
+      try {
+        email = configService.getUsername()
+      } catch (_) {
+        displayOutput({
+          itemToDisplay: `Config file doesn't exist, after logging in there will be one created and you can then use the configured username feature`,
+        })
+      }
     }
 
     let wrongEmailCount = 0
@@ -56,12 +68,12 @@ export default class Login extends Command {
       email = await enterEmailPrompt()
       wrongEmailCount += 1
       if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-        CliUx.ux.error(WrongEmailError)
+        throw new Error(WrongEmailError)
       }
     }
 
     // http request to affinidi sign-up endpoint
-    CliUx.ux.action.start('Start loging in to Affinidi')
+    CliUx.ux.action.start('Start logging in to Affinidi')
     const token = await userManagementService.login(email)
 
     // mask input after enter is pressed
@@ -80,7 +92,7 @@ export default class Login extends Command {
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
     createSession(email, userId, sessionToken)
-    if (configService.show().version === null) {
+    if (configService.show().version === null || !configService.show().configs[userId]) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createConfig({ userId, analyticsOptIn: wantsToOptIn })
     }

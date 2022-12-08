@@ -9,7 +9,6 @@ import { IAM_URL } from '../../../src/services/iam'
 import * as prompts from '../../../src/user-actions'
 import * as authentication from '../../../src/middleware/authentication'
 import * as userManagement from '../../../src/services'
-import { vaultService } from '../../../src/services'
 import { configService } from '../../../src/services'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'

@@ -2,7 +2,7 @@ import Conf from 'conf'
 import * as os from 'os'
 import * as path from 'path'
 
-import { NoUserConfigFound } from '../../errors'
+import { NoConfigFile, NoUserConfigFound } from '../../errors'
 import { version } from '../../constants'
 
 export const validVersions = [1]
@@ -20,6 +20,7 @@ type UserConfig = {
 }
 
 type ConfigStoreFormat = {
+  username: string
   version: number
   currentUserID: string
   configs: Record<UserId, UserConfig>
@@ -29,11 +30,14 @@ interface IConfigStorer {
   save(params: ConfigStoreFormat): void
   clear(): void
   setOutputFormat(outputFormat: string): void
+  getUsername: () => string
   getVersion: () => number
   getCurrentUser: () => string
   getAllUserConfigs: () => Record<UserId, UserConfig>
   getOutputFormat: () => string
   setCurrentProjectId: (id: string) => void
+  setUsername: (username: string) => void
+  deleteUserConfig: () => void
 }
 
 class ConfigService {
@@ -55,7 +59,24 @@ class ConfigService {
     const currentUserID = this.getCurrentUser()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
-    return { version: configVersion, currentUserID, configs }
+    const username = this.store.getUsername()
+    return { version: configVersion, currentUserID, configs, username }
+  }
+
+  private readonly userConfigMustExist = (): void => {
+    this.configFileMustExist()
+    const userId = this.getCurrentUser()
+    const configs = this.store.getAllUserConfigs()
+    if (!(userId in configs)) {
+      throw new Error(NoUserConfigFound)
+    }
+  }
+
+  private readonly configFileMustExist = (): void => {
+    const versionConf = this.store.getVersion()
+    if (versionConf === null) {
+      throw new Error(NoConfigFile)
+    }
   }
 
   public getCurrentUser = (): string => {
@@ -66,6 +87,10 @@ class ConfigService {
     return this.store.getOutputFormat()
   }
 
+  public getUsername = (): string => {
+    return this.store.getUsername()
+  }
+
   public create = (
     userId: string,
     activeProjectId: string = '',
@@ -74,6 +99,7 @@ class ConfigService {
     this.store.save({
       currentUserID: userId,
       version: getMajorVersion(),
+      username: '',
       configs: {
         [userId]: {
           activeProjectId,
@@ -85,6 +111,7 @@ class ConfigService {
   }
 
   public setOutputFormat = (format: string): void => {
+    this.userConfigMustExist()
     this.store.setOutputFormat(format)
   }
 
@@ -107,6 +134,7 @@ class ConfigService {
   }
 
   public optInOrOut = (inOrOut: boolean) => {
+    this.userConfigMustExist()
     const userConfig = this.currentUserConfig()
     userConfig.analyticsOptIn = inOrOut
     const all = this.show()
@@ -119,7 +147,17 @@ class ConfigService {
   }
 
   public setCurrentProjectId = (id: string): void => {
+    this.userConfigMustExist()
     this.store.setCurrentProjectId(id)
+  }
+
+  public setUsername = (username: string): void => {
+    this.userConfigMustExist()
+    this.store.setUsername(username)
+  }
+
+  public deleteUserConfig = (): void => {
+    this.store.deleteUserConfig()
   }
 }
 
@@ -145,8 +183,7 @@ const store: IConfigStorer = {
     return Number.isNaN(v) ? null : v
   },
   getCurrentUser: function getCurrentUser(): string {
-    const value = configConf.get('currentUserID')
-    return value
+    return configConf.get('currentUserID')
   },
   getAllUserConfigs: (): Record<string, UserConfig> => {
     return configConf.get('configs')
@@ -175,6 +212,18 @@ const store: IConfigStorer = {
       outputFormat,
     }
     configs[userId] = newUserConfig
+    configConf.set('configs', configs)
+  },
+  getUsername: function getUsername(): string {
+    return configConf.get('username')
+  },
+  setUsername: function setUsername(username: string): void {
+    configConf.set('username', username)
+  },
+  deleteUserConfig: function deleteUserConfig(): void {
+    const userId = this.getCurrentUser()
+    const configs = configConf.get('configs')
+    delete configs[userId]
     configConf.set('configs', configs)
   },
 }
@@ -223,6 +272,18 @@ const testStorer: IConfigStorer = {
       outputFormat,
     }
     configs[userId] = newUserConfig
+    testStore.set('configs', configs)
+  },
+  getUsername: function getUsername(): string {
+    return testStore.get('username')
+  },
+  setUsername: function setUsername(username: string): void {
+    testStore.set('username', username)
+  },
+  deleteUserConfig: function deleteUserConfig(): void {
+    const configs = testStore.get('configs')
+    const userId = this.getCurrentUser()
+    delete configs[userId]
     testStore.set('configs', configs)
   },
 }
