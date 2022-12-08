@@ -1,12 +1,12 @@
 # Affinidi CLI
 
-[Introduction](#introduction)  
-[Features](#features)  
-[Installation](#installation)  
-[Quick Start](#quick-start)  
-[CLI Commands](#cli-commands)  
-[About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials)  
-[Feedback & Support](#feedback--support)  
+[Introduction](#introduction)
+[Features](#features)
+[Installation](#installation)
+[Quick Start](#quick-start)
+[CLI Commands](#cli-commands)
+[About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials)
+[Feedback & Support](#feedback--support)
 [FAQ](#faq)
 
 #
@@ -31,7 +31,7 @@ Learn more about [VCs](https://academy.affinidi.com/what-are-verifiable-credenti
 
 ## Features
 
-The folowing features are available through Affinidi CLI:
+The following features are available through Affinidi CLI:
 
 ### Affinidi account
 
@@ -104,8 +104,8 @@ If you already have an account:
 affinidi login
 ```
 
-Full reference for each command can be found here:  
-[`sign-up`](#affinidi-sign-up)  
+Full reference for each command can be found here:
+[`sign-up`](#affinidi-sign-up)
 [`login`](#affinidi-login)
 
 ### Create or activate a project:
@@ -128,8 +128,8 @@ You can also simply type this and follow the prompts to choose from a list of ex
 affinidi use project
 ```
 
-Full reference for each command can be found here:  
-[`create`](#affinidi-create)  
+Full reference for each command can be found here:
+[`create`](#affinidi-create)
 [`use`](#affinidi-use)
 
 ### Schemas
@@ -150,9 +150,9 @@ To issue a VC you first have to create a schema or choose an existing one:
 
 You will need the value of the property `jsonSchemaUrl` of the created or chosen schema to issue VCs.
 
-Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).  
-Full reference for each command can be found here:  
-[`create`](#affinidi-create)  
+Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).
+Full reference for each command can be found here:
+[`create`](#affinidi-create)
 [`list`](#affinidi-list)
 
 ### Verifiable Credentials
@@ -173,8 +173,8 @@ Please see [How to structure a JSON file to issue a VC](#how-to-structure-a-json
 $ affinidi verify-vc --data=<value>
 ```
 
-Full reference for each command can be found here:  
-[issue-vc](#affinidi-issue-vc)  
+Full reference for each command can be found here:
+[issue-vc](#affinidi-issue-vc)
 [verify-vc](#affinidi-verify-vc)
 
 ### Generate an application
@@ -325,7 +325,7 @@ SCHEMA FLAGS
   -s, --source=<value>            (required) Path to the json file with schema properties
 ```
 
-Please see [How to structure a schema](#how-to-structure-a-schema) for guidance on how to create the _source_ file.  
+Please see [How to structure a schema](#how-to-structure-a-schema) for guidance on how to create the _source_ file.
 EXAMPLES
 
 ```
@@ -595,7 +595,7 @@ $ affinidi show schema --help
 
 ### **affinidi sign-up**
 
-Create an Affinidi account with this command to use our privacy preserving tools. You will need your email adress, and then confirm the authentication with the code sent to your email.
+Create an Affinidi account with this command to use our privacy preserving tools. You will need your email address, and then confirm the authentication with the code sent to your email.
 
 USAGE
 
@@ -840,7 +840,7 @@ However, you can always fork your private (unlisted) schema in order to make it 
 
 The JSON file that is the source for the VC to be issued must follow the structure of the schema on which the VC is based. Use the properties of the schema's `credentialSubject` as the template for the new VC.
 
-Example for [Event Elegibility Schema](https://schema.affinidi.com/EventElegibilityV1-0.json):
+Example for [Event Eligibility Schema](https://schema.affinidi.com/EventElegibilityV1-0.json):
 
 ```
 {
