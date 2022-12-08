@@ -81,7 +81,6 @@ class ConfigService {
   }
 
   public getCurrentUser = (): string => {
-    // this.configFileExist()
     return this.store.getCurrentUser()
   }
 
@@ -90,7 +89,6 @@ class ConfigService {
   }
 
   public getUsername = (): string => {
-    // this.configFileExist()
     return this.store.getUsername()
   }
 
