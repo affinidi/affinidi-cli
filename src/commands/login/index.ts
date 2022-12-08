@@ -48,7 +48,7 @@ export default class Login extends Command {
     let { email } = args
     if (!email && !configService.getUsername()) {
       displayOutput({
-        itemToDisplay: `Now you can save your username using "affinidi configure username" command, so you don't have to enter your username each time you log-in`,
+        itemToDisplay: `Now you can save your username using "affinidi config username [username]" command, so you don't have to enter your username each time you log-in`,
         flag: flags.output,
       })
       email = await enterEmailPrompt()
