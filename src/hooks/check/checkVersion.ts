@@ -1,8 +1,9 @@
 import { Hook } from '@oclif/core'
 import { Hooks } from '@oclif/core/lib/interfaces'
 
-import { UnsuportedConfig } from '../../errors'
+import { UnsuportedConfig, UnsuportedCredential } from '../../errors'
 import { configService, validVersions } from '../../services/config'
+import { vaultService } from '../../services/vault'
 
 export const CHECK_OPERATION = Object.freeze({
   CONFIG: 'check-config-version',
@@ -27,10 +28,12 @@ const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function (
   if (!version) {
     return
   }
-  // if (opts.id === CHECK_OPERATION.CREDENTIALS) {
-  //   version = vaultService.getVersion()
-  //   message = UnsuportedCredential
-  // }
+  
+  if (opts.id === CHECK_OPERATION.CREDENTIALS) {
+    // ToDo: implement getService() 
+    // version = vaultService.getVersion()
+    message = UnsuportedCredential
+  }
   if (!validVersions.includes(version)) {
     this.error(message)
   }
