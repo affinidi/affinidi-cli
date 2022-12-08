@@ -63,17 +63,16 @@ class ConfigService {
     return { version: configVersion, currentUserID, configs, username }
   }
 
-  private readonly userConfigExist = (): boolean => {
-    this.configFileExist()
+  private readonly userConfigMustExist = (): void => {
+    this.configFileMustExist()
     const userId = this.getCurrentUser()
     const configs = this.store.getAllUserConfigs()
-    if (!configs[userId]) {
+    if (!(userId in configs)) {
       throw new Error(NoUserConfigFound)
     }
-    return true
   }
 
-  private readonly configFileExist = (): void => {
+  private readonly configFileMustExist = (): void => {
     const versionConf = this.store.getVersion()
     if (versionConf === null) {
       throw new Error(NoConfigFile)
@@ -112,9 +111,8 @@ class ConfigService {
   }
 
   public setOutputFormat = (format: string): void => {
-    if (this.userConfigExist()) {
-      this.store.setOutputFormat(format)
-    }
+    this.userConfigMustExist()
+    this.store.setOutputFormat(format)
   }
 
   public currentUserConfig = (): UserConfig => {
@@ -136,7 +134,7 @@ class ConfigService {
   }
 
   public optInOrOut = (inOrOut: boolean) => {
-    this.userConfigExist()
+    this.userConfigMustExist()
     const userConfig = this.currentUserConfig()
     userConfig.analyticsOptIn = inOrOut
     const all = this.show()
@@ -149,15 +147,13 @@ class ConfigService {
   }
 
   public setCurrentProjectId = (id: string): void => {
-    if (this.userConfigExist()) {
-      this.store.setCurrentProjectId(id)
-    }
+    this.userConfigMustExist()
+    this.store.setCurrentProjectId(id)
   }
 
   public setUsername = (username: string): void => {
-    if (this.userConfigExist()) {
-      this.store.setUsername(username)
-    }
+    this.userConfigMustExist()
+    this.store.setUsername(username)
   }
 
   public deleteUserConfig = (): void => {
