@@ -14,7 +14,7 @@ const testProjectId = 'random-test-project-id'
 const getSchemaOK = (id: string) => async (api: FancyTypes.NockScope) =>
   api.get(`/schemas/${id}`).reply(StatusCodes.OK, mockSchemaDtoOne)
 
-describe('schema', () => {
+describe('show schema command', () => {
   before(() => {
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)

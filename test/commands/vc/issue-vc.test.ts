@@ -49,7 +49,7 @@ const doNothing = () => {}
 const jsonFile = 'some-user/some-folder/someFile.json'
 const csvFile = 'some-user/some-folder/someFile.csv'
 
-describe('issue-vc', () => {
+describe('issue-vc command', () => {
   before(() => {
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
