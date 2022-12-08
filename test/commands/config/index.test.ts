@@ -9,7 +9,7 @@ const testProjectId = 'random-test-project-id'
 
 describe('config', () => {
   before(() => {
-    createSession('email', testUserId, 'sessionToken')
+    createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
     createConfig({ userId: testUserId, projectId: testProjectId })
   })
   after(() => {

@@ -13,7 +13,7 @@ const testProjectId = 'random-test-project-id'
 
 describe('logout command', () => {
   before(() => {
-    createSession('email', testUserId, 'sessionToken')
+    createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
   })

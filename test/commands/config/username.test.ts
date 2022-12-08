@@ -13,7 +13,7 @@ describe('config username command', () => {
   })
   describe('set username', () => {
     before(() => {
-      createSession('email', testUserId, 'sessionToken')
+      createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
       createConfig({ userId: testUserId, projectId: testProjectId })
     })
     test
@@ -27,7 +27,7 @@ describe('config username command', () => {
   })
   describe('unset username', () => {
     before(() => {
-      createSession('email', testUserId, 'sessionToken')
+      createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
       createConfig({ userId: testUserId, projectId: testProjectId })
     })
     test

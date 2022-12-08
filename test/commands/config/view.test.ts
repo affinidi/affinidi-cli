@@ -13,7 +13,7 @@ describe('config view command', () => {
   })
   describe('change from plaintext to json', () => {
     before(() => {
-      createSession('email', testUserId, 'sessionToken')
+      createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
       createConfig({ userId: testUserId, projectId: testProjectId })
     })
     test
@@ -27,7 +27,7 @@ describe('config view command', () => {
   })
   describe('change from json to plaintext', () => {
     before(() => {
-      createSession('email', testUserId, 'sessionToken')
+      createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
       createConfig({ userId: testUserId, projectId: testProjectId })
       configService.setOutputFormat('json')
     })

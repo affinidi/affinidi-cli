@@ -11,7 +11,7 @@ import {
 import { userManagementService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
-import { createConfig, createSession, parseJwt } from '../../services/user-management'
+import { createConfig, initiSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
@@ -78,7 +78,7 @@ export default class SignUp extends Command {
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
-    createSession(email, userId, sessionToken)
+    initiSession({ accountLabel: email, accountId: userId, accessToken: sessionToken })
     createConfig({ userId, analyticsOptIn: wantsToOptIn })
 
     const analyticsData: EventDTO = {

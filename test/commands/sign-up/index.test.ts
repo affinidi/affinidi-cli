@@ -4,10 +4,10 @@ import { StatusCodes } from 'http-status-codes'
 
 import { getWelcomeUserRawMessages } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
-import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
+import { createSession, USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
-import { configService, vaultService } from '../../../src/services'
+import { configService, vaultService, VAULT_KEYS } from '../../../src/services'
 import * as config from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'
@@ -16,6 +16,8 @@ const validCookie =
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
 const testProjectId = 'random-test-project-id'
 const testOTP = '123456'
+const testApiKey = 'Awesome-API-Key-Hash'
+const testProjectDid = 'did:elem:AwesomeDID'
 const doNothing = () => {}
 
 const clearSessionAndConfig = () => {
@@ -89,6 +91,47 @@ describe('sign-up command', () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           expect(analyticsService.hasAnalyticsOptIn()).to.be.true
         })
+    })
+  })
+  describe('Given an already logged in user', () => {
+    before(() => {
+      createSession({ accountLabel: 'email', accountId: testUserId, accessToken: 'sessionToken' })
+      vaultService.set(VAULT_KEYS.projectAPIKey, testApiKey)
+      vaultService.set(VAULT_KEYS.projectDID, testProjectDid)
+      vaultService.set(VAULT_KEYS.projectId, testProjectId)
+    })
+    describe('When the user tries to sign-up with a new account', () => {
+      test
+        .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+          api.post('/auth/signup').reply(StatusCodes.OK, { token: 'some-valid-token' }),
+        )
+        .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+          api
+            .post('/auth/signup/confirm')
+            .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
+        )
+        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+        .stdout()
+        .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
+        .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
+        .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
+        .stub(prompts, 'analyticsConsentPrompt', () => async () => true)
+        .command(['sign-up'])
+        .it(
+          'runs sign-up and verifies that the credentials.json file has the correct values',
+          (ctx) => {
+            const output = ctx.stdout
+            getWelcomeUserRawMessages().forEach((b) => {
+              expect(output).to.contain(b)
+            })
+            /* eslint-disable @typescript-eslint/no-unused-expressions */
+            expect(vaultService.get(VAULT_KEYS.projectId)).to.be.null
+            expect(vaultService.get(VAULT_KEYS.projectName)).to.be.null
+            expect(vaultService.get(VAULT_KEYS.projectAPIKey)).to.be.null
+            expect(vaultService.get(VAULT_KEYS.projectDID)).to.be.null
+            /* eslint-enable */
+          },
+        )
     })
   })
 })

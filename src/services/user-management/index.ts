@@ -23,6 +23,13 @@ type Session = {
   scopes: string[]
 }
 
+type InitOrCreateSessionParams = {
+  accountLabel: string
+  accountId: string
+  accessToken: string
+  scopes?: string[]
+}
+
 export const parseJwt = (token: string) => {
   try {
     return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
@@ -37,12 +44,12 @@ export const getSession = (): Session => {
   return storageValue ? (JSON.parse(storageValue) as Session) : undefined
 }
 
-export const createSession = (
-  accountLabel: string,
-  accountId: string,
-  accessToken: string,
-  scopes: string[] = [],
-): Session => {
+export const createSession = ({
+  accountLabel,
+  accountId,
+  accessToken,
+  scopes = [],
+}: InitOrCreateSessionParams): Session => {
   const session: Session = {
     id: nanoid(),
     accessToken,
@@ -51,6 +58,18 @@ export const createSession = (
   }
   vaultService.set(VAULT_KEYS.session, JSON.stringify(session))
   return session
+}
+
+const deleteUserProjectData = () => {
+  vaultService.delete(VAULT_KEYS.projectId)
+  vaultService.delete(VAULT_KEYS.projectName)
+  vaultService.delete(VAULT_KEYS.projectAPIKey)
+  vaultService.delete(VAULT_KEYS.projectDID)
+}
+
+export const initiSession = (params: InitOrCreateSessionParams): Session => {
+  deleteUserProjectData()
+  return createSession(params)
 }
 
 export const createConfig = ({

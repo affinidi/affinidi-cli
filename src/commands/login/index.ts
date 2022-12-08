@@ -91,7 +91,7 @@ export default class Login extends Command {
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
 
-    createSession(email, userId, sessionToken)
+    createSession({ accountLabel: email, accountId: userId, accessToken: sessionToken })
     if (configService.show().version === null || !configService.show().configs[userId]) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createConfig({ userId, analyticsOptIn: wantsToOptIn })
