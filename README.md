@@ -241,7 +241,7 @@ You can also see the help for the command in the CLI:
 $ affinidi autocomplete --help
 ```
 
-### **affinidi config\***
+### **affinidi config**
 
 Use this command to configure the format of the output. Supported options are: `plaintext` and `json`.
 
