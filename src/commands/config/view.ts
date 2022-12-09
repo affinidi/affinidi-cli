@@ -44,7 +44,7 @@ export default class View extends Command {
       name: 'CLI_VIEW_FORMAT_CONFIGURED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: session?.account?.userId,
       metadata: {
         format,
         commandId: 'affinidi.configView',

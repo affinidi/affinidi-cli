@@ -1,10 +1,11 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
-import * as fs from 'fs/promises'
+
 import { StatusCodes } from 'http-status-codes'
 
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
-import { iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
+import { iAmService } from '../../services'
 import { selectProject } from '../../user-actions'
 import { NextStepsRawMessage } from '../../render/functions'
 import { EventDTO } from '../../services/analytics/analytics.api'
@@ -48,11 +49,12 @@ export default class ShowProject extends Command {
     }
 
     const session = getSession()
-    const token = session?.accessToken
+    const token = session?.consoleAuthToken
     let projectId = args['project-id']
 
     if (flags.active) {
-      projectId = vaultService.get(VAULT_KEYS.projectId)
+      const activProject = vaultService.getActiveProject()
+      projectId = activProject.project.projectId
       CliUx.ux.action.start('Fetching active project')
     } else if (projectId) {
       CliUx.ux.action.start(`Fetching project with id: ${projectId}`)

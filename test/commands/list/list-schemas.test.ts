@@ -5,22 +5,22 @@ import { StatusCodes } from 'http-status-codes'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { mockSchemaDto } from '../../../src/fixtures/mock-schemas'
 import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
-import { VAULT_KEYS, configService, vaultService } from '../../../src/services'
+import { configService } from '../../../src/services'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
+import { projectSummary } from '../../../src/fixtures/mock-projects'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
-const testProjectId = 'random-test-project-id'
-const testProjectDid = 'did:elem:AwesomeDID'
+const testProjectId = projectSummary.project.projectId
+// const testProjectDid = projectSummary.wallet.did
 
 const getSchemasOK = async (api: FancyTypes.NockScope) =>
-  api
-    .get(`/schemas?skip=0&limit=10&scope=default&did=${testProjectDid}`)
-    .reply(StatusCodes.OK, mockSchemaDto)
+  api.get(`/schemas?scope=default&skip=0&limit=10`).reply(StatusCodes.OK, mockSchemaDto)
 
 describe('list schemas command', () => {
   before(() => {
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
-    vaultService.set(VAULT_KEYS.projectDID, testProjectDid)
+    vaultService.setActiveProject(projectSummary)
   })
   after(() => {
     configService.clear()

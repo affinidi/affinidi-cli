@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { anonymous, ViewFormat } from '../../constants'
 
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
-import { VAULT_KEYS, vaultService } from '../../services/vault'
+import { vaultService } from '../../services/vault/typedVaultService'
 import { schemaManagerService } from '../../services/schema-manager'
 import { getSession } from '../../services/user-management'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
@@ -66,8 +66,11 @@ export default class Schema extends Command {
     const session = getSession()
 
     CliUx.ux.action.start('Fetching schema')
-
-    const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
+    let apiKey: string
+    if (args['schema-id'].includes('@did:elem')) {
+      const activeProject = vaultService.getActiveProject()
+      apiKey = activeProject.apiKey.apiKeyHash
+    }
     const schema = await schemaManagerService.getById(args['schema-id'], apiKey)
     const analyticsData: EventDTO = {
       name: 'VC_SCHEMAS_READ',

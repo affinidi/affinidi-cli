@@ -1,8 +1,8 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import path from 'path'
-
-import { vaultService, GitService, Writer, VAULT_KEYS } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
+import { GitService, Writer } from '../../services'
 import {
   CliError,
   InvalidUseCase,
@@ -88,7 +88,7 @@ export default class GenerateApplication extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'generator')
     }
-    const userId = getSession()?.account?.id
+    const userId = getSession()?.account?.userId
     const analyticsData: EventDTO = {
       name: 'APPLICATION_GENERATION_STARTED',
       category: 'APPLICATION',
@@ -176,9 +176,10 @@ export default class GenerateApplication extends Command {
   }
 
   private async setUpProject(name: string, withProxy: boolean) {
-    const activeProjectApiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
-    const activeProjectDid = vaultService.get(VAULT_KEYS.projectDID)
-    const activeProjectId = vaultService.get(VAULT_KEYS.projectId)
+    const activeProject = vaultService.getActiveProject()
+    const activeProjectApiKey = activeProject.apiKey.apiKeyHash
+    const activeProjectDid = activeProject.wallet.did
+    const activeProjectId = activeProject.project.projectId
     const { flags } = await this.parse(GenerateApplication)
 
     if (!activeProjectApiKey || !activeProjectDid || !activeProjectId) {

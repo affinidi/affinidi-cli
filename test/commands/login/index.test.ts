@@ -15,7 +15,8 @@ import {
   UnsuportedConfig,
 } from '../../../src/errors'
 import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
-import { configService, vaultService } from '../../../src/services'
+import { configService } from '../../../src/services'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
 import * as config from '../../../src/services/config'
 
 const validEmailAddress = 'valid@email-address.com'

@@ -1,7 +1,7 @@
 import { getSession } from '../services/user-management'
 
 export const isAuthenticated = (): boolean => {
-  if (getSession()?.accessToken) {
+  if (getSession()?.consoleAuthToken) {
     return true
   }
   return false

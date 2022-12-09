@@ -77,8 +77,8 @@ export default class SignUp extends Command {
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
-
-    createSession(email, userId, sessionToken)
+    const sessionWithoutPrefix = sessionToken.replace('console_authtoken=', '')
+    createSession(email, userId, sessionWithoutPrefix)
     createConfig({ userId, analyticsOptIn: wantsToOptIn })
 
     const analyticsData: EventDTO = {

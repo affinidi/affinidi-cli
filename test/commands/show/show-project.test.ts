@@ -5,9 +5,10 @@ import { CliUx } from '@oclif/core'
 import { IAM_URL } from '../../../src/services/iam'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
-import { configService, vaultService, VAULT_KEYS } from '../../../src/services'
+import { configService } from '../../../src/services'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import * as authentication from '../../../src/middleware/authentication'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
 const testProjectId = 'random-test-project-id'
@@ -40,7 +41,7 @@ describe('show project command', () => {
     })
   describe('Showing active project', () => {
     before(() => {
-      vaultService.set(VAULT_KEYS.projectId, projectSummary.project.projectId)
+      vaultService.setActiveProject(projectSummary)
     })
     after(() => {
       vaultService.clear()

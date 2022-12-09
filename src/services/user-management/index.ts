@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 
 import { Api as UserManagementApi } from './user-management.api'
 import { CliError } from '../../errors'
-import { vaultService, VAULT_KEYS } from '../vault'
+import { vaultService, SessionType } from '../vault/typedVaultService'
 import { configService } from '../config'
 
 type SessionToken = string
@@ -12,16 +12,6 @@ type AuthFlow = 'login' | 'signup'
 
 export const USER_MANAGEMENT_URL = 'https://console-user-management.apse1.affinidi.com/api/v1'
 const SERVICE = 'userManagement'
-
-type Session = {
-  id: string
-  accessToken: string
-  account: {
-    id: string
-    label: string
-  }
-  scopes: string[]
-}
 
 export const parseJwt = (token: string) => {
   try {
@@ -31,10 +21,8 @@ export const parseJwt = (token: string) => {
   }
 }
 
-export const getSession = (): Session => {
-  const storageValue = vaultService.get(VAULT_KEYS.session)
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return storageValue ? (JSON.parse(storageValue) as Session) : undefined
+export const getSession = (): SessionType => {
+  return vaultService.getSession()
 }
 
 export const createSession = (
@@ -42,14 +30,14 @@ export const createSession = (
   accountId: string,
   accessToken: string,
   scopes: string[] = [],
-): Session => {
-  const session: Session = {
-    id: nanoid(),
-    accessToken,
-    account: { label: accountLabel, id: accountId },
+): SessionType => {
+  const session: SessionType = {
+    sessionId: nanoid(),
+    consoleAuthToken: accessToken,
+    account: { label: accountLabel, userId: accountId },
     scopes,
   }
-  vaultService.set(VAULT_KEYS.session, JSON.stringify(session))
+  vaultService.setSession(session)
   return session
 }
 

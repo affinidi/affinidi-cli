@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
 import { schemaManagerService } from '../../services/schema-manager'
-import { vaultService, VAULT_KEYS } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
 import { CreateSchemaInputDto } from '../../services/schema-manager/schema-manager.api'
 import { enterSchemaName } from '../../user-actions'
 import {
@@ -67,8 +67,9 @@ export default class Schema extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
-    const apiKeyhash = vaultService.get(VAULT_KEYS.projectAPIKey)
-    const did = vaultService.get(VAULT_KEYS.projectDID)
+    const activeProject = vaultService.getActiveProject()
+    const apiKeyhash = activeProject.apiKey.apiKeyHash
+    const { did } = activeProject.wallet
     const session = getSession()
 
     let { schemaName } = args
@@ -145,7 +146,7 @@ export default class Schema extends Command {
       name: 'VC_SCHEMA_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: configService.getCurrentUser(),
+      uuid: session?.account?.userId,
       metadata: {
         schemaId: schemaInfo?.id,
         commandId: 'affinidi.createSchema',

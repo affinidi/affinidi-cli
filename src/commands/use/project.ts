@@ -1,8 +1,8 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
-import { ProjectSummary } from '../../services/iam/iam.api'
-import { iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
+import { iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { selectProject } from '../../user-actions'
@@ -14,12 +14,6 @@ import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 
-const setActiveProject = (projectToBeActive: ProjectSummary): void => {
-  vaultService.set(VAULT_KEYS.projectId, projectToBeActive.project.projectId)
-  vaultService.set(VAULT_KEYS.projectName, projectToBeActive.project.name)
-  vaultService.set(VAULT_KEYS.projectAPIKey, projectToBeActive.apiKey.apiKeyHash)
-  vaultService.set(VAULT_KEYS.projectDID, projectToBeActive.wallet.did)
-}
 export default class Project extends Command {
   static command = 'affinidi use'
 
@@ -52,7 +46,7 @@ export default class Project extends Command {
 
     let projectId = args['project-id']
     const session = getSession()
-    const token = session?.accessToken
+    const token = session?.consoleAuthToken
 
     if (!projectId) {
       CliUx.ux.action.start('Fetching projects')
@@ -70,8 +64,8 @@ export default class Project extends Command {
       projectId = await selectProject(projectData, maxNameLength)
     }
     const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
-    const userId = session?.account?.id
-    setActiveProject(projectToBeActive)
+    const userId = session?.account?.userId
+    vaultService.setActiveProject(projectToBeActive)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_SET_ACTIVE',
       category: 'APPLICATION',

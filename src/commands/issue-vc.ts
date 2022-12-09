@@ -6,7 +6,7 @@ import * as EmailValidator from 'email-validator'
 import { StatusCodes } from 'http-status-codes'
 
 import { parseSchemaURL } from '../services/issuance/parse.schema.url'
-import { vaultService, VAULT_KEYS } from '../services'
+import { vaultService } from '../services/vault/typedVaultService'
 import {
   CreateIssuanceInput,
   CreateIssuanceOfferInput,
@@ -79,7 +79,8 @@ export default class IssueVc extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'issuance')
     }
-    const apiKeyHash = vaultService.get(VAULT_KEYS.projectAPIKey)
+    const activeProject = vaultService.getActiveProject()
+    const { apiKeyHash } = activeProject.apiKey
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)
     const session = getSession()
 
@@ -94,9 +95,9 @@ export default class IssueVc extends Command {
           jsonLdContextUrl: jsonLdContext.toString(),
           jsonSchemaUrl: jsonSchema.toString(),
         },
-        issuerDid: vaultService.get(VAULT_KEYS.projectDID),
+        issuerDid: activeProject.wallet.did,
       },
-      projectId: vaultService.get(VAULT_KEYS.projectId),
+      projectId: activeProject.project.projectId,
     }
     const fileExtension = flags.data.split('.').pop()
     let issuanceId: CreateIssuanceOutput

@@ -52,12 +52,12 @@ export default class Projects extends Command {
     }
     const session = getSession()
 
-    const token = session?.accessToken
+    const token = session?.consoleAuthToken
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECTS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: configService.getCurrentUser(),
+      uuid: session?.account?.userId,
       metadata: {
         commandId: 'affinidi.listProjects',
         ...generateUserMetadata(session?.account?.label),

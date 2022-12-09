@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
-import { vaultService, VAULT_KEYS } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
 import { schemaManagerService, ScopeType } from '../../services/schema-manager'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
@@ -121,8 +121,13 @@ export default class Schemas extends Command {
         ...generateUserMetadata(session?.account?.label),
       },
     }
-    const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
-    const did = vaultService.get(VAULT_KEYS.projectDID)
+    let apiKey: string
+    let did: string
+    if (scope === 'unlisted' || publicFlag === 'false') {
+      const activeProject = vaultService.getActiveProject()
+      apiKey = activeProject.apiKey.apiKeyHash
+      did = activeProject.wallet.did
+    }
     const params = {
       apiKey,
       authorDid: did,

@@ -48,7 +48,7 @@ export default class Username extends Command {
     const analyticsData: EventDTO = {
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: session?.account?.userId,
       metadata: {
         commandId: 'affinidi.configUsername',
         ...generateUserMetadata(session?.account?.label),
