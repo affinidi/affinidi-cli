@@ -14,7 +14,6 @@ import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
-import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -28,13 +27,6 @@ export default class SignUp extends Command {
   static args = [{ name: 'email' }]
 
   public async run(): Promise<void> {
-    const { failures } = await this.config.runHook('check', { id: CHECK_OPERATION.CONFIG })
-    if (failures.length) {
-      const failure = failures.shift()
-      const { error } = failure
-      CliUx.ux.error(error.message)
-    }
-
     const { args } = await this.parse(SignUp)
     let { email } = args
     if (!email) {

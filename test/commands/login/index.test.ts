@@ -41,17 +41,6 @@ describe('login command', () => {
   after(() => {
     configService.clear()
   })
-  describe('Given an unsuported cli config version', () => {
-    test
-      .stdout()
-      .stub(userActions, 'enterEmailPrompt', () => async () => 'invalid.email.address')
-      .stub(configService, 'getVersion', () => () => invalidCliVersion)
-      .command(['login'])
-      .it('runs login and throws and unsuported version error', (ctx) => {
-        expect(ctx.stdout).to.contain(UnsuportedConfig)
-      })
-  })
-
   describe('Given an invalid email address', () => {
     test
       .stdout()

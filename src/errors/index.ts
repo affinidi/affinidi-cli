@@ -36,6 +36,7 @@ export const NoUserConfigFound =
 export const NoConfigFile = "The config file doesn't exist, please log-in again"
 export const UnsuportedConfig = 'Unsuported configuration version'
 export const UnsuportedCredential = 'Unsuported credential version'
+export const OldCredntials = 'Please login again to update your credentials to the latest version'
 
 export class CliError extends Error {
   code: number

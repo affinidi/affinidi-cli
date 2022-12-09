@@ -21,8 +21,8 @@ describe('checkVersion hooks', () => {
       .stdout()
       .hook('check', { id: CHECK_OPERATION.CONFIG })
       .do((output: { returned: Hook.Result<undefined> }) => {
-        expect(output.returned.successes).to.have.lengthOf(1)
-        expect(output.returned.failures).to.have.lengthOf(0)
+        expect(output.returned.successes).to.have.lengthOf(0)
+        expect(output.returned.failures).to.have.lengthOf(1)
       })
       .it(`shows an ${UnsuportedConfig} error message`)
   })
@@ -62,27 +62,4 @@ describe('checkVersion hooks', () => {
         .it(`shows an ${UnsuportedConfig} error message`)
     })
   })
-
-  // describe('checkVersion for the credentials.json file', () => {
-  //   describe('Given an unsuported version in the credentials file', () => {
-  //     before(() => {
-  //       Sinon.stub(config, 'getMajorVersion').returns(unsuportedVersion)
-  //       createSession('email', testUserId, 'sessionToken')
-  //     })
-  //     after(() => {
-  //       Sinon.restore()
-  //     })
-
-  //     test
-  //       .only()
-  //       .stdout()
-  //       .hook('check', { id: CHECK_OPERATION.CREDENTIALS })
-  //       .do((output: { returned: Hook.Result<undefined> }) => {
-  //         expect(output.returned.failures).to.have.lengthOf(1)
-  //         const { error } = output.returned.failures.shift()
-  //         expect(error.message).to.contain(UnsuportedCredential)
-  //       })
-  //       .it(`shows an ${UnsuportedCredential} error message`)
-  //   })
-  // })
 })
