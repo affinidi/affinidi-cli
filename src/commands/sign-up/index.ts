@@ -8,7 +8,7 @@ import {
   AnswerYes,
   analyticsConsentPrompt,
 } from '../../user-actions'
-import { userManagementService } from '../../services'
+import { userManagementService, vaultService } from '../../services'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
@@ -70,6 +70,7 @@ export default class SignUp extends Command {
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
     const sessionWithoutPrefix = sessionToken.replace('console_authtoken=', '')
+    vaultService.clear()
     createSession(email, userId, sessionWithoutPrefix)
     createConfig({ userId, analyticsOptIn: wantsToOptIn })
 
