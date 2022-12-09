@@ -8,7 +8,8 @@ import {
   AnswerYes,
   analyticsConsentPrompt,
 } from '../../user-actions'
-import { userManagementService, vaultService } from '../../services'
+import { userManagementService } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
