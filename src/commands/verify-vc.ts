@@ -42,7 +42,7 @@ export default class VerifyVc extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'verifier')
     }
-    const session = getSession()
+    const { account } = getSession()
     const activeProject = vaultService.getActiveProject()
     const apiKey = activeProject.apiKey.apiKeyHash
 
@@ -55,10 +55,10 @@ export default class VerifyVc extends Command {
       name: 'VC Verified',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? configService.getCurrentUser() : anonymous,
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.verify-vc',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

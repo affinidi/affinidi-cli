@@ -48,8 +48,7 @@ export default class ShowProject extends Command {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
 
-    const session = getSession()
-    const token = session?.consoleAuthToken
+    const { account, consoleAuthToken: token } = getSession()
     let projectId = args['project-id']
 
     if (flags.active) {
@@ -82,9 +81,9 @@ export default class ShowProject extends Command {
       component: 'Cli',
       uuid: configService.getCurrentUser(),
       metadata: {
-        projectId: projectData?.project?.projectId,
+        projectId: projectData.project.projectId,
         commandId: 'affinidi.showProject',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

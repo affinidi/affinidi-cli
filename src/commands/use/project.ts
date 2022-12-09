@@ -45,8 +45,7 @@ export default class Project extends Command {
     }
 
     let projectId = args['project-id']
-    const session = getSession()
-    const token = session?.consoleAuthToken
+    const { account, consoleAuthToken: token } = getSession()
 
     if (!projectId) {
       CliUx.ux.action.start('Fetching projects')
@@ -64,7 +63,7 @@ export default class Project extends Command {
       projectId = await selectProject(projectData, maxNameLength)
     }
     const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
-    const userId = session?.account?.userId
+    const { userId, label } = account
     vaultService.setActiveProject(projectToBeActive)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_SET_ACTIVE',
@@ -73,8 +72,8 @@ export default class Project extends Command {
       uuid: userId,
       metadata: {
         commandId: 'affinidi.useProject',
-        projectId: projectToBeActive?.project?.projectId,
-        ...generateUserMetadata(session?.account?.label),
+        projectId: projectToBeActive.project.projectId,
+        ...generateUserMetadata(label),
       },
     }
 

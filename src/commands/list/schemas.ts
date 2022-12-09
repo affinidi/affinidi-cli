@@ -110,15 +110,15 @@ export default class Schemas extends Command {
     if (!isAuthenticated() && (scope === 'unlisted' || publicFlag === 'false')) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
-    const session = getSession()
+    const { account } = getSession()
     const analyticsData: EventDTO = {
       name: 'VC_SCHEMAS_SEARCHED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? configService.getCurrentUser() : anonymous,
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.listSchemas',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     let apiKey: string

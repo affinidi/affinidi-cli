@@ -6,13 +6,14 @@ import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
-import * as authentication from '../../../src/middleware/authentication'
+import { createSession } from '../../../src/services/user-management'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
 const testProjectId = 'random-test-project-id'
 
 describe('use project command', () => {
   before(() => {
+    createSession('email', testUserId, 'sessionToken')
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
   })
@@ -26,7 +27,6 @@ describe('use project command', () => {
         .reply(StatusCodes.OK, projectSummary),
     )
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
-    .stub(authentication, 'isAuthenticated', () => true)
     .stdout()
     .command(['use project', projectSummary.project.projectId])
     .it('runs use project with a specific project-id', (ctx) => {
@@ -41,7 +41,6 @@ describe('use project command', () => {
           .get(`/projects/${projectSummary.project.projectId}/summary`)
           .reply(StatusCodes.UNAUTHORIZED),
       )
-      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['use project', projectSummary.project.projectId])
       .it('runs use project while user is unauthorized', (ctx) => {
@@ -55,7 +54,6 @@ describe('use project command', () => {
           .get(`/projects/${projectSummary.project.projectId}/summary`)
           .reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
-      .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['use project', projectSummary.project.projectId])
       .it('runs use project while the service is down', (ctx) => {

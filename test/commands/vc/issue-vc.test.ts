@@ -8,6 +8,9 @@ import * as prompts from '../../../src/user-actions'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
 import * as authentication from '../../../src/middleware/authentication'
+import { createSession } from '../../../src/services/user-management'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
+import { projectSummary } from '../../../src/fixtures/mock-projects'
 
 const ISSUANCE_URL = `https://console-vc-issuance.prod.affinity-project.org/api/v1`
 const issuanceRespnse = {
@@ -53,6 +56,8 @@ describe('issue-vc command', () => {
   before(() => {
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
+    createSession('email', testUserId, 'sessionToken')
+    vaultService.setActiveProject(projectSummary)
   })
   after(() => {
     configService.clear()
@@ -67,7 +72,6 @@ describe('issue-vc command', () => {
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
-    .stub(authentication, 'isAuthenticated', () => true)
     .stdout()
     .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
     .it('runs issue-vc single issuance', (ctx) => {

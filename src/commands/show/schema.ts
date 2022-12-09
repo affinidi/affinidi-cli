@@ -63,7 +63,7 @@ export default class Schema extends Command {
     if (!isAuthenticated() && args['schema-id'].includes('@did:elem')) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
-    const session = getSession()
+    const { account } = getSession()
 
     CliUx.ux.action.start('Fetching schema')
     let apiKey: string
@@ -76,11 +76,11 @@ export default class Schema extends Command {
       name: 'VC_SCHEMAS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? configService.getCurrentUser() : anonymous,
+      uuid: account.userId || anonymous,
       metadata: {
         schemaId: schema?.id,
         commandId: 'affinidi.showSchema',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

@@ -22,6 +22,7 @@ import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
 import { vaultService } from '../../../src/services/vault/typedVaultService'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
+import { createSession } from '../../../src/services/user-management'
 
 const SCHEMA_NAME = 'schemaName'
 const schemaFile = 'some/file.json'
@@ -32,6 +33,7 @@ const description = 'Some description'
 
 describe('Create Schema', () => {
   before(() => {
+    createSession('email', testUserId, 'sessionToken')
     vaultService.setActiveProject(projectSummary)
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
@@ -117,6 +119,7 @@ describe('Create Schema', () => {
       .stdout()
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
+      .stub(authentication, 'isAuthenticated', () => false)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])

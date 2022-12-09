@@ -38,16 +38,16 @@ export default class Logout extends Command {
       await CliUx.ux.done()
       return
     }
-    const session = getSession()
-    const token = session?.consoleAuthToken
+    const { account, consoleAuthToken } = getSession()
+    const token = consoleAuthToken
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_OUT',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.userId,
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.logout',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
 

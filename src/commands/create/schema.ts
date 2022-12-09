@@ -70,7 +70,7 @@ export default class Schema extends Command {
     const activeProject = vaultService.getActiveProject()
     const apiKeyhash = activeProject.apiKey.apiKeyHash
     const { did } = activeProject.wallet
-    const session = getSession()
+    const { account } = getSession()
 
     let { schemaName } = args
     if (!(flags.source.split('.').pop() === 'json')) {
@@ -146,11 +146,11 @@ export default class Schema extends Command {
       name: 'VC_SCHEMA_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.userId,
+      uuid: account.userId,
       metadata: {
         schemaId: schemaInfo?.id,
         commandId: 'affinidi.createSchema',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

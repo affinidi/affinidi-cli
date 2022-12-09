@@ -82,7 +82,7 @@ export default class IssueVc extends Command {
     const activeProject = vaultService.getActiveProject()
     const { apiKeyHash } = activeProject.apiKey
     const { schemaType, jsonSchema, jsonLdContext } = parseSchemaURL(flags.schema)
-    const session = getSession()
+    const { account } = getSession()
 
     const issuanceJson: CreateIssuanceInput = {
       template: {
@@ -148,7 +148,7 @@ export default class IssueVc extends Command {
       uuid: configService.getCurrentUser(),
       metadata: {
         commandId: 'affinidi.issue-vc',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

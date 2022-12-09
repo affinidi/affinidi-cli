@@ -45,8 +45,7 @@ export default class Project extends Command {
     if (!projectName) {
       projectName = await projectNamePrompt()
     }
-    const session = getSession()
-    const token = session?.consoleAuthToken
+    const { account, consoleAuthToken: token } = getSession()
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
@@ -59,11 +58,11 @@ export default class Project extends Command {
       name: 'CONSOLE_PROJECT_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.userId,
+      uuid: account.userId,
       metadata: {
-        projectId: projectData?.projectId,
+        projectId: projectData.projectId,
         commandId: 'affinidi.createProject',
-        ...generateUserMetadata(session?.account.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
