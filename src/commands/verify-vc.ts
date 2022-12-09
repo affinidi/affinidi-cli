@@ -10,7 +10,7 @@ import { CliError, getErrorOutput, JsonFileSyntaxError, Unauthorized } from '../
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
-import { anonymous, ViewFormat } from '../constants'
+import { ViewFormat } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
