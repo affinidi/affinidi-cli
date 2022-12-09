@@ -49,7 +49,6 @@ describe('create project command', () => {
         },
       }),
     )
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .stub(authentication, 'isAuthenticated', () => true)
     .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)

@@ -22,7 +22,7 @@ describe('list projects command', () => {
   })
   test
     .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+
     .stdout()
     .stub(authentication, 'isAuthenticated', () => true)
     .command(['list projects'])
@@ -36,7 +36,6 @@ describe('list projects command', () => {
   describe('list projects with skip flag set', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .command(['list projects', '--skip=1'])
@@ -50,7 +49,6 @@ describe('list projects command', () => {
   describe('list projects with skip and limit flag set', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .command(['list projects', '--skip=1', '--limit=1'])
@@ -66,7 +64,6 @@ describe('list projects command', () => {
   describe('list projects output flag set to table format', () => {
     test
       .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, projectList))
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .command(['list projects', '--output=table'])

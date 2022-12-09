@@ -52,7 +52,7 @@ describe('Create Schema', () => {
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api.post('/schemas').reply(StatusCodes.OK, mockSchemaDtoUnlisted),
       )
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+
       .stdout()
       .stub(authentication, 'isAuthenticated', () => () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
@@ -78,7 +78,6 @@ describe('Create Schema', () => {
       .nock(`${SCHEMA_MANAGER_URL}`, (api) =>
         api.post('/schemas').reply(StatusCodes.OK, mockSchemaDtoOne),
       )
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)

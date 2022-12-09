@@ -48,6 +48,9 @@ class AnalyticsService {
     if (!this.hasAnalyticsOptIn()) {
       return
     }
+    if (process.env.NODE_ENV === 'test') {
+      return
+    }
 
     try {
       // TODO: this toke is going to expire in 180 days, generate new one before it expires. Created on 22/11/2022.

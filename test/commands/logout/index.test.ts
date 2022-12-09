@@ -27,7 +27,6 @@ describe('logout command', () => {
   })
   test
     .nock(`${USER_MANAGEMENT_URL}`, (api) => api.post('/auth/logout').reply(StatusCodes.CREATED))
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .stub(prompts, 'confirmSignOut', () => async () => prompts.AnswerYes)
     .command(['logout'])

@@ -34,7 +34,6 @@ describe('verify-vc command', () => {
     .nock(`${VERIFIER_URL}`, (api) =>
       api.post('/verifier/verify-vcs').reply(StatusCodes.OK, verifyVcResponse),
     )
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)

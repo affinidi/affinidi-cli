@@ -26,7 +26,6 @@ describe('use project command', () => {
         .get(`/projects/${projectSummary.project.projectId}/summary`)
         .reply(StatusCodes.OK, projectSummary),
     )
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['use project', projectSummary.project.projectId])
     .it('runs use project with a specific project-id', (ctx) => {
