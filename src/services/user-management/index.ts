@@ -142,9 +142,11 @@ class UserManagementService {
     }
   }
 
-  public me = async () => {
+  public me = async ({ token }: { token: string }) => {
     try {
-      const result = await this.client.auth.me()
+      const result = await this.client.auth.me({
+        headers: { Cookie: token, 'content-type': 'application/json' },
+      })
       return result.data
     } catch (error: any) {
       throw new CliError(error?.message, error.response.status, SERVICE)
