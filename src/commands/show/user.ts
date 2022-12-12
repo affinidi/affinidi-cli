@@ -1,11 +1,11 @@
 import { Command, Flags, CliUx } from '@oclif/core'
+import { StatusCodes } from 'http-status-codes'
 import { displayOutput, DisplayOptions } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { userManagementService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { configService } from '../../services/config'
 import { CliError, Unauthorized, getErrorOutput } from '../../errors'
-import { StatusCodes } from 'http-status-codes'
 
 export default class ShowUser extends Command {
   static command = 'affinidi show user'
@@ -14,9 +14,7 @@ export default class ShowUser extends Command {
 
   static description = 'Shows info about logged-in user.'
 
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-  ]
+  static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
     output: Flags.enum<ViewFormat>({
@@ -25,10 +23,10 @@ export default class ShowUser extends Command {
       options: ['plaintext', 'json'],
     }),
   }
+
   public async run(): Promise<void> {
     const { flags } = await this.parse(ShowUser)
-    const session = getSession()
-    const token = session?.accessToken
+    const { consoleAuthToken: token } = getSession()
     if (!token) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
