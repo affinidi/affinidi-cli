@@ -12,7 +12,6 @@ import {
   ServiceDownError,
   WrongEmailError,
   notFoundProject,
-  UnsuportedConfig,
 } from '../../../src/errors'
 import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
@@ -26,7 +25,6 @@ const testOTP = '123456'
 const validCookie =
   'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOGVmY2M3MC1iYmUxLTQ1N2EtYTZjNy1iMjlhZDk5MTM2NDgiLCJ1c2VybmFtZSI6InZhbGlkQGVtYWlsLWFkZHJlc3MuY29tIiwiYWNjZXNzVG9rZW4iOiJtb2NrZWQtYWNjZXNzLXRva2VuIiwiZXhwIjoxNjY4MDA0Njk3LCJpYXQiOjE2Njc5MTgyOTd9.WDOeDB6PwFkmXWhe4zmMnltJGB44ayvDYaHDKJlcZEQ; Domain=affinidi.com; Path=/; Expires=Wed, 09 Nov 2022 14:38:17 GMT; HttpOnly; Secure; SameSite=Lax'
 const doNothing = () => {}
-const invalidCliVersion = -1
 
 const clearSessionAndConfig = () => {
   vaultService.clear()
@@ -170,7 +168,7 @@ describe('login command', () => {
 
         it('checks that the config contains some data', () => {
           const currentConfig = configService.show()
-          expect(currentConfig.currentUserID).to.equal(testUserId)
+          expect(currentConfig.currentUserId).to.equal(testUserId)
           expect(currentConfig.version).to.equal(config.getMajorVersion())
           expect(currentConfig.configs).to.haveOwnProperty(testUserId)
           expect(currentConfig.configs[testUserId].activeProjectId).to.equal(
@@ -239,7 +237,7 @@ describe('login command', () => {
 
         it('checks that the config contains some data', () => {
           const currentConfig = configService.show()
-          expect(currentConfig.currentUserID).to.equal(testUserId)
+          expect(currentConfig.currentUserId).to.equal(testUserId)
           expect(currentConfig.version).to.equal(config.getMajorVersion())
           expect(currentConfig.configs).to.haveOwnProperty(testUserId)
           expect(currentConfig.configs[testUserId].activeProjectId).to.equal(

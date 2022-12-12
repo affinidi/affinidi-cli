@@ -22,7 +22,7 @@ type UserConfig = {
 type ConfigStoreFormat = {
   username: string
   version: number
-  currentUserID: string
+  currentUserId: string
   configs: Record<UserId, UserConfig>
 }
 
@@ -56,11 +56,11 @@ class ConfigService {
   }
 
   public show = (): ConfigStoreFormat => {
-    const currentUserID = this.getCurrentUser()
+    const currentUserId = this.getCurrentUser()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
     const username = this.store.getUsername()
-    return { version: configVersion, currentUserID, configs, username }
+    return { version: configVersion, currentUserId, configs, username }
   }
 
   private readonly userConfigMustExist = (): void => {
@@ -97,7 +97,7 @@ class ConfigService {
     analyticsOptIn: boolean | undefined = undefined,
   ): void => {
     this.store.save({
-      currentUserID: userId,
+      currentUserId: userId,
       version: getMajorVersion(),
       username: '',
       configs: {
@@ -138,7 +138,7 @@ class ConfigService {
     const userConfig = this.currentUserConfig()
     userConfig.analyticsOptIn = inOrOut
     const all = this.show()
-    const user = all.currentUserID
+    const user = all.currentUserId
     const updateConfigFile = {
       ...all,
       configs: Object.assign(all.configs, { [user]: { ...userConfig } }),
@@ -170,7 +170,7 @@ const store: IConfigStorer = {
   save: (params: ConfigStoreFormat): void => {
     // TODO validate the config before saving
     configConf.set('version', params.version)
-    configConf.set('currentUserID', params.currentUserID)
+    configConf.set('currentUserId', params.currentUserId)
     configConf.set('configs', params.configs)
   },
 
@@ -183,7 +183,7 @@ const store: IConfigStorer = {
     return Number.isNaN(v) ? null : v
   },
   getCurrentUser: function getCurrentUser(): string {
-    return configConf.get('currentUserID')
+    return configConf.get('currentUserId')
   },
   getAllUserConfigs: (): Record<string, UserConfig> => {
     return configConf.get('configs')
@@ -232,7 +232,7 @@ export const testStore = new Map()
 const testStorer: IConfigStorer = {
   save: (params: ConfigStoreFormat): void => {
     testStore.set('version', params.version)
-    testStore.set('currentUserID', params.currentUserID)
+    testStore.set('currentUserId', params.currentUserId)
     testStore.set('configs', params.configs)
   },
 
@@ -244,7 +244,7 @@ const testStorer: IConfigStorer = {
     return testStore.get('version')
   },
   getCurrentUser: function getCurrentUser(): string {
-    return testStore.get('currentUserID')
+    return testStore.get('currentUserId')
   },
   getAllUserConfigs: function getAllUserConfigs(): Record<string, UserConfig> {
     return testStore.get('configs')
