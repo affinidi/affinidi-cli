@@ -1,6 +1,7 @@
 import { expect, test } from '@oclif/test'
 import { Unauthorized } from '../../../src/errors'
-import { configService, vaultService } from '../../../src/services'
+import { configService } from '../../../src/services'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
 import { createSession, createConfig } from '../../../src/services/user-management'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'

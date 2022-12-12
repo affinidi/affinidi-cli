@@ -1,6 +1,8 @@
 import Conf from 'conf'
 import * as os from 'os'
 import * as path from 'path'
+import { Unauthorized, CliError, OldCredntials } from '../../errors'
+import { ProjectSummary } from '../iam/iam.api'
 
 export const VAULT_KEYS = {
   projectId: 'active-project-id',
@@ -10,50 +12,32 @@ export const VAULT_KEYS = {
   session: 'session',
 }
 
-type SessionType = {
-  sessionId: 'eXtIGgjCYyf6Qu2m9ERro'
-  consoleAuthToken: '<consoleAuthToken>' // without "console_authtoken=" prefix
+export type SessionType = {
+  sessionId: string
+  consoleAuthToken: string // without "console_authtoken=" prefix '<consoleAuthToken>'
   account: {
-    label: 'carlos.r@affinidi.com'
-    userId: 'fab9014e-5c79-463e-9d5f-6c16c21db93a'
+    label: string
+    userId: string
   }
-  scopes: []
-}
-
-type ProjectType = {
-  name: string
-  projectId: string
-  createdAt: string
-}
-
-type ApiKeyType = {
-  apiKeyHash: string
-  apiKeyName: string
-}
-
-type WalletType = {
-  did: string
-  didUrl: string
-}
-
-type ProjectSummaryType = {
-  project: ProjectType
-  apiKey: ApiKeyType
-  wallet: WalletType
+  scopes: string[]
 }
 
 type CredentialsType = {
   version: number // only for breaking changes
   session: SessionType
-  activeProjectSummary: ProjectSummaryType
+  activeProjectSummary: ProjectSummary
 }
 
-type CredentialsTypeKeys = keyof CredentialsType
+export type CredentialsTypeKeys = keyof CredentialsType
 type CredentialsTypeValues = CredentialsType[CredentialsTypeKeys]
 
 interface IVaultSetterGetter {
   clear: () => void
   delete: (key: CredentialsTypeKeys) => void
+  getSession: () => SessionType
+  setSession: (session: SessionType) => void
+  getActiveProject: () => ProjectSummary
+  setActiveProject: (project: ProjectSummary) => void
   get: (key: CredentialsTypeKeys) => CredentialsTypeValues
   set: (key: CredentialsTypeKeys, value: unknown) => void
 }
@@ -85,9 +69,36 @@ class VaultService {
   public set = (key: CredentialsTypeKeys, value: CredentialsTypeValues): void => {
     this.store.set(key, value)
   }
+
+  public getSession = (): SessionType => {
+    const session = this.store.getSession()
+    if (typeof session === 'string') {
+      throw new CliError(OldCredntials, 0, 'vault')
+    }
+    if (session) {
+      session.consoleAuthToken = `console_authtoken=${session.consoleAuthToken}`
+    }
+    return session
+  }
+
+  public setSession = (session: SessionType): void => {
+    this.store.setSession(session)
+  }
+
+  public getActiveProject = (): ProjectSummary => {
+    const activeProject = this.store.getActiveProject()
+    if (!activeProject) {
+      throw new CliError(Unauthorized, 401, 'vault')
+    }
+    return activeProject
+  }
+
+  public setActiveProject = (project: ProjectSummary): void => {
+    this.store.setActiveProject(project)
+  }
 }
 
-const testStore = new Map<CredentialsTypeKeys, CredentialsTypeValues>()
+const testStore = new Map()
 const testStorer: IVaultSetterGetter = {
   clear: () => {
     testStore.clear()
@@ -100,6 +111,18 @@ const testStorer: IVaultSetterGetter = {
   },
   set: (key: CredentialsTypeKeys, value: CredentialsTypeValues): void => {
     testStore.set(key, value)
+  },
+  getSession: function getSession(): SessionType {
+    return testStore.get('session')
+  },
+  setSession: function setSession(session: SessionType): void {
+    testStore.set('session', session)
+  },
+  getActiveProject: function getActiveProject(): ProjectSummary {
+    return testStore.get('activeProjectSummary')
+  },
+  setActiveProject: function setActiveProject(project: ProjectSummary): void {
+    testStore.set('activeProjectSummary', project)
   },
 }
 
@@ -120,6 +143,18 @@ const storer: IVaultSetterGetter = {
   },
   set: (key: CredentialsTypeKeys, value: string): void => {
     credentialConf.set(key, value)
+  },
+  getSession: function getSession(): SessionType {
+    return credentialConf.get('session')
+  },
+  setSession: function setSession(session: SessionType): void {
+    credentialConf.set('session', session)
+  },
+  getActiveProject: function getActiveProject(): ProjectSummary {
+    return credentialConf.get('activeProjectSummary')
+  },
+  setActiveProject: function setActiveProject(project: ProjectSummary): void {
+    credentialConf.set('activeProjectSummary', project)
   },
 }
 

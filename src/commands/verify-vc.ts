@@ -4,13 +4,13 @@ import { StatusCodes } from 'http-status-codes'
 
 import { verfierService } from '../services/verification'
 
-import { vaultService, VAULT_KEYS } from '../services/vault'
+import { vaultService } from '../services/vault/typedVaultService'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
 import { CliError, getErrorOutput, JsonFileSyntaxError, Unauthorized } from '../errors'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
-import { anonymous, ViewFormat } from '../constants'
+import { ViewFormat } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
@@ -42,8 +42,9 @@ export default class VerifyVc extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'verifier')
     }
-    const session = getSession()
-    const apiKey = vaultService.get(VAULT_KEYS.projectAPIKey)
+    const { account } = getSession()
+    const activeProject = vaultService.getActiveProject()
+    const apiKey = activeProject.apiKey.apiKeyHash
 
     const credentialData = await fs.readFile(flags.data, 'utf-8')
     CliUx.ux.action.start('verifying')
@@ -54,10 +55,10 @@ export default class VerifyVc extends Command {
       name: 'VC Verified',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session ? configService.getCurrentUser() : anonymous,
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.verify-vc',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

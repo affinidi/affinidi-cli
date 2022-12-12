@@ -11,7 +11,6 @@ export const SignoutError = `There was an error while trying to sign-out. ${plea
 export const Unauthorized =
   'You are not authorized to perform this action. Please try to log-in, sign-up or make sure you have an active project'
 export const notFoundProject = 'Please provide an existing project ID or activate a project.'
-
 export const CouldNotParseSchema = 'Could not parse schema URL, please provide a valid schema URl'
 export const EmptyIssueDataFlag = 'Please enter a directory to a json file.'
 export const NoSuchFileOrDir = 'Please provide a vaild directory for the json file'
@@ -37,6 +36,7 @@ export const NoUserConfigFound =
 export const NoConfigFile = "The config file doesn't exist, please log-in again"
 export const UnsuportedConfig = 'Unsuported configuration version'
 export const UnsuportedCredential = 'Unsuported credential version'
+export const OldCredntials = 'Please login again to update your credentials to the latest version'
 
 export class CliError extends Error {
   code: number

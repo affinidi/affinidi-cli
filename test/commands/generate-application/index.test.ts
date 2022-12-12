@@ -1,8 +1,8 @@
 import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
-
-import { GitService, Writer, VAULT_KEYS, configService, vaultService } from '../../../src/services'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
+import { GitService, Writer, configService } from '../../../src/services'
 import {
   defaultAppName,
   Platforms,
@@ -12,18 +12,15 @@ import { NotSupportedPlatform } from '../../../src/errors'
 import { buildGeneratedAppNextStepsMessageBlocks } from '../../../src/render/texts'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
 import * as authentication from '../../../src/middleware/authentication'
+import { projectSummary } from '../../../src/fixtures/mock-projects'
 
 const doNothing = () => {}
-const testApiKey = 'Awesome-API-Key-Hash'
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
 const testProjectId = 'random-test-project-id'
-const testProjectDid = 'did:elem:AwesomeDID'
 
 describe('generate-application command', () => {
   before(() => {
-    vaultService.set(VAULT_KEYS.projectAPIKey, testApiKey)
-    vaultService.set(VAULT_KEYS.projectDID, testProjectDid)
-    vaultService.set(VAULT_KEYS.projectId, testProjectId)
+    vaultService.setActiveProject(projectSummary)
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
   })

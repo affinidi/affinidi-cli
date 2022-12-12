@@ -50,17 +50,16 @@ export default class Projects extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
-    const session = getSession()
+    const { account, consoleAuthToken: token } = getSession()
 
-    const token = session?.accessToken
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECTS_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: configService.getCurrentUser(),
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.listProjects',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
 

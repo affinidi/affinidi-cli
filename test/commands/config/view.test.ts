@@ -1,6 +1,6 @@
 import { expect, test } from '@oclif/test'
 import { Unauthorized } from '../../../src/errors'
-import { vaultService } from '../../../src/services'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
 import { configService } from '../../../src/services/config'
 import { createSession, createConfig } from '../../../src/services/user-management'
 

@@ -5,6 +5,7 @@ import UseProject from '../use/project'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { NextStepsRawMessage } from '../../render/functions'
 import { iAmService, userManagementService } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
 import { analyticsConsentPrompt, enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
@@ -39,10 +40,10 @@ export default class Login extends Command {
   public async run(): Promise<void> {
     const { failures } = await this.config.runHook('check', { id: CHECK_OPERATION.CONFIG })
     const { args, flags } = await this.parse(Login)
+    let confVersionError: Error
     if (failures.length) {
       const failure = failures.shift()
-      const { error } = failure
-      throw new Error(error.message)
+      confVersionError = failure.error
     }
 
     let { email } = args
@@ -90,9 +91,10 @@ export default class Login extends Command {
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
-
-    createSession(email, userId, sessionToken)
-    if (configService.show().version === null || !configService.show().configs[userId]) {
+    const sessionWithoutPrefix = sessionToken.replace('console_authtoken=', '')
+    vaultService.clear()
+    createSession(email, userId, sessionWithoutPrefix)
+    if (confVersionError || !configService.show().configs[userId]) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createConfig({ userId, analyticsOptIn: wantsToOptIn })
     }

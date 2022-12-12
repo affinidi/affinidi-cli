@@ -8,7 +8,7 @@ import { projectSummary } from '../../../src/fixtures/mock-projects'
 import { IAM_URL } from '../../../src/services/iam'
 import * as prompts from '../../../src/user-actions'
 import * as authentication from '../../../src/middleware/authentication'
-import * as userManagement from '../../../src/services'
+import { createSession } from '../../../src/services/user-management'
 import { configService } from '../../../src/services'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
@@ -19,6 +19,7 @@ describe('create project command', () => {
   beforeEach(() => {
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
+    createSession('email', testUserId, 'sessionToken')
   })
   afterEach(() => {
     configService.clear()
@@ -51,13 +52,6 @@ describe('create project command', () => {
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .stub(authentication, 'isAuthenticated', () => true)
-    .stub(userManagement, 'getSession', () => {
-      return {
-        account: {
-          id: 'userID',
-        },
-      }
-    })
     .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)

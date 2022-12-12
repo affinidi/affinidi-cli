@@ -36,7 +36,7 @@ export default class View extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
     }
-    const session = getSession()
+    const { account } = getSession()
 
     configService.setOutputFormat(format)
     displayOutput({ itemToDisplay: `Default output format view is set to ${format}` })
@@ -44,11 +44,11 @@ export default class View extends Command {
       name: 'CLI_VIEW_FORMAT_CONFIGURED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: account.userId,
       metadata: {
         format,
         commandId: 'affinidi.configView',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

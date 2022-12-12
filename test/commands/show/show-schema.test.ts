@@ -5,8 +5,8 @@ import { SCHEMA_MANAGER_URL } from '../../../src/services/schema-manager'
 import { mockSchemaDtoOne, mockSchemaDtoUnlisted } from '../../../src/fixtures/mock-schemas'
 import { ServiceDownError, Unauthorized } from '../../../src/errors'
 import { ANALYTICS_URL } from '../../../src/services/analytics'
-import * as authentication from '../../../src/middleware/authentication'
 import { configService } from '../../../src/services'
+import { createSession } from '../../../src/services/user-management'
 
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
 const testProjectId = 'random-test-project-id'
@@ -16,6 +16,7 @@ const getSchemaOK = (id: string) => async (api: FancyTypes.NockScope) =>
 
 describe('show schema command', () => {
   before(() => {
+    createSession('email', testUserId, 'sessionToken')
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
   })
@@ -36,7 +37,6 @@ describe('show schema command', () => {
         api.get(`/schemas/${mockSchemaDtoOne.id}`).reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
       .stdout()
-      .stub(authentication, 'isAuthenticated', () => true)
       .command(['show schema', mockSchemaDtoOne.id])
       .it('runs show schema ServiceDown error message', (ctx) => {
         expect(ctx.stdout).to.contain(ServiceDownError)
@@ -47,7 +47,6 @@ describe('show schema command', () => {
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
-    .stub(authentication, 'isAuthenticated', () => true)
     .command(['show schema', mockSchemaDtoOne.id])
     .it('runs show schema and displays the detailed schema', (ctx) => {
       expect(ctx.stdout).to.include(mockSchemaDtoOne.id)
@@ -59,7 +58,6 @@ describe('show schema command', () => {
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
-    .stub(authentication, 'isAuthenticated', () => true)
     .command(['show schema', mockSchemaDtoOne.id, '-s', 'json'])
     .it('runs show schema and displays the jsonSchemaUrl field', (ctx) => {
       expect(ctx.stdout).to.contain(mockSchemaDtoOne.jsonSchemaUrl)
@@ -68,7 +66,6 @@ describe('show schema command', () => {
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
     .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
-    .stub(authentication, 'isAuthenticated', () => true)
     .command(['show schema', mockSchemaDtoOne.id, '-s', 'jsonld'])
     .it('runs show schema and displays the jsonLdContextUrl field', (ctx) => {
       expect(ctx.stdout).to.contain(mockSchemaDtoOne.jsonLdContextUrl)

@@ -15,7 +15,7 @@ type CheckVersionHookOptionType = Hooks & {
   check: { options: { id: typeof CHECK_OPERATION[CheckOperationKeys] } }
 }
 
-const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function (opts) {
+const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function checkVersion(opts) {
   let version: number
   let message = ''
   if (opts.id === CHECK_OPERATION.CONFIG) {
@@ -24,14 +24,7 @@ const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function (
   }
 
   // the version was either not found in the config, or there was no config file.
-  if (!version) {
-    return
-  }
-  // if (opts.id === CHECK_OPERATION.CREDENTIALS) {
-  //   version = vaultService.getVersion()
-  //   message = UnsuportedCredential
-  // }
-  if (!validVersions.includes(version)) {
+  if (!version || !validVersions.includes(version)) {
     this.error(message)
   }
 }

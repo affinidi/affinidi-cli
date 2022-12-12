@@ -2,7 +2,8 @@ import { Command, CliUx, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
-import { userManagementService, vaultService } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
+import { userManagementService } from '../../services'
 import { SignoutError, getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { getSession } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
@@ -37,16 +38,16 @@ export default class Logout extends Command {
       await CliUx.ux.done()
       return
     }
-    const session = getSession()
-    const token = session?.accessToken
+    const { account, consoleAuthToken } = getSession()
+    const token = consoleAuthToken
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_OUT',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: configService.getCurrentUser(),
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.logout',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
     }
 

@@ -3,7 +3,8 @@ import { StatusCodes } from 'http-status-codes'
 import chalk from 'chalk'
 
 import { projectNamePrompt } from '../../user-actions'
-import { iAmService, vaultService, VAULT_KEYS } from '../../services'
+import { vaultService } from '../../services/vault/typedVaultService'
+import { iAmService } from '../../services'
 import { CreateProjectInput } from '../../services/iam/iam.api'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
@@ -44,8 +45,7 @@ export default class Project extends Command {
     if (!projectName) {
       projectName = await projectNamePrompt()
     }
-    const session = getSession()
-    const token = session?.accessToken
+    const { account, consoleAuthToken: token } = getSession()
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
@@ -53,19 +53,16 @@ export default class Project extends Command {
     const projectData = await iAmService.createProject(token, projectNameInput)
     const projectDetails = await iAmService.getProjectSummary(token, projectData.projectId)
     CliUx.ux.action.stop('Project has been successfully created: ')
-    vaultService.set(VAULT_KEYS.projectId, projectDetails.project.projectId)
-    vaultService.set(VAULT_KEYS.projectName, projectDetails.project.name)
-    vaultService.set(VAULT_KEYS.projectAPIKey, projectDetails.apiKey.apiKeyHash)
-    vaultService.set(VAULT_KEYS.projectDID, projectDetails.wallet.did)
+    vaultService.setActiveProject(projectDetails)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_CREATED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: configService.getCurrentUser(),
+      uuid: account.userId,
       metadata: {
-        projectId: projectData?.projectId,
+        projectId: projectData.projectId,
         commandId: 'affinidi.createProject',
-        ...generateUserMetadata(session?.account.label),
+        ...generateUserMetadata(account.label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)

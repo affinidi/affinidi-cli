@@ -44,14 +44,14 @@ export default class Username extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
     }
-    const session = getSession()
+    const { account } = getSession()
     const analyticsData: EventDTO = {
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: session?.account?.id,
+      uuid: account.userId,
       metadata: {
         commandId: 'affinidi.configUsername',
-        ...generateUserMetadata(session?.account?.label),
+        ...generateUserMetadata(account.label),
       },
       name: 'CLI_CONFIG_USERNAME_SET',
     }

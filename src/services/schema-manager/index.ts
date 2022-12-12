@@ -44,7 +44,7 @@ class SchemaManagerService {
           },
         },
       )
-      if (response.status !== StatusCodes.OK) {
+      if (response?.status !== StatusCodes.OK) {
         return []
       }
       return response.data.schemas

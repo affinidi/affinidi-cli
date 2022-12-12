@@ -4,11 +4,13 @@ import { StatusCodes } from 'http-status-codes'
 
 import { getWelcomeUserRawMessages } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
-import { USER_MANAGEMENT_URL } from '../../../src/services/user-management'
+import { createSession, USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
 import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
-import { configService, vaultService } from '../../../src/services'
+import { configService } from '../../../src/services'
+import { vaultService } from '../../../src/services/vault/typedVaultService'
 import * as config from '../../../src/services/config'
+import { projectSummary } from '../../../src/fixtures/mock-projects'
 
 const validEmailAddress = 'valid@email-address.com'
 const validCookie =
@@ -89,6 +91,41 @@ describe('sign-up command', () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           expect(analyticsService.hasAnalyticsOptIn()).to.be.true
         })
+    })
+
+    describe('Given an already logged in user', () => {
+      before(() => {
+        createSession('email', testUserId, 'sessionToken')
+        vaultService.setActiveProject(projectSummary)
+      })
+      describe('When the user tries to sign-up with a new account', () => {
+        test
+          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+            api.post('/auth/signup').reply(StatusCodes.OK, { token: 'some-valid-token' }),
+          )
+          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+            api
+              .post('/auth/signup/confirm')
+              .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
+          )
+          .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
+          .stdout()
+          .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
+          .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
+          .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
+          .stub(prompts, 'analyticsConsentPrompt', () => async () => true)
+          .command(['sign-up'])
+          .it(
+            'runs sign-up and verifies that the credentials.json file has the correct values',
+            (ctx) => {
+              const output = ctx.stdout
+              getWelcomeUserRawMessages().forEach((b) => {
+                expect(output).to.contain(b)
+              })
+              expect(vaultService.getActiveProject).to.throw()
+            },
+          )
+      })
     })
   })
 })
