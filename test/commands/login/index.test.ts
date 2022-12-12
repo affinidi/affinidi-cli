@@ -169,7 +169,7 @@ describe('login command', () => {
 
         it('checks that the config contains some data', () => {
           const currentConfig = configService.show()
-          expect(currentConfig.currentUserID).to.equal(testUserId)
+          expect(currentConfig.currentUserId).to.equal(testUserId)
           expect(currentConfig.version).to.equal(config.getMajorVersion())
           expect(currentConfig.configs).to.haveOwnProperty(testUserId)
           expect(currentConfig.configs[testUserId].activeProjectId).to.equal(
@@ -237,7 +237,7 @@ describe('login command', () => {
 
         it('checks that the config contains some data', () => {
           const currentConfig = configService.show()
-          expect(currentConfig.currentUserID).to.equal(testUserId)
+          expect(currentConfig.currentUserId).to.equal(testUserId)
           expect(currentConfig.version).to.equal(config.getMajorVersion())
           expect(currentConfig.configs).to.haveOwnProperty(testUserId)
           expect(currentConfig.configs[testUserId].activeProjectId).to.equal(
