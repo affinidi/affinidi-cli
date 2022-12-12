@@ -1,5 +1,6 @@
 import { Command, Flags, CliUx } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
+
 import { displayOutput, DisplayOptions } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { userManagementService } from '../../services'

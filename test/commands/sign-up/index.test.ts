@@ -82,7 +82,7 @@ describe('sign-up command', () => {
           })
 
           const currentConf = configService.show()
-          expect(currentConf.currentUserID).to.equal(testUserId)
+          expect(currentConf.currentUserId).to.equal(testUserId)
           expect(currentConf.version).to.equal(config.getMajorVersion())
           expect(currentConf.configs).to.haveOwnProperty(testUserId)
           expect(currentConf.configs[testUserId].activeProjectId).to.equal('')
