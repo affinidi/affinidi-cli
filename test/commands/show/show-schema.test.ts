@@ -45,7 +45,6 @@ describe('show schema command', () => {
 
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['show schema', mockSchemaDtoOne.id])
     .it('runs show schema and displays the detailed schema', (ctx) => {
@@ -56,7 +55,6 @@ describe('show schema command', () => {
     })
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['show schema', mockSchemaDtoOne.id, '-s', 'json'])
     .it('runs show schema and displays the jsonSchemaUrl field', (ctx) => {
@@ -64,7 +62,6 @@ describe('show schema command', () => {
     })
   test
     .nock(`${SCHEMA_MANAGER_URL}`, getSchemaOK(mockSchemaDtoOne.id))
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stdout()
     .command(['show schema', mockSchemaDtoOne.id, '-s', 'jsonld'])
     .it('runs show schema and displays the jsonLdContextUrl field', (ctx) => {

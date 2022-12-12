@@ -67,7 +67,6 @@ describe('sign-up command', () => {
             .post('/auth/signup/confirm')
             .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
         )
-        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .stdout()
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
@@ -108,7 +107,6 @@ describe('sign-up command', () => {
               .post('/auth/signup/confirm')
               .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
           )
-          .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
           .stdout()
           .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
           .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)

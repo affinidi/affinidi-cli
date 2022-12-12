@@ -69,7 +69,6 @@ describe('generate-application command', () => {
 
     describe('When the Writer write function fails', () => {
       test
-        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .stub(authentication, 'isAuthenticated', () => {
           return true
         })
@@ -86,8 +85,6 @@ describe('generate-application command', () => {
 
     describe('When the GitService clone and Writer write functions work', () => {
       test
-        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
-        .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
         .stdout()
         .stub(authentication, 'isAuthenticated', () => {
           return true
@@ -116,8 +113,6 @@ describe('generate-application command', () => {
       vaultService.clear()
     })
     test
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stdout()
       .stub(authentication, 'isAuthenticated', () => {
         return true

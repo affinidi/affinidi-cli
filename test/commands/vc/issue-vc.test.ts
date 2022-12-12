@@ -67,7 +67,6 @@ describe('issue-vc command', () => {
     .nock(`${ISSUANCE_URL}`, (api) =>
       api.post(`/issuances/some-vc-id/offers`).reply(StatusCodes.OK, offerResponse),
     )
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
@@ -82,7 +81,6 @@ describe('issue-vc command', () => {
       .nock(`${ISSUANCE_URL}`, (api) =>
         api.post('/issuances/create-from-csv').reply(StatusCodes.OK, bulkIssuanceRespone),
       )
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)

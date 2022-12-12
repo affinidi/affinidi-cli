@@ -31,7 +31,6 @@ describe('show project command', () => {
         .get(`/projects/${projectSummary.project.projectId}/summary`)
         .reply(StatusCodes.OK, projectSummary),
     )
-    .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
     .stub(CliUx.ux.action, 'start', () => () => doNothing)
     .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
@@ -67,7 +66,6 @@ describe('show project command', () => {
           .get(`/projects/${projectSummary.project.projectId}/summary`)
           .reply(StatusCodes.OK, projectSummary),
       )
-      .nock(`${ANALYTICS_URL}`, (api) => api.post('/api/events').reply(StatusCodes.CREATED))
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
       .stub(CliUx.ux.action, 'stop', () => doNothing)
