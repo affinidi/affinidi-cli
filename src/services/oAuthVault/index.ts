@@ -2,7 +2,7 @@ import Conf from 'conf'
 import * as os from 'os'
 import * as path from 'path'
 
-type CredTypes = {
+type UserToken = {
   access_token: string
   expires_in: number
   id_token: string
@@ -10,10 +10,23 @@ type CredTypes = {
   token_type: string
   expires_at: Date
 }
+type ProjectToken = {
+  projectId: string
+  projectAccessToken: string
+  expiresIn: number
+  scope: string
+}
+
+type CredsType = {
+  userToken: UserToken
+  projectToken: ProjectToken
+}
 interface NewCredSetterGetter {
   clear: () => void
-  get: () => CredTypes
-  set: (token: CredTypes) => void
+  getUserToken: () => UserToken
+  setUserToken: (token: UserToken) => void
+  getProjectToken: () => ProjectToken
+  setProjectToken: (token: ProjectToken) => void
 }
 
 class NewVaultService {
@@ -23,12 +36,20 @@ class NewVaultService {
     this.store = storer
   }
 
-  public get = (): CredTypes => {
-    return this.store.get()
+  public getUserToken = (): UserToken => {
+    return this.store.getUserToken()
   }
 
-  public set = (token: CredTypes): void => {
-    this.store.set(token)
+  public getProjectToken = (): ProjectToken => {
+    return this.store.getProjectToken()
+  }
+
+  public setUserToken = (token: UserToken): void => {
+    this.store.setUserToken(token)
+  }
+
+  public setProjectToken = (token: ProjectToken): void => {
+    this.store.setProjectToken(token)
   }
 
   public clear = (): void => {
@@ -36,7 +57,7 @@ class NewVaultService {
   }
 }
 
-const credentialConf = new Conf<CredTypes>({
+const credentialConf = new Conf<CredsType>({
   cwd: path.join(os.homedir(), '.affinidi'),
   configName: 'oAuthCred',
 })
@@ -45,11 +66,17 @@ const storer: NewCredSetterGetter = {
   clear: (): void => {
     credentialConf.clear()
   },
-  get: (): CredTypes => {
-    return credentialConf.get('token')
+  getUserToken: (): UserToken => {
+    return credentialConf.get('userToken')
   },
-  set: (token: CredTypes): void => {
-    credentialConf.set('token', token)
+  setUserToken: (token: UserToken): void => {
+    credentialConf.set('userToken', token)
+  },
+  getProjectToken: (): ProjectToken => {
+    return credentialConf.get('projectToken')
+  },
+  setProjectToken: (token: ProjectToken): void => {
+    credentialConf.set('projectToken', token)
   },
 }
 

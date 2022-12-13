@@ -48,7 +48,8 @@ export default class Projects extends Command {
     // if (!isAuthenticated()) {
     //   throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     // }
-    const { access_token: accessToken } = newVaultService.get()
+
+    const { access_token: accessToken } = newVaultService.getUserToken()
     const account = { userId: 'some-user-id', label: 'yigitcan.u@affinidi.com' }
 
     const analyticsData: EventDTO = {

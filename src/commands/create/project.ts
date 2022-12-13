@@ -1,5 +1,6 @@
 import { Command, CliUx, Flags } from '@oclif/core'
 import chalk from 'chalk'
+import axios from 'axios'
 
 import { projectNamePrompt } from '../../user-actions'
 import { genesisIAMService } from '../../services'
@@ -43,7 +44,7 @@ export default class Project extends Command {
       projectName = await projectNamePrompt()
     }
 
-    const { access_token: accessToken } = newVaultService.get()
+    const { access_token: accessToken } = newVaultService.getUserToken()
     const account = { userId: 'some-user-id', label: 'yigitcan.u@affinidi.com' }
 
     const projectNameInput: CreateProjectInput = {
@@ -63,6 +64,17 @@ export default class Project extends Command {
         ...generateUserMetadata(account.label),
       },
     }
+    const data = await axios.post(
+      'https://rdoibywdwi.execute-api.ap-southeast-1.amazonaws.com/prod/create-project-scoped-token',
+      {
+        projectId: projectData.id,
+      },
+      {
+        headers: { authorization: `Bearer ${accessToken}` },
+      },
+    )
+    const projectToken = data.data
+    newVaultService.setProjectToken(projectToken)
     await analyticsService.eventsControllerSend(analyticsData)
     displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.output })
   }

@@ -48,7 +48,8 @@ export default class Login extends Command {
     let code: string
     app.get('/callback', async function (req, res) {
       code = String(req.query.code)
-      newVaultService.set(await exchangeForToken({ code }))
+      newVaultService.clear()
+      newVaultService.setUserToken(await exchangeForToken({ code }))
       res.end('')
       server.close()
     })
