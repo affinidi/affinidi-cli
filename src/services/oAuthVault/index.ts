@@ -8,7 +8,7 @@ type CredTypes = {
   id_token: string
   scope: string
   token_type: string
-  expiresat: Date
+  expires_at: Date
 }
 interface NewCredSetterGetter {
   clear: () => void

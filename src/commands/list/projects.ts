@@ -1,15 +1,13 @@
 import { Command, CliUx, Flags } from '@oclif/core'
 import { stringify as csv_stringify } from 'csv-stringify'
-import { StatusCodes } from 'http-status-codes'
 
-import { iAmService } from '../../services'
-import { getSession } from '../../services/user-management'
-import { getErrorOutput, CliError, Unauthorized } from '../../errors'
+import { genesisIAMService } from '../../services'
+import { getErrorOutput, CliError } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
-import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { newVaultService } from '../../services/oAuthVault'
 
 type ListProjectsOutputType = 'json' | 'table' | 'csv'
 
@@ -47,10 +45,11 @@ export default class Projects extends Command {
     const { flags } = await this.parse(Projects)
     const { skip, limit } = flags
     let { output } = flags
-    if (!isAuthenticated()) {
-      throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
-    }
-    const { account, consoleAuthToken: token } = getSession()
+    // if (!isAuthenticated()) {
+    //   throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
+    // }
+    const { access_token: accessToken } = newVaultService.get()
+    const account = { userId: 'some-user-id', label: 'yigitcan.u@affinidi.com' }
 
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECTS_READ',
@@ -64,7 +63,7 @@ export default class Projects extends Command {
     }
 
     CliUx.ux.action.start('Fetching list of projects')
-    const projectData = await iAmService.listProjects(token, skip, limit)
+    const projectData = await genesisIAMService.listProjects(accessToken, skip, limit)
     await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop()
     const outputFormat = configService.getOutputFormat()
@@ -77,11 +76,10 @@ export default class Projects extends Command {
       case 'table':
         CliUx.ux.table(
           projectData.map((data) => ({
-            projectId: data.projectId,
+            projectId: data.id,
             name: data.name,
-            createdAt: data.createdAt,
           })),
-          { projectId: {}, name: {}, createdAt: {} },
+          { projectId: {}, name: {} },
         )
         break
       case 'csv':
