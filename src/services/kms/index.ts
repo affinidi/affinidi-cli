@@ -8,7 +8,6 @@ const SERVICE = 'KMS'
 
 /// ///////////////////// TEST CODE ///////////////////////
 const jwkPair = {
-  kty: 'NOT EXIST',
 } as const
 
 const privateKey = jwkToPem(jwkPair, { private: true })
@@ -127,6 +126,7 @@ class KmsService {
       })
       return result.data
     } catch (error: any) {
+      console.log(error)
       throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }

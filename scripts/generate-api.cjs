@@ -57,3 +57,9 @@ generateApi({
   httpClientType: 'axios',
 }).catch(console.error)
 
+generateApi({
+  name: 'iam.api.ts',
+  output: path.resolve(process.cwd(), './src/services/genesis/iam'),
+  url: 'http://localhost:3001',
+  httpClientType: 'axios',
+}).catch(console.error)
