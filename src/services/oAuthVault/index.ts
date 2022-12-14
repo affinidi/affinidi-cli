@@ -48,8 +48,15 @@ class NewVaultService {
     this.store.setUserToken(token)
   }
 
-  public setProjectToken = (token: ProjectToken): void => {
-    this.store.setProjectToken(token)
+  public setProjectToken = (token: ProjectToken, projectId: string): void => {
+    const project = JSON.parse(JSON.stringify(token))
+    const projectToken: ProjectToken = {
+      projectId,
+      projectAccessToken: project.accessToken,
+      expiresIn: project.expiresIn,
+      scope: project.scope,
+    }
+    this.store.setProjectToken(projectToken)
   }
 
   public clear = (): void => {

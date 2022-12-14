@@ -74,7 +74,7 @@ export default class Project extends Command {
       },
     )
     const projectToken = data.data
-    newVaultService.setProjectToken(projectToken)
+    newVaultService.setProjectToken(projectToken, projectData.id)
     await analyticsService.eventsControllerSend(analyticsData)
     displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.output })
   }
