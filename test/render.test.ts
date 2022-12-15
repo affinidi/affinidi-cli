@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { MessageBlock, wizardStatus } from '../src/render/functions'
+import { defaultWizardMessages, MessageBlock, wizardStatus } from '../src/render/functions'
 import { projectSummary } from '../src/fixtures/mock-projects'
 import {
   authNoProjMessage,
@@ -18,25 +18,37 @@ const toString = (messages: MessageBlock[]): string => {
   return res
 }
 
-describe('wizard status', () => {
+const {
+  project: { projectId },
+} = projectSummary
+
+describe.only('wizard status', () => {
   describe('status unauth and no project', () => {
     it('should wizard status when not authenticated and no active project', () => {
-      const result = wizardStatus({ breadcrumbs: [] })
+      const result = wizardStatus({
+        messages: defaultWizardMessages,
+        breadcrumbs: [],
+      })
       expect(toString(result)).to.equal(toString(unAuthNoProjMessage))
     })
   })
   describe('status auth and no project', () => {
     it('should wizard status when authenticated and no active project', () => {
-      const result = wizardStatus({ breadcrumbs: [], userEmail: testUserEmail })
+      const result = wizardStatus({
+        messages: defaultWizardMessages,
+        breadcrumbs: [],
+        userEmail: testUserEmail,
+      })
       expect(toString(result)).to.equal(toString(authNoProjMessage))
     })
   })
   describe('status auth and active project', () => {
     it('should wizard status when authenticated and active project', () => {
       const result = wizardStatus({
+        messages: defaultWizardMessages,
         breadcrumbs: [],
         userEmail: testUserEmail,
-        project: projectSummary,
+        projectId,
       })
       expect(toString(result)).to.equal(toString(authProjMessage))
     })
@@ -44,11 +56,21 @@ describe('wizard status', () => {
   describe('status auth, active project and breadCrumbs', () => {
     it('should wizard status when authenticated and active project', () => {
       const result = wizardStatus({
+        messages: defaultWizardMessages,
         breadcrumbs,
         userEmail: testUserEmail,
-        project: projectSummary,
+        projectId,
       })
       expect(toString(result)).to.equal(toString(authProjBCMessage))
     })
   })
 })
+
+// describe.only('wizard status functional', () => {
+//   describe('status auth and no project', () => {
+//     it('should wizard status when authenticated and no active project', () => {
+//       const result = wizardStatusAuthenticated(testUserEmail)
+//       expect(toString(result)).to.equal(toString(authNoProjMessage))
+//     })
+//   })
+// })

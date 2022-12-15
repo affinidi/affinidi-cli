@@ -51,7 +51,79 @@ export const welcomeMessageBlocks: MessageBlock[] = [
   ...nextStepMessageBlocks,
 ]
 
+type MessageKeyBlock = { key: string } & MessageBlock
+
+export const defaultWizardMessages: MessageKeyBlock[] = [
+  {
+    key: 'welcome',
+    text: welcomeWizard,
+    styled: welcomeWizard,
+  },
+  {
+    key: 'auth',
+    text: notAuthenticated,
+    styled: notAuthenticated,
+  },
+  {
+    key: 'activeProject',
+    text: noActiveproject,
+    styled: noActiveproject,
+  },
+]
+
+const wizardStatusWithCondition =
+  (condition: string) => (text: string) => (msg: MessageKeyBlock) => {
+    if (msg.key !== condition) {
+      return msg
+    }
+
+    return {
+      ...msg,
+      text,
+      styled: text,
+    }
+  }
+
+export const wizardStatusAuthenticated =
+  (userEmail: string) =>
+  (message: MessageKeyBlock): MessageKeyBlock => {
+    return wizardStatusWithCondition('auth')(`You are authenticated as: ${userEmail}`)(message)
+  }
+
+export const wizardStatusWithActiveProject =
+  (projectId: string) =>
+  (message: MessageKeyBlock): MessageKeyBlock => {
+    return wizardStatusWithCondition('auth')(`Active project: ${projectId}`)(message)
+  }
+
 export const wizardStatus = ({
+  messages,
+  breadcrumbs,
+  userEmail,
+  projectId,
+}: {
+  messages: MessageKeyBlock[]
+  breadcrumbs: string[]
+  userEmail?: string
+  projectId?: string
+}): MessageBlock[] => {
+  const buildMessages = messages
+    .map(wizardStatusAuthenticated(userEmail))
+    .map(wizardStatusWithActiveProject(projectId))
+    .map(({ styled, text }) => ({ text, styled }))
+
+  const breadcrumbsBlock: MessageBlock = {
+    text: breadcrumbs.join(' > '),
+    styled: breadcrumbs.join(' > '),
+  }
+  if (breadcrumbs.length > 0) {
+    buildMessages.push(breadcrumbsBlock)
+  }
+
+  return buildMessages
+}
+
+export const _wizardStatus = ({
   breadcrumbs,
   userEmail,
   project,
