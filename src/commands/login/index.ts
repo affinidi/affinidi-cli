@@ -125,14 +125,14 @@ export default class Login extends Command {
     if (projectsList.length === 1) {
       const projectId = projectsList.shift()?.projectId
       if (flags.output) {
-        await UseProject.run([projectId, `--view=${flags.output}`])
+        await UseProject.run([projectId, `--output=${flags.output}`])
         return
       }
       await UseProject.run([projectId])
       return
     }
 
-    await UseProject.run([flags.output ? `--view=${flags.output}` : ''])
+    await UseProject.run([flags.output ? `--output=${flags.output}` : ''])
   }
 
   async catch(error: CliError) {
