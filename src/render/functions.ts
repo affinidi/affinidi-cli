@@ -50,6 +50,9 @@ export const welcomeMessageBlocks: MessageBlock[] = [
   ...nextStepMessageBlocks,
 ]
 
+export const welcomeWizard = 'Welcome to the Affinidi Wizard'
+export const notAuthenticated = 'You are not authenticated yet.'
+export const noActiveproject = 'Active project: no active projects'
 export const wizardStatus = ({
   breadcrumbs,
   userEmail,
@@ -61,14 +64,14 @@ export const wizardStatus = ({
 }): MessageBlock[] => {
   const messages: MessageBlock[] = [
     {
-      text: 'Welcome to the Affinidi Wizard',
-      styled: 'Welcome to the Affinidi Wizard',
+      text: welcomeWizard,
+      styled: welcomeWizard,
     },
   ]
 
   const authBlock: MessageBlock = {
-    text: 'You are not authenticated yet.',
-    styled: 'You are not authenticated yet.',
+    text: notAuthenticated,
+    styled: notAuthenticated,
   }
   if (userEmail) {
     authBlock.text = `You are authenticated as: ${userEmail}`
@@ -76,8 +79,8 @@ export const wizardStatus = ({
   }
   messages.push(authBlock)
   const projectBlock: MessageBlock = {
-    text: 'Active project: no active projects',
-    styled: 'Active project: no active projects',
+    text: noActiveproject,
+    styled: noActiveproject,
   }
   if (project) {
     projectBlock.text = `Active project: ${project.project.projectId}`

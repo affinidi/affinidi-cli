@@ -1,40 +1,40 @@
-import { MessageBlock } from '../render/functions'
+import { MessageBlock, noActiveproject, notAuthenticated, welcomeWizard } from '../render/functions'
 import { projectSummary } from './mock-projects'
 
 export const unAuthNoProjMessage: MessageBlock[] = [
   {
-    text: 'Welcome to the Affinidi Wizard',
-    styled: 'Welcome to the Affinidi Wizard',
+    text: welcomeWizard,
+    styled: welcomeWizard,
   },
   {
-    text: 'You are not authenticated yet.',
-    styled: 'You are not authenticated yet.',
+    text: notAuthenticated,
+    styled: notAuthenticated,
   },
   {
-    text: 'Active project: no active projects',
-    styled: 'Active project: no active projects',
+    text: noActiveproject,
+    styled: noActiveproject,
   },
 ]
 export const testUserEmail = 'test@email.com'
 export const authNoProjMessage: MessageBlock[] = [
   {
-    text: 'Welcome to the Affinidi Wizard',
-    styled: 'Welcome to the Affinidi Wizard',
+    text: welcomeWizard,
+    styled: welcomeWizard,
   },
   {
     text: `You are authenticated as: ${testUserEmail}`,
     styled: `You are authenticated as: ${testUserEmail}`,
   },
   {
-    text: 'Active project: no active projects',
-    styled: 'Active project: no active projects',
+    text: noActiveproject,
+    styled: noActiveproject,
   },
 ]
 
 export const authProjMessage: MessageBlock[] = [
   {
-    text: 'Welcome to the Affinidi Wizard',
-    styled: 'Welcome to the Affinidi Wizard',
+    text: welcomeWizard,
+    styled: welcomeWizard,
   },
   {
     text: `You are authenticated as: ${testUserEmail}`,
@@ -54,8 +54,8 @@ export const breadcrumbs: string[] = [
 
 export const authProjBCMessage: MessageBlock[] = [
   {
-    text: 'Welcome to the Affinidi Wizard',
-    styled: 'Welcome to the Affinidi Wizard',
+    text: welcomeWizard,
+    styled: welcomeWizard,
   },
   {
     text: `You are authenticated as: ${testUserEmail}`,
