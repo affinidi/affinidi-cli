@@ -1,4 +1,4 @@
-import { Command, CliUx } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import {
@@ -15,6 +15,8 @@ import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { flagUsage } from '@oclif/core/lib/parser/help'
+import { flags } from '@oclif/core/lib/parser'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -27,8 +29,16 @@ export default class SignUp extends Command {
 
   static args = [{ name: 'email' }]
 
+  static flags = {
+    isWizard: Flags.boolean({
+      char: 'w',
+      hidden: true,
+      default: false,
+    }),
+  }
+
   public async run(): Promise<void> {
-    const { args } = await this.parse(SignUp)
+    const { args, flags } = await this.parse(SignUp)
     let { email } = args
     if (!email) {
       email = await enterEmailPrompt()
@@ -86,7 +96,7 @@ export default class SignUp extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-
+    if (flags.isWizard) return
     CliUx.ux.info(WelcomeUserStyledMessage)
   }
 

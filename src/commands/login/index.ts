@@ -35,6 +35,11 @@ export default class Login extends Command {
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
+    isWizard: Flags.boolean({
+      char: 'w',
+      hidden: true,
+      default: false,
+    }),
   }
 
   public async run(): Promise<void> {
@@ -109,7 +114,7 @@ export default class Login extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-
+    if (flags.isWizard) return
     const projectsList = await iAmService.listProjects(sessionToken, 0, Number.MAX_SAFE_INTEGER)
     displayOutput({ itemToDisplay: 'You are authenticated', flag: flags.output })
     displayOutput({ itemToDisplay: `Welcome back to Affinidi ${email}!`, flag: flags.output })
