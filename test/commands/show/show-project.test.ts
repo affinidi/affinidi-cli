@@ -78,6 +78,14 @@ describe('show project command', () => {
         expect(ctx.stdout).to.contain('apiKeyHash : ********************')
       })
   })
+
+  test
+    .stdout()
+    .command(['show project', '--active'])
+    .it("shows next step message when no active project", (ctx) => {
+      expect(ctx.stdout).to.contain("you need to create a project to get an Api-Key")
+    })
+
   describe('Showing a project while not authorized', () => {
     test
       .stub(CliUx.ux.action, 'start', () => () => doNothing)
