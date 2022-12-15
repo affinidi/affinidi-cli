@@ -50,11 +50,15 @@ export const welcomeMessageBlocks: MessageBlock[] = [
   ...nextStepMessageBlocks,
 ]
 
-export const wizardStatus = (
-  breadcrumbs: string[],
-  userEmail?: string,
-  project?: ProjectSummary,
-): MessageBlock[] => {
+export const wizardStatus = ({
+  breadcrumbs,
+  userEmail,
+  project,
+}: {
+  breadcrumbs: string[]
+  userEmail?: string
+  project?: ProjectSummary
+}): MessageBlock[] => {
   const messages: MessageBlock[] = [
     {
       text: 'Welcome to the Affinidi Wizard',
