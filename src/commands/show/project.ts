@@ -52,9 +52,22 @@ export default class ShowProject extends Command {
     let projectId = args['project-id']
 
     if (flags.active) {
-      const activProject = vaultService.getActiveProject()
-      projectId = activProject.project.projectId
       CliUx.ux.action.start('Fetching active project')
+
+      let activeProject
+      try {
+        activeProject = vaultService.getActiveProject()
+      } catch (err) {
+        if (err instanceof CliError) {
+          CliUx.ux.action.stop('No active project')
+          displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
+          return
+        } else {
+          throw err
+        }
+      }
+
+      projectId = activeProject.project.projectId
     } else if (projectId) {
       CliUx.ux.action.start(`Fetching project with id: ${projectId}`)
     } else {
