@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { ProjectSummary } from '../services/iam/iam.api'
 
 const indent = '  '
 
@@ -11,7 +12,7 @@ const bigName = `
 ╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚═════╝ ╚═╝
 `
 
-type MessageBlock = { text: string; styled: string }
+export type MessageBlock = { text: string; styled: string }
 
 const nextStepMessageBlocks: MessageBlock[] = [
   {
@@ -48,6 +49,48 @@ export const welcomeMessageBlocks: MessageBlock[] = [
   },
   ...nextStepMessageBlocks,
 ]
+
+export const wizardStatus = (
+  breadcrumbs: string[],
+  userEmail?: string,
+  project?: ProjectSummary,
+): MessageBlock[] => {
+  const messages: MessageBlock[] = [
+    {
+      text: 'Welcome to the Affinidi Wizard',
+      styled: 'Welcome to the Affinidi Wizard',
+    },
+  ]
+
+  const authBlock: MessageBlock = {
+    text: 'You are not authenticated yet.',
+    styled: 'You are not authenticated yet.',
+  }
+  if (userEmail) {
+    authBlock.text = `You are authenticated as: ${userEmail}`
+    authBlock.styled = `You are authenticated as: ${userEmail}`
+  }
+  messages.push(authBlock)
+  const projectBlock: MessageBlock = {
+    text: 'Active project: no active projects',
+    styled: 'Active project: no active projects',
+  }
+  if (project) {
+    projectBlock.text = `Active project: ${project.project.projectId}`
+    projectBlock.styled = `Active project: ${project.project.projectId}`
+  }
+  messages.push(projectBlock)
+
+  const breadcrumbsBlock: MessageBlock = {
+    text: breadcrumbs.join(' > '),
+    styled: breadcrumbs.join(' > '),
+  }
+  if (breadcrumbs.length > 0) {
+    messages.push(breadcrumbsBlock)
+  }
+
+  return messages
+}
 
 export const mapStyled = (b: MessageBlock): string => b.styled
 export const mapRawText = (b: MessageBlock): string => b.text
