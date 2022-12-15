@@ -111,3 +111,7 @@ export const wrapError = (message: string, json: boolean): string => {
   const error = 'Error: '
   return chalk.red(`${json ? '' : error}${message}`)
 }
+
+export const welcomeWizard = 'Welcome to the Affinidi Wizard'
+export const notAuthenticated = 'You are not authenticated yet.'
+export const noActiveproject = 'Active project: no active projects'

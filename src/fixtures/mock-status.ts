@@ -1,4 +1,5 @@
-import { MessageBlock, noActiveproject, notAuthenticated, welcomeWizard } from '../render/functions'
+import { MessageBlock } from '../render/functions'
+import { noActiveproject, notAuthenticated, welcomeWizard } from '../render/texts'
 import { projectSummary } from './mock-projects'
 
 export const unAuthNoProjMessage: MessageBlock[] = [

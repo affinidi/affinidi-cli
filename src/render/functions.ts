@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import { ProjectSummary } from '../services/iam/iam.api'
+import { noActiveproject, notAuthenticated, welcomeWizard } from './texts'
 
 const indent = '  '
 
@@ -50,9 +51,6 @@ export const welcomeMessageBlocks: MessageBlock[] = [
   ...nextStepMessageBlocks,
 ]
 
-export const welcomeWizard = 'Welcome to the Affinidi Wizard'
-export const notAuthenticated = 'You are not authenticated yet.'
-export const noActiveproject = 'Active project: no active projects'
 export const wizardStatus = ({
   breadcrumbs,
   userEmail,
