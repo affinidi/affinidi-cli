@@ -1,5 +1,7 @@
 import chalk from 'chalk'
 
+import { noActiveproject, notAuthenticated, welcomeWizard } from './texts'
+
 const indent = '  '
 
 const bigName = `
@@ -11,7 +13,7 @@ const bigName = `
 ╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚═════╝ ╚═╝
 `
 
-type MessageBlock = { text: string; styled: string }
+export type MessageBlock = { text: string; styled: string }
 
 const nextStepMessageBlocks: MessageBlock[] = [
   {
@@ -48,6 +50,95 @@ export const welcomeMessageBlocks: MessageBlock[] = [
   },
   ...nextStepMessageBlocks,
 ]
+
+type MessageKeyBlock = { key: string } & MessageBlock
+
+const welcomeKey = 'welcome'
+const authenticatedKey = 'authenticated'
+const activeProjectKey = 'activeProject'
+
+export const defaultWizardMessages: MessageKeyBlock[] = [
+  {
+    key: welcomeKey,
+    text: welcomeWizard,
+    styled: welcomeWizard,
+  },
+  {
+    key: authenticatedKey,
+    text: notAuthenticated,
+    styled: notAuthenticated,
+  },
+  {
+    key: activeProjectKey,
+    text: noActiveproject,
+    styled: noActiveproject,
+  },
+]
+
+const appendBreadCrumbs = (messages: MessageBlock[], breadcrumbs: string[]): MessageBlock[] => {
+  const breadcrumbsBlock: MessageBlock = {
+    text: breadcrumbs.join(' > '),
+    styled: breadcrumbs.join(' > '),
+  }
+
+  if (breadcrumbs.length > 0) {
+    messages.push(breadcrumbsBlock)
+  }
+
+  return messages
+}
+
+const wizardStatusWithCondition =
+  (key: string) =>
+  (value: string) =>
+  (textFormatter: (t: string) => string) =>
+  (msg: MessageKeyBlock) => {
+    if (msg.key !== key || !value) {
+      return msg
+    }
+
+    const text = textFormatter(value)
+    return {
+      ...msg,
+      text,
+      styled: text,
+    }
+  }
+
+export const wizardStatusAuthenticated =
+  (userEmail: string) =>
+  (message: MessageKeyBlock): MessageKeyBlock => {
+    return wizardStatusWithCondition(authenticatedKey)(userEmail)(
+      (t: string) => `You are authenticated as: ${t}`,
+    )(message)
+  }
+
+export const wizardStatusWithActiveProject =
+  (projectId: string) =>
+  (message: MessageKeyBlock): MessageKeyBlock => {
+    return wizardStatusWithCondition(activeProjectKey)(projectId)(
+      (t: string) => `Active project: ${t}`,
+    )(message)
+  }
+
+export const wizardStatus = ({
+  messages,
+  breadcrumbs,
+  userEmail,
+  projectId,
+}: {
+  messages: MessageKeyBlock[]
+  breadcrumbs: string[]
+  userEmail?: string
+  projectId?: string
+}): MessageBlock[] => {
+  const buildMessages = messages
+    .map(wizardStatusAuthenticated(userEmail))
+    .map(wizardStatusWithActiveProject(projectId))
+    .map(({ styled, text }) => ({ text, styled }))
+
+  return appendBreadCrumbs(buildMessages, breadcrumbs)
+}
 
 export const mapStyled = (b: MessageBlock): string => b.styled
 export const mapRawText = (b: MessageBlock): string => b.text
