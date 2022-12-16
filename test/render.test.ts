@@ -65,12 +65,3 @@ describe('wizard status', () => {
     })
   })
 })
-
-// describe.only('wizard status functional', () => {
-//   describe('status auth and no project', () => {
-//     it('should wizard status when authenticated and no active project', () => {
-//       const result = wizardStatusAuthenticated(testUserEmail)
-//       expect(toString(result)).to.equal(toString(authNoProjMessage))
-//     })
-//   })
-// })
