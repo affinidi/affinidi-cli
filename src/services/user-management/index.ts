@@ -53,6 +53,16 @@ export const createConfig = ({
   configService.create(userId, projectId, analyticsOptIn)
 }
 
+export const createOrUpdateConfig = ({
+  userId,
+  analyticsOptIn,
+}: {
+  userId: string
+  analyticsOptIn?: boolean
+}): void => {
+  return configService.createOrUpdate(userId, analyticsOptIn)
+}
+
 class UserManagementService {
   constructor(
     private readonly client = new UserManagementApi({

@@ -74,8 +74,17 @@ class ConfigService {
 
   private readonly configFileMustExist = (): void => {
     const versionConf = this.store.getVersion()
-    if (versionConf === null) {
+    if (versionConf === null || versionConf === undefined) {
       throw new Error(NoConfigFile)
+    }
+  }
+
+  private readonly configFileExists = (): boolean => {
+    try {
+      this.configFileMustExist()
+      return true
+    } catch (error) {
+      return false
     }
   }
 
@@ -107,6 +116,40 @@ class ConfigService {
           analyticsOptIn,
         },
       },
+    })
+  }
+
+  public updateConfigs = (
+    userId: string,
+    analyticsOptIn: boolean | undefined = undefined,
+  ): Record<UserId, UserConfig> => {
+    const configs = this.store.getAllUserConfigs()
+    if (!configs[userId]) {
+      configs[userId] = {
+        activeProjectId: '',
+        outputFormat: 'plaintext',
+        analyticsOptIn,
+      }
+    }
+
+    return configs
+  }
+
+  public createOrUpdate = (
+    userId: string,
+    analyticsOptIn: boolean | undefined = undefined,
+  ): void => {
+    if (!this.configFileExists()) {
+      this.create(userId, '', analyticsOptIn)
+      return
+    }
+
+    const configs = this.updateConfigs(userId, analyticsOptIn)
+    this.store.save({
+      currentUserId: userId,
+      version: getMajorVersion(),
+      username: this.getUsername(),
+      configs,
     })
   }
 

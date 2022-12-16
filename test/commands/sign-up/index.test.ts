@@ -6,7 +6,7 @@ import { getWelcomeUserRawMessages } from '../../../src/render/functions'
 import { WrongEmailError } from '../../../src/errors'
 import { createSession, USER_MANAGEMENT_URL } from '../../../src/services/user-management'
 import * as prompts from '../../../src/user-actions'
-import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
+import { analyticsService } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
 import { vaultService } from '../../../src/services/vault/typedVaultService'
 import * as config from '../../../src/services/config'
@@ -16,7 +16,6 @@ const validEmailAddress = 'valid@email-address.com'
 const validCookie =
   'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOGVmY2M3MC1iYmUxLTQ1N2EtYTZjNy1iMjlhZDk5MTM2NDgiLCJ1c2VybmFtZSI6InZhbGlkQGVtYWlsLWFkZHJlc3MuY29tIiwiYWNjZXNzVG9rZW4iOiJtb2NrZWQtYWNjZXNzLXRva2VuIiwiZXhwIjoxNjY4MDA0Njk3LCJpYXQiOjE2Njc5MTgyOTd9.WDOeDB6PwFkmXWhe4zmMnltJGB44ayvDYaHDKJlcZEQ; Domain=affinidi.com; Path=/; Expires=Wed, 09 Nov 2022 14:38:17 GMT; HttpOnly; Secure; SameSite=Lax'
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
-const testProjectId = 'random-test-project-id'
 const testOTP = '123456'
 const doNothing = () => {}
 
@@ -27,7 +26,8 @@ const clearSessionAndConfig = () => {
 
 describe('sign-up command', () => {
   before(() => {
-    configService.create(testUserId, testProjectId)
+    clearSessionAndConfig()
+    configService.createOrUpdate(testUserId, true)
   })
   after(clearSessionAndConfig)
   test
@@ -56,7 +56,7 @@ describe('sign-up command', () => {
     describe('When user accepts the conditions and policy', () => {
       before(() => {
         clearSessionAndConfig()
-        configService.create(testUserId, testProjectId)
+        configService.createOrUpdate(testUserId, true)
       })
       test
         .nock(`${USER_MANAGEMENT_URL}`, (api) =>
