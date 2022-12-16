@@ -35,11 +35,6 @@ export default class Login extends Command {
       description: 'set flag to override default output format view',
       options: ['plaintext', 'json'],
     }),
-    isWizard: Flags.boolean({
-      char: 'w',
-      hidden: true,
-      default: false,
-    }),
   }
 
   public async run(): Promise<void> {
