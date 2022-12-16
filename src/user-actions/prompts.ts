@@ -51,3 +51,18 @@ export const analyticsConsentPrompt = async (
   const prompt = await CliUx.ux.prompt(text, { default: 'n' })
   return prompt.toLowerCase() === 'y'
 }
+export const pathToVc = async (text: string = 'Path to JSON file'): Promise<string> => {
+  const prompt = await CliUx.ux.prompt(text, { required: true })
+  return prompt
+}
+export const applicationName = async (text: string = 'name of application'): Promise<string> => {
+  const prompt = await CliUx.ux.prompt(text, { required: true })
+  return prompt
+}
+
+export const withProxy = async (
+  text: string = 'create backend to hide credentials [y/n]',
+): Promise<boolean> => {
+  const prompt = await CliUx.ux.prompt(text, { default: 'n' })
+  return prompt.toLowerCase() === 'y'
+}

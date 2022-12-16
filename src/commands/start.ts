@@ -1,5 +1,5 @@
 import { CliUx, Command } from '@oclif/core'
-import { wizardStatusMessage, wizardStatus } from '../render/functions'
+import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 
 import { isAuthenticated } from '../middleware/authentication'
 import { selectNextStep } from '../user-actions/inquirer'
@@ -7,62 +7,119 @@ import Login from './login'
 import SignUp from './sign-up'
 import { getSession } from '../services/user-management'
 import { iAmService } from '../services'
+import { vaultService } from '../services/vault/typedVaultService'
 import CreateProject from './create/project'
 import Logout from './logout'
+import { CliError, getErrorOutput } from '../errors'
+import { displayOutput } from '../middleware/display'
+import { wizardMap, WizardMenus } from '../constants'
+import { applicationName, pathToVc, withProxy } from '../user-actions'
+import VerifyVc from './verify-vc'
+import GenerateApplication from './generate-application'
 
 export default class Start extends Command {
-  static description = 'describe the command here'
+  static description = 'Start provides a way to guide you from end to end.'
+
+  static command = 'affinidi start'
+
+  static usage = 'start'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static isWizard = true
+  breadcrumbs: string[] = []
+
+  menuMap = new Map<WizardMenus, () => void>([
+    [WizardMenus.AUTH_MENU, this.getAuthmenu.prototype],
+    [WizardMenus.MAIN_MENU, this.getMainmenu.prototype],
+  ])
 
   public async run(): Promise<void> {
-    let breadCrumbs: string[]
     if (!isAuthenticated()) {
-      CliUx.ux.info(wizardStatusMessage(wizardStatus({ breadcrumbs: breadCrumbs })))
-      const nextStep = await selectNextStep(['login', 'sign-up'])
-      switch (nextStep) {
-        case 'login':
-          Login.run(['-w'])
-          breadCrumbs.push(nextStep)
-          break
-        default:
-          SignUp.run(['-w'])
-          breadCrumbs.push(nextStep)
-          break
-      }
+      await this.getAuthmenu()
     }
-    const { consoleAuthToken: token } = getSession()
+    const {
+      consoleAuthToken: token,
+      account: { label: userEmail },
+    } = getSession()
     const projects = await iAmService.listProjects(token, 0, 10)
     if (projects.length === 0) {
       CreateProject.run([])
-      breadCrumbs.push('create a project')
+      this.breadcrumbs.push('create a project')
     }
-    let nextStep = await selectNextStep([
-      'manage projects',
-      'manage schemas',
-      'generate an application',
-      'issue a vc',
-      'verify a vc',
-      'logout',
-    ])
+    const { projectId } = vaultService.getActiveProject().project
+    await this.getMainmenu(userEmail, projectId)
+  }
+
+  async catch(error: CliError) {
+    CliUx.ux.action.stop('failed')
+    displayOutput({
+      itemToDisplay: getErrorOutput(error, Start.command, Start.usage, Start.description, false),
+      err: true,
+    })
+    const prevStep = this.breadcrumbs[this.breadcrumbs.length - 1]
+    wizardMap.forEach((value, key): void => {
+      if (value.includes(prevStep)) {
+        this.menuMap.get(key)()
+      }
+    })
+  }
+
+  private async getAuthmenu() {
+    CliUx.ux.info(
+      wizardStatusMessage(
+        wizardStatus({ messages: defaultWizardMessages, breadcrumbs: this.breadcrumbs }),
+      ),
+    )
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.AUTH_MENU))
+    switch (nextStep) {
+      case 'login':
+        await Login.run(['-w'])
+        this.breadcrumbs.push(nextStep)
+        break
+      case 'sign-up':
+        await SignUp.run(['-w'])
+        this.breadcrumbs.push(nextStep)
+        break
+      default:
+        await CliUx.ux.done()
+        break
+    }
+  }
+
+  private async getMainmenu(userEmail: string, projectId: string) {
+    CliUx.ux.info(
+      wizardStatusMessage(
+        wizardStatus({
+          messages: defaultWizardMessages,
+          breadcrumbs: this.breadcrumbs,
+          userEmail,
+          projectId,
+        }),
+      ),
+    )
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.MAIN_MENU))
     switch (nextStep) {
       case 'manage projects':
         break
       case 'manage schemas':
         break
       case 'generate an application':
+        GenerateApplication.run([
+          `-n ${await applicationName()}`,
+          `${(await withProxy()) ? '-w' : ''}`,
+        ])
         break
       case 'issue a vc':
         break
       case 'verify a vc':
+        await VerifyVc.run([`-d${await pathToVc()}`])
         break
       case 'logout':
-        Logout.run([])
-        breadCrumbs.push(nextStep)
+        await Logout.run([])
+        this.breadcrumbs.push(nextStep)
         break
       default:
+        CliUx.ux.done()
         break
     }
   }

@@ -15,8 +15,6 @@ import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
-import { flagUsage } from '@oclif/core/lib/parser/help'
-import { flags } from '@oclif/core/lib/parser'
 
 const MAX_EMAIL_ATTEMPT = 3
 
