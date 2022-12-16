@@ -1,4 +1,3 @@
-import { string } from '@oclif/core/lib/parser'
 import chalk from 'chalk'
 
 import { noActiveproject, notAuthenticated, welcomeWizard } from './texts'
