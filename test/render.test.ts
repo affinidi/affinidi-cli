@@ -22,7 +22,7 @@ const {
   project: { projectId },
 } = projectSummary
 
-describe.only('wizard status', () => {
+describe('wizard status', () => {
   describe('status unauth and no project', () => {
     it('should wizard status when not authenticated and no active project', () => {
       const result = wizardStatus({
