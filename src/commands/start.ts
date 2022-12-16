@@ -73,7 +73,7 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.AUTH_MENU))
     switch (nextStep) {
       case 'login':
-        await Login.run(['-w'])
+        await Login.run([])
         this.breadcrumbs.push(nextStep)
         break
       case 'sign-up':
@@ -100,27 +100,95 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.MAIN_MENU))
     switch (nextStep) {
       case 'manage projects':
+        this.breadcrumbs.push(nextStep)
+        this.getProjectmenu(userEmail, projectId)
         break
       case 'manage schemas':
+        this.breadcrumbs.push(nextStep)
+        this.getSchemamenu(userEmail, projectId)
         break
       case 'generate an application':
         GenerateApplication.run([
           `-n ${await applicationName()}`,
           `${(await withProxy()) ? '-w' : ''}`,
         ])
+        this.breadcrumbs.push(nextStep)
         break
       case 'issue a vc':
         break
       case 'verify a vc':
         await VerifyVc.run([`-d${await pathToVc()}`])
+        this.breadcrumbs.push(nextStep)
         break
       case 'logout':
-        await Logout.run([])
-        this.breadcrumbs.push(nextStep)
+        this.logout(nextStep)
         break
       default:
         CliUx.ux.done()
         break
     }
+  }
+
+  private async getProjectmenu(userEmail: string, projectId: string) {
+    CliUx.ux.info(
+      wizardStatusMessage(
+        wizardStatus({
+          messages: defaultWizardMessages,
+          breadcrumbs: this.breadcrumbs,
+          userEmail,
+          projectId,
+        }),
+      ),
+    )
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
+    switch (nextStep) {
+      case 'change active project':
+        break
+      case 'create another project':
+        break
+      case 'show active project':
+        break
+      case "show project's details":
+        break
+      case 'logut':
+        this.logout(nextStep)
+        break
+      default:
+        CliUx.ux.done()
+        break
+    }
+  }
+
+  private async getSchemamenu(userEmail: string, projectId: string) {
+    CliUx.ux.info(
+      wizardStatusMessage(
+        wizardStatus({
+          messages: defaultWizardMessages,
+          breadcrumbs: this.breadcrumbs,
+          userEmail,
+          projectId,
+        }),
+      ),
+    )
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
+    switch (nextStep) {
+      case 'show schemas':
+        break
+      case 'show schema details':
+        break
+      case 'create schema':
+        break
+      case 'logut':
+        this.logout(nextStep)
+        break
+      default:
+        CliUx.ux.done()
+        break
+    }
+  }
+
+  public async logout(nextStep: string) {
+    await Logout.run([])
+    this.breadcrumbs.push(nextStep)
   }
 }
