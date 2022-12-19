@@ -158,3 +158,6 @@ export const buildWelcomeUserMessageByType = (mapFn: (b: MessageBlock) => string
 export const WelcomeUserStyledMessage = buildWelcomeUserMessageByType(mapStyled)
 export const WelcomeUserRawMessage = buildWelcomeUserMessageByType(mapRawText)
 export const NextStepsRawMessage = nextStepMessageBlocks.map((m) => m.styled).join('\n\n')
+export const wizardStatusMessage = (wizardStatusBlock: MessageBlock[]): string => {
+  return wizardStatusBlock.map((m) => m.text).join('\n')
+}

@@ -9,6 +9,9 @@ export {
   projectNamePrompt,
   enterIssuanceEmailPrompt,
   enterSchemaName,
+  pathToVc,
+  applicationName,
+  withProxy,
 } from './prompts'
 
 export { selectProject } from './inquirer'

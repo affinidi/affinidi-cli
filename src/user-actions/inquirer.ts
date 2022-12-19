@@ -20,3 +20,18 @@ export const selectProject = async (
       return answer.projectId.split(' ')[0]
     })
 }
+
+export const selectNextStep = async (choices: string[]): Promise<string> => {
+  return inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'NextStep',
+        message: 'select your next step',
+        choices,
+      },
+    ])
+    .then((choice) => {
+      return choice.NextStep
+    })
+}
