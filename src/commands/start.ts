@@ -31,6 +31,8 @@ export default class Start extends Command {
   menuMap = new Map<WizardMenus, () => void>([
     [WizardMenus.AUTH_MENU, this.getAuthmenu.prototype],
     [WizardMenus.MAIN_MENU, this.getMainmenu.prototype],
+    [WizardMenus.PROJECT_MENU, this.getProjectmenu.prototype],
+    [WizardMenus.SCHEMA_MENU, this.getSchemamenu.prototype],
   ])
 
   public async run(): Promise<void> {
@@ -73,7 +75,7 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.AUTH_MENU))
     switch (nextStep) {
       case 'login':
-        await Login.run([])
+        await Login.run(['-w'])
         this.breadcrumbs.push(nextStep)
         break
       case 'sign-up':
@@ -81,8 +83,7 @@ export default class Start extends Command {
         this.breadcrumbs.push(nextStep)
         break
       default:
-        await CliUx.ux.done()
-        break
+        process.exit(0)
     }
   }
 
@@ -124,8 +125,7 @@ export default class Start extends Command {
         this.logout(nextStep)
         break
       default:
-        CliUx.ux.done()
-        break
+        process.exit(0)
     }
   }
 
@@ -154,8 +154,7 @@ export default class Start extends Command {
         this.logout(nextStep)
         break
       default:
-        CliUx.ux.done()
-        break
+        process.exit(0)
     }
   }
 
@@ -182,8 +181,7 @@ export default class Start extends Command {
         this.logout(nextStep)
         break
       default:
-        CliUx.ux.done()
-        break
+        process.exit(0)
     }
   }
 
