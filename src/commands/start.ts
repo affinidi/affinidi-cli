@@ -79,7 +79,7 @@ export default class Start extends Command {
         this.breadcrumbs.push(nextStep)
         break
       case 'sign-up':
-        await SignUp.run(['-w', '-o', 'plaintext'])
+        await SignUp.run(['-w'])
         this.breadcrumbs.push(nextStep)
         break
       default:
