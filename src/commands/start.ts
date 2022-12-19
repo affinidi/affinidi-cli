@@ -45,7 +45,7 @@ export default class Start extends Command {
     } = getSession()
     const projects = await iAmService.listProjects(token, 0, 10)
     if (projects.length === 0) {
-      await CreateProject.run(['-oplaintext'])
+      await CreateProject.run(['-o', 'plaintext'])
       this.breadcrumbs.push('create a project')
     }
     const { projectId } = vaultService.getActiveProject().project
@@ -75,11 +75,11 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.AUTH_MENU))
     switch (nextStep) {
       case 'login':
-        await Login.run(['-oplaintext', '-w'])
+        await Login.run(['-o', 'plaintext', '-w'])
         this.breadcrumbs.push(nextStep)
         break
       case 'sign-up':
-        await SignUp.run(['-w', '-oplaintext'])
+        await SignUp.run(['-w', '-o', 'plaintext'])
         this.breadcrumbs.push(nextStep)
         break
       default:
@@ -112,14 +112,15 @@ export default class Start extends Command {
         GenerateApplication.run([
           `-n ${await applicationName()}`,
           `${(await withProxy()) ? '-w' : ''}`,
-          '-oplaintext',
+          '-o',
+          'plaintext',
         ])
         this.breadcrumbs.push(nextStep)
         break
       case 'issue a vc':
         break
       case 'verify a vc':
-        await VerifyVc.run([`-d${await pathToVc()}`, '-oplaintext'])
+        await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
         this.breadcrumbs.push(nextStep)
         break
       case 'logout':
@@ -187,7 +188,7 @@ export default class Start extends Command {
   }
 
   public async logout(nextStep: string) {
-    await Logout.run(['-oplaintext'])
+    await Logout.run(['-o', 'plaintext'])
     this.breadcrumbs.push(nextStep)
   }
 }
