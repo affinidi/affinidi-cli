@@ -62,9 +62,8 @@ export default class ShowProject extends Command {
           CliUx.ux.action.stop('No active project')
           displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
           return
-        } else {
-          throw err
         }
+        throw err
       }
 
       projectId = activeProject.project.projectId

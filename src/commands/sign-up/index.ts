@@ -12,7 +12,7 @@ import { userManagementService } from '../../services'
 import { vaultService } from '../../services/vault/typedVaultService'
 import { CliError, WrongEmailError, getErrorOutput } from '../../errors'
 import { WelcomeUserStyledMessage } from '../../render/functions'
-import { createConfig, createSession, parseJwt } from '../../services/user-management'
+import { createOrUpdateConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
@@ -73,7 +73,7 @@ export default class SignUp extends Command {
     const sessionWithoutPrefix = sessionToken.replace('console_authtoken=', '')
     vaultService.clear()
     createSession(email, userId, sessionWithoutPrefix)
-    createConfig({ userId, analyticsOptIn: wantsToOptIn })
+    createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
 
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_UP',

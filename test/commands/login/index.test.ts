@@ -12,9 +12,8 @@ import {
   ServiceDownError,
   WrongEmailError,
   notFoundProject,
-  UnsuportedConfig,
 } from '../../../src/errors'
-import { analyticsService, ANALYTICS_URL } from '../../../src/services/analytics'
+import { analyticsService } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
 import { vaultService } from '../../../src/services/vault/typedVaultService'
 import * as config from '../../../src/services/config'
@@ -25,12 +24,30 @@ const testProjectId = 'random-test-project-id'
 const testOTP = '123456'
 const validCookie =
   'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOGVmY2M3MC1iYmUxLTQ1N2EtYTZjNy1iMjlhZDk5MTM2NDgiLCJ1c2VybmFtZSI6InZhbGlkQGVtYWlsLWFkZHJlc3MuY29tIiwiYWNjZXNzVG9rZW4iOiJtb2NrZWQtYWNjZXNzLXRva2VuIiwiZXhwIjoxNjY4MDA0Njk3LCJpYXQiOjE2Njc5MTgyOTd9.WDOeDB6PwFkmXWhe4zmMnltJGB44ayvDYaHDKJlcZEQ; Domain=affinidi.com; Path=/; Expires=Wed, 09 Nov 2022 14:38:17 GMT; HttpOnly; Secure; SameSite=Lax'
+const secondEmailAddress = 'second@email-address.com'
+const secondCookie =
+  'console_authtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MTYyM2M4OS04NzNmLTQ5NTYtYTc4Mi04YzEwNDY2MWZjYjIiLCJ1c2VybmFtZSI6InNlY29uZEBlbWFpbC1hZGRyZXNzLmNvbSIsImFjY2Vzc1Rva2VuIjoibW9ja2VkLWFjY2Vzcy10b2tlbiIsImV4cCI6MTY2ODAwNDY5NywiaWF0IjoxNjY3OTE4Mjk3fQ.TdjWsZgo5Fbu2m8guNTzhVuhtqw5XQPW7_jJ7YNPNoE;'
+const secondUserId = '91623c89-873f-4956-a782-8c104661fcb2'
 const doNothing = () => {}
-const invalidCliVersion = -1
 
 const clearSessionAndConfig = () => {
   vaultService.clear()
   configService.clear()
+}
+
+const setupTest = (cookie: string, email: string) => {
+  return test
+    .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+      api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
+    )
+    .nock(`${USER_MANAGEMENT_URL}`, (api) =>
+      api.post('/auth/login/confirm').reply(StatusCodes.OK, null, { 'set-cookie': [cookie] }),
+    )
+    .stdout()
+    .stub(userActions, 'enterEmailPrompt', () => async () => email)
+    .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
+    .stub(CliUx.ux.action, 'start', () => () => doNothing)
+    .stub(CliUx.ux.action, 'stop', () => doNothing)
 }
 
 describe('login command', () => {
@@ -88,23 +105,6 @@ describe('login command', () => {
     })
 
     describe('When the user enters the valid OTP', () => {
-      const setupTest = () => {
-        return test
-          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-            api.post('/auth/login').reply(StatusCodes.OK, { token: 'some-valid-token' }),
-          )
-          .nock(`${USER_MANAGEMENT_URL}`, (api) =>
-            api
-              .post('/auth/login/confirm')
-              .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
-          )
-          .stdout()
-          .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
-          .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
-          .stub(CliUx.ux.action, 'start', () => () => doNothing)
-          .stub(CliUx.ux.action, 'stop', () => doNothing)
-      }
-
       describe('And When the user has no project', () => {
         before(() => {
           configService.create(testUserId, testProjectId)
@@ -113,7 +113,7 @@ describe('login command', () => {
         after(() => {
           vaultService.clear()
         })
-        setupTest()
+        setupTest(validCookie, validEmailAddress)
           .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, { projects: [] }))
           .command(['login'])
           .it(
@@ -137,7 +137,7 @@ describe('login command', () => {
         after(() => {
           clearSessionAndConfig()
         })
-        setupTest()
+        setupTest(validCookie, validEmailAddress)
           .nock(`${IAM_URL}`, (api) =>
             api.get('/projects').reply(StatusCodes.OK, { projects: [projectList.projects[0]] }),
           )
@@ -246,6 +246,26 @@ describe('login command', () => {
           expect(currentConfig.configs[testUserId].outputFormat).to.equal('plaintext')
         })
       })
+    })
+  })
+
+  describe('Given an already logged in user  ', () => {
+    describe('When another user logs-in', () => {
+      before(() => {
+        configService.createOrUpdate(testUserId, true)
+      })
+      setupTest(secondCookie, secondEmailAddress)
+        .nock(`${IAM_URL}`, (api) => api.get('/projects').reply(StatusCodes.OK, { projects: [] }))
+        .stub(userActions, 'analyticsConsentPrompt', () => async () => true)
+        .command(['login'])
+        .it(
+          'runs login and verifies that the credentials.json file contains the new user config',
+          () => {
+            const { configs } = configService.show()
+            expect(Object.keys(configs)).to.have.lengthOf(2)
+            expect(configs).to.have.property(secondUserId)
+          },
+        )
     })
   })
 })
