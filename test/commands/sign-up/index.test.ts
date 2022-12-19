@@ -118,7 +118,7 @@ describe('sign-up command', () => {
           .stub(prompts, 'analyticsConsentPrompt', () => async () => true)
           .command(['sign-up'])
           .it(
-            'runs sign-up and verifies that the credentials.json file has the correct values',
+            'runs sign-up and verifies that the credentials.json file contains the new user config',
             (ctx) => {
               const output = ctx.stdout
               getWelcomeUserRawMessages().forEach((b) => {

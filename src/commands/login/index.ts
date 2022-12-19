@@ -8,7 +8,7 @@ import { iAmService, userManagementService } from '../../services'
 import { vaultService } from '../../services/vault/typedVaultService'
 import { analyticsConsentPrompt, enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
-import { createConfig, createSession, parseJwt } from '../../services/user-management'
+import { createOrUpdateConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
@@ -96,7 +96,7 @@ export default class Login extends Command {
     createSession(email, userId, sessionWithoutPrefix)
     if (confVersionError || !configService.show().configs[userId]) {
       const wantsToOptIn = await analyticsConsentPrompt()
-      createConfig({ userId, analyticsOptIn: wantsToOptIn })
+      createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
     }
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_IN',
