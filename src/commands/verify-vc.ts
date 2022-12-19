@@ -20,7 +20,7 @@ export default class VerifyVc extends Command {
 
   static usage = 'verify-vc [FLAGS]'
 
-  static description = 'Verfies a verifiable credential.'
+  static description = 'Use this command to verify a verifiable credential.'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 

@@ -23,7 +23,7 @@ export default class Login extends Command {
   static usage = 'login [email]'
 
   static description =
-    'Please log-in with your email address to use Affinidi privacy preserving services."'
+    'Use this command to log-in with your email address and use Affinidi privacy preserving services."'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 

@@ -11,7 +11,7 @@ import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 export default class Config extends Command {
   static command = 'affinidi config'
 
-  static summary = 'The config commmand allows to set various settings for cli.'
+  static summary = 'Use this commmand to delete user saved configurations.'
 
   static usage = 'config [COMMAND] [ARGS...]'
 
@@ -19,7 +19,11 @@ export default class Config extends Command {
 
   static examples: Interfaces.Example[] = [
     {
-      description: 'Configures output format view:',
+      description: 'Delete logged in user saved configuration:',
+      command: '$ <%= config.bin %> <%= command.id %> --unset-all',
+    },
+    {
+      description: 'Configure output format view:',
       command: '$ <%= config.bin %> <%= command.id %> view',
     },
     {

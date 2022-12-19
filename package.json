@@ -115,7 +115,23 @@
       "@oclif/plugin-warn-if-update-available"
     ],
     "topicSeparator": " ",
-    "topics": {},
+    "topics": {
+      "show": {
+        "description": "Use this command to display the details of a resource"
+      },
+      "list": {
+        "description": "Use this command to display resources that you have created or are available"
+      },
+      "create": {
+        "description": "Use this command to create a new resource"
+      },
+      "config": {
+        "description": "Use this command to configure various settings for cli"
+      },
+      "use": {
+        "description": "Use this command to choose and activate a project"
+      }
+    },
     "warn-if-update-available": {
       "timeoutInDays": 7
     },
