@@ -7,6 +7,9 @@ import { userManagementService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { configService } from '../../services/config'
 import { CliError, Unauthorized, getErrorOutput } from '../../errors'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export default class ShowUser extends Command {
   static command = 'affinidi show user'
@@ -27,11 +30,22 @@ export default class ShowUser extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(ShowUser)
-    const { consoleAuthToken: token } = getSession()
-    if (!token) {
+    if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'userManagement')
     }
+    const { consoleAuthToken: token, account } = getSession()
+    const analyticsData: EventDTO = {
+      name: 'CLI_USER_INFO_SHOWED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: account.userId,
+      metadata: {
+        commandId: 'affinidi.showUser',
+        ...generateUserMetadata(account.label),
+      },
+    }
     const userData = await userManagementService.me({ token })
+    await analyticsService.eventsControllerSend(analyticsData)
     displayOutput({ itemToDisplay: JSON.stringify(userData, null, '  '), flag: flags.output })
   }
 
