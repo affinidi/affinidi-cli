@@ -15,9 +15,9 @@ import UseProject from './use/project'
 import { CliError, getErrorOutput } from '../errors'
 import { displayOutput } from '../middleware/display'
 import { wizardMap, WizardMenus } from '../constants'
-import { applicationName, pathToVc, withProxy } from '../user-actions'
-import VerifyVc from './verify-vc'
-import GenerateApplication from './generate-application'
+// import { applicationName, pathToVc, withProxy } from '../user-actions'
+// import VerifyVc from './verify-vc'
+// import GenerateApplication from './generate-application'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
