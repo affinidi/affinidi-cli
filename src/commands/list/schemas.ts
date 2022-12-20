@@ -91,12 +91,6 @@ export default class Schemas extends Command {
       description: 'The type of scope',
       default: 'default',
     }),
-    public: Flags.enum<'true' | 'false'>({
-      char: 'p',
-      options: ['true', 'false'],
-      description: 'To specify if you want to get public or private schemas',
-      default: 'true',
-    }),
     // search: Flags.string({ char: 'q', description: 'The name of the schema to search for' }),
     skip: Flags.integer({ char: 's', description: 'The number of schemas to skip', default: 0 }),
   }
@@ -106,24 +100,28 @@ export default class Schemas extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(Schemas)
 
-    const { extended, limit, public: publicFlag, output, scope, skip } = flags
-    if (!isAuthenticated() && (scope === 'unlisted' || publicFlag === 'false')) {
+    const { extended, limit, output, scope, skip } = flags
+    if (!isAuthenticated() && (scope === 'unlisted' || scope === 'default')) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
     }
-    const { account } = getSession()
+    const session = getSession()
+    let account
+    if (session) {
+      ;({ account } = session)
+    }
     const analyticsData: EventDTO = {
       name: 'VC_SCHEMAS_SEARCHED',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: account.userId,
+      uuid: account?.userId || anonymous,
       metadata: {
         commandId: 'affinidi.listSchemas',
-        ...generateUserMetadata(account.label),
+        ...generateUserMetadata(account?.label),
       },
     }
     let apiKey: string
     let did: string
-    if (scope === 'unlisted' || publicFlag === 'false') {
+    if (scope === 'unlisted' || scope === 'default') {
       const activeProject = vaultService.getActiveProject()
       apiKey = activeProject.apiKey.apiKeyHash
       did = activeProject.wallet.did
@@ -133,29 +131,27 @@ export default class Schemas extends Command {
       authorDid: did,
       did,
       limit,
-      scope: publicFlag === 'false' ? 'unlisted' : scope,
+      scope,
       skip,
     }
 
     const schemas = await schemaManagerService.search(params)
     await analyticsService.eventsControllerSend(analyticsData)
 
-    const data = schemas
-      .map((s, index) => {
-        return {
-          index,
-          id: s.id,
-          parentId: s.parentId,
-          authorDid: s.authorDid,
-          description: s.description,
-          createdAt: s.createdAt,
-          type: s.type,
-          version: s.version,
-          revision: s.revision,
-          jsonSchemaUrl: s.jsonSchemaUrl,
-        }
-      })
-      .slice(skip, skip + limit)
+    const data = schemas.map((s, index) => {
+      return {
+        index,
+        id: s.id,
+        parentId: s.parentId,
+        authorDid: s.authorDid,
+        description: s.description,
+        createdAt: s.createdAt,
+        type: s.type,
+        version: s.version,
+        revision: s.revision,
+        jsonSchemaUrl: s.jsonSchemaUrl,
+      }
+    })
 
     printData(data, { extended, output })
   }
