@@ -91,7 +91,7 @@ export default class ShowProject extends Command {
       name: 'CONSOLE_PROJECT_READ',
       category: 'APPLICATION',
       component: 'Cli',
-      uuid: configService.getCurrentUser(),
+      uuid: account.userId,
       metadata: {
         projectId: projectData.project.projectId,
         commandId: 'affinidi.showProject',
