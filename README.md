@@ -1,12 +1,19 @@
 # Affinidi CLI
 
 [Introduction](#introduction)
+
 [Features](#features)
+
 [Installation](#installation)
+
 [Quick Start](#quick-start)
+
 [CLI Commands](#cli-commands)
+
 [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials)
+
 [Feedback & Support](#feedback--support)
+
 [FAQ](#faq)
 
 #
