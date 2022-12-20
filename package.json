@@ -126,7 +126,7 @@
         "description": "Use this command to create a new resource"
       },
       "config": {
-        "description": "Use this command to configure various settings for cli"
+        "description": "Use this command to to configure CLI settings"
       },
       "use": {
         "description": "Use this command to choose and activate a project"

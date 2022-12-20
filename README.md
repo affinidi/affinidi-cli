@@ -243,7 +243,10 @@ $ affinidi autocomplete --help
 
 ### **affinidi config**
 
-Use this command to configure various settings for cli.
+Use this command to configure CLI settings or delete user saved configurations. Current config settings include:
+
+- Output format view
+- Saved Username
 
 USAGE
 
@@ -254,23 +257,15 @@ USAGE
 SUBCOMMAND
 
 ```
-  view Configures the output view format
-  username Persists a username in config file to be used in the future when not providing a username when loggin in
-```
+  view          Configures the output view format
 
-EXAMPLES
-Configures output in json format:
-
-```
- affinidi config --unset-all
- affinidi config view json
- affinidi config username email@example.com
+  username      Persists a username in config file to be used in the future when not providing a username when loggin in
 ```
 
 CONFIG FLAGS
 
 ```
--u, --unset-all remove username from config
+-u, --unset-all                 Remove username from config
 -o, --output=(plaintext|json)   [default: plaintext] Formats output view
 ```
 
@@ -278,6 +273,16 @@ USERNAME FLAGS
 
 ```
 -o, --output=(plaintext|json)   [default: plaintext] Formats output view
+```
+
+EXAMPLES
+
+```
+ affinidi config --unset-all
+
+ affinidi config view json
+
+ affinidi config username email@example.com
 ```
 
 You can also see the help for the command in the CLI:
@@ -303,7 +308,7 @@ SUBCOMMANDS
 
 ```
 project          Creates a new Affinidi project.
-schema          Creates a new schema for a verifiable credential.
+schema           Creates a new schema for a verifiable credential.
 ```
 
 To create a project:
@@ -594,7 +599,7 @@ $ affinidi show project
 SCHEMA FLAGS
 
 ```
--o, --output=(plaintext|json)  set flag to override default output format view
+-o, --output=(plaintext|json)  Set this flag to override the default plain text format view
 -s, --show=(info|json|jsonld)  [default: info] The details of the schema to show
 ```
 
@@ -607,20 +612,22 @@ $ affinidi show schema [<schema-id>] [--output json]
 USER FLAGS
 
 ```
--o, --output=(plaintext|json)  set flag to override default output format view
+-o, --output=(plaintext|json)  Set this flag to override the default plain text format view
 ```
 
 To show info of logged in user:
 
 ```
-$ affinidi show user [--output json]
+$ affinidi show user
 ```
 
 EXAMPLES
 
 ```
 $ affinidi show project example-id
+
 $ affinidi show schema example-id
+
 $ affinidi show user
 ```
 
@@ -686,7 +693,7 @@ $ affinidi use project --help
 
 ### **affinidi analytics**
 
-The Analytics command lets you choose whether you want send anonymous usage data or not.
+The Analytics command lets you opt in or out of sending anonymous usage data..
 
 USAGE
 
