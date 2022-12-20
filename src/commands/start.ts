@@ -95,23 +95,23 @@ export default class Start extends Command {
         await this.getProjectmenu()
         break
       case 'manage schemas':
-        this.breadcrumbs.push(nextStep)
-        await this.getSchemamenu()
+        // this.breadcrumbs.push(nextStep)
+        // await this.getSchemamenu()
         break
       case 'generate an application':
-        GenerateApplication.run([
-          `-n ${await applicationName()}`,
-          `${(await withProxy()) ? '-w' : ''}`,
-          '-o',
-          'plaintext',
-        ])
-        this.breadcrumbs.push(nextStep)
+        // GenerateApplication.run([
+        //   `-n ${await applicationName()}`,
+        //   `${(await withProxy()) ? '-w' : ''}`,
+        //   '-o',
+        //   'plaintext',
+        // ])
+        // this.breadcrumbs.push(nextStep)
         break
       case 'issue a vc':
         break
       case 'verify a vc':
-        await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
-        this.breadcrumbs.push(nextStep)
+        // await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
+        // this.breadcrumbs.push(nextStep)
         break
       case 'logout':
         this.logout(nextStep)
@@ -164,6 +164,9 @@ export default class Start extends Command {
       case 'show schema details':
         break
       case 'create schema':
+        break
+      case 'go back to main menu':
+        await this.getMainmenu()
         break
       case 'logut':
         this.logout(nextStep)
