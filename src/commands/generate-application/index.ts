@@ -144,7 +144,7 @@ export default class GenerateApplication extends Command {
       return
     }
 
-    this.setUpProject(name, withProxy)
+    await this.setUpProject(name, withProxy)
     analyticsData.name = 'APPLICATION_GENERATION_COMPLETED'
     await analyticsService.eventsControllerSend(analyticsData)
     CliUx.ux.action.stop('\nApplication generated')
