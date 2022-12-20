@@ -47,7 +47,6 @@ class SchemaManagerService {
       if (response?.status !== StatusCodes.OK) {
         return []
       }
-
       return response.data.schemas
     } catch (err) {
       throw new CliError(err?.message, err.response.status, SERVICE)
