@@ -16,7 +16,7 @@ const MAX_EMAIL_ATTEMPT = 3
 
 export default class Username extends Command {
   static description =
-    'This command sets the username. This username will be used when logging in the future if not one provided'
+    'Use this command to set a username. This username will be used when logging in the future if not one provided'
 
   static examples = ['<%= config.bin %> <%= command.id %> example@email.com']
 

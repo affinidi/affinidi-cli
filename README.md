@@ -1,12 +1,19 @@
 # Affinidi CLI
 
 [Introduction](#introduction)
+
 [Features](#features)
+
 [Installation](#installation)
+
 [Quick Start](#quick-start)
+
 [CLI Commands](#cli-commands)
+
 [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials)
+
 [Feedback & Support](#feedback--support)
+
 [FAQ](#faq)
 
 #
@@ -243,7 +250,10 @@ $ affinidi autocomplete --help
 
 ### **affinidi config**
 
-Use this command to configure the format of the output. Supported options are: `plaintext` and `json`.
+Use this command to configure CLI settings or delete user saved configurations. Current config settings include:
+
+- Output format view
+- Saved Username
 
 USAGE
 
@@ -254,23 +264,32 @@ USAGE
 SUBCOMMAND
 
 ```
-  view Configures the output view format
-  username Persists a username in config file to be used in the future when not providing a username when loggin in
+  view          Configures the output view format
+
+  username      Persists a username in config file to be used in the future when not providing a username when loggin in
 ```
 
-EXAMPLES
-Configures output in json format:
+CONFIG FLAGS
 
 ```
- affinidi config view json
- affinidi config username email@example.com
+-u, --unset-all                 Remove username from config
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view
 ```
 
 USERNAME FLAGS
 
 ```
 -o, --output=(plaintext|json)   [default: plaintext] Formats output view
--u, --unset-all remove username from config
+```
+
+EXAMPLES
+
+```
+ affinidi config --unset-all
+
+ affinidi config view json
+
+ affinidi config username email@example.com
 ```
 
 You can also see the help for the command in the CLI:
@@ -296,7 +315,7 @@ SUBCOMMANDS
 
 ```
 project          Creates a new Affinidi project.
-schema          Creates a new schema for a verifiable credential.
+schema           Creates a new schema for a verifiable credential.
 ```
 
 To create a project:
@@ -365,7 +384,7 @@ FLAGS
 
 ```
 -n, --name=<value>              [default: my-app] Name of the application
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
+-o, --output=(plaintext|json)   [default: plaintext] Override default output format view
 -w, --with-proxy                Add backend-proxy to protect credentials
 ```
 
@@ -422,6 +441,8 @@ EXAMPLES
 ```
 $ affinidi issue-vc example@email.com -s "https://example.org/exampleSchema.json" -d "/exampleCredential.json"
 
+$ affinidi issue-vc -s "https://example.org/exampleSchema.json" -d "/exampleCredential.csv" -b
+
 ```
 
 You can also see the help for the command in the CLI:
@@ -457,7 +478,6 @@ FLAGS for project listing
 -l, --limit=<value>                           [default: 10] Maximum number of projects which will be listed
 -o, --output=(json|table|csv)  [default: json] Project listing output format
 -s, --skip=<value>                            Index into projects list from which to start the listing
---json  Format output as json.
 ```
 
 FLAGS for schema listing
@@ -561,11 +581,13 @@ SUBCOMMANDS
 ```
 project         Shows information about a given project
 schema          Shows the details of a schema
+user            Shows info about logged-in user
 ```
 
-FLAGS
+PROJECT FLAGS
 
 ```
+-a, --active                    Set to show the active project
 -o, --output=(plaintext|json)   [default: plaintext] Formats output view
 ```
 
@@ -581,17 +603,39 @@ if you simply type this, the CLI will prompt you to choose from a list of availa
 $ affinidi show project
 ```
 
+SCHEMA FLAGS
+
+```
+-o, --output=(plaintext|json)  Set this flag to override the default plain text format view
+-s, --show=(info|json|jsonld)  [default: info] The details of the schema to show
+```
+
 To show a schema:
 
 ```
 $ affinidi show schema [<schema-id>] [--output json]
 ```
 
+USER FLAGS
+
+```
+-o, --output=(plaintext|json)  Set this flag to override the default plain text format view
+```
+
+To show info of logged in user:
+
+```
+$ affinidi show user
+```
+
 EXAMPLES
 
 ```
 $ affinidi show project example-id
+
 $ affinidi show schema example-id
+
+$ affinidi show user
 ```
 
 You can also see the help for the command in the CLI:
@@ -600,6 +644,7 @@ You can also see the help for the command in the CLI:
 $ affinidi show --help
 $ affinidi show project --help
 $ affinidi show schema --help
+$ affinidi show user --help
 ```
 
 ### **affinidi sign-up**
@@ -651,6 +696,34 @@ You can also see the help for the command in the CLI:
 ```
 $ affinidi use --help
 $ affinidi use project --help
+```
+
+### **affinidi analytics**
+
+The Analytics command lets you opt in or out of sending anonymous usage data..
+
+USAGE
+
+```
+$ affinidi analytics [true | false]
+```
+
+FLAGS
+
+```
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view of the chosen project's details
+```
+
+EXAMPLES
+
+```
+    $ affinidi analytics true
+```
+
+You can also see the help for the command in the CLI:
+
+```
+$ affinidi analytics --help
 ```
 
 ### **affinidi verify-vc**

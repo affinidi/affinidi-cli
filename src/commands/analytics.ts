@@ -10,7 +10,7 @@ export const OPTIN_MESSAGE = 'You have opted in to analytics'
 export const OPTOUT_MESSAGE = 'You have not opted in to analytics'
 
 export default class Analytics extends Command {
-  static description = 'Opt-in or opt-out of analytics'
+  static description = 'Use this command to opt in or out of sending anonymous usage data'
 
   static command = 'affinidi analytics'
 

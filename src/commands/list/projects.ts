@@ -22,7 +22,7 @@ export default class Projects extends Command {
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> --skip=2 --limit=5 --output=csv-file',
+    '<%= config.bin %> <%= command.id %> --skip=2 --limit=5 --output=json',
   ]
 
   static flags = {

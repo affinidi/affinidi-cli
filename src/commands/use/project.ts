@@ -17,11 +17,12 @@ import { ViewFormat } from '../../constants'
 export default class Project extends Command {
   static command = 'affinidi use'
 
-  static description = 'Defines the project you want to work with.'
+  static description =
+    'Lets you choose and activate a project. An active project is a prerequisite for executing most commands.'
 
   static usage = 'use project [project-id] [FLAGS]'
 
-  static examples = ['<%= config.bin %> <%= command.id %>']
+  static examples = ['<%= config.bin %> <%= command.id %> example-id']
 
   static flags = {
     output: Flags.enum<ViewFormat>({

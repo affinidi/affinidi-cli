@@ -18,6 +18,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
+import { platform } from 'os'
 
 export enum Platforms {
   web = 'web',
@@ -58,6 +59,7 @@ export default class GenerateApplication extends Command {
       description: 'Platform',
       default: 'web',
       options: ['web', 'mobile'],
+      hidden: true,
     }),
     name: Flags.string({
       char: 'n',
@@ -69,6 +71,7 @@ export default class GenerateApplication extends Command {
       description: 'Use case',
       default: 'certification-and-verification',
       options: Object.values(UseCasesAppNames),
+      hidden: true,
     }),
     'with-proxy': Flags.boolean({
       char: 'w',

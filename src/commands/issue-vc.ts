@@ -39,9 +39,12 @@ export default class IssueVc extends Command {
   static usage = 'issue-vc [email] [FLAGS]'
 
   static description =
-    'Issues a verifiable credential based on an given schema. Refer to https://github.com/affinidi/affinidi-cli/blob/main/README.md#issuing-a-vc for more details and examples.'
+    'Use this command to issue a verifiable credential based on an given schema. Refer to https://github.com/affinidi/affinidi-cli/blob/main/README.md#issuing-a-vc for more details and examples.'
 
-  static examples = ['<%= config.bin %> <%= command.id %>']
+  static examples = [
+    '<%= config.bin %> <%= command.id %> example@email.com -s "https://example.org/exampleSchema.json" -d "/exampleCredential.json"',
+    '<%= config.bin %> <%= command.id %> -s "https://example.org/exampleSchema.json" -d "/exampleCredential.csv" -b',
+  ]
 
   static flags = {
     schema: Flags.string({

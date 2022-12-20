@@ -23,7 +23,7 @@ export default class SignUp extends Command {
 
   static description = 'Use this command with your email address to create a new Affinid account.'
 
-  static examples = ['<%= config.bin %> <%= command.id %>']
+  static examples = ['<%= config.bin %> <%= command.id %> example@email.com']
 
   static args = [{ name: 'email' }]
 
