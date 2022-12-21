@@ -4,6 +4,7 @@ import * as path from 'path'
 
 import { NoConfigFile, NoUserConfigFound } from '../../errors'
 import { version } from '../../constants'
+import { vaultService } from '../vault/typedVaultService'
 
 export const validVersions = [1]
 
@@ -65,7 +66,9 @@ class ConfigService {
 
   private readonly userConfigMustExist = (): void => {
     this.configFileMustExist()
-    const userId = this.getCurrentUser()
+    const {
+      account: { userId },
+    } = vaultService.getSession()
     const configs = this.store.getAllUserConfigs()
     if (!(userId in configs)) {
       throw new Error(NoUserConfigFound)
@@ -130,8 +133,14 @@ class ConfigService {
         outputFormat: 'plaintext',
         analyticsOptIn,
       }
+    } else {
+      const userConfig = configs[userId]
+      configs[userId] = {
+        activeProjectId: userConfig.activeProjectId || '',
+        outputFormat: userConfig.outputFormat || 'plaintext',
+        analyticsOptIn: userConfig.analyticsOptIn || analyticsOptIn || false,
+      }
     }
-
     return configs
   }
 
