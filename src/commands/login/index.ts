@@ -101,8 +101,8 @@ export default class Login extends Command {
     createSession(email, userId, sessionWithoutPrefix)
     if (
       confVersionError ||
-      !configService.show().configs[userId].analyticsOptIn ||
-      !configService.show().configs[userId].activeProjectId
+      !configService.show().configs[userId]?.analyticsOptIn ||
+      !configService.show().configs[userId]?.activeProjectId
     ) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })

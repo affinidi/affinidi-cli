@@ -66,9 +66,7 @@ class ConfigService {
 
   private readonly userConfigMustExist = (): void => {
     this.configFileMustExist()
-    const {
-      account: { userId },
-    } = vaultService.getSession()
+    const userId = this.getCurrentUser() || vaultService.getSession().account.userId
     const configs = this.store.getAllUserConfigs()
     if (!(userId in configs)) {
       throw new Error(NoUserConfigFound)
