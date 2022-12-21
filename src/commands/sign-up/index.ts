@@ -28,16 +28,8 @@ export default class SignUp extends Command {
 
   static args = [{ name: 'email' }]
 
-  static flags = {
-    isWizard: Flags.boolean({
-      char: 'w',
-      hidden: true,
-      default: false,
-    }),
-  }
-
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(SignUp)
+    const { args } = await this.parse(SignUp)
     let { email } = args
     if (!email) {
       email = await enterEmailPrompt()
