@@ -15,6 +15,7 @@ import { WelcomeUserStyledMessage } from '../../render/functions'
 import { createOrUpdateConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import CreateProject from '../create/project'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -94,8 +95,9 @@ export default class SignUp extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    if (flags.isWizard) return
-    CliUx.ux.info(WelcomeUserStyledMessage)
+    CliUx.ux.info(`${WelcomeUserStyledMessage}\n`)
+
+    await CreateProject.run(['Default Project'])
   }
 
   async catch(error: CliError) {

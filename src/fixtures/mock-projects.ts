@@ -13,7 +13,7 @@ const awesomeProject2: ProjectDto = {
 }
 
 const awesomeProject3: ProjectDto = {
-  name: 'Awesome project 3',
+  name: 'Default Project',
   projectId: 'some-project3-id',
   createdAt: '2022-09-06T20:31:20.467Z',
 }

@@ -1,7 +1,6 @@
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
-import { ANALYTICS_URL } from '../../../src/services/analytics'
 import { projectList } from '../../../src/fixtures/mock-projects'
 import * as authentication from '../../../src/middleware/authentication'
 import { IAM_URL } from '../../../src/services/iam'
@@ -31,7 +30,7 @@ describe('list projects command', () => {
       expect(ctx.stdout).to.contain('some-project1-id')
       expect(ctx.stdout).to.contain('2022-09-06T20:31:20.467Z')
       expect(ctx.stdout).to.contain('Awesome project 2')
-      expect(ctx.stdout).to.contain('Awesome project 3')
+      expect(ctx.stdout).to.contain('Default Project')
     })
   describe('list projects with skip flag set', () => {
     test
@@ -42,7 +41,7 @@ describe('list projects command', () => {
       .it('it runs list projects with skip flag = 1', (ctx) => {
         expect(ctx.stdout).to.contain('Awesome project 2')
         expect(ctx.stdout).to.contain('some-project2-id')
-        expect(ctx.stdout).to.contain('Awesome project 3')
+        expect(ctx.stdout).to.contain('Default Project')
         expect(ctx.stdout).to.contain('some-project3-id')
       })
   })
