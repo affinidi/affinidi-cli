@@ -64,6 +64,14 @@ class ConfigService {
     return { version: configVersion, currentUserId, configs, username }
   }
 
+  public userConfigMustBeVaild = (userId: string): boolean => {
+    const userConfig = this.store.getAllUserConfigs()[userId]
+    if (!userConfig?.analyticsOptIn || !userConfig?.activeProjectId) {
+      return false
+    }
+    return true
+  }
+
   private readonly userConfigMustExist = (): void => {
     this.configFileMustExist()
     const userId = this.getCurrentUser() || vaultService.getSession()?.account.userId
