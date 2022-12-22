@@ -48,7 +48,6 @@ export const welcomeMessageBlocks: MessageBlock[] = [
     text: 'and boilerplate your next privacy-preserving app!',
     styled: 'and boilerplate your next privacy-preserving app!',
   },
-  ...nextStepMessageBlocks,
 ]
 
 type MessageKeyBlock = { key: string } & MessageBlock

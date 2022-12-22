@@ -10,6 +10,8 @@ import { analyticsService } from '../../../src/services/analytics'
 import { configService } from '../../../src/services'
 import { vaultService } from '../../../src/services/vault/typedVaultService'
 import * as config from '../../../src/services/config'
+import { IAM_URL } from '../../../src/services/iam'
+import { projectSummary3 } from '../../../src/fixtures/mock-projects'
 
 const validEmailAddress = 'valid@email-address.com'
 const validCookie =
@@ -70,6 +72,18 @@ describe('sign-up command', () => {
             .post('/auth/signup/confirm')
             .reply(StatusCodes.OK, null, { 'set-cookie': [validCookie] }),
         )
+        .nock(`${IAM_URL}`, (api) =>
+          api.post('/projects').reply(StatusCodes.OK, {
+            projectId: projectSummary3.project.projectId,
+            name: projectSummary3.project.name,
+            createdAt: projectSummary3.project.createdAt,
+          }),
+        )
+        .nock(`${IAM_URL}`, (api) =>
+          api
+            .get(`/projects/${projectSummary3.project.projectId}/summary`)
+            .reply(StatusCodes.OK, projectSummary3),
+        )
         .stdout()
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
@@ -78,7 +92,7 @@ describe('sign-up command', () => {
         .stub(CliUx.ux.action, 'start', () => () => doNothing)
         .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['sign-up'])
-        .it('runs sign-up and shows a welcome message', (ctx) => {
+        .it('runs sign-up, shows a welcome message, creates and activates a project', (ctx) => {
           const output = ctx.stdout
           getWelcomeUserRawMessages().forEach((b) => {
             expect(output).to.contain(b)
@@ -92,6 +106,8 @@ describe('sign-up command', () => {
           expect(currentConf.configs[testUserId].outputFormat).to.equal('plaintext')
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           expect(analyticsService.hasAnalyticsOptIn()).to.be.true
+          const { project } = vaultService.getActiveProject()
+          expect(project.name).to.equal(projectSummary3.project.name)
         })
     })
 
@@ -111,6 +127,18 @@ describe('sign-up command', () => {
               .post('/auth/signup/confirm')
               .reply(StatusCodes.OK, null, { 'set-cookie': [secondCookie] }),
           )
+          .nock(`${IAM_URL}`, (api) =>
+            api.post('/projects').reply(StatusCodes.OK, {
+              projectId: projectSummary3.project.projectId,
+              name: projectSummary3.project.name,
+              createdAt: projectSummary3.project.createdAt,
+            }),
+          )
+          .nock(`${IAM_URL}`, (api) =>
+            api
+              .get(`/projects/${projectSummary3.project.projectId}/summary`)
+              .reply(StatusCodes.OK, projectSummary3),
+          )
           .stdout()
           .stub(prompts, 'enterEmailPrompt', () => async () => secondEmailAddress)
           .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
@@ -124,7 +152,8 @@ describe('sign-up command', () => {
               getWelcomeUserRawMessages().forEach((b) => {
                 expect(output).to.contain(b)
               })
-              expect(vaultService.getActiveProject).to.throw()
+              const { project } = vaultService.getActiveProject()
+              expect(project.name).to.equal(projectSummary3.project.name)
               const { configs } = configService.show()
               expect(Object.keys(configs)).to.have.lengthOf(2)
               expect(configs).to.have.property(secondUserId)
