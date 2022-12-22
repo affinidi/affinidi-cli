@@ -99,11 +99,9 @@ export default class Login extends Command {
     const sessionWithoutPrefix = sessionToken.replace('console_authtoken=', '')
     vaultService.clear()
     createSession(email, userId, sessionWithoutPrefix)
-    if (
-      confVersionError ||
-      !configService.show().configs[userId]?.analyticsOptIn ||
-      !configService.show().configs[userId]?.activeProjectId
-    ) {
+    const userConfig = configService.show().configs[userId]
+
+    if (confVersionError || !userConfig?.analyticsOptIn || !userConfig?.activeProjectId) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
     }
