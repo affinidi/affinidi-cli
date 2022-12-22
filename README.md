@@ -649,7 +649,7 @@ $ affinidi show user --help
 
 ### **affinidi sign-up**
 
-Create an Affinidi account with this command to use our privacy-preserving tools. You will need your email address, and then confirm the authentication with the code sent to your email.
+Create an Affinidi account with this command to use our privacy-preserving tools. You will need your email address, and then confirm the authentication with the code sent to your email. After confirming the authentication a default project will be created so you can start using Affinidi services right away.
 
 USAGE
 
