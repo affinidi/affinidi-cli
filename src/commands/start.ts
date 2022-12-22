@@ -14,7 +14,25 @@ import ShowProject from './show/project'
 import UseProject from './use/project'
 import { CliError, getErrorOutput } from '../errors'
 import { displayOutput } from '../middleware/display'
-import { wizardMap, WizardMenus } from '../constants'
+import {
+  backToMainMenu,
+  backToProjectMenu,
+  changeActiveProject,
+  createProject,
+  createSchema,
+  generateApplication,
+  issueVC,
+  logout,
+  manageProjects,
+  manageSchemas,
+  showActiveProject,
+  showDetailedProject,
+  showDetailedSchema,
+  showSchemas,
+  verifyVC,
+  wizardMap,
+  WizardMenus,
+} from '../constants'
 // import { applicationName, pathToVc, withProxy } from '../user-actions'
 // import VerifyVc from './verify-vc'
 // import GenerateApplication from './generate-application'
@@ -90,15 +108,15 @@ export default class Start extends Command {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.MAIN_MENU))
     switch (nextStep) {
-      case 'manage projects':
+      case manageProjects:
         this.breadcrumbs.push(nextStep)
         await this.getProjectmenu()
         break
-      case 'manage schemas':
+      case manageSchemas:
         // this.breadcrumbs.push(nextStep)
         // await this.getSchemamenu()
         break
-      case 'generate an application':
+      case generateApplication:
         // GenerateApplication.run([
         //   `-n ${await applicationName()}`,
         //   `${(await withProxy()) ? '-w' : ''}`,
@@ -107,13 +125,13 @@ export default class Start extends Command {
         // ])
         // this.breadcrumbs.push(nextStep)
         break
-      case 'issue a vc':
+      case issueVC:
         break
-      case 'verify a vc':
+      case verifyVC:
         // await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
         // this.breadcrumbs.push(nextStep)
         break
-      case 'logout':
+      case logout:
         this.logout(nextStep)
         break
       default:
@@ -125,29 +143,29 @@ export default class Start extends Command {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
     switch (nextStep) {
-      case 'change active project':
+      case changeActiveProject:
         await this.useProject()
         this.breadcrumbs.push(nextStep)
         await this.getGoBackProjectMenu()
         break
-      case 'create another project':
+      case createProject:
         await this.createProject()
         await this.getGoBackProjectMenu()
         break
-      case 'show active project':
+      case showActiveProject:
         await this.showProject(true)
         this.breadcrumbs.push(nextStep)
         await this.getGoBackProjectMenu()
         break
-      case "show project's details":
+      case showDetailedProject:
         await this.showProject(false)
         this.breadcrumbs.push(nextStep)
         await this.getGoBackProjectMenu()
         break
-      case 'go back to main menu':
+      case backToMainMenu:
         await this.getMainmenu()
         break
-      case 'logut':
+      case logout:
         this.logout(nextStep)
         break
       default:
@@ -159,16 +177,16 @@ export default class Start extends Command {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
     switch (nextStep) {
-      case 'show schemas':
+      case showSchemas:
         break
-      case 'show schema details':
+      case showDetailedSchema:
         break
-      case 'create schema':
+      case createSchema:
         break
-      case 'go back to main menu':
+      case backToMainMenu:
         await this.getMainmenu()
         break
-      case 'logut':
+      case logout:
         this.logout(nextStep)
         break
       default:
@@ -181,10 +199,10 @@ export default class Start extends Command {
 
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_PROJECT_MENU))
     switch (nextStep) {
-      case 'go back to project managment':
+      case backToProjectMenu:
         await this.getProjectmenu()
         break
-      case 'go back to main menu':
+      case backToMainMenu:
         await this.getMainmenu()
         break
       default:
