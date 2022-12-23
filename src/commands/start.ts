@@ -10,12 +10,32 @@ import { iAmService } from '../services'
 import { vaultService } from '../services/vault/typedVaultService'
 import CreateProject from './create/project'
 import Logout from './logout'
+import ShowProject from './show/project'
+import UseProject from './use/project'
 import { CliError, getErrorOutput } from '../errors'
 import { displayOutput } from '../middleware/display'
-import { wizardMap, WizardMenus } from '../constants'
-import { applicationName, pathToVc, withProxy } from '../user-actions'
-import VerifyVc from './verify-vc'
-import GenerateApplication from './generate-application'
+import {
+  backToMainMenu,
+  backToProjectMenu,
+  changeActiveProject,
+  createProject,
+  createSchema,
+  generateApplication,
+  issueVC,
+  logout,
+  manageProjects,
+  manageSchemas,
+  showActiveProject,
+  showDetailedProject,
+  showDetailedSchema,
+  showSchemas,
+  verifyVC,
+  wizardMap,
+  WizardMenus,
+} from '../constants'
+// import { applicationName, pathToVc, withProxy } from '../user-actions'
+// import VerifyVc from './verify-vc'
+// import GenerateApplication from './generate-application'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
@@ -33,23 +53,20 @@ export default class Start extends Command {
     [WizardMenus.MAIN_MENU, this.getMainmenu.prototype],
     [WizardMenus.PROJECT_MENU, this.getProjectmenu.prototype],
     [WizardMenus.SCHEMA_MENU, this.getSchemamenu.prototype],
+    [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu.prototype],
   ])
 
   public async run(): Promise<void> {
     if (!isAuthenticated()) {
       await this.getAuthmenu()
     }
-    const {
-      consoleAuthToken: token,
-      account: { label: userEmail },
-    } = getSession()
+    const { consoleAuthToken: token } = getSession()
     const projects = await iAmService.listProjects(token, 0, 10)
     if (projects.length === 0) {
-      await CreateProject.run(['-o', 'plaintext'])
-      this.breadcrumbs.push('create a project')
+      await this.createProject()
     }
-    const { projectId } = vaultService.getActiveProject().project
-    await this.getMainmenu(userEmail, projectId)
+
+    await this.getMainmenu()
   }
 
   async catch(error: CliError) {
@@ -87,43 +104,34 @@ export default class Start extends Command {
     }
   }
 
-  private async getMainmenu(userEmail: string, projectId: string) {
-    CliUx.ux.info(
-      wizardStatusMessage(
-        wizardStatus({
-          messages: defaultWizardMessages,
-          breadcrumbs: this.breadcrumbs,
-          userEmail,
-          projectId,
-        }),
-      ),
-    )
+  private async getMainmenu() {
+    CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.MAIN_MENU))
     switch (nextStep) {
-      case 'manage projects':
+      case manageProjects:
         this.breadcrumbs.push(nextStep)
-        this.getProjectmenu(userEmail, projectId)
+        await this.getProjectmenu()
         break
-      case 'manage schemas':
-        this.breadcrumbs.push(nextStep)
-        this.getSchemamenu(userEmail, projectId)
+      case manageSchemas:
+        // this.breadcrumbs.push(nextStep)
+        // await this.getSchemamenu()
         break
-      case 'generate an application':
-        GenerateApplication.run([
-          `-n ${await applicationName()}`,
-          `${(await withProxy()) ? '-w' : ''}`,
-          '-o',
-          'plaintext',
-        ])
-        this.breadcrumbs.push(nextStep)
+      case generateApplication:
+        // GenerateApplication.run([
+        //   `-n ${await applicationName()}`,
+        //   `${(await withProxy()) ? '-w' : ''}`,
+        //   '-o',
+        //   'plaintext',
+        // ])
+        // this.breadcrumbs.push(nextStep)
         break
-      case 'issue a vc':
+      case issueVC:
         break
-      case 'verify a vc':
-        await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
-        this.breadcrumbs.push(nextStep)
+      case verifyVC:
+        // await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
+        // this.breadcrumbs.push(nextStep)
         break
-      case 'logout':
+      case logout:
         this.logout(nextStep)
         break
       default:
@@ -131,28 +139,33 @@ export default class Start extends Command {
     }
   }
 
-  private async getProjectmenu(userEmail: string, projectId: string) {
-    CliUx.ux.info(
-      wizardStatusMessage(
-        wizardStatus({
-          messages: defaultWizardMessages,
-          breadcrumbs: this.breadcrumbs,
-          userEmail,
-          projectId,
-        }),
-      ),
-    )
+  private async getProjectmenu() {
+    CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
     switch (nextStep) {
-      case 'change active project':
+      case changeActiveProject:
+        await this.useProject()
+        this.breadcrumbs.push(nextStep)
+        await this.getGoBackProjectMenu()
         break
-      case 'create another project':
+      case createProject:
+        await this.createProject()
+        await this.getGoBackProjectMenu()
         break
-      case 'show active project':
+      case showActiveProject:
+        await this.showProject(true)
+        this.breadcrumbs.push(nextStep)
+        await this.getGoBackProjectMenu()
         break
-      case "show project's details":
+      case showDetailedProject:
+        await this.showProject(false)
+        this.breadcrumbs.push(nextStep)
+        await this.getGoBackProjectMenu()
         break
-      case 'logut':
+      case backToMainMenu:
+        await this.getMainmenu()
+        break
+      case logout:
         this.logout(nextStep)
         break
       default:
@@ -160,35 +173,95 @@ export default class Start extends Command {
     }
   }
 
-  private async getSchemamenu(userEmail: string, projectId: string) {
+  private async getSchemamenu() {
+    CliUx.ux.info(this.getStatus())
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
+    switch (nextStep) {
+      case showSchemas:
+        break
+      case showDetailedSchema:
+        break
+      case createSchema:
+        break
+      case backToMainMenu:
+        await this.getMainmenu()
+        break
+      case logout:
+        this.logout(nextStep)
+        break
+      default:
+        process.exit(0)
+    }
+  }
+
+  private async getGoBackProjectMenu() {
+    CliUx.ux.info(this.getStatus())
+
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_PROJECT_MENU))
+    switch (nextStep) {
+      case backToProjectMenu:
+        await this.getProjectmenu()
+        break
+      case backToMainMenu:
+        await this.getMainmenu()
+        break
+      default:
+        process.exit(0)
+        break
+    }
+  }
+
+  private async createProject() {
+    const {
+      account: { label: userEmail },
+    } = getSession()
     CliUx.ux.info(
       wizardStatusMessage(
         wizardStatus({
           messages: defaultWizardMessages,
           breadcrumbs: this.breadcrumbs,
           userEmail,
-          projectId,
         }),
       ),
     )
-    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
-    switch (nextStep) {
-      case 'show schemas':
-        break
-      case 'show schema details':
-        break
-      case 'create schema':
-        break
-      case 'logut':
-        this.logout(nextStep)
-        break
-      default:
-        process.exit(0)
-    }
+    await CreateProject.run(['-o', 'plaintext'])
+    this.breadcrumbs.push('create a project')
   }
 
-  public async logout(nextStep: string) {
+  private async useProject() {
+    CliUx.ux.info(this.getStatus())
+    await UseProject.run(['-o', 'plaintext'])
+  }
+
+  private async showProject(active: boolean) {
+    CliUx.ux.info(this.getStatus())
+    if (active) {
+      await ShowProject.run(['-a', '-o', 'plaintext'])
+      return
+    }
+    await ShowProject.run(['-o', 'plaintext'])
+  }
+
+  private async logout(nextStep: string) {
     await Logout.run(['-o', 'plaintext'])
     this.breadcrumbs.push(nextStep)
+  }
+
+  private getStatus(): string {
+    const {
+      account: { label: userEmail },
+    } = getSession()
+    const {
+      project: { projectId },
+    } = vaultService.getActiveProject()
+    const status = wizardStatusMessage(
+      wizardStatus({
+        messages: defaultWizardMessages,
+        breadcrumbs: this.breadcrumbs,
+        userEmail,
+        projectId,
+      }),
+    )
+    return `\n${status}\n`
   }
 }
