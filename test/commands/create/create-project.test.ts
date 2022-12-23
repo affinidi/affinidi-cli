@@ -16,9 +16,9 @@ const doNothing = () => {}
 
 describe('create project command', () => {
   beforeEach(() => {
+    createSession('email', testUserId, 'sessionToken')
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
-    createSession('email', testUserId, 'sessionToken')
   })
   afterEach(() => {
     configService.clear()
