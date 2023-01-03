@@ -66,7 +66,7 @@ class ConfigService {
 
   public userConfigMustBeVaild = (userId: string): boolean => {
     const userConfig = this.store.getAllUserConfigs()[userId]
-    if (!userConfig?.analyticsOptIn || !userConfig?.activeProjectId) {
+    if (!userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
       return false
     }
     return true
