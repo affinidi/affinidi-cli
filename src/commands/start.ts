@@ -1,6 +1,6 @@
 import { CliUx, Command } from '@oclif/core'
-import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 
+import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isAuthenticated } from '../middleware/authentication'
 import { selectNextStep } from '../user-actions/inquirer'
 import Login from './login'
@@ -21,6 +21,7 @@ import {
   createProject,
   createSchema,
   generateApplication,
+  genNewApp,
   issueVC,
   logout,
   manageProjects,
@@ -35,7 +36,8 @@ import {
 } from '../constants'
 // import { applicationName, pathToVc, withProxy } from '../user-actions'
 // import VerifyVc from './verify-vc'
-// import GenerateApplication from './generate-application'
+import GenerateApplication from './generate-application'
+import { applicationName, withProxy } from '../user-actions'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
@@ -54,6 +56,7 @@ export default class Start extends Command {
     [WizardMenus.PROJECT_MENU, this.getProjectmenu.prototype],
     [WizardMenus.SCHEMA_MENU, this.getSchemamenu.prototype],
     [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu.prototype],
+    [WizardMenus.GO_BACK_TO_GEN_APP, this.getGoBackGenApplication.prototype],
   ])
 
   public async run(): Promise<void> {
@@ -117,13 +120,9 @@ export default class Start extends Command {
         // await this.getSchemamenu()
         break
       case generateApplication:
-        // GenerateApplication.run([
-        //   `-n ${await applicationName()}`,
-        //   `${(await withProxy()) ? '-w' : ''}`,
-        //   '-o',
-        //   'plaintext',
-        // ])
-        // this.breadcrumbs.push(nextStep)
+        await this.generateApplication()
+        this.breadcrumbs.push(nextStep)
+        await this.getGoBackGenApplication()
         break
       case issueVC:
         break
@@ -211,6 +210,23 @@ export default class Start extends Command {
     }
   }
 
+  private async getGoBackGenApplication() {
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_GEN_APP))
+    switch (nextStep) {
+      case genNewApp:
+        await this.generateApplication()
+        this.breadcrumbs.push(generateApplication)
+        await this.getGoBackGenApplication()
+        break
+      case backToMainMenu:
+        await this.getMainmenu()
+        break
+      default:
+        process.exit(0)
+        break
+    }
+  }
+
   private async createProject() {
     const {
       account: { label: userEmail },
@@ -226,6 +242,15 @@ export default class Start extends Command {
     )
     await CreateProject.run(['-o', 'plaintext'])
     this.breadcrumbs.push('create a project')
+  }
+
+  private async generateApplication() {
+    CliUx.ux.info(this.getStatus())
+    const appName = await applicationName()
+    const withP = await withProxy()
+    const flags = ['-n', appName, '-o', 'plaintext', `-w`]
+    if (!withP) flags.pop()
+    await GenerateApplication.run(flags)
   }
 
   private async useProject() {

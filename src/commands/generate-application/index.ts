@@ -18,7 +18,6 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
-import { platform } from 'os'
 
 export enum Platforms {
   web = 'web',
