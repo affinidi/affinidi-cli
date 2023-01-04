@@ -39,7 +39,13 @@ import {
 } from '../constants'
 import ListSchemas from './list/schemas'
 import ShowSchema from './show/schema'
-import { schemaId } from '../user-actions'
+import CreateSchema from './create/schema'
+import {
+  schemaDescription,
+  schemaId,
+  schemaJSONFilePath,
+  schemaPublicPrivate,
+} from '../user-actions'
 // import { applicationName, pathToVc, withProxy } from '../user-actions'
 // import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
@@ -193,6 +199,8 @@ export default class Start extends Command {
         await this.showDetailedSchemaMenu()
         break
       case createSchema:
+        await this.createSchema()
+        await this.getGoBackSchemaMenu()
         break
       case backToMainMenu:
         await this.getMainmenu()
@@ -209,6 +217,19 @@ export default class Start extends Command {
     CliUx.ux.info(this.getStatus())
     await ListSchemas.run(['-w'])
     this.breadcrumbs.push(showSchemas)
+  }
+
+  private async createSchema() {
+    CliUx.ux.info(this.getStatus())
+    await CreateSchema.run([
+      '-s',
+      `${await schemaJSONFilePath()}`,
+      `-p`,
+      `${await schemaPublicPrivate()}`,
+      '-d',
+      `${await schemaDescription()}`,
+    ])
+    this.breadcrumbs.push(createSchema)
   }
 
   private async getGoBackProjectMenu() {
