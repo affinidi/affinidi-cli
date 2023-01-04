@@ -2,7 +2,7 @@ import { CliUx, Command } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isAuthenticated } from '../middleware/authentication'
-import { schemaPublicPrivate, selectNextStep } from '../user-actions/inquirer'
+import { selectNextStep } from '../user-actions/inquirer'
 import Login from './login'
 import SignUp from './sign-up'
 import { getSession } from '../services/user-management'
