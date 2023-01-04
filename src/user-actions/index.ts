@@ -14,6 +14,7 @@ export {
   withProxy,
   schemaId,
   schemaJSONFilePath,
+  schemaPublicPrivate,
   schemaDescription,
 } from './prompts'
 
