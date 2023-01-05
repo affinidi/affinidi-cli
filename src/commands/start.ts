@@ -2,7 +2,11 @@ import { CliUx, Command } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isAuthenticated } from '../middleware/authentication'
-import { selectNextStep } from '../user-actions/inquirer'
+import {
+  confirmConfigCustomWallet,
+  schemaPublicPrivate,
+  selectNextStep,
+} from '../user-actions/inquirer'
 import Login from './login'
 import SignUp from './sign-up'
 import { getSession } from '../services/user-management'
@@ -18,12 +22,14 @@ import {
   backToMainMenu,
   backToProjectMenu,
   backtoSchemaMenu,
+  bulkIssuance,
   changeActiveProject,
   chooseSchmeaFromList,
   createProject,
   createSchema,
   generateApplication,
   genNewApp,
+  issueNewVc,
   issueVC,
   logout,
   manageProjects,
@@ -32,12 +38,13 @@ import {
   showDetailedProject,
   showDetailedSchema,
   showSchemas,
+  singleIssuance,
   typeSchemaId,
+  typeSchemaUrl,
   verifyVC,
   wizardMap,
   WizardMenus,
 } from '../constants'
-import ListSchemas from './list/schemas'
 import ShowSchema from './show/schema'
 import CreateSchema from './create/schema'
 import {
@@ -46,10 +53,15 @@ import {
   schemaJSONFilePath,
   applicationName,
   withProxy,
+  pathToCSV,
+  pathToVc,
+  schemaUrl,
+  walletUrl,
 } from '../user-actions'
-// import { applicationName, pathToVc, withProxy } from '../user-actions'
 // import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
+import IssueVc from './issue-vc'
+import { chooseSchemaId, chooseSchemaUrl } from '../wizard/helpers'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
@@ -64,7 +76,7 @@ export default class Start extends Command {
 
   menuMap = new Map<WizardMenus, () => void>([
     [WizardMenus.AUTH_MENU, this.getAuthmenu.prototype],
-    [WizardMenus.MAIN_MENU, this.getMainmenu.prototype],
+    [WizardMenus.MAIN_MENU, this.getMainMenu.prototype],
     [WizardMenus.PROJECT_MENU, this.getProjectmenu.prototype],
     [WizardMenus.SCHEMA_MENU, this.getSchemamenu.prototype],
     [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu.prototype],
@@ -83,7 +95,7 @@ export default class Start extends Command {
       await this.createProject()
     }
 
-    await this.getMainmenu()
+    await this.getMainMenu()
   }
 
   async catch(error: CliError) {
@@ -121,7 +133,7 @@ export default class Start extends Command {
     }
   }
 
-  private async getMainmenu() {
+  private async getMainMenu() {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.MAIN_MENU))
     switch (nextStep) {
@@ -139,6 +151,8 @@ export default class Start extends Command {
         await this.getGoBackGenApplication()
         break
       case issueVC:
+        await this.issuanceSchemaMenu()
+        this.breadcrumbs.push(nextStep)
         break
       case verifyVC:
         // await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
@@ -152,6 +166,7 @@ export default class Start extends Command {
     }
   }
 
+  // Project Management
   private async getProjectmenu() {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
@@ -176,7 +191,7 @@ export default class Start extends Command {
         await this.getGoBackProjectMenu()
         break
       case backToMainMenu:
-        await this.getMainmenu()
+        await this.getMainMenu()
         break
       case logout:
         this.logout(nextStep)
@@ -186,6 +201,54 @@ export default class Start extends Command {
     }
   }
 
+  private async getGoBackProjectMenu() {
+    CliUx.ux.info(this.getStatus())
+
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_PROJECT_MENU))
+    switch (nextStep) {
+      case backToProjectMenu:
+        await this.getProjectmenu()
+        break
+      case backToMainMenu:
+        await this.getMainMenu()
+        break
+      default:
+        process.exit(0)
+    }
+  }
+
+  private async createProject() {
+    const {
+      account: { label: userEmail },
+    } = getSession()
+    CliUx.ux.info(
+      wizardStatusMessage(
+        wizardStatus({
+          messages: defaultWizardMessages,
+          breadcrumbs: this.breadcrumbs,
+          userEmail,
+        }),
+      ),
+    )
+    await CreateProject.run(['-o', 'plaintext'])
+    this.breadcrumbs.push('create a project')
+  }
+
+  private async useProject() {
+    CliUx.ux.info(this.getStatus())
+    await UseProject.run(['-o', 'plaintext'])
+  }
+
+  private async showProject(active: boolean) {
+    CliUx.ux.info(this.getStatus())
+    if (active) {
+      await ShowProject.run(['-a', '-o', 'plaintext'])
+      return
+    }
+    await ShowProject.run(['-o', 'plaintext'])
+  }
+
+  // Schema Management
   private async getSchemamenu() {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
@@ -203,7 +266,7 @@ export default class Start extends Command {
         await this.getGoBackSchemaMenu()
         break
       case backToMainMenu:
-        await this.getMainmenu()
+        await this.getMainMenu()
         break
       case logout:
         this.logout(nextStep)
@@ -215,7 +278,8 @@ export default class Start extends Command {
 
   private async listSchemas() {
     CliUx.ux.info(this.getStatus())
-    await ListSchemas.run(['-w'])
+    const chosenSchemaId = await chooseSchemaId()
+    await ShowSchema.run([`${chosenSchemaId}`])
     this.breadcrumbs.push(showSchemas)
   }
 
@@ -230,22 +294,6 @@ export default class Start extends Command {
       `${await schemaDescription()}`,
     ])
     this.breadcrumbs.push(createSchema)
-  }
-
-  private async getGoBackProjectMenu() {
-    CliUx.ux.info(this.getStatus())
-
-    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_PROJECT_MENU))
-    switch (nextStep) {
-      case backToProjectMenu:
-        await this.getProjectmenu()
-        break
-      case backToMainMenu:
-        await this.getMainmenu()
-        break
-      default:
-        process.exit(0)
-    }
   }
 
   private async showDetailedSchemaMenu() {
@@ -277,7 +325,7 @@ export default class Start extends Command {
         await this.getSchemamenu()
         break
       case backToMainMenu:
-        await this.getMainmenu()
+        await this.getMainMenu()
         break
       default:
         process.exit(0)
@@ -285,6 +333,7 @@ export default class Start extends Command {
     }
   }
 
+  // Generate Application
   private async getGoBackGenApplication() {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_GEN_APP))
     switch (nextStep) {
@@ -294,29 +343,12 @@ export default class Start extends Command {
         await this.getGoBackGenApplication()
         break
       case backToMainMenu:
-        await this.getMainmenu()
+        await this.getMainMenu()
         break
       default:
         process.exit(0)
         break
     }
-  }
-
-  private async createProject() {
-    const {
-      account: { label: userEmail },
-    } = getSession()
-    CliUx.ux.info(
-      wizardStatusMessage(
-        wizardStatus({
-          messages: defaultWizardMessages,
-          breadcrumbs: this.breadcrumbs,
-          userEmail,
-        }),
-      ),
-    )
-    await CreateProject.run(['-o', 'plaintext'])
-    this.breadcrumbs.push('create a project')
   }
 
   private async generateApplication() {
@@ -328,18 +360,70 @@ export default class Start extends Command {
     await GenerateApplication.run(flags)
   }
 
-  private async useProject() {
+  // VC issuance
+  private async issuanceSchemaMenu() {
     CliUx.ux.info(this.getStatus())
-    await UseProject.run(['-o', 'plaintext'])
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.ISSUANCE_SCHEMA_MENU))
+    switch (nextStep) {
+      case chooseSchmeaFromList:
+        await this.issuanceTypeMenu(await chooseSchemaUrl())
+        break
+      case typeSchemaUrl:
+        await this.issuanceTypeMenu(await schemaUrl())
+        break
+      default:
+        process.exit(0)
+        break
+    }
   }
 
-  private async showProject(active: boolean) {
+  private async getGoBackIssueVc() {
     CliUx.ux.info(this.getStatus())
-    if (active) {
-      await ShowProject.run(['-a', '-o', 'plaintext'])
-      return
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_ISSUANCE))
+    switch (nextStep) {
+      case issueNewVc:
+        await this.issuanceSchemaMenu()
+        break
+      case backToMainMenu:
+        await this.getMainMenu()
+        break
+      default:
+        process.exit(0)
+        break
     }
-    await ShowProject.run(['-o', 'plaintext'])
+  }
+
+  private async issuanceTypeMenu(schemaInputUrl: string) {
+    CliUx.ux.info(this.getStatus())
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.ISSUANCE_TYPE_MENU))
+    switch (nextStep) {
+      case bulkIssuance:
+        await this.issueVc(true, schemaInputUrl)
+        await this.getGoBackIssueVc()
+        break
+      case singleIssuance:
+        await this.issueVc(false, schemaInputUrl)
+        await this.getGoBackIssueVc()
+        break
+      default:
+        process.exit(0)
+        break
+    }
+  }
+
+  private async issueVc(bulk: boolean, schemaInputUrl: string) {
+    let walletCustomUrl: string
+    const pathToFile = bulk ? await pathToCSV() : await pathToVc()
+    const confirmWallet = await confirmConfigCustomWallet()
+    const flags = ['-s', `${schemaInputUrl}`, '-d', `${pathToFile}`, `w`]
+    if (confirmWallet) {
+      walletCustomUrl = await walletUrl()
+      flags.push(`${walletCustomUrl}`)
+    } else {
+      flags.pop()
+    }
+    if (bulk) flags.push('-b')
+    await IssueVc.run(flags)
   }
 
   private async logout(nextStep: string) {
