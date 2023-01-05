@@ -40,11 +40,16 @@ import {
 import ListSchemas from './list/schemas'
 import ShowSchema from './show/schema'
 import CreateSchema from './create/schema'
-import { schemaDescription, schemaId, schemaJSONFilePath } from '../user-actions'
+import {
+  schemaDescription,
+  schemaId,
+  schemaJSONFilePath,
+  applicationName,
+  withProxy,
+} from '../user-actions'
 // import { applicationName, pathToVc, withProxy } from '../user-actions'
 // import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
-import { applicationName, withProxy } from '../user-actions'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
