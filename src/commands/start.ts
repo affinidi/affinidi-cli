@@ -75,10 +75,10 @@ export default class Start extends Command {
   breadcrumbs: string[] = []
 
   menuMap = new Map<WizardMenus, () => void>([
-    [WizardMenus.AUTH_MENU, this.getAuthmenu.prototype],
+    [WizardMenus.AUTH_MENU, this.getAuthMenu.prototype],
     [WizardMenus.MAIN_MENU, this.getMainMenu.prototype],
-    [WizardMenus.PROJECT_MENU, this.getProjectmenu.prototype],
-    [WizardMenus.SCHEMA_MENU, this.getSchemamenu.prototype],
+    [WizardMenus.PROJECT_MENU, this.getProjectMenu.prototype],
+    [WizardMenus.SCHEMA_MENU, this.getSchemaMenu.prototype],
     [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu.prototype],
     [WizardMenus.GO_BACK_TO_GEN_APP, this.getGoBackGenApplication.prototype],
     [WizardMenus.GO_BACK_SCHEMA_MENU, this.getGoBackSchemaMenu.prototype],
@@ -87,7 +87,7 @@ export default class Start extends Command {
 
   public async run(): Promise<void> {
     if (!isAuthenticated()) {
-      await this.getAuthmenu()
+      await this.getAuthMenu()
     }
     const { consoleAuthToken: token } = getSession()
     const projects = await iAmService.listProjects(token, 0, 10)
@@ -112,7 +112,7 @@ export default class Start extends Command {
     })
   }
 
-  private async getAuthmenu() {
+  private async getAuthMenu() {
     CliUx.ux.info(
       wizardStatusMessage(
         wizardStatus({ messages: defaultWizardMessages, breadcrumbs: this.breadcrumbs }),
@@ -139,11 +139,11 @@ export default class Start extends Command {
     switch (nextStep) {
       case manageProjects:
         this.breadcrumbs.push(nextStep)
-        await this.getProjectmenu()
+        await this.getProjectMenu()
         break
       case manageSchemas:
         this.breadcrumbs.push(nextStep)
-        await this.getSchemamenu()
+        await this.getSchemaMenu()
         break
       case generateApplication:
         await this.generateApplication()
@@ -167,7 +167,7 @@ export default class Start extends Command {
   }
 
   // Project Management
-  private async getProjectmenu() {
+  private async getProjectMenu() {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
     switch (nextStep) {
@@ -207,7 +207,7 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_PROJECT_MENU))
     switch (nextStep) {
       case backToProjectMenu:
-        await this.getProjectmenu()
+        await this.getProjectMenu()
         break
       case backToMainMenu:
         await this.getMainMenu()
@@ -249,7 +249,7 @@ export default class Start extends Command {
   }
 
   // Schema Management
-  private async getSchemamenu() {
+  private async getSchemaMenu() {
     CliUx.ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
     switch (nextStep) {
@@ -322,7 +322,7 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_SCHEMA_MENU))
     switch (nextStep) {
       case backtoSchemaMenu:
-        await this.getSchemamenu()
+        await this.getSchemaMenu()
         break
       case backToMainMenu:
         await this.getMainMenu()
