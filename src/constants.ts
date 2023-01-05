@@ -19,6 +19,9 @@ export const showDetailedSchema = 'show schema details'
 export const createSchema = 'create schema'
 export const backToProjectMenu = 'go back to project managment'
 export const genNewApp = 'generate a new application'
+export const backtoSchemaMenu = 'go back to schema managment'
+export const chooseSchmeaFromList = 'choose schema from list'
+export const typeSchemaId = 'type schema ID'
 
 export enum WizardMenus {
   AUTH_MENU = 'authmenu',
@@ -27,6 +30,8 @@ export enum WizardMenus {
   SCHEMA_MENU = 'schemamenu',
   GO_BACK_PROJECT_MENU = 'gobackprojectmenu',
   GO_BACK_TO_GEN_APP = 'gobacktogenapp',
+  GO_BACK_SCHEMA_MENU = 'gobackschemamenu',
+  SHOW_DETAILED_SCHEMA_MENU = 'showdetailedschemamenu',
 }
 
 export const wizardMap = new Map<WizardMenus, string[]>([
@@ -53,4 +58,6 @@ export const wizardMap = new Map<WizardMenus, string[]>([
   ],
   [WizardMenus.GO_BACK_PROJECT_MENU, [backToProjectMenu, backToMainMenu]],
   [WizardMenus.GO_BACK_TO_GEN_APP, [genNewApp, backToMainMenu]],
+  [WizardMenus.GO_BACK_SCHEMA_MENU, [backtoSchemaMenu, backToMainMenu]],
+  [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, [chooseSchmeaFromList, typeSchemaId]],
 ])

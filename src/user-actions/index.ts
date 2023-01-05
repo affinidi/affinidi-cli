@@ -12,6 +12,9 @@ export {
   pathToVc,
   applicationName,
   withProxy,
+  schemaId,
+  schemaJSONFilePath,
+  schemaDescription,
 } from './prompts'
 
 export { selectProject } from './inquirer'

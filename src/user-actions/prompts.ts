@@ -60,6 +60,23 @@ export const applicationName = async (text: string = 'name of application'): Pro
   return prompt
 }
 
+export const schemaId = async (text: string = 'schema ID'): Promise<string> => {
+  const prompt = await CliUx.ux.prompt(text, { required: true })
+  return prompt
+}
+
+export const schemaJSONFilePath = async (text: string = 'path to JSON file'): Promise<string> => {
+  const prompt = await CliUx.ux.prompt(text, { required: true })
+  return prompt
+}
+
+export const schemaDescription = async (
+  text: string = 'give a short description for the schema',
+): Promise<string> => {
+  const prompt = await CliUx.ux.prompt(text, { required: true })
+  return prompt
+}
+
 export const withProxy = async (
   text: string = 'create backend to hide credentials [y/n]',
 ): Promise<boolean> => {

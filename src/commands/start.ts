@@ -2,7 +2,7 @@ import { CliUx, Command } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isAuthenticated } from '../middleware/authentication'
-import { selectNextStep } from '../user-actions/inquirer'
+import { schemaPublicPrivate, selectNextStep } from '../user-actions/inquirer'
 import Login from './login'
 import SignUp from './sign-up'
 import { getSession } from '../services/user-management'
@@ -17,7 +17,9 @@ import { displayOutput } from '../middleware/display'
 import {
   backToMainMenu,
   backToProjectMenu,
+  backtoSchemaMenu,
   changeActiveProject,
+  chooseSchmeaFromList,
   createProject,
   createSchema,
   generateApplication,
@@ -30,14 +32,24 @@ import {
   showDetailedProject,
   showDetailedSchema,
   showSchemas,
+  typeSchemaId,
   verifyVC,
   wizardMap,
   WizardMenus,
 } from '../constants'
+import ListSchemas from './list/schemas'
+import ShowSchema from './show/schema'
+import CreateSchema from './create/schema'
+import {
+  schemaDescription,
+  schemaId,
+  schemaJSONFilePath,
+  applicationName,
+  withProxy,
+} from '../user-actions'
 // import { applicationName, pathToVc, withProxy } from '../user-actions'
 // import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
-import { applicationName, withProxy } from '../user-actions'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
@@ -57,6 +69,8 @@ export default class Start extends Command {
     [WizardMenus.SCHEMA_MENU, this.getSchemamenu.prototype],
     [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu.prototype],
     [WizardMenus.GO_BACK_TO_GEN_APP, this.getGoBackGenApplication.prototype],
+    [WizardMenus.GO_BACK_SCHEMA_MENU, this.getGoBackSchemaMenu.prototype],
+    [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, this.showDetailedSchemaMenu.prototype],
   ])
 
   public async run(): Promise<void> {
@@ -116,8 +130,8 @@ export default class Start extends Command {
         await this.getProjectmenu()
         break
       case manageSchemas:
-        // this.breadcrumbs.push(nextStep)
-        // await this.getSchemamenu()
+        this.breadcrumbs.push(nextStep)
+        await this.getSchemamenu()
         break
       case generateApplication:
         await this.generateApplication()
@@ -177,10 +191,16 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
     switch (nextStep) {
       case showSchemas:
+        await this.listSchemas()
+        this.breadcrumbs.push(showDetailedSchema)
+        await this.getGoBackSchemaMenu()
         break
       case showDetailedSchema:
+        await this.showDetailedSchemaMenu()
         break
       case createSchema:
+        await this.createSchema()
+        await this.getGoBackSchemaMenu()
         break
       case backToMainMenu:
         await this.getMainmenu()
@@ -193,6 +213,25 @@ export default class Start extends Command {
     }
   }
 
+  private async listSchemas() {
+    CliUx.ux.info(this.getStatus())
+    await ListSchemas.run(['-w'])
+    this.breadcrumbs.push(showSchemas)
+  }
+
+  private async createSchema() {
+    CliUx.ux.info(this.getStatus())
+    await CreateSchema.run([
+      '-s',
+      `${await schemaJSONFilePath()}`,
+      `-p`,
+      `${await schemaPublicPrivate()}`,
+      '-d',
+      `${await schemaDescription()}`,
+    ])
+    this.breadcrumbs.push(createSchema)
+  }
+
   private async getGoBackProjectMenu() {
     CliUx.ux.info(this.getStatus())
 
@@ -200,6 +239,42 @@ export default class Start extends Command {
     switch (nextStep) {
       case backToProjectMenu:
         await this.getProjectmenu()
+        break
+      case backToMainMenu:
+        await this.getMainmenu()
+        break
+      default:
+        process.exit(0)
+    }
+  }
+
+  private async showDetailedSchemaMenu() {
+    CliUx.ux.info(this.getStatus())
+
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SHOW_DETAILED_SCHEMA_MENU))
+    switch (nextStep) {
+      case chooseSchmeaFromList:
+        await this.listSchemas()
+        this.breadcrumbs.push(showDetailedSchema)
+        await this.getGoBackSchemaMenu()
+        break
+      case typeSchemaId:
+        await ShowSchema.run([`${await schemaId()}`])
+        this.breadcrumbs.push(showDetailedSchema)
+        await this.getGoBackSchemaMenu()
+        break
+      default:
+        process.exit(0)
+    }
+  }
+
+  private async getGoBackSchemaMenu() {
+    CliUx.ux.info(this.getStatus())
+
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_SCHEMA_MENU))
+    switch (nextStep) {
+      case backtoSchemaMenu:
+        await this.getSchemamenu()
         break
       case backToMainMenu:
         await this.getMainmenu()
