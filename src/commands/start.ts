@@ -1,4 +1,4 @@
-import { CliUx, Command } from '@oclif/core'
+import { CliUx, Command, Flags } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isAuthenticated } from '../middleware/authentication'
@@ -62,7 +62,7 @@ import {
 import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
 import IssueVc from './issue-vc'
-import { chooseSchemaId, chooseSchemaUrl } from '../wizard/helpers'
+import { chooseSchemaId, chooseSchemaUrl, nextFuncAfterError } from '../wizard/helpers'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
@@ -72,6 +72,15 @@ export default class Start extends Command {
   static usage = 'start'
 
   static examples = ['<%= config.bin %> <%= command.id %>']
+
+  static flags = {
+    error: Flags.boolean({
+      char: 'e',
+      description: '',
+      default: false,
+      hidden: true,
+    }),
+  }
 
   breadcrumbs: string[] = []
 
@@ -88,6 +97,10 @@ export default class Start extends Command {
   ])
 
   public async run(): Promise<void> {
+    const { flags } = await this.parse(Start)
+    if (flags.error) {
+      await nextFuncAfterError.pop().bind(this)()
+    }
     if (!isAuthenticated()) {
       await this.getAuthMenu()
     }
@@ -109,9 +122,10 @@ export default class Start extends Command {
     const prevStep = this.breadcrumbs[this.breadcrumbs.length - 1]
     wizardMap.forEach((value, key): void => {
       if (value.includes(prevStep)) {
-        this.menuMap.get(key)()
+        nextFuncAfterError.push(this.menuMap.get(key))
       }
     })
+    await Start.run([`-e`])
   }
 
   private async getAuthMenu() {
