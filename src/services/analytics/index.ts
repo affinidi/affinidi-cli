@@ -64,14 +64,14 @@ class AnalyticsService {
     }
   }
 
-  public sendEnabledEvent = async (email: string, enabled: boolean) => {
+  public sendEnabledEvent = async (email: string, enabled: boolean, commandId: string) => {
     const analyticsData: EventDTO = {
       name: 'CLI_ANALYTICS_ENABLED',
       category: 'APPLICATION',
       component: 'Cli',
       uuid: configService.getCurrentUser(),
       metadata: {
-        commandId: 'affinidi.analytics',
+        commandId: commandId,
         enabled,
         ...generateUserMetadata(email),
       },

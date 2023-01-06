@@ -75,7 +75,7 @@ export default class SignUp extends Command {
     vaultService.clear()
     createSession(email, userId, sessionWithoutPrefix)
     createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
-    await analyticsService.sendEnabledEvent(email, wantsToOptIn)
+    await analyticsService.sendEnabledEvent(email, wantsToOptIn, 'affinidi.sign-up')
 
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_UP',

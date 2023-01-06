@@ -64,7 +64,7 @@ export default class Analytics extends Command {
     })
 
     const { account } = getSession()
-    await analyticsService.sendEnabledEvent(account.label, wantsToOptIn)
+    await analyticsService.sendEnabledEvent(account.label, wantsToOptIn, 'affinidi.analytics')
   }
 
   async catch(error: CliError) {
