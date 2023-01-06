@@ -261,6 +261,7 @@ export default class Start extends Command {
         await this.getGoBackSchemaMenu()
         break
       case showDetailedSchema:
+        this.breadcrumbs.push(nextStep)
         await this.showDetailedSchemaMenu()
         break
       case createSchema:
