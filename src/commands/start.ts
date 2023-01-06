@@ -41,6 +41,7 @@ import {
   singleIssuance,
   typeSchemaId,
   typeSchemaUrl,
+  verifyNewVc,
   verifyVC,
   wizardMap,
   WizardMenus,
@@ -58,7 +59,7 @@ import {
   schemaUrl,
   walletUrl,
 } from '../user-actions'
-// import VerifyVc from './verify-vc'
+import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
 import IssueVc from './issue-vc'
 import { chooseSchemaId, chooseSchemaUrl } from '../wizard/helpers'
@@ -75,14 +76,15 @@ export default class Start extends Command {
   breadcrumbs: string[] = []
 
   menuMap = new Map<WizardMenus, () => void>([
-    [WizardMenus.AUTH_MENU, this.getAuthMenu.prototype],
-    [WizardMenus.MAIN_MENU, this.getMainMenu.prototype],
-    [WizardMenus.PROJECT_MENU, this.getProjectMenu.prototype],
-    [WizardMenus.SCHEMA_MENU, this.getSchemaMenu.prototype],
-    [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu.prototype],
-    [WizardMenus.GO_BACK_TO_GEN_APP, this.getGoBackGenApplication.prototype],
-    [WizardMenus.GO_BACK_SCHEMA_MENU, this.getGoBackSchemaMenu.prototype],
-    [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, this.showDetailedSchemaMenu.prototype],
+    [WizardMenus.AUTH_MENU, this.getAuthMenu],
+    [WizardMenus.MAIN_MENU, this.getMainMenu],
+    [WizardMenus.PROJECT_MENU, this.getProjectMenu],
+    [WizardMenus.SCHEMA_MENU, this.getSchemaMenu],
+    [WizardMenus.GO_BACK_PROJECT_MENU, this.getGoBackProjectMenu],
+    [WizardMenus.GO_BACK_TO_GEN_APP, this.getGoBackGenApplication],
+    [WizardMenus.GO_BACK_SCHEMA_MENU, this.getGoBackSchemaMenu],
+    [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, this.showDetailedSchemaMenu],
+    [WizardMenus.GO_BACK_TO_VERIFICATION, this.getGoBackVerifyVc],
   ])
 
   public async run(): Promise<void> {
@@ -146,17 +148,17 @@ export default class Start extends Command {
         await this.getSchemaMenu()
         break
       case generateApplication:
-        await this.generateApplication()
         this.breadcrumbs.push(nextStep)
+        await this.generateApplication()
         await this.getGoBackGenApplication()
         break
       case issueVC:
-        await this.issuanceSchemaMenu()
         this.breadcrumbs.push(nextStep)
+        await this.issuanceSchemaMenu()
         break
       case verifyVC:
-        // await VerifyVc.run([`-d${await pathToVc()}`, '-o', 'plaintext'])
-        // this.breadcrumbs.push(nextStep)
+        this.breadcrumbs.push(nextStep)
+        await this.verifyVc()
         break
       case logout:
         this.logout(nextStep)
@@ -172,8 +174,8 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
     switch (nextStep) {
       case changeActiveProject:
-        await this.useProject()
         this.breadcrumbs.push(nextStep)
+        await this.useProject()
         await this.getGoBackProjectMenu()
         break
       case createProject:
@@ -181,13 +183,13 @@ export default class Start extends Command {
         await this.getGoBackProjectMenu()
         break
       case showActiveProject:
-        await this.showProject(true)
         this.breadcrumbs.push(nextStep)
+        await this.showProject(true)
         await this.getGoBackProjectMenu()
         break
       case showDetailedProject:
-        await this.showProject(false)
         this.breadcrumbs.push(nextStep)
+        await this.showProject(false)
         await this.getGoBackProjectMenu()
         break
       case backToMainMenu:
@@ -230,8 +232,8 @@ export default class Start extends Command {
         }),
       ),
     )
-    await CreateProject.run(['-o', 'plaintext'])
     this.breadcrumbs.push('create a project')
+    await CreateProject.run(['-o', 'plaintext'])
   }
 
   private async useProject() {
@@ -254,8 +256,8 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
     switch (nextStep) {
       case showSchemas:
-        await this.listSchemas()
         this.breadcrumbs.push(showDetailedSchema)
+        await this.listSchemas()
         await this.getGoBackSchemaMenu()
         break
       case showDetailedSchema:
@@ -278,13 +280,14 @@ export default class Start extends Command {
 
   private async listSchemas() {
     CliUx.ux.info(this.getStatus())
+    this.breadcrumbs.push(showSchemas)
     const chosenSchemaId = await chooseSchemaId()
     await ShowSchema.run([`${chosenSchemaId}`])
-    this.breadcrumbs.push(showSchemas)
   }
 
   private async createSchema() {
     CliUx.ux.info(this.getStatus())
+    this.breadcrumbs.push(createSchema)
     await CreateSchema.run([
       '-s',
       `${await schemaJSONFilePath()}`,
@@ -293,7 +296,6 @@ export default class Start extends Command {
       '-d',
       `${await schemaDescription()}`,
     ])
-    this.breadcrumbs.push(createSchema)
   }
 
   private async showDetailedSchemaMenu() {
@@ -302,13 +304,13 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SHOW_DETAILED_SCHEMA_MENU))
     switch (nextStep) {
       case chooseSchmeaFromList:
-        await this.listSchemas()
         this.breadcrumbs.push(showDetailedSchema)
+        await this.listSchemas()
         await this.getGoBackSchemaMenu()
         break
       case typeSchemaId:
-        await ShowSchema.run([`${await schemaId()}`])
         this.breadcrumbs.push(showDetailedSchema)
+        await ShowSchema.run([`${await schemaId()}`])
         await this.getGoBackSchemaMenu()
         break
       default:
@@ -338,8 +340,8 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_GEN_APP))
     switch (nextStep) {
       case genNewApp:
-        await this.generateApplication()
         this.breadcrumbs.push(generateApplication)
+        await this.generateApplication()
         await this.getGoBackGenApplication()
         break
       case backToMainMenu:
@@ -424,6 +426,29 @@ export default class Start extends Command {
     }
     if (bulk) flags.push('-b')
     await IssueVc.run(flags)
+  }
+
+  // VC Verification
+  private async verifyVc() {
+    const vcPath = await pathToVc()
+    await VerifyVc.run([`-d`, `${vcPath}`, '-o', 'plaintext'])
+    await this.getGoBackVerifyVc()
+  }
+
+  private async getGoBackVerifyVc() {
+    CliUx.ux.info(this.getStatus())
+    const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_VERIFICATION))
+    switch (nextStep) {
+      case verifyNewVc:
+        await this.verifyVc()
+        break
+      case backToMainMenu:
+        await this.getMainMenu()
+        break
+      default:
+        process.exit(0)
+        break
+    }
   }
 
   private async logout(nextStep: string) {

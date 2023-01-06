@@ -26,6 +26,7 @@ export const typeSchemaUrl = 'type schema URL'
 export const bulkIssuance = 'bulk issuance'
 export const singleIssuance = 'single issuance'
 export const issueNewVc = 'issue a new VC'
+export const verifyNewVc = 'verify a new VC'
 
 export enum WizardMenus {
   AUTH_MENU = 'authmenu',
@@ -39,6 +40,7 @@ export enum WizardMenus {
   ISSUANCE_SCHEMA_MENU = 'issuanceschemamenu',
   ISSUANCE_TYPE_MENU = 'issuancetypemenu',
   GO_BACK_TO_ISSUANCE = 'gobacktoissuance',
+  GO_BACK_TO_VERIFICATION = 'gobacktoverification',
 }
 
 export const wizardMap = new Map<WizardMenus, string[]>([
@@ -70,4 +72,5 @@ export const wizardMap = new Map<WizardMenus, string[]>([
   [WizardMenus.ISSUANCE_SCHEMA_MENU, [chooseSchmeaFromList, typeSchemaUrl]],
   [WizardMenus.ISSUANCE_TYPE_MENU, [bulkIssuance, singleIssuance]],
   [WizardMenus.GO_BACK_TO_ISSUANCE, [issueNewVc, backToMainMenu]],
+  [WizardMenus.GO_BACK_TO_VERIFICATION, [verifyNewVc, backToMainMenu]],
 ])
