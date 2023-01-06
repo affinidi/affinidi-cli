@@ -15,6 +15,9 @@ export {
   schemaId,
   schemaJSONFilePath,
   schemaDescription,
+  schemaUrl,
+  pathToCSV,
+  walletUrl,
 } from './prompts'
 
 export { selectProject } from './inquirer'

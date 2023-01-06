@@ -22,6 +22,10 @@ export const genNewApp = 'generate a new application'
 export const backtoSchemaMenu = 'go back to schema managment'
 export const chooseSchmeaFromList = 'choose schema from list'
 export const typeSchemaId = 'type schema ID'
+export const typeSchemaUrl = 'type schema URL'
+export const bulkIssuance = 'bulk issuance'
+export const singleIssuance = 'single issuance'
+export const issueNewVc = 'issue a new VC'
 
 export enum WizardMenus {
   AUTH_MENU = 'authmenu',
@@ -32,6 +36,9 @@ export enum WizardMenus {
   GO_BACK_TO_GEN_APP = 'gobacktogenapp',
   GO_BACK_SCHEMA_MENU = 'gobackschemamenu',
   SHOW_DETAILED_SCHEMA_MENU = 'showdetailedschemamenu',
+  ISSUANCE_SCHEMA_MENU = 'issuanceschemamenu',
+  ISSUANCE_TYPE_MENU = 'issuancetypemenu',
+  GO_BACK_TO_ISSUANCE = 'gobacktoissuance',
 }
 
 export const wizardMap = new Map<WizardMenus, string[]>([
@@ -60,4 +67,7 @@ export const wizardMap = new Map<WizardMenus, string[]>([
   [WizardMenus.GO_BACK_TO_GEN_APP, [genNewApp, backToMainMenu]],
   [WizardMenus.GO_BACK_SCHEMA_MENU, [backtoSchemaMenu, backToMainMenu]],
   [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, [chooseSchmeaFromList, typeSchemaId]],
+  [WizardMenus.ISSUANCE_SCHEMA_MENU, [chooseSchmeaFromList, typeSchemaUrl]],
+  [WizardMenus.ISSUANCE_TYPE_MENU, [bulkIssuance, singleIssuance]],
+  [WizardMenus.GO_BACK_TO_ISSUANCE, [issueNewVc, backToMainMenu]],
 ])

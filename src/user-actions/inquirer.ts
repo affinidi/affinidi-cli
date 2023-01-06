@@ -22,9 +22,10 @@ export const selectProject = async (
     })
 }
 
-export const selectSchema = async (
+export const selectSchemaId = async (
   schemaData: SchemaDto[],
   maxIdLength: number,
+  maxDescLength: number,
 ): Promise<string> => {
   return inquirer
     .prompt([
@@ -33,13 +34,38 @@ export const selectSchema = async (
         name: 'schemaId',
         message: 'select a schema',
         choices: schemaData.map((data) => ({
-          name: `${data.id.padEnd(maxIdLength)} ${data.description} ${data.version} ${data.type}`,
+          name: `${data.id.padEnd(maxIdLength)} ${(data.description ? data.description : '').padEnd(
+            maxDescLength,
+          )} ${data.version} ${data.type}`,
           value: `${data.id}`,
         })),
       },
     ])
     .then((answer) => {
       return answer.schemaId
+    })
+}
+export const selectSchemaUrl = async (
+  schemaData: SchemaDto[],
+  maxIdLength: number,
+  maxUrlLength: number,
+): Promise<string> => {
+  return inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'schemaUrl',
+        message: 'select a schema',
+        choices: schemaData.map((data) => ({
+          name: `${data.jsonSchemaUrl.padEnd(maxUrlLength)} ${data.id.padEnd(maxIdLength)} ${
+            data.version
+          } ${data.type}`,
+          value: `${data.jsonSchemaUrl}`,
+        })),
+      },
+    ])
+    .then((answer) => {
+      return answer.schemaUrl
     })
 }
 
@@ -71,4 +97,16 @@ export const selectNextStep = async (choices: string[]): Promise<string> => {
     .then((choice) => {
       return choice.NextStep
     })
+}
+
+export const confirmConfigCustomWallet = async (): Promise<string> => {
+  return inquirer
+    .prompt([
+      {
+        type: 'confirm',
+        message: 'Please confirm by pressing enter if you want to configure your own wallet',
+        name: 'WalletConfirmation',
+      },
+    ])
+    .then((answer) => answer.WalletConfirmation)
 }

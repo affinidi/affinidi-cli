@@ -12,8 +12,6 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { anonymous } from '../../constants'
 import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { selectSchema } from '../../user-actions/inquirer'
-import ShowSchema from '../show/schema'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -95,12 +93,6 @@ export default class Schemas extends Command {
     }),
     // search: Flags.string({ char: 'q', description: 'The name of the schema to search for' }),
     skip: Flags.integer({ char: 's', description: 'The number of schemas to skip', default: 0 }),
-    wizard: Flags.boolean({
-      char: 'w',
-      description: 'if it is called from wizard',
-      default: false,
-      hidden: true,
-    }),
   }
 
   static args = [{ name: 'file' }]
@@ -160,13 +152,6 @@ export default class Schemas extends Command {
         jsonSchemaUrl: s.jsonSchemaUrl,
       }
     })
-    if (flags.wizard) {
-      const maxIdLength = schemas.map((p) => p.id.length).reduce((p, c) => Math.max(p, c), 0)
-      const schemaId = await selectSchema(schemas, maxIdLength)
-      await ShowSchema.run([`${schemaId}`, '-o', 'plaintext'])
-      return
-    }
-
     printData(data, { extended, output })
   }
 
