@@ -18,6 +18,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 export enum Platforms {
   web = 'web',
@@ -156,6 +157,7 @@ export default class GenerateApplication extends Command {
   }
 
   async catch(error: CliError) {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {

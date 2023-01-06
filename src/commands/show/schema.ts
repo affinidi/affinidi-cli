@@ -11,6 +11,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
@@ -102,6 +103,7 @@ export default class Schema extends Command {
   }
 
   protected async catch(error: CliError): Promise<void> {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {

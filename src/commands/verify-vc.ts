@@ -6,7 +6,13 @@ import { verfierService } from '../services/verification'
 
 import { vaultService } from '../services/vault/typedVaultService'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
-import { CliError, getErrorOutput, JsonFileSyntaxError, Unauthorized } from '../errors'
+import {
+  CliError,
+  getErrorOutput,
+  JsonFileSyntaxError,
+  Unauthorized,
+  WrongSchemaFileType,
+} from '../errors'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
@@ -14,6 +20,7 @@ import { ViewFormat } from '../constants'
 import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
+import { checkErrorFromWizard } from '../wizard/helpers'
 
 export default class VerifyVc extends Command {
   static command = 'affinidi verify-vc'
@@ -45,7 +52,9 @@ export default class VerifyVc extends Command {
     const { account } = getSession()
     const activeProject = vaultService.getActiveProject()
     const apiKey = activeProject.apiKey.apiKeyHash
-
+    if (!(flags.data.split('.').pop() === 'json')) {
+      throw new Error(WrongSchemaFileType)
+    }
     const credentialData = await fs.readFile(flags.data, 'utf-8')
     CliUx.ux.action.start('verifying')
     const verifyCredentialInput: VerifyCredentialInput = JSON.parse(credentialData)
@@ -66,11 +75,11 @@ export default class VerifyVc extends Command {
   }
 
   async catch(error: CliError) {
-    CliUx.ux.action.stop('failed')
     const err = error
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError
     }
+    if (checkErrorFromWizard(err)) throw err
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

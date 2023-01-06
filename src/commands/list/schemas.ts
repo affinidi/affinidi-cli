@@ -12,6 +12,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { anonymous } from '../../constants'
 import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 type OutputType = 'csv' | 'table' | 'json'
 
@@ -156,6 +157,7 @@ export default class Schemas extends Command {
   }
 
   protected async catch(error: CliError): Promise<void> {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {

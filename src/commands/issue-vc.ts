@@ -30,6 +30,7 @@ import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
 import { ViewFormat } from '../constants'
+import { checkErrorFromWizard } from '../wizard/helpers'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -158,6 +159,7 @@ export default class IssueVc extends Command {
   }
 
   async catch(error: CliError) {
+    if (checkErrorFromWizard(error)) throw error
     const err = error
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError

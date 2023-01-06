@@ -16,6 +16,7 @@ import { createOrUpdateConfig, createSession, parseJwt } from '../../services/us
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import CreateProject from '../create/project'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -93,6 +94,7 @@ export default class SignUp extends Command {
   }
 
   async catch(error: CliError) {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     CliUx.ux.info(getErrorOutput(error, SignUp.command, SignUp.command, SignUp.description, false))
   }

@@ -14,6 +14,7 @@ import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
 import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -137,6 +138,7 @@ export default class Login extends Command {
   }
 
   async catch(error: CliError) {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {

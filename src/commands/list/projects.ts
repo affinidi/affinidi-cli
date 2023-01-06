@@ -10,6 +10,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
 import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 type ListProjectsOutputType = 'json' | 'table' | 'csv'
 
@@ -96,6 +97,7 @@ export default class Projects extends Command {
   }
 
   async catch(error: CliError) {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {

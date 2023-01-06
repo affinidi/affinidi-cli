@@ -14,6 +14,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 import { ViewFormat } from '../../constants'
+import { checkErrorFromWizard } from '../../wizard/helpers'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -76,6 +77,7 @@ export default class Project extends Command {
   }
 
   async catch(error: CliError) {
+    if (checkErrorFromWizard(error)) throw error
     CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {

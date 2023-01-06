@@ -2,6 +2,7 @@ import { vaultService } from '../services/vault/typedVaultService'
 import { schemaManagerService, ScopeType } from '../services/schema-manager'
 import { SchemaDto } from '../services/schema-manager/schema-manager.api'
 import { selectSchemaId, selectSchemaUrl } from '../user-actions/inquirer'
+import { CliError } from '../errors'
 
 export const getSchemaList = async (): Promise<SchemaDto[]> => {
   const {
@@ -40,3 +41,7 @@ export const chooseSchemaUrl = async (): Promise<string> => {
   const schemaUrl = await selectSchemaUrl(schemas, maxIdLength, maxUrlLength)
   return schemaUrl
 }
+
+export const checkErrorFromWizard = (error: CliError): boolean => error.stack.includes('Start')
+
+export const nextFuncAfterError: (() => void)[] = []
