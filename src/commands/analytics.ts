@@ -5,6 +5,7 @@ import { analyticsService, configService } from '../services'
 import { ViewFormat } from '../constants'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { CliError, getErrorOutput } from '../errors'
+import { getSession } from '../services/user-management'
 
 export const OPTIN_MESSAGE = 'You have opted in to analytics'
 export const OPTOUT_MESSAGE = 'You have not opted in to analytics'
@@ -61,6 +62,9 @@ export default class Analytics extends Command {
       itemToDisplay: wantsToOptIn ? OPTIN_MESSAGE : OPTOUT_MESSAGE,
       flag: flags.output,
     })
+
+    const { account } = getSession()
+    await analyticsService.sendEnabledEvent(account.label, wantsToOptIn)
   }
 
   async catch(error: CliError) {

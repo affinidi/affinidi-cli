@@ -116,6 +116,7 @@ export interface EventDTO {
     | 'CLI_CONFIG_USERNAME_SET'
     | 'CLI_CONFIG_USERNAME_UNSET'
     | 'CLI_USER_INFO_SHOWED'
+    | 'CLI_ANALYTICS_ENABLED'
   /** @example APPLICATION */
   category: 'DID' | 'VC' | 'VP' | 'APPLICATION' | 'JWT'
   subCategory?: string

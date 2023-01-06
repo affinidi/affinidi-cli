@@ -103,6 +103,7 @@ export default class Login extends Command {
     if (confVersionError || !configService.userConfigMustBeVaild(userId)) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
+      await analyticsService.sendEnabledEvent(email, wantsToOptIn)
     }
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_IN',
