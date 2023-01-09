@@ -1,7 +1,7 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
-import { isAuthenticated } from '../middleware/authentication'
+import { isTokenVaild } from '../middleware/authentication'
 import {
   confirmConfigCustomWallet,
   schemaPublicPrivate,
@@ -101,18 +101,12 @@ export default class Start extends Command {
     if (flags.error) {
       await nextFuncAfterError.pop().bind(this)()
     }
-    if (!isAuthenticated()) {
+
+    if (!(await isTokenVaild())) {
       await this.getAuthMenu()
     }
-    let projects
-    let { consoleAuthToken: token } = getSession()
-    try {
-      projects = await iAmService.listProjects(token, 0, 10)
-    } catch (error) {
-      await this.getAuthMenu()
-      token = getSession().consoleAuthToken
-      projects = await iAmService.listProjects(token, 0, 10)
-    }
+    const { consoleAuthToken: token } = getSession()
+    const projects = await iAmService.listProjects(token, 0, 10)
 
     if (projects.length === 0) {
       await this.createProject()
@@ -123,6 +117,7 @@ export default class Start extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
+    console.log('Inside catch block')
     displayOutput({
       itemToDisplay: getErrorOutput(error, Start.command, Start.usage, Start.description, false),
       err: true,
