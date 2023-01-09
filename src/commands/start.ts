@@ -1,7 +1,7 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
-import { isAuthenticated } from '../middleware/authentication'
+import { isTokenValid } from '../middleware/authentication'
 import {
   confirmConfigCustomWallet,
   schemaPublicPrivate,
@@ -101,11 +101,13 @@ export default class Start extends Command {
     if (flags.error) {
       await nextFuncAfterError.pop().bind(this)()
     }
-    if (!isAuthenticated()) {
+
+    if (!(await isTokenValid())) {
       await this.getAuthMenu()
     }
     const { consoleAuthToken: token } = getSession()
     const projects = await iAmService.listProjects(token, 0, 10)
+
     if (projects.length === 0) {
       await this.createProject()
     }
