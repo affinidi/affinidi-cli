@@ -7,7 +7,7 @@ export const isAuthenticated = (): boolean => {
   return false
 }
 
-export const isTokenVaild = async (): Promise<boolean> => {
+export const isTokenValid = async (): Promise<boolean> => {
   try {
     const { consoleAuthToken: token } = getSession()
     await userManagementService.me({ token })
