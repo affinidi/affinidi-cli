@@ -1,7 +1,7 @@
 import { CliUx, Command, Flags } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
-import { isTokenVaild } from '../middleware/authentication'
+import { isTokenValid } from '../middleware/authentication'
 import {
   confirmConfigCustomWallet,
   schemaPublicPrivate,
@@ -102,7 +102,7 @@ export default class Start extends Command {
       await nextFuncAfterError.pop().bind(this)()
     }
 
-    if (!(await isTokenVaild())) {
+    if (!(await isTokenValid())) {
       await this.getAuthMenu()
     }
     const { consoleAuthToken: token } = getSession()
