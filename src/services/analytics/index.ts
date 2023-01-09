@@ -48,6 +48,11 @@ class AnalyticsService {
     if (!this.hasAnalyticsOptIn()) {
       return
     }
+    
+    await this.eventsSend(data)
+  }
+
+  public eventsSend = async (data: EventDTO) => {
     if (process.env.NODE_ENV === 'test') {
       return
     }
@@ -76,7 +81,7 @@ class AnalyticsService {
         ...generateUserMetadata(email),
       },
     }
-    await analyticsService.eventsControllerSend(analyticsData)
+    await analyticsService.eventsSend(analyticsData)
   }
 }
 
