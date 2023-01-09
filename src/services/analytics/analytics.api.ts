@@ -117,6 +117,10 @@ export interface EventDTO {
     | 'CLI_CONFIG_USERNAME_UNSET'
     | 'CLI_USER_INFO_SHOWED'
     | 'CLI_ANALYTICS_ENABLED'
+    | 'ISSUANCE_CREATED'
+    | 'OFFER_CREATED'
+    | 'OFFER_CLAIMED'
+    | 'CSV_VALIDATION_ERROR'
   /** @example APPLICATION */
   category: 'DID' | 'VC' | 'VP' | 'APPLICATION' | 'JWT'
   subCategory?: string
