@@ -117,7 +117,6 @@ export default class Start extends Command {
 
   async catch(error: CliError) {
     CliUx.ux.action.stop('failed')
-    console.log('Inside catch block')
     displayOutput({
       itemToDisplay: getErrorOutput(error, Start.command, Start.usage, Start.description, false),
       err: true,
