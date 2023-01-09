@@ -104,8 +104,16 @@ export default class Start extends Command {
     if (!isAuthenticated()) {
       await this.getAuthMenu()
     }
-    const { consoleAuthToken: token } = getSession()
-    const projects = await iAmService.listProjects(token, 0, 10)
+    let projects
+    let { consoleAuthToken: token } = getSession()
+    try {
+      projects = await iAmService.listProjects(token, 0, 10)
+    } catch (error) {
+      await this.getAuthMenu()
+      token = getSession().consoleAuthToken
+      projects = await iAmService.listProjects(token, 0, 10)
+    }
+
     if (projects.length === 0) {
       await this.createProject()
     }
