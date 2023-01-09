@@ -60,7 +60,7 @@ import {
   walletUrl,
 } from '../user-actions'
 import VerifyVc from './verify-vc'
-import GenerateApplication from './generate-application'
+import { GenerateApplication } from './generate-application'
 import IssueVc from './issue-vc'
 import { chooseSchemaId, chooseSchemaUrl, nextFuncAfterError } from '../wizard/helpers'
 
