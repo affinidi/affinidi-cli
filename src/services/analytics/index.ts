@@ -63,6 +63,21 @@ class AnalyticsService {
       throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
+
+  public sendEnabledEvent = async (email: string, enabled: boolean, commandId: string) => {
+    const analyticsData: EventDTO = {
+      name: 'CLI_ANALYTICS_ENABLED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: configService.getCurrentUser(),
+      metadata: {
+        commandId: commandId,
+        enabled,
+        ...generateUserMetadata(email),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
+  }
 }
 
 const analyticsService = new AnalyticsService()
