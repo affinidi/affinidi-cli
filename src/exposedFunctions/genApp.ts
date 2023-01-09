@@ -52,7 +52,7 @@ const download = async (gitUrl: string, destination: string): Promise<void> => {
   }
 }
 
-const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput) => {
+const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput): Promise<void> => {
   const { apiKey, projectDid, projectId } = flags
 
   const activeProjectApiKey = apiKey
@@ -109,7 +109,7 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
   }
 }
 
-export const generateApplication = async (flags: FlagsInput) => {
+export const generateApplication = async (flags: FlagsInput): Promise<void> => {
   const { name, platform, use_case: useCase, withProxy } = flags
   if (platform === Platforms.mobile) {
     throw new CliError(NotSupportedPlatform, 0, 'reference-app')

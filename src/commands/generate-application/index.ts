@@ -78,7 +78,7 @@ export class GenerateApplication extends Command {
       project: { projectId },
     } = vaultService.getActiveProject()
 
-    generateApplication({
+    await generateApplication({
       platform,
       name,
       output: flags.output,
