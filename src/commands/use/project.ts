@@ -13,7 +13,7 @@ import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { checkErrorFromWizard } from '../../wizard/helpers'
-import { useProject } from '../../exposedFunctions/useProject'
+import { vaultService } from '../../services/vault/typedVaultService'
 
 export default class Project extends Command {
   static command = 'affinidi use'
@@ -64,8 +64,9 @@ export default class Project extends Command {
 
       projectId = await selectProject(projectData, maxNameLength)
     }
-    const projectToBeActive = await useProject({ token, projectId })
+    const projectToBeActive = await iAmService.getProjectSummary(token, projectId)
     const { userId, label } = account
+    vaultService.setActiveProject(projectToBeActive)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_SET_ACTIVE',
       category: 'APPLICATION',
