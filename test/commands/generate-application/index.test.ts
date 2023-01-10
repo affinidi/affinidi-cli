@@ -1,6 +1,5 @@
 import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
-import { StatusCodes } from 'http-status-codes'
 import { vaultService } from '../../../src/services/vault/typedVaultService'
 import { GitService, Writer, configService } from '../../../src/services'
 import {
@@ -10,7 +9,6 @@ import {
 } from '../../../src/commands/generate-application'
 import { NotSupportedPlatform } from '../../../src/errors'
 import { buildGeneratedAppNextStepsMessageBlocks } from '../../../src/render/texts'
-import { ANALYTICS_URL } from '../../../src/services/analytics'
 import * as authentication from '../../../src/middleware/authentication'
 import { projectSummary } from '../../../src/fixtures/mock-projects'
 
