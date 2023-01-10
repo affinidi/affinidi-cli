@@ -25,7 +25,7 @@ type PlatformType = `${Platforms}`
 type UseCaseType = `${UseCasesAppNames}`
 
 export const defaultAppName = 'my-app'
-export class GenerateApplication extends Command {
+export default class GenerateApplication extends Command {
   static command = 'affinidi generate-application'
 
   static usage = 'generate-application [FLAGS]'
