@@ -1,6 +1,7 @@
 import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
+import { vaultService } from '../../services/vault/typedVaultService'
 import { iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
@@ -13,7 +14,6 @@ import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { ViewFormat } from '../../constants'
 import { checkErrorFromWizard } from '../../wizard/helpers'
-import { vaultService } from '../../services/vault/typedVaultService'
 
 export default class Project extends Command {
   static command = 'affinidi use'
