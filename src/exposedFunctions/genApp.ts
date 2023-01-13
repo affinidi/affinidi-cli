@@ -68,10 +68,10 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
   try {
     if (withProxy) {
       Writer.write(path.join(name, '.env'), [
-        'REACT_APP_CLOUD_WALLET_URL=http://localhost:8080/cloud-wallet',
-        'REACT_APP_VERIFIER_URL=http://localhost:8080/affinity-verifier',
-        'REACT_APP_USER_MANAGEMENT_URL=http://localhost:8080/user-management',
-        'REACT_APP_ISSUANCE_URL=http://localhost:8080/console-vc-issuance',
+        'VITE_CLOUD_WALLET_URL=http://localhost:8080/cloud-wallet',
+        'VITE_VERIFIER_URL=http://localhost:8080/affinity-verifier',
+        'VITE_USER_MANAGEMENT_URL=http://localhost:8080/user-management',
+        'VITE_ISSUANCE_URL=http://localhost:8080/console-vc-issuance',
       ])
 
       Writer.write(path.join(`${name}-backend`, '.env'), [
@@ -90,15 +90,15 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
     }
 
     Writer.write(path.join(name, '.env'), [
-      'REACT_APP_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
-      'REACT_APP_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',
-      'REACT_APP_USER_MANAGEMENT_URL=https://console-user-management.apse1.affinidi.com',
-      'REACT_APP_ISSUANCE_URL=https://console-vc-issuance.apse1.affinidi.com',
-      'REACT_APP_IAM_URL=https://affinidi-iam.apse1.affinidi.com',
+      'VITE_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
+      'VITE_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',
+      'VITE_USER_MANAGEMENT_URL=https://console-user-management.apse1.affinidi.com',
+      'VITE_ISSUANCE_URL=https://console-vc-issuance.apse1.affinidi.com',
+      'VITE_IAM_URL=https://affinidi-iam.apse1.affinidi.com',
 
-      `REACT_APP_API_KEY=${activeProjectApiKey}`,
-      `REACT_APP_PROJECT_DID=${activeProjectDid}`,
-      `REACT_APP_PROJECT_ID=${activeProjectId}`,
+      `VITE_API_KEY=${activeProjectApiKey}`,
+      `VITE_PROJECT_DID=${activeProjectDid}`,
+      `VITE_PROJECT_ID=${activeProjectId}`,
     ])
   } catch (error) {
     displayOutput({
