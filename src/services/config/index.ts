@@ -211,8 +211,7 @@ class ConfigService {
   }
 
   public setCurrentUserId = (id: string): void => {
-    this.configFileExists()
-    this.store.setCurrentUserId(id)
+    if (this.configFileExists()) this.store.setCurrentUserId(id)
   }
 
   public setUsername = (username: string): void => {
