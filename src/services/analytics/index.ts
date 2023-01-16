@@ -48,7 +48,6 @@ class AnalyticsService {
     if (!this.hasAnalyticsOptIn()) {
       return
     }
-    
     await this.eventsSend(data)
   }
 
@@ -76,7 +75,7 @@ class AnalyticsService {
       component: 'Cli',
       uuid: configService.getCurrentUser(),
       metadata: {
-        commandId: commandId,
+        commandId,
         enabled,
         ...generateUserMetadata(email),
       },

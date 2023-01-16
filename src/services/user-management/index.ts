@@ -10,7 +10,10 @@ import { configService } from '../config'
 type SessionToken = string
 type AuthFlow = 'login' | 'signup'
 
-export const USER_MANAGEMENT_URL = 'https://console-user-management.apse1.affinidi.com/api/v1'
+export const USER_MANAGEMENT_URL =
+  process.env.NODE_ENV === 'test'
+    ? 'https://console-user-management.staging.affinity-project.org/api/v1'
+    : 'https://console-user-management.apse1.affinidi.com/api/v1'
 const SERVICE = 'userManagement'
 
 export const parseJwt = (token: string) => {
