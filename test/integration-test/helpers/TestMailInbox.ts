@@ -71,6 +71,6 @@ export class TestMailInbox {
 }
 export const testInbox = new TestMailInbox({
   tag,
-  apiKey: '982df5ff-d180-4077-9f1f-33571e592b73',
-  namespace: 'z3q4w',
+  apiKey: ,
+  namespace: '',
 })
