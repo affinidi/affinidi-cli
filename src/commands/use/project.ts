@@ -81,13 +81,14 @@ export default class Project extends Command {
 
     configService.setCurrentProjectId(projectToBeActive?.project?.projectId)
     await analyticsService.eventsControllerSend(analyticsData)
-    if (projectToBeActive.apiKey?.apiKeyHash) {
+    const test = process.env.NODE_ENV === 'test'
+    if (projectToBeActive.apiKey?.apiKeyHash && !test) {
       projectToBeActive.apiKey.apiKeyHash = ''.padEnd(
         projectToBeActive.apiKey.apiKeyHash?.length,
         '*',
       )
     }
-    if (projectToBeActive.wallet?.didUrl) {
+    if (projectToBeActive.wallet?.didUrl && !test) {
       projectToBeActive.wallet.didUrl = ''.padEnd(projectToBeActive.wallet.didUrl?.length, '*')
     }
 

@@ -7,7 +7,7 @@ describe.skip('User creates a new project', () => {
   test
     .stdout()
     .command(['create project', `${projectName}`])
-    .it('create a new project', async (ctx) => {
+    .it('create a new project', (ctx) => {
       expect(ctx.stdout).to.contains(projectName)
       projectsCreated.push(projectName)
     })
