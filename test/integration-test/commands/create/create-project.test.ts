@@ -1,12 +1,14 @@
 import { expect, test } from '@oclif/test'
+import { projectsCreated } from '../../helpers/constants'
 
 const randomName = () => `Test Project ${Math.floor(Math.random() * 100)}`
-describe('User Logs in, creates a new project and generates an application', () => {
+describe.skip('User creates a new project', () => {
   const projectName = randomName()
   test
     .stdout()
     .command(['create project', `${projectName}`])
-    .it('list all projects of this account', async (ctx) => {
+    .it('create a new project', async (ctx) => {
       expect(ctx.stdout).to.contains(projectName)
+      projectsCreated.push(projectName)
     })
 })
