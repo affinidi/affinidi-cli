@@ -71,6 +71,6 @@ export class TestMailInbox {
 }
 export const testInbox = new TestMailInbox({
   tag,
-  apiKey: ,
-  namespace: '',
+  apiKey: process.env.MAIL_API_KEY,
+  namespace: process.env.MAIL_NAMESPACE,
 })
