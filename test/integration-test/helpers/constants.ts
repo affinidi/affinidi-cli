@@ -5,3 +5,7 @@ export const projectsCreated = [
   'Test Project 97',
   'Test Project 2',
 ]
+
+export const schemaPath = 'test/integration-test/static/testSchema.json'
+export const unlistedDescription = 'test schema unlisted'
+export const publicDescription = 'test schema public'

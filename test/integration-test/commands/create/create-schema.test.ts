@@ -1,8 +1,5 @@
 import { expect, test } from '@oclif/test'
-
-const schemaPath = 'test/integration-test/static/testSchema.json'
-const unlistedDescription = 'test schema unlisted'
-const publicDescription = 'test schema public'
+import { publicDescription, schemaPath, unlistedDescription } from '../../helpers/constants'
 
 describe('User creates a new schema', () => {
   test
