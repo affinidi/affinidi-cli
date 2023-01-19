@@ -5,12 +5,12 @@ describe('User lists schemas', () => {
     .stdout()
     .command(['list schemas', '-c', 'public'])
     .it('list all public schemas', (ctx) => {
-      expect(ctx.stdout).to.contains('0')
+      expect(ctx.stdout).to.contains('TestSchemaPublic')
     })
   test
     .stdout()
     .command(['list schemas', '-c', 'unlisted'])
     .it('list all unlisted schemas', (ctx) => {
-      expect(ctx.stdout).to.contains('ID DESC Version Type \n ─ ── ──── ─────── ──── \n')
+      expect(ctx.stdout).to.contains('TestSchemaUnlisted')
     })
 })

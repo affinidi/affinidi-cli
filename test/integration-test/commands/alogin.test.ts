@@ -11,7 +11,7 @@ const getCode = async (): Promise<string> => {
   return code
 }
 
-describe('Login user', () => {
+describe('User login', () => {
   test
     .stdout()
     .stdin('\n', 10000)
