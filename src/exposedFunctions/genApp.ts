@@ -80,7 +80,7 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
         `AFFINIDI_PROJECT_DID=${activeProjectDid}`,
         `AFFINIDI_PROJECT_ID=${activeProjectId}`,
 
-        'JWT_SECRET=this-is-very-secret-dont-tell-anyone',
+        'JWT_SECRET=',
       ])
 
       return
