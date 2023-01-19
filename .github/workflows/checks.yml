@@ -51,5 +51,6 @@ jobs:
 
       - name: Npm run test:integration
         run: npm run test:integration
-        env: ${{secrets.MAIL_API_KEY}}
-        env: ${{secrets.MAIL_NAMESPACE}}
+        env:
+          MAIL_API_KEY: ${{secrets.MAIL_API_KEY}}
+          MAIL_NAMESPACE: ${{secrets.MAIL_NAMESPACE}}
