@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect, test } from '@oclif/test'
 import { stdin } from 'mock-stdin'
 import { selectSchemaId } from '../../../src/user-actions/inquirer'
 import { mockSchemaDto, mockSchemaDtoTwo } from '../../../src/fixtures/mock-schemas'
@@ -6,14 +6,7 @@ import { mockSchemaDto, mockSchemaDtoTwo } from '../../../src/fixtures/mock-sche
 import { keys } from './constants'
 
 describe('test select schema id inquirer', () => {
-  const io = stdin()
-  const sendKeystrokes = async () => {
-    io.send(keys.down)
-    io.send(keys.enter)
-  }
-  setTimeout(() => sendKeystrokes().then(), 1000)
-  after(() => io.restore())
-  it('select a schema from list', async () => {
+  test.stdin(`${keys.down}\n`, 1000).it('select a schema from list', async () => {
     const project = await selectSchemaId(mockSchemaDto.schemas, 10, 10)
     expect(project).to.equal(mockSchemaDtoTwo.id)
   })
