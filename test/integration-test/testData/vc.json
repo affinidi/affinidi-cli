@@ -1,0 +1,31 @@
+{
+  "verifiableCredentials": [
+    {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://schema.affinidi.com/PheonixSchemaInfoV1-0.jsonld"
+      ],
+      "id": "claimId:ca654c65694de16e",
+      "type": ["VerifiableCredential", "PheonixSchemaInfo"],
+      "holder": { "id": "did:elem:EiAZkjGcXplf2ySnuStiOwn7sukE59lIMjhivf0oIky6aA" },
+      "credentialSubject": {
+        "firstName": "Youssef",
+        "lastName": "Wasfy",
+        "role": "Engineering intern"
+      },
+      "credentialSchema": {
+        "id": "https://schema.affinidi.com/PheonixSchemaInfoV1-0.json",
+        "type": "JsonSchemaValidator2018"
+      },
+      "issuanceDate": "2023-01-19T14:30:52.480Z",
+      "issuer": "did:elem:EiC8lGLPTODEnlyZYMQHGIWrXJ6niReJdyWAt5NxoXOOCw;elem:initial-state=eyJwcm90ZWN0ZWQiOiJleUp2Y0dWeVlYUnBiMjRpT2lKamNtVmhkR1VpTENKcmFXUWlPaUlqY0hKcGJXRnllU0lzSW1Gc1p5STZJa1ZUTWpVMlN5SjkiLCJwYXlsb2FkIjoiZXlKQVkyOXVkR1Y0ZENJNkltaDBkSEJ6T2k4dmR6TnBaQzV2Y21jdmMyVmpkWEpwZEhrdmRqSWlMQ0p3ZFdKc2FXTkxaWGtpT2x0N0ltbGtJam9pSTNCeWFXMWhjbmtpTENKMWMyRm5aU0k2SW5OcFoyNXBibWNpTENKMGVYQmxJam9pVTJWamNESTFObXN4Vm1WeWFXWnBZMkYwYVc5dVMyVjVNakF4T0NJc0luQjFZbXhwWTB0bGVVaGxlQ0k2SWpBek16WTBZbUkwT1Rnd05XUXpZakZqTUdNME56ZGpaRFJoTWpSak4yRXdOMlJrWlRObFpXUTFOV0V4WlRVMFlUUXhZVEJsTVRJMU9EQTVZMk0zWmpZeU1pSjlMSHNpYVdRaU9pSWpjbVZqYjNabGNua2lMQ0oxYzJGblpTSTZJbkpsWTI5MlpYSjVJaXdpZEhsd1pTSTZJbE5sWTNBeU5UWnJNVlpsY21sbWFXTmhkR2x2Ymt0bGVUSXdNVGdpTENKd2RXSnNhV05MWlhsSVpYZ2lPaUl3TXpReU0yRTBZMkV3TnpCaU1qVXhNVFF6WW1Jek56RmlOR1k0T1dRNU4yTTBaV0V4Tm1ObFlUUmtOelkwTVdaaU1tTTROVE01TlRoaVl6ZzBNMlEzT1RFaWZTeDdJbWxrSWpvaUkySmljeUlzSW5SNWNHVWlPaUpDYkhNeE1qTTRNVWN5UzJWNU1qQXlNQ0lzSW5WellXZGxJam9pYzJsbmJtbHVaeUlzSW5CMVlteHBZMHRsZVVKaGMyVTFPQ0k2SWpJeGQyZDBhMnQ1VjNGWlRHRnpNa3hWZDNRMFRuSTVVVXMyU25ReVJXRllhWE5IYVdVNVVtRXhRVm8wTWtaeFJFTjNiVmxUU0VGQmRtWk9hVk5YYzAxTE5tODFNbkJSUlVkQ2FXMWhSM0Z0ZGtkYWR6RnRiWEZxYlVnNWRGWkhlSEJ0WWxOMFoycENXbGhrYUhaUlozcFdVbFIxWVRJNGIxZExSREkyVEVWWmIycHJTaUo5WFN3aVlYVjBhR1Z1ZEdsallYUnBiMjRpT2xzaUkzQnlhVzFoY25raUxDSWpZbUp6SWwwc0ltRnpjMlZ5ZEdsdmJrMWxkR2h2WkNJNld5SWpjSEpwYldGeWVTSXNJaU5pWW5NaVhYMCIsInNpZ25hdHVyZSI6Ikw2VFd2eVVWekoxMGJwTDNSSlRGR1hlSlBYY0pZR0xNVjNrZVVRLXpwRFlGZlR1ODV3WDNTMlE0SHluYzk1VG1lc1hLZXJyTE1NN214R05aNmRIalZBIn0",
+      "proof": {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2023-01-19T14:30:52Z",
+        "verificationMethod": "did:elem:EiC8lGLPTODEnlyZYMQHGIWrXJ6niReJdyWAt5NxoXOOCw#primary",
+        "proofPurpose": "assertionMethod",
+        "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..tR2loJzDPElib3OCDnwN5GnXd_GUIY40iC-Y7iuobos-jWdgllFm3CZhuS6rjhi2rokQhzsiD-qCTmZ1PlgHgg"
+      }
+    }
+  ]
+}

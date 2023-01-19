@@ -1,7 +1,10 @@
 import { CliError } from '../../errors'
 import { Api as VerifierApi, VerifyCredentialInput, VerifyCredentialOutput } from './verifier.api'
 
-export const VERIFIER_URL = 'https://affinity-verifier.prod.affinity-project.org/api/v1'
+export const VERIFIER_URL =
+  process.env.NODE_ENV === 'test'
+    ? 'https://affinity-verifier.staging.affinity-project.org/api/v1'
+    : 'https://affinity-verifier.prod.affinity-project.org/api/v1'
 const SERVICE = 'verification'
 
 class VerifierService {
