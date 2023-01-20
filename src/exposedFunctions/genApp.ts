@@ -37,7 +37,7 @@ type UseCaseType = `${UseCasesAppNames}`
 type PlatformType = `${Platforms}`
 
 const UseCaseSources: Record<UseCaseType, string> = {
-  'portable-reputation': 'NOT IMPLEMENTED YET',
+  'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
   'certification-and-verification':
     'https://github.com/affinidi/elements-reference-app-frontend.git',
@@ -66,6 +66,26 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
   displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.output })
 
   try {
+    if (flags.use_case === UseCasesAppNames.portableReputation) {
+      Writer.write(path.join(name, '.env'), [
+        'NEXT_PUBLIC_HOST=http://localhost:3000',
+        'HOST=http://localhost:3000',
+        'NEXT_PUBLIC_GITHUB_APP_CLIENT_ID=',
+        'GITHUB_APP_CLIENT_ID=',
+        'GITHUB_APP_CLIENT_SECRET=',
+
+        'AFFINIDI_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
+        'AFFINIDI_ISSUANCE_URL=https://console-vc-issuance.apse1.affinidi.com',
+        `AFFINIDI_API_KEY_HASH=${activeProjectApiKey}`,
+        `AFFINIDI_PROJECT_DID=${activeProjectDid}`,
+        `AFFINIDI_PROJECT_ID=${activeProjectId}`,
+
+        'JWT_SECRET=',
+      ])
+
+      return
+    }
+
     if (withProxy) {
       Writer.write(path.join(name, '.env'), [
         'VITE_CLOUD_WALLET_URL=http://localhost:8080/cloud-wallet',
@@ -132,11 +152,11 @@ export const generateApplication = async (flags: FlagsInput): Promise<void> => {
   try {
     switch (useCase) {
       case UseCasesAppNames.certificationAndVerification:
+      case UseCasesAppNames.portableReputation:
         await download(UseCaseSources[useCase], name)
         await analyticsService.eventsControllerSend(analyticsData)
         break
       case UseCasesAppNames.accessWithoutOwnershipOfData:
-      case UseCasesAppNames.portableReputation:
       case UseCasesAppNames.kycKyb:
         displayOutput({ itemToDisplay: 'Not implemented yet', flag: flags.output })
         break
