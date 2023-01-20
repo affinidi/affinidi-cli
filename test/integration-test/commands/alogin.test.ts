@@ -14,7 +14,7 @@ const getCode = async (): Promise<string> => {
 describe('User login', () => {
   test
     .stdout()
-    .stdin('\n', 30000)
+    .stdin('\n', 35000)
     .stub(prompts, 'analyticsConsentPrompt', () => async () => prompts.AnswerNo)
     .stub(prompts, 'enterOTPPrompt', () => async () => getCode())
     .stub(prompts, 'confirmSignOut', () => async () => prompts.AnswerYes)
