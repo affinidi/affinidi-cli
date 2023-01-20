@@ -75,7 +75,7 @@ class VaultService {
     if (typeof session === 'string') {
       throw new CliError(OldCredntials, 0, 'vault')
     }
-    if (session) {
+    if (session && !session.consoleAuthToken.includes('console_authtoken=')) {
       session.consoleAuthToken = `console_authtoken=${session.consoleAuthToken}`
     }
     return session

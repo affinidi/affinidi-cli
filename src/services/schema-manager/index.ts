@@ -4,7 +4,10 @@ import { getNextVersion } from './generator/helpers'
 import { Api as SchemaManagerApi, CreateSchemaInputDto, SchemaDto } from './schema-manager.api'
 import { CliError } from '../../errors'
 
-export const SCHEMA_MANAGER_URL = 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
+export const SCHEMA_MANAGER_URL =
+  process.env.NODE_ENV === 'test'
+    ? 'https://affinidi-schema-manager.staging.affinity-project.org/api/v1'
+    : 'https://affinidi-schema-manager.prod.affinity-project.org/api/v1'
 
 export type ScopeType = 'public' | 'unlisted' | 'default'
 const SERVICE = 'schema'

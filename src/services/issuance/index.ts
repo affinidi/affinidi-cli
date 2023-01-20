@@ -9,7 +9,10 @@ import {
 } from './issuance.api'
 import { BulkApi } from './bulkIssuance.api'
 
-export const ISSUANCE_URL = 'https://console-vc-issuance.prod.affinity-project.org/api/v1'
+export const ISSUANCE_URL =
+  process.env.NODE_ENV === 'test'
+    ? 'https://console-vc-issuance.staging.affinity-project.org/api/v1'
+    : 'https://console-vc-issuance.prod.affinity-project.org/api/v1'
 const SERVICE = 'issuance'
 
 class IssuanceService {

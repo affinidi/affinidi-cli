@@ -1,6 +1,6 @@
 {
   "require": ["test/helpers/init.js", "ts-node/register"],
-  "spec": ["test/**/*.test.ts"],
+
   "watch-extensions": ["ts"],
   "recursive": true,
   "reporter": "spec",
