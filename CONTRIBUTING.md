@@ -11,8 +11,8 @@ Some useful commands:
   > Check out the in-depth instructions in the [CLI ReadMe](README.md) file for using existing commands.
 - Run `npm test` to execute unit tests
   > You can find them in the `src/test/unit-tests` directory.
-- Run `npm run test:integration` to execute integration tests
-  > You can find them in the `src/test/integration-test` directory.
+  <!-- - Run `npm run test:integration` to execute integration tests
+    > You can find them in the `src/test/integration-test` directory. -->
 - `npm run lint` can be used to check for linting errors
 
 ## Implementing a new command
@@ -37,7 +37,7 @@ For simple commands, you can also take advantage of OCLIF's [command generation 
 
 ## Analytics & telemetry
 
-In order to send an analytics event, use the `sendEnabledEvent()` method:
+In order to send an analytics event, use the `eventsControllerSend()` method:
 
 ```ts
 import { analyticsService } from 'src/services/analytics'
