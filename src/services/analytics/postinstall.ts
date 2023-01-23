@@ -4,7 +4,7 @@ import { EventDTO } from './analytics.api'
 
 const check = fs.readFileSync('./file.txt', 'utf-8')
 const analyticsData: EventDTO = {
-  name: '',
+  name: 'CLI_ANALYTICS_ENABLED',
   category: 'APPLICATION',
   component: 'Cli',
   uuid: '',
