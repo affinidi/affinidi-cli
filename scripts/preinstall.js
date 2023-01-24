@@ -1,8 +1,8 @@
+const fs = require('fs')
 const {exec} = require('child_process')
-const fs = require('fs');
 const { env } = require('process')
-const isGlobal = env.npm_config_global === "true";
 
+const isGlobal = env.npm_config_global === "true"
 const filePath = './file.txt'
 
 const runCommand = async () => {
@@ -23,7 +23,7 @@ const runCommand = async () => {
         return 'installation'
     }
     } catch (error) {
-      console.log(`affinidi cli not installed`);
+      console.log(`affinidi cli not installed`)
     }
   }
   
@@ -33,10 +33,10 @@ const runCommand = async () => {
         data = `${checked}`
         fs.writeFile(filePath, data, (err) => {
             if (err) {
-              console.log('cannot write to file');
+              console.log('cannot write to file')
               return;
             }
-            console.log("Data written to file successfully");
+            console.log("Data written to file successfully")
           });
       });
     }
