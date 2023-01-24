@@ -121,6 +121,7 @@ export interface EventDTO {
     | 'OFFER_CREATED'
     | 'OFFER_CLAIMED'
     | 'CSV_VALIDATION_ERROR'
+    | 'CLI_INSTALLED'
   /** @example APPLICATION */
   category: 'DID' | 'VC' | 'VP' | 'APPLICATION' | 'JWT'
   subCategory?: string
