@@ -23,7 +23,7 @@ const runCommand = async () => {
         return 'installation'
     }
     } catch (error) {
-      console.error(`exec error: ${error}`);
+      console.log(`affinidi cli not installed`);
     }
   }
   
@@ -33,7 +33,7 @@ const runCommand = async () => {
         data = checked
         fs.writeFile(filePath, data, (err) => {
             if (err) {
-              console.error(err);
+              console.log('cannot write to file');
               return;
             }
             console.log("Data written to file successfully");

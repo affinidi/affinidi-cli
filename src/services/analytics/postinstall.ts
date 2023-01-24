@@ -17,6 +17,6 @@ if (isGlobal) {
     analyticsService.eventsControllerSend(analyticsData)
   }
   fs.unlink('./file.txt', (err) => {
-    if (err) throw err
+    if (err) console.log('cannot delete file')
   })
 }
