@@ -30,7 +30,7 @@ const runCommand = async () => {
   const setGlobalEnv = () => {
     if (isGlobal) {
       runCommand().then((checked) => {
-        data = checked
+        data = checked.toString()
         fs.writeFile(filePath, data, (err) => {
             if (err) {
               console.log('cannot write to file');
