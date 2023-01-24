@@ -1,12 +1,12 @@
-import * as fs from 'fs'
-import { env } from 'process'
-import { analyticsService } from '.'
-import { EventDTO } from './analytics.api'
+const  fs = require('fs')
+const { env } = require('process')
+// const { analyticsService } = require('../src/services/analytics/index')
+
 
 const isGlobal = env.npm_config_global === 'true'
 if (isGlobal) {
   const check = fs.readFileSync('./file.txt', 'utf-8')
-  const analyticsData: EventDTO = {
+  const analyticsData = {
     name: 'CLI_INSTALLED',
     category: 'APPLICATION',
     component: 'Cli',

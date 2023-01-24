@@ -22,8 +22,7 @@
   },
   "include": [
     "src/**/*",
-    "test/**/*",
-    "scripts/**/*"
+    "test/**/*", "scripts/postinstall.ts",
   ],
   "exclude": [
     "node_modules"
