@@ -32,7 +32,7 @@
     "prepare": "node -e \"process.exit(process.env.NODE_ENV === 'production' ? 0 : 1)\" || npm run prepare:dev",
     "remove:dist": "shx rm -rf dist",
     "generate:api": "node scripts/generate-api.cjs",
-    "preinstall": "chmod a+x preinstall.sh && bash ./preinstall"
+    "preinstall": "bash chmod +x ./preinstall.sh && bash ./preinstall"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
