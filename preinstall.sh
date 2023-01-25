@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 output=$(affinidi --version)
 mode="update"
