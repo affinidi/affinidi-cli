@@ -1,11 +1,12 @@
 #!/bin/sh
 
-output=$(affinidi --version)
+output=$(affinidi)
 mode="update"
 npm_config_global=$(npm config get global)
+echo "$output"
 echo "$npm_config_global"
 if [ $npm_config_global = "true" ]; then
-    if [[ $output =~ "command not found" ]]; then
+    if [[ $output = "affinidi: command not found" ]]; then
         echo "Install"
         mode="install" 
     fi
