@@ -1,17 +1,17 @@
 #!/bin/bash
 
-mode=$(head -n 1 installaionMode.txt)
-
-if [[ $mode = "install" ]]; then
+npm_config_global=$(npm config get global)
+if [ $npm_config_global = "true" ]; then
 code=$(curl --write-out "%{http_code}\n" --location -X POST 'https://analytics-stream.prod.affinity-project.org/api/events' \
 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5OWIwN2ZjOS0yZjlhLTRjNDUtOThhZi0xYjcwMzM1Nzg2Y2EiLCJ1c2VyTmFtZSI6ImRlbmlzLmRAYWZmaW5pZGkuY29tIiwiaWF0IjoxNjY5MTE0MjYwLCJleHAiOjE2ODQ2NjYyNjB9.zaRR6e4_Np6kJGqLKsatz2iovtoeZTxcgQgvYdycm9g' \
 -H 'Content-Type: application/json' \
+-H 'Accept-Encoding: application/json' \
 --data-raw '{
     "name": "CLI_INSTALLED",
     "category": "APPLICATION",
     "component": "Cli",
-    "uuid": "",
+    "uuid": "cli-installed-userId",
     "metadata": {}
 }')
 fi
-rm -f installaionMode.txt
+
