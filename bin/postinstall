@@ -1,0 +1,17 @@
+#!/bin/sh
+
+mode=$(head -n 1 installaionMode.txt)
+
+if [ $mode = "install" ]; then
+code=$(curl --location --request POST 'https://analytics-stream.prod.affinity-project.org/api/events' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5OWIwN2ZjOS0yZjlhLTRjNDUtOThhZi0xYjcwMzM1Nzg2Y2EiLCJ1c2VyTmFtZSI6ImRlbmlzLmRAYWZmaW5pZGkuY29tIiwiaWF0IjoxNjY5MTE0MjYwLCJleHAiOjE2ODQ2NjYyNjB9.zaRR6e4_Np6kJGqLKsatz2iovtoeZTxcgQgvYdycm9g' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "CLI_INSTALLED",
+    "category": "APPLICATION",
+    "component": "Cli",
+    "uuid": "",
+    "metadata": {}
+}')
+echo "$code"
+fi
