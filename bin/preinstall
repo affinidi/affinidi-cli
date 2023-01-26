@@ -1,16 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
-output=$(affinidi)
-mode="update"
 npm_config_global=$(npm config get global)
-notFound='command not found'
-echo "$output"
-echo "$npm_config_global"
+output=$(npm list -g --json @affinidi/cli)
+mode="update" 
 if [ $npm_config_global = "true" ]; then
-    if [[ "$output" =~ .*"$notfound".* ]]; then
-        echo "Install"
+    if [[$output =~ "@affinidi/cli"]]
+    then
+        echo "Command found: true" >> logs.txt
         mode="install" 
-    fi
+    fi    
 echo "$mode" >> installaionMode.txt
 fi
-
