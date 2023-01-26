@@ -3,10 +3,11 @@
 output=$(affinidi)
 mode="update"
 npm_config_global=$(npm config get global)
+notFound='command not found'
 echo "$output"
 echo "$npm_config_global"
 if [ $npm_config_global = "true" ]; then
-    if [[ $output = "affinidi: command not found" ]]; then
+    if [[ "$output" =~ .*"$notfound".* ]]; then
         echo "Install"
         mode="install" 
     fi
