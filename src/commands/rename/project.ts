@@ -1,5 +1,7 @@
 import { Command, Flags, CliUx } from '@oclif/core'
-import { CliError, getErrorOutput } from '../../errors'
+import { StatusCodes } from 'http-status-codes'
+
+import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { ViewFormat } from '../../constants'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { NextStepsRawMessage } from '../../render/functions'
@@ -7,6 +9,7 @@ import { configService, iAmService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { newProjectName, selectProject } from '../../user-actions'
 import { checkErrorFromWizard } from '../../wizard/helpers'
+import { isAuthenticated } from '../../middleware/authentication'
 
 export default class Project extends Command {
   static command = 'affinidi rename project'
@@ -33,6 +36,9 @@ export default class Project extends Command {
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Project)
+    if (!isAuthenticated()) {
+      throw new CliError(`${Unauthorized}`, StatusCodes.UNAUTHORIZED, 'userManagement')
+    }
     const {
       consoleAuthToken: token,
       account: { userId, label },
