@@ -208,6 +208,34 @@ For the full reference, please see the [`affinidi generate-application`](#affini
 
 ## CLI Commands
 
+### **affinidi analytics**
+
+The Analytics command lets you opt in or out of sending anonymous usage data..
+
+USAGE
+
+```
+$ affinidi analytics [true | false]
+```
+
+FLAGS
+
+```
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view of the chosen project's details
+```
+
+EXAMPLES
+
+```
+    $ affinidi analytics true
+```
+
+You can also see the help for the command in the CLI:
+
+```
+$ affinidi analytics --help
+```
+
 ### **autocomplete**
 
 Display autocomplete installation instructions.
@@ -563,6 +591,35 @@ FLAGS
 -o, --output=(plaintext|json)   [default: plaintext] Formats output view
 ```
 
+### **affinidi rename project**
+
+Use this command to change the name of an existing project
+
+USAGE
+
+```
+$ affinidi rename project [<project-id>] [FLAGS]
+```
+
+FLAGS
+
+```
+-n, --name=<value>  (required) The new name of the project
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view
+```
+
+EXAMPLES
+
+```
+$ affinidi rename project example-id -n "New Name"
+```
+
+You can also see the help for the command in the CLI:
+
+```
+$ affinidi rename project --help
+```
+
 ### **affinidi show**
 
 This command displays the details of a resource. The current available resource types are:
@@ -698,34 +755,6 @@ $ affinidi use --help
 $ affinidi use project --help
 ```
 
-### **affinidi analytics**
-
-The Analytics command lets you opt in or out of sending anonymous usage data..
-
-USAGE
-
-```
-$ affinidi analytics [true | false]
-```
-
-FLAGS
-
-```
--o, --output=(plaintext|json)   [default: plaintext] Formats output view of the chosen project's details
-```
-
-EXAMPLES
-
-```
-    $ affinidi analytics true
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi analytics --help
-```
-
 ### **affinidi verify-vc**
 
 Verifies a verifiable credential
@@ -753,35 +782,6 @@ You can also see the help for the command in the CLI:
 
 ```
 $ affinidi verify-vc --help
-```
-
-### **affinidi rename project**
-
-Change the name of an existing project
-
-USAGE
-
-```
-$ affinidi rename project [<project-id>] [FLAGS]
-```
-
-FLAGS
-
-```
--n, --name=<value>  (required) The new name of the project
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
-
-EXAMPLES
-
-```
-$ affinidi rename project example-id -n "New Name"
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi rename project --help
 ```
 
 &nbsp;
