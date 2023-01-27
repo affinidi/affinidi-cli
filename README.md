@@ -755,6 +755,35 @@ You can also see the help for the command in the CLI:
 $ affinidi verify-vc --help
 ```
 
+### **affinidi rename project**
+
+Change the name of an existing project
+
+USAGE
+
+```
+$ affinidi rename project [<project-id>] [FLAGS]
+```
+
+FLAGS
+
+```
+-n, --name=<value>  (required) The new name of the project
+-o, --output=(plaintext|json)   [default: plaintext] Formats output view
+```
+
+EXAMPLES
+
+```
+$ affinidi rename project example-id -n "New Name"
+```
+
+You can also see the help for the command in the CLI:
+
+```
+$ affinidi rename project --help
+```
+
 &nbsp;
 
 &nbsp;
