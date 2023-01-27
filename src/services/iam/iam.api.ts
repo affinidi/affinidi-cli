@@ -11,6 +11,7 @@
 
 export interface AuthenticateCloudWalletOutput {
   apiKey: {
+    apiKeyName: string
     apiKeyHash: string
   }
   wallet: {
@@ -25,6 +26,10 @@ export interface ProjectDto {
   name: string
   /** @format date-time */
   createdAt: string
+}
+
+export interface PatchProjectInput {
+  name: string
 }
 
 export interface ProjectSummary {
@@ -192,7 +197,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title affinidi-iam
- * @version 1.37.0
+ * @version 1.44.1
  * @license ISC
  * @baseUrl /api/v1
  * @contact Yigitcan UCUM yigitcan.u@affinidi.com
@@ -255,6 +260,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/projects/${projectId}`,
         method: 'GET',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags projects
+     * @name PatchProject
+     * @request PATCH:/projects/{projectId}
+     * @secure
+     */
+    patchProject: (projectId: string, data: PatchProjectInput, params: RequestParams = {}) =>
+      this.request<ProjectDto, any>({
+        path: `/projects/${projectId}`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

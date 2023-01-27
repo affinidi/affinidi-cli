@@ -317,7 +317,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title @affinidi/schema-manager
- * @version 1.14.2
+ * @version 1.19.0
  * @license ISC
  * @baseUrl /api/v1
  * @contact Vitaly Rudenko  <vitaly.r@affinidi.com>

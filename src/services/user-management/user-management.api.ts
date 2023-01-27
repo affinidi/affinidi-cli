@@ -167,7 +167,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title console-user-management
- * @version 1.19.1
+ * @version 1.21.0
  * @license ISC
  * @baseUrl /api/v1
  * @contact Dmytro Filipenko dmytro.f@affinidi.com
