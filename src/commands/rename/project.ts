@@ -10,6 +10,8 @@ import { getSession } from '../../services/user-management'
 import { newProjectName, selectProject } from '../../user-actions'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 import { isAuthenticated } from '../../middleware/authentication'
+import { EventDTO } from '../../services/analytics/analytics.api'
+import { analyticsService, generateUserMetadata } from '../../services/analytics'
 
 export default class Project extends Command {
   static command = 'affinidi rename project'
@@ -66,6 +68,18 @@ export default class Project extends Command {
     }
     await iAmService.renameProject(projectId, newName, token)
     const renamedProjectSumamry = await iAmService.getProjectSummary(token, projectId)
+    const analyticsData: EventDTO = {
+      name: 'CONSOLE_PROJECT_RENAMED',
+      category: 'APPLICATION',
+      component: 'Cli',
+      uuid: userId,
+      metadata: {
+        commandId: 'affinidi.renameProject',
+        projectId: renamedProjectSumamry.project.projectId,
+        ...generateUserMetadata(label),
+      },
+    }
+    await analyticsService.eventsControllerSend(analyticsData)
     const test = process.env.NODE_ENV === 'test'
     if (renamedProjectSumamry.apiKey?.apiKeyHash && !test) {
       renamedProjectSumamry.apiKey.apiKeyHash = ''.padEnd(
