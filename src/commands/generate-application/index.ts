@@ -77,17 +77,21 @@ export default class GenerateApplication extends Command {
       wallet: { did },
       project: { projectId },
     } = vaultService.getActiveProject()
+    const timeStamp = vaultService.getTimeStamp()
 
-    await generateApplication({
-      platform,
-      name,
-      output: flags.output,
-      use_case: useCase,
-      withProxy,
-      apiKey: apiKeyHash,
-      projectDid: did,
-      projectId,
-    })
+    await generateApplication(
+      {
+        platform,
+        name,
+        output: flags.output,
+        use_case: useCase,
+        withProxy,
+        apiKey: apiKeyHash,
+        projectDid: did,
+        projectId,
+      },
+      timeStamp,
+    )
   }
 
   async catch(error: CliError) {
