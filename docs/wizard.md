@@ -31,10 +31,72 @@ Active project: <project-id> <project-name>
 Where:
 
 - `manage projects` brings you to use any command related to `projects`:
+
   - creating a new one
   - seeing the active one
   - activating another one
   - listing them all
   - seeing the details of one in particular
+
+  Output when selecting this option:
+
+  ```shell
+  ? select your next step (Use arrow keys)
+  ❯ change active project
+    create another project
+    show active project
+    show project's details
+    go back to main menu
+    logout
+    exit
+  ```
+
 - Similarly `manage schemas` brings you to use any command related to `schemas`
+
+  Output when selecting this option:
+
+  ```shell
+  ? select your next step (Use arrow keys)
+  ❯ show schemas
+    show schema details
+    create schema
+    go back to main menu
+    logout
+    exit
+  ```
+
 - `generate-application` is about generating a privacy preserving application ([see command details](../README.md#affinidi-generate-application))
+
+  Output when selecting this option:
+
+  ```shell
+  ? select your next step generate an application
+
+    Welcome to the Affinidi Wizard
+    You are authenticated as: <your-email@address.com>
+    Active project: <project-id>
+    generate an application
+
+    name of application:
+  ```
+
+- `issue-vc` is all about issuing a [verifiable credential](https://github.com/affinidi/affinidi-cli#about-schemas-and-verifiable-credentials). See [how it works](../README.md#affinidi-issue-vc)
+
+  Output when selecting this option:
+
+  ```shell
+    ? select your next step (Use arrow keys)
+    ❯ choose schema from list
+      type schema URL
+  ```
+
+- `verify-vc` is all about verifying an issues [VC](https://github.com/affinidi/affinidi-cli#about-schemas-and-verifiable-credentials). See [how it works](../README.md#affinidi-verify-vc)
+
+  Output when selecting this option:
+
+  ```shell
+  ? select your next step verify a vc
+    Path to JSON file:
+  ```
+
+- `logout` simply logs you out
