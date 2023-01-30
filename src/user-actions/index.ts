@@ -18,6 +18,7 @@ export {
   schemaUrl,
   pathToCSV,
   walletUrl,
+  newProjectName,
 } from './prompts'
 
 export { selectProject } from './inquirer'

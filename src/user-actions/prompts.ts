@@ -98,3 +98,9 @@ export const walletUrl = async (text: string = 'wallet url'): Promise<string> =>
   const prompt = await CliUx.ux.prompt(text, { required: true })
   return prompt
 }
+
+export const newProjectName = async (
+  text: string = 'Please enter a new name for the project',
+): Promise<string> => {
+  return CliUx.ux.prompt(text, { required: true })
+}
