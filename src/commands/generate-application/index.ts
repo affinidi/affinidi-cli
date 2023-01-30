@@ -52,7 +52,7 @@ export default class GenerateApplication extends Command {
       description: 'Use case',
       default: 'certification-and-verification',
       options: Object.values(UseCasesAppNames),
-      hidden: true,
+      hidden: true, // TODO: remove when portable reputation app is public
     }),
     'with-proxy': Flags.boolean({
       char: 'w',

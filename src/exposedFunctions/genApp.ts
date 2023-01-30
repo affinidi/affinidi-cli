@@ -136,7 +136,10 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
   }
   const userId = getSession()?.account?.userId
   const analyticsData: EventDTO = {
-    name: 'APPLICATION_GENERATION_STARTED',
+    name:
+      useCase === UseCasesAppNames.portableReputation
+        ? 'APP_PORT_REP_GENERATION_STARTED'
+        : 'APPLICATION_GENERATION_STARTED',
     category: 'APPLICATION',
     component: 'Cli',
     uuid: userId,
@@ -186,7 +189,10 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
   }
 
   await setUpProject(name, withProxy, flags)
-  analyticsData.name = 'APPLICATION_GENERATION_COMPLETED'
+  analyticsData.name =
+    useCase === UseCasesAppNames.portableReputation
+      ? 'APP_PORT_REP_GENERATION_COMPLETED'
+      : 'APPLICATION_GENERATION_COMPLETED'
   await analyticsService.eventsControllerSend(analyticsData)
   CliUx.ux.action.stop('\nApplication generated')
 
