@@ -80,7 +80,7 @@ Where:
     name of application:
   ```
 
-- `issue-vc` is all about issuing a [verifiable credential](https://github.com/affinidi/affinidi-cli#about-schemas-and-verifiable-credentials). See [how it works](../README.md#affinidi-issue-vc)
+- `issue-vc` is all about issuing a [verifiable credential](../README.md#about-schemas-and-verifiable-credentials). See [how it works](../README.md#affinidi-issue-vc)
 
   Output when selecting this option:
 
@@ -90,7 +90,7 @@ Where:
       type schema URL
   ```
 
-- `verify-vc` is all about verifying an issues [VC](https://github.com/affinidi/affinidi-cli#about-schemas-and-verifiable-credentials). See [how it works](../README.md#affinidi-verify-vc)
+- `verify-vc` is all about verifying an issues [VC](../README.md#about-schemas-and-verifiable-credentials). See [how it works](../README.md#affinidi-verify-vc)
 
   Output when selecting this option:
 
