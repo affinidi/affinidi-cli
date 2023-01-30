@@ -110,3 +110,18 @@ export const confirmConfigCustomWallet = async (): Promise<string> => {
     ])
     .then((answer) => answer.WalletConfirmation)
 }
+
+export const chooseUseCase = async (choices: string[]): Promise<string> => {
+  return inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'refApp',
+        message: 'select type of reference app',
+        choices,
+      },
+    ])
+    .then((choice) => {
+      return choice.refApp
+    })
+}

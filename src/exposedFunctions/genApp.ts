@@ -143,6 +143,7 @@ export const generateApplication = async (flags: FlagsInput): Promise<void> => {
     metadata: {
       appName: name,
       commandId: 'affinidi.generate-application',
+      useCase,
       ...generateUserMetadata(userId),
     },
   }
@@ -168,7 +169,7 @@ export const generateApplication = async (flags: FlagsInput): Promise<void> => {
   }
 
   try {
-    if (withProxy) {
+    if (withProxy && useCase === UseCasesAppNames.certificationAndVerification) {
       await download(
         'https://github.com/affinidi/elements-reference-app-backend.git',
         `${name}-backend`,
