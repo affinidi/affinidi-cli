@@ -129,7 +129,7 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
   }
 }
 
-export const generateApplication = async (flags: FlagsInput): Promise<void> => {
+export const generateApplication = async (flags: FlagsInput, timeStamp?: number): Promise<void> => {
   const { name, platform, use_case: useCase, withProxy } = flags
   if (platform === Platforms.mobile) {
     throw new CliError(NotSupportedPlatform, 0, 'reference-app')
@@ -144,6 +144,7 @@ export const generateApplication = async (flags: FlagsInput): Promise<void> => {
       appName: name,
       commandId: 'affinidi.generate-application',
       useCase,
+      timeTaken: timeStamp ? Math.floor((Date.now() - timeStamp) / 1000) : 0,
       ...generateUserMetadata(userId),
     },
   }

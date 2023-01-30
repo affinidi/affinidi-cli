@@ -106,6 +106,7 @@ export default class Login extends Command {
       createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
       await analyticsService.sendEnabledEvent(email, wantsToOptIn, 'affinidi.login')
     }
+    vaultService.setTimeStamp()
     const analyticsData: EventDTO = {
       name: 'CONSOLE_USER_SIGN_IN',
       category: 'APPLICATION',
