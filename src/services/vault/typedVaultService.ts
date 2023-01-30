@@ -25,7 +25,7 @@ export type SessionType = {
 type CredentialsType = {
   version: number // only for breaking changes
   session: SessionType
-  actisveProjectSummary: ProjectSummary
+  activeProjectSummary: ProjectSummary
   timeStamp: number
 }
 
