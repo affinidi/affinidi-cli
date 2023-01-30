@@ -1,11 +1,11 @@
 import { expect, test } from '@oclif/test'
 
-describe('User lists projects', () => {
+describe('User renames a project', () => {
   test
     .stdin('\n', 2000)
     .stdout()
     .command(['rename project', '-n', 'New Project Rename'])
-    .it('list all projects of this account', (ctx) => {
+    .it('renames a project based on project id', (ctx) => {
       expect(ctx.stdout).to.contains('New Project Rename')
     })
 })
