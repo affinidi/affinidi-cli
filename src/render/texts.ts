@@ -48,63 +48,88 @@ export const useCommandDescription = chalk`
 
   ${chalk.bgWhite(`$ affinidi use --help`)}
 `
+export const portableReputationNextSteps: { text: string; styled: string }[] = [
+  {
+    text: 'Read the README file of the generated application to know the next steps.',
+    styled: `${chalk.yellowBright(
+      'Read the README file of the generated application to know the next steps.',
+    )}`,
+  },
+  {
+    text: 'Add github credentials to .env file',
+    styled: `${chalk.red('Add github credentials to .env file')}`,
+  },
+  {
+    text: 'open this directory in terminal and install the dependencies',
+    styled: 'open this directory in terminal and install the dependencies',
+  },
+  {
+    text: '$ npm install',
+    styled: `  ${chalk.bgWhite('$ npm install')}`,
+  },
+  {
+    text: 'then start the application with the command:',
+    styled: 'then start the application with the command:',
+  },
+  {
+    text: '$ npm run dev',
+    styled: `  ${chalk.bgWhite('$ npm run dev')}`,
+  },
+]
+export const certificationAndVerificationNextSteps = (
+  withProxy: boolean,
+  name: string,
+  appPath: string,
+): { text: string; styled: string }[] => [
+  withProxy && {
+    text: `Successfully generated ${name}-backend at ${appPath}-backend`,
+    styled: `${chalk.green('Successfully')} generated ${chalk.italic(
+      `${name}-backend`,
+    )} at ${appPath}-backend`,
+  },
+  withProxy
+    ? {
+        text: 'open each directory in separate terminals and install the dependencies',
+        styled: 'open each directory in separate terminals and install the dependencies',
+      }
+    : {
+        text: 'open this directory in terminal and install the dependencies',
+        styled: 'open this directory in terminal and install the dependencies',
+      },
+  {
+    text: '$ npm install',
+    styled: `  ${chalk.bgWhite('$ npm install')}`,
+  },
+  withProxy
+    ? {
+        text: 'then start both applications with the command:',
+        styled: 'then start both applications with the command:',
+      }
+    : {
+        text: 'then start the application with the command:',
+        styled: 'then start the application with the command:',
+      },
+  {
+    text: '$ npm run start',
+    styled: `  ${chalk.bgWhite('$ npm run start')}`,
+  },
+]
 export const buildGeneratedAppNextStepsMessageBlocks = (
   name: string,
   appPath: string,
   withProxy: boolean,
   useCase: string,
 ): { text: string; styled: string }[] => {
-  const certificationAndVerification = useCase === 'certification-and-verification'
-  const portableReputation = useCase === 'portable-reputation'
+  const message =
+    useCase === 'certification-and-verification'
+      ? certificationAndVerificationNextSteps(withProxy, name, appPath)
+      : portableReputationNextSteps
   return [
     {
       text: `Successfully generated ${name} at ${appPath}`,
       styled: `${chalk.green('Successfully')} generated ${chalk.italic(name)} at ${appPath}`,
     },
-    withProxy &&
-      certificationAndVerification && {
-        text: `Successfully generated ${name}-backend at ${appPath}-backend`,
-        styled: `${chalk.green('Successfully')} generated ${chalk.italic(
-          `${name}-backend`,
-        )} at ${appPath}-backend`,
-      },
-    portableReputation && {
-      text: 'Please read the README file of the generated application to know the next steps.',
-      styled: `${chalk.yellowBright(
-        'Please read the README file of the generated application to know the next steps.',
-      )}`,
-    },
-    withProxy && certificationAndVerification
-      ? {
-          text: 'open each directory in separate terminals and install the dependencies',
-          styled: 'open each directory in separate terminals and install the dependencies',
-        }
-      : {
-          text: 'open this directory in terminal and install the dependencies',
-          styled: 'open this directory in terminal and install the dependencies',
-        },
-    {
-      text: '$ npm install',
-      styled: `  ${chalk.bgWhite('$ npm install')}`,
-    },
-    withProxy && certificationAndVerification
-      ? {
-          text: 'then start both applications with the command:',
-          styled: 'then start both applications with the command:',
-        }
-      : {
-          text: 'then start the application with the command:',
-          styled: 'then start the application with the command:',
-        },
-    certificationAndVerification
-      ? {
-          text: '$ npm run start',
-          styled: `  ${chalk.bgWhite('$ npm run start')}`,
-        }
-      : {
-          text: '$ npm run dev',
-          styled: `  ${chalk.bgWhite('$ npm run dev')}`,
-        },
+    ...message,
     {
       text: 'Enjoy the App!',
       styled: 'Enjoy the App!',
