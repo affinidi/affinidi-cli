@@ -9,6 +9,7 @@ import { getSession } from '../services/user-management'
 import { EventDTO } from '../services/analytics/analytics.api'
 import { GitService, Writer } from '../services'
 import { buildGeneratedAppNextStepsMessage } from '../render/texts'
+import { fakeJWT } from '../render/functions'
 
 export interface FlagsInput {
   platform?: PlatformType
@@ -80,7 +81,7 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
         `PROJECT_DID=${activeProjectDid}`,
         `API_KEY_HASH=${activeProjectApiKey}`,
         '',
-        'AUTH_JWT_SECRET=',
+        `AUTH_JWT_SECRET=${fakeJWT() + fakeJWT() + fakeJWT()}`,
         'GITHUB_APP_CLIENT_ID=',
         'GITHUB_APP_CLIENT_SECRET=',
         '',

@@ -160,3 +160,7 @@ export const NextStepsRawMessage = nextStepMessageBlocks.map((m) => m.styled).jo
 export const wizardStatusMessage = (wizardStatusBlock: MessageBlock[]): string => {
   return wizardStatusBlock.map((m) => m.text).join('\n')
 }
+
+export const fakeJWT = () => {
+  return Math.random().toString(32).substring(2)
+}
