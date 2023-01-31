@@ -97,6 +97,7 @@ describe('generate-application command', () => {
             defaultAppName,
             `${process.cwd()}/${defaultAppName}`,
             false,
+            UseCasesAppNames.certificationAndVerification,
           )
             .map((b) => b.text)
             .forEach((msg) => {
@@ -125,6 +126,7 @@ describe('generate-application command', () => {
           defaultAppName,
           `${process.cwd()}/${defaultAppName}`,
           true,
+          UseCasesAppNames.certificationAndVerification,
         )
           .map((b) => b.text)
           .forEach((msg) => {
