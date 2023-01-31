@@ -414,7 +414,7 @@ FLAGS
 -n, --name=<value>                                                  [default: my-app] Name of the application
 -o, --output=(plaintext|json)                                       [default: plaintext] Override default output format view
 -w, --with-proxy                                                    Add backend-proxy to protect credentials
--u, --use-case=(portable-reputation|certification-and-verification) [default: certification-and-verification ]Choose which app you want generate
+-u, --use-case=(portable-reputation|certification-and-verification) [default: certification-and-verification] Choose which app you want generate
 ```
 
 You can use this to generate the application with the default values:
