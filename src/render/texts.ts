@@ -52,19 +52,29 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
   name: string,
   appPath: string,
   withProxy: boolean,
+  useCase: string,
 ): { text: string; styled: string }[] => {
+  const certificationAndVerification = useCase === 'certification-and-verification'
+  const portableReputation = useCase === 'portable-reputation'
   return [
     {
       text: `Successfully generated ${name} at ${appPath}`,
       styled: `${chalk.green('Successfully')} generated ${chalk.italic(name)} at ${appPath}`,
     },
-    withProxy && {
-      text: `Successfully generated ${name}-backend at ${appPath}-backend`,
-      styled: `${chalk.green('Successfully')} generated ${chalk.italic(
-        `${name}-backend`,
-      )} at ${appPath}-backend`,
+    withProxy &&
+      certificationAndVerification && {
+        text: `Successfully generated ${name}-backend at ${appPath}-backend`,
+        styled: `${chalk.green('Successfully')} generated ${chalk.italic(
+          `${name}-backend`,
+        )} at ${appPath}-backend`,
+      },
+    portableReputation && {
+      text: 'Please read the README file of the generated application to know the next steps.',
+      styled: `${chalk.yellowBright(
+        'Please read the README file of the generated application to know the next steps.',
+      )}`,
     },
-    withProxy
+    withProxy && certificationAndVerification
       ? {
           text: 'open each directory in separate terminals and install the dependencies',
           styled: 'open each directory in separate terminals and install the dependencies',
@@ -77,7 +87,7 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
       text: '$ npm install',
       styled: `  ${chalk.bgWhite('$ npm install')}`,
     },
-    withProxy
+    withProxy && certificationAndVerification
       ? {
           text: 'then start both applications with the command:',
           styled: 'then start both applications with the command:',
@@ -86,10 +96,15 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
           text: 'then start the application with the command:',
           styled: 'then start the application with the command:',
         },
-    {
-      text: '$ npm run start',
-      styled: `  ${chalk.bgWhite('$ npm run start')}`,
-    },
+    certificationAndVerification
+      ? {
+          text: '$ npm run start',
+          styled: `  ${chalk.bgWhite('$ npm run start')}`,
+        }
+      : {
+          text: '$ npm run dev',
+          styled: `  ${chalk.bgWhite('$ npm run dev')}`,
+        },
     {
       text: 'Enjoy the App!',
       styled: 'Enjoy the App!',
@@ -101,8 +116,9 @@ export const buildGeneratedAppNextStepsMessage = (
   name: string,
   appPath: string,
   withProxy: boolean,
+  useCase: string,
 ): string => {
-  return buildGeneratedAppNextStepsMessageBlocks(name, appPath, withProxy)
+  return buildGeneratedAppNextStepsMessageBlocks(name, appPath, withProxy, useCase)
     .map((b) => b.styled)
     .join('\n\n')
 }
