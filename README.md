@@ -402,7 +402,7 @@ Use this command to generate a privacy-preserving app. Please see [Affinidi Refe
 USAGE
 
 ```
-$ affinidi generate-application [-n <value>] [-w]
+$ affinidi generate-application [-n <value>] [-u <portable-reputation|certification-and-verification>][-w]
 ```
 
 FLAGS
