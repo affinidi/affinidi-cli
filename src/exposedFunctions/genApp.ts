@@ -7,8 +7,9 @@ import { CliError, InvalidUseCase, NotSupportedPlatform, Unauthorized } from '..
 import { displayOutput } from '../middleware/display'
 import { getSession } from '../services/user-management'
 import { EventDTO } from '../services/analytics/analytics.api'
-import { buildGeneratedAppNextStepsMessage } from '../render/texts'
 import { GitService, Writer } from '../services'
+import { buildGeneratedAppNextStepsMessage } from '../render/texts'
+import { fakeJWT } from '../render/functions'
 
 export interface FlagsInput {
   platform?: PlatformType
@@ -68,19 +69,23 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
   try {
     if (flags.use_case === UseCasesAppNames.portableReputation) {
       Writer.write(path.join(name, '.env'), [
+        '# frontend-only envs',
         'NEXT_PUBLIC_HOST=http://localhost:3000',
-        'HOST=http://localhost:3000',
-        'NEXT_PUBLIC_GITHUB_APP_CLIENT_ID=',
+        '',
+        '# backend-only envs',
+        'CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
+        'AFFINIDI_IAM_API_URL=https://affinidi-iam.apse1.affinidi.com/api',
+        'ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
+        '',
+        `PROJECT_ID=${activeProjectId}`,
+        `PROJECT_DID=${activeProjectDid}`,
+        `API_KEY_HASH=${activeProjectApiKey}`,
+        '',
+        `AUTH_JWT_SECRET=${fakeJWT() + fakeJWT() + fakeJWT()}`,
         'GITHUB_APP_CLIENT_ID=',
         'GITHUB_APP_CLIENT_SECRET=',
-
-        'AFFINIDI_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
-        'AFFINIDI_ISSUANCE_URL=https://console-vc-issuance.apse1.affinidi.com',
-        `AFFINIDI_API_KEY_HASH=${activeProjectApiKey}`,
-        `AFFINIDI_PROJECT_DID=${activeProjectDid}`,
-        `AFFINIDI_PROJECT_ID=${activeProjectId}`,
-
-        'JWT_SECRET=',
+        '',
+        'LOG_LEVEL=debug',
       ])
 
       return
@@ -198,7 +203,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
 
   const appPath = path.resolve(`${process.cwd()}/${name}`)
   displayOutput({
-    itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, withProxy),
+    itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, withProxy, useCase),
     flag: flags.output,
   })
 }

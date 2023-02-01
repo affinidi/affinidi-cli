@@ -16,9 +16,9 @@ export enum Platforms {
 
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
-  accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
+  // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
   certificationAndVerification = 'certification-and-verification',
-  kycKyb = 'kyc-kyb',
+  // kycKyb = 'kyc-kyb',
 }
 
 type PlatformType = `${Platforms}`
@@ -52,7 +52,6 @@ export default class GenerateApplication extends Command {
       description: 'Use case',
       default: 'certification-and-verification',
       options: Object.values(UseCasesAppNames),
-      hidden: true, // TODO: remove when portable reputation app is public
     }),
     'with-proxy': Flags.boolean({
       char: 'w',
