@@ -1023,5 +1023,3 @@ Affinidi collects usage data to improve our products and services. For informati
 
 Disclaimer:
 Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi Developer Tools, please refer to our [Terms of Use](https://build.affinidi.com/dev-tools/terms-of-use.pdf).
-
----
