@@ -30,7 +30,7 @@ Active project: <project-id> <project-name>
 
 Where:
 
-- `manage projects` brings you to use any command related to `projects`:
+- `manage projects` allows you to use any command related to `projects`:
 
   - creating a new one
   - seeing the active one
@@ -51,7 +51,7 @@ Where:
     exit
   ```
 
-- Similarly `manage schemas` brings you to use any command related to `schemas`
+- Similarly `manage schemas` allows you to use any command related to `schemas`
 
   Output when selecting this option:
 
