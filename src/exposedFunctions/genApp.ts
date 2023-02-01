@@ -151,7 +151,6 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
     metadata: {
       appName: name,
       commandId: 'affinidi.generate-application',
-      useCase,
       timeTaken: timeStamp ? Math.floor((Date.now() - timeStamp) / 1000) : 0,
       ...generateUserMetadata(userId),
     },
