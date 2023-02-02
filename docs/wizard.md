@@ -1,6 +1,20 @@
 ### The wizard, or start command
 
-Once running the command you should first see one of the prompts below:
+Once running the command you should see:
+
+- if you are not authenticated:
+
+```shell
+Welcome to the Affinidi Wizard
+You are not authenticated yet.
+Active project: no active projects
+? select your next step (Use arrow keys)
+❯ login
+  sign-up
+  exit
+```
+
+Otherwise when logged-in
 
 - if you don't have an active `project`.
 
