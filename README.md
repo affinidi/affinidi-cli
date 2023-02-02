@@ -786,6 +786,16 @@ You can also see the help for the command in the CLI:
 $ affinidi verify-vc --help
 ```
 
+### **affinidi start**
+
+Also called `wizard`.
+
+This command provides you with an end-to-end, step-by-step guide to the Affinidi CLI, with selectable options.
+
+You can imagine it like an installation wizard for an app on a desktop or a mobile-device.
+
+See documentation [here](./docs/wizard.md)
+
 &nbsp;
 
 &nbsp;
