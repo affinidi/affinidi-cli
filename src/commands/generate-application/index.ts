@@ -16,9 +16,9 @@ export enum Platforms {
 
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
-  accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
+  // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
   certificationAndVerification = 'certification-and-verification',
-  kycKyb = 'kyc-kyb',
+  // kycKyb = 'kyc-kyb',
 }
 
 type PlatformType = `${Platforms}`
@@ -52,7 +52,6 @@ export default class GenerateApplication extends Command {
       description: 'Use case',
       default: 'certification-and-verification',
       options: Object.values(UseCasesAppNames),
-      hidden: true,
     }),
     'with-proxy': Flags.boolean({
       char: 'w',
@@ -77,17 +76,21 @@ export default class GenerateApplication extends Command {
       wallet: { did },
       project: { projectId },
     } = vaultService.getActiveProject()
+    const timeStamp = vaultService.getTimeStamp()
 
-    await generateApplication({
-      platform,
-      name,
-      output: flags.output,
-      use_case: useCase,
-      withProxy,
-      apiKey: apiKeyHash,
-      projectDid: did,
-      projectId,
-    })
+    await generateApplication(
+      {
+        platform,
+        name,
+        output: flags.output,
+        use_case: useCase,
+        withProxy,
+        apiKey: apiKeyHash,
+        projectDid: did,
+        projectId,
+      },
+      timeStamp,
+    )
   }
 
   async catch(error: CliError) {

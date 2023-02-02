@@ -70,6 +70,29 @@ class IAmService {
       throw new CliError(error?.message, error.response.status, SERVICE)
     }
   }
+
+  public renameProject = async (
+    projectId: string,
+    newName: string,
+    token: string,
+  ): Promise<ProjectDto> => {
+    try {
+      const resp = await this.client.projects.patchProject(
+        projectId,
+        { name: newName },
+        {
+          headers: {
+            Cookie: token,
+            'content-type': 'application/json',
+            Accept: 'application/json',
+          },
+        },
+      )
+      return resp.data
+    } catch (error: any) {
+      throw new CliError(error?.message, error.response.status, SERVICE)
+    }
+  }
 }
 
 const iAmService = new IAmService()

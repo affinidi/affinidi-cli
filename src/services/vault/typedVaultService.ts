@@ -26,6 +26,7 @@ type CredentialsType = {
   version: number // only for breaking changes
   session: SessionType
   activeProjectSummary: ProjectSummary
+  timeStamp: number
 }
 
 export type CredentialsTypeKeys = keyof CredentialsType
@@ -38,6 +39,8 @@ interface IVaultSetterGetter {
   setSession: (session: SessionType) => void
   getActiveProject: () => ProjectSummary
   setActiveProject: (project: ProjectSummary) => void
+  getDate: () => number
+  setDate: () => void
   get: (key: CredentialsTypeKeys) => CredentialsTypeValues
   set: (key: CredentialsTypeKeys, value: unknown) => void
 }
@@ -96,6 +99,14 @@ class VaultService {
   public setActiveProject = (project: ProjectSummary): void => {
     this.store.setActiveProject(project)
   }
+
+  public getTimeStamp = (): number => {
+    return this.store.getDate()
+  }
+
+  public setTimeStamp = (): void => {
+    this.store.setDate()
+  }
 }
 
 const testStore = new Map()
@@ -123,6 +134,12 @@ const testStorer: IVaultSetterGetter = {
   },
   setActiveProject: function setActiveProject(project: ProjectSummary): void {
     testStore.set('activeProjectSummary', project)
+  },
+  getDate: function getDate(): number {
+    return testStore.get('timeStamp')
+  },
+  setDate: function setDate(): void {
+    testStore.set('timeStamp', Date.now())
   },
 }
 
@@ -155,6 +172,12 @@ const storer: IVaultSetterGetter = {
   },
   setActiveProject: function setActiveProject(project: ProjectSummary): void {
     credentialConf.set('activeProjectSummary', project)
+  },
+  getDate: function getDate(): number {
+    return credentialConf.get('timeStamp')
+  },
+  setDate: function setDate(): void {
+    credentialConf.set('timeStamp', Date.now())
   },
 }
 

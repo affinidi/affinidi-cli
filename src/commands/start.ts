@@ -3,6 +3,7 @@ import { CliUx, Command, Flags } from '@oclif/core'
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isTokenValid } from '../middleware/authentication'
 import {
+  chooseUseCase,
   confirmConfigCustomWallet,
   schemaPublicPrivate,
   selectNextStep,
@@ -63,6 +64,7 @@ import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
 import IssueVc from './issue-vc'
 import { chooseSchemaId, chooseSchemaUrl, nextFuncAfterError } from '../wizard/helpers'
+import { UseCasesAppNames } from '../exposedFunctions/genApp'
 
 export default class Start extends Command {
   static description = 'Start provides a way to guide you from end to end.'
@@ -373,8 +375,15 @@ export default class Start extends Command {
   private async generateApplication() {
     CliUx.ux.info(this.getStatus())
     const appName = await applicationName()
-    const withP = await withProxy()
-    const flags = ['-n', appName, '-o', 'plaintext', `-w`]
+    const useCase = await chooseUseCase([
+      UseCasesAppNames.portableReputation,
+      UseCasesAppNames.certificationAndVerification,
+    ])
+    let withP = false
+    if (useCase === UseCasesAppNames.certificationAndVerification) {
+      withP = await withProxy()
+    }
+    const flags = ['-n', appName, '-o', 'plaintext', '-u', `${useCase}`, `-w`]
     if (!withP) flags.pop()
     await GenerateApplication.run(flags)
   }
