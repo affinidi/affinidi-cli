@@ -74,7 +74,6 @@
     "@oclif/test": "^2.2.6",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/gitlab": "^9.4.2",
     "@semantic-release/npm": "^9.0.1",
     "@types/chai": "4.3.4",
     "@types/inquirer": "^8.2.3",
