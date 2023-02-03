@@ -7,7 +7,7 @@ import {
   Platforms,
   UseCasesAppNames,
 } from '../../../../src/commands/generate-application'
-import { NotSupportedPlatform, WrongEmailError } from '../../../../src/errors'
+import { NotSupportedPlatform } from '../../../../src/errors'
 import { buildGeneratedAppNextStepsMessageBlocks } from '../../../../src/render/texts'
 import * as authentication from '../../../../src/middleware/authentication'
 import { projectSummary } from '../../../../src/fixtures/mock-projects'
