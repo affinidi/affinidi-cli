@@ -20,7 +20,7 @@ const testProjectId = 'random-test-project-id'
 describe('generate-application command', () => {
   before(() => {
     vaultService.setActiveProject(projectSummary)
-    createSession('test@email.com', testUserId, 'test-acces-toke')
+    createSession('test@email.com', testUserId, 'test-access-token')
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
   })
