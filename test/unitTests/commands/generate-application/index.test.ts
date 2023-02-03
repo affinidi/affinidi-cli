@@ -11,6 +11,7 @@ import { NotSupportedPlatform } from '../../../../src/errors'
 import { buildGeneratedAppNextStepsMessageBlocks } from '../../../../src/render/texts'
 import * as authentication from '../../../../src/middleware/authentication'
 import { projectSummary } from '../../../../src/fixtures/mock-projects'
+import { createSession } from '../../../../src/services/user-management'
 
 const doNothing = () => {}
 const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
@@ -19,6 +20,7 @@ const testProjectId = 'random-test-project-id'
 describe('generate-application command', () => {
   before(() => {
     vaultService.setActiveProject(projectSummary)
+    createSession('test@email.com', testUserId, 'test-access-token')
     configService.create(testUserId, testProjectId)
     configService.optInOrOut(true)
   })
