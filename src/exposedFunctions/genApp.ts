@@ -139,7 +139,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
   if (platform === Platforms.mobile) {
     throw new CliError(NotSupportedPlatform, 0, 'reference-app')
   }
-  const userId = getSession()?.account?.userId
+  const { userId, label } = getSession()?.account
   const analyticsData: EventDTO = {
     name:
       useCase === UseCasesAppNames.portableReputation
@@ -152,7 +152,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       appName: name,
       commandId: 'affinidi.generate-application',
       timeTaken: timeStamp ? Math.floor((Date.now() - timeStamp) / 1000) : 0,
-      ...generateUserMetadata(userId),
+      ...generateUserMetadata(label),
     },
   }
 
