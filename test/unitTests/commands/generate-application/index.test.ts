@@ -1,4 +1,4 @@
-import { CliUx } from '@oclif/core'
+import { ux } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { vaultService } from '../../../../src/services/vault/typedVaultService'
 import { GitService, Writer, configService } from '../../../../src/services'
@@ -57,8 +57,8 @@ describe('generate-application command', () => {
         .stdout()
         .stub(authentication, 'isAuthenticated', () => true)
         .stub(GitService, 'clone', fails)
-        .stub(CliUx.ux.action, 'start', () => () => doNothing)
-        .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .stub(ux.action, 'start', () => () => doNothing)
+        .stub(ux.action, 'stop', () => doNothing)
         .command(['generate-application'])
         .it('it runs generate-application and shows a failing message', (ctx) => {
           expect(ctx.stdout).to.contain(
@@ -74,8 +74,8 @@ describe('generate-application command', () => {
         })
         .stub(GitService, 'clone', doNothing)
         .stub(Writer, 'write', fails)
-        .stub(CliUx.ux.action, 'start', () => () => doNothing)
-        .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .stub(ux.action, 'start', () => () => doNothing)
+        .stub(ux.action, 'stop', () => doNothing)
         .stdout()
         .command(['generate-application'])
         .it('it runs generate-application and shows a failing message', (ctx) => {
@@ -91,8 +91,8 @@ describe('generate-application command', () => {
         })
         .stub(GitService, 'clone', doNothing)
         .stub(Writer, 'write', doNothing)
-        .stub(CliUx.ux.action, 'start', () => () => doNothing)
-        .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .stub(ux.action, 'start', () => () => doNothing)
+        .stub(ux.action, 'stop', () => doNothing)
         .command(['generate-application'])
         .it('it runs generate-application and shows the next steps long description', (ctx) => {
           buildGeneratedAppNextStepsMessageBlocks(
@@ -120,8 +120,8 @@ describe('generate-application command', () => {
       })
       .stub(GitService, 'clone', doNothing)
       .stub(Writer, 'write', doNothing)
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(ux.action, 'start', () => () => doNothing)
+      .stub(ux.action, 'stop', () => doNothing)
       .command(['generate-application', '-w'])
       .it('it runs generate-application and shows the next steps long description', (ctx) => {
         buildGeneratedAppNextStepsMessageBlocks(
