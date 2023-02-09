@@ -1,4 +1,4 @@
-import { Command, CliUx, Flags } from '@oclif/core'
+import { Command, ux, Flags, Args } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import UseProject from '../use/project'
@@ -11,10 +11,10 @@ import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createOrUpdateConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
 import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
 import { checkErrorFromWizard } from '../../wizard/helpers'
+import { output } from '../../customFlags/outputFlag'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -28,14 +28,10 @@ export default class Login extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = [{ name: 'email' }]
+  static args = { email: Args.string() }
 
   static flags = {
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
     isWizard: Flags.boolean({
       char: 'w',
       hidden: true,
@@ -80,20 +76,20 @@ export default class Login extends Command {
     }
 
     // http request to affinidi sign-up endpoint
-    CliUx.ux.action.start('Start logging in to Affinidi')
+    ux.action.start('Start logging in to Affinidi')
     const token = await userManagementService.login(email)
 
     // mask input after enter is pressed
     const confirmationCode = await enterOTPPrompt()
 
-    CliUx.ux.action.start('Verifying the OTP')
+    ux.action.start('Verifying the OTP')
     const sessionToken = await userManagementService.confirmAndGetToken(
       token,
       confirmationCode,
       'login',
     )
-    CliUx.ux.action.stop('OTP verified')
-    CliUx.ux.action.stop('Log-in successful')
+    ux.action.stop('OTP verified')
+    ux.action.stop('Log-in successful')
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
@@ -135,13 +131,13 @@ export default class Login extends Command {
       await UseProject.run([projectId])
       return
     }
-
-    await UseProject.run([flags.output ? `--output=${flags.output}` : ''])
+    if (flags.output) await UseProject.run([`--output=${flags.output}`])
+    await UseProject.run([])
   }
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

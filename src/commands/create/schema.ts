@@ -1,4 +1,4 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { ux, Command, Flags, Args } from '@oclif/core'
 import fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
@@ -28,8 +28,8 @@ import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
-import { ViewFormat } from '../../constants'
 import { checkErrorFromWizard } from '../../wizard/helpers'
+import { output } from '../../customFlags/outputFlag'
 
 export default class Schema extends Command {
   static command = 'affinidi create schema'
@@ -40,7 +40,7 @@ export default class Schema extends Command {
     'Use this command to create a new Schema for a verifiable credential. Refer to https://github.com/affinidi/affinidi-cli/blob/main/README.md#schema-manager for more details and examples.'
 
   static flags = {
-    public: Flags.enum<'true' | 'false'>({
+    public: Flags.string({
       char: 'p',
       options: ['true', 'false'],
       description: 'To specify if you want to create public or private schemas',
@@ -54,14 +54,10 @@ export default class Schema extends Command {
       description: 'path to the json file with schema properties',
       required: true,
     }),
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
-  static args = [{ name: 'schemaName' }]
+  static args = { schemaName: Args.string() }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
@@ -140,9 +136,9 @@ export default class Schema extends Command {
       authorDid: did,
       description: flags.description,
     }
-    CliUx.ux.action.start('Creating Schema')
+    ux.action.start('Creating Schema')
     const schemaInfo = await schemaManagerService.createSchema(apiKeyhash, createSchemaInput)
-    CliUx.ux.action.stop('')
+    ux.action.stop('')
     const analyticsData: EventDTO = {
       name: 'VC_SCHEMA_CREATED',
       category: 'APPLICATION',

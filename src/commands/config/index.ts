@@ -1,12 +1,12 @@
-import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
+import { ux, Command, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { configService } from '../../services'
-import { ViewFormat } from '../../constants'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { buildInvalidCommandUsage, configCommandDescription } from '../../render/texts'
 import { isAuthenticated } from '../../middleware/authentication'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
+import { output } from '../../customFlags/outputFlag'
 
 export default class Config extends Command {
   static command = 'affinidi config'
@@ -17,7 +17,7 @@ export default class Config extends Command {
 
   static description = configCommandDescription
 
-  static examples: Interfaces.Example[] = [
+  static examples: Command.Example[] = [
     {
       description: 'Delete logged in user saved configuration:',
       command: '$ <%= config.bin %> <%= command.id %> --unset-all',
@@ -36,14 +36,11 @@ export default class Config extends Command {
   static flags = {
     'unset-all': Flags.boolean({
       char: 'u',
-      description: 'remove username from config',
+      description: 'remove user configuration from config file',
       default: false,
     }),
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['json', 'plaintext'],
-    }),
+
+    output,
   }
 
   public async run(): Promise<void> {
@@ -51,10 +48,10 @@ export default class Config extends Command {
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'config')
     }
-    const { 'unset-all': unsetAll, output } = flags
+    const { 'unset-all': unsetAll, output: outputFlag } = flags
     if (unsetAll) {
       configService.deleteUserConfig()
-      displayOutput({ itemToDisplay: 'Your configuration is unset', flag: output })
+      displayOutput({ itemToDisplay: 'Your configuration is unset', flag: outputFlag })
       return
     }
     displayOutput({
@@ -63,7 +60,7 @@ export default class Config extends Command {
   }
 
   async catch(error: CliError) {
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

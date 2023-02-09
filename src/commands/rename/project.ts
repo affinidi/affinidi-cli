@@ -1,8 +1,8 @@
-import { Command, Flags, CliUx } from '@oclif/core'
+import { Args, Command, Flags, ux } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
-import { ViewFormat } from '../../constants'
+
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { NextStepsRawMessage } from '../../render/functions'
 import { configService, iAmService } from '../../services'
@@ -12,6 +12,7 @@ import { checkErrorFromWizard } from '../../wizard/helpers'
 import { isAuthenticated } from '../../middleware/authentication'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { output } from '../../customFlags/outputFlag'
 
 export default class Project extends Command {
   static command = 'affinidi rename project'
@@ -22,14 +23,10 @@ export default class Project extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = [{ name: 'projectId' }]
+  static args = { projectId: Args.string() }
 
   static flags = {
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
     name: Flags.string({
       char: 'n',
       description: 'new name of the project',
@@ -49,14 +46,14 @@ export default class Project extends Command {
     let newName = flags.name
 
     if (!projectId) {
-      CliUx.ux.action.start('Fetching projects')
+      ux.action.start('Fetching projects')
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
-        CliUx.ux.action.stop('No Projects were found')
+        ux.action.stop('No Projects were found')
         displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
         return
       }
-      CliUx.ux.action.stop('List of projects: ')
+      ux.action.stop('List of projects: ')
       const maxNameLength = projectData
         .map((p) => p.name.length)
         .reduce((p, c) => Math.max(p, c), 0)
@@ -101,7 +98,7 @@ export default class Project extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(
