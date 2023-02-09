@@ -17,7 +17,9 @@ export enum Platforms {
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
   // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
-  certificationAndVerification = 'certification-and-verification',
+  healthReferenceApp = 'health-reference-app',
+  educationReferenceApp = 'education-reference-app',
+  ticketingReferenceApp = 'ticketing-reference-app',
   // kycKyb = 'kyc-kyb',
 }
 
@@ -50,13 +52,8 @@ export default class GenerateApplication extends Command {
     'use-case': Flags.enum<UseCaseType>({
       char: 'u',
       description: 'Use case',
-      default: 'certification-and-verification',
+      default: 'ticketing-reference-app',
       options: Object.values(UseCasesAppNames),
-    }),
-    'with-proxy': Flags.boolean({
-      char: 'w',
-      description: 'Add BE-proxy to protect credentials',
-      default: false,
     }),
     output: Flags.enum<ViewFormat>({
       char: 'o',
@@ -67,7 +64,7 @@ export default class GenerateApplication extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApplication)
-    const { name, platform, 'use-case': useCase, 'with-proxy': withProxy } = flags
+    const { name, platform, 'use-case': useCase } = flags
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'generator')
     }
@@ -84,7 +81,6 @@ export default class GenerateApplication extends Command {
         name,
         output: flags.output,
         use_case: useCase,
-        withProxy,
         apiKey: apiKeyHash,
         projectDid: did,
         projectId,

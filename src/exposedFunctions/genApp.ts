@@ -15,7 +15,6 @@ export interface FlagsInput {
   platform?: PlatformType
   name?: string
   use_case?: UseCaseType
-  withProxy?: boolean
   output?: ViewFormat
   apiKey: string
   projectDid: string
@@ -30,7 +29,9 @@ export enum Platforms {
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
   accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
-  certificationAndVerification = 'certification-and-verification',
+  healthReferenceApp = 'health-reference-app',
+  educationReferenceApp = 'education-reference-app',
+  ticketingReferenceApp = 'ticketing-reference-app',
   kycKyb = 'kyc-kyb',
 }
 
@@ -40,8 +41,9 @@ type PlatformType = `${Platforms}`
 const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
-  'certification-and-verification':
-    'https://github.com/affinidi/elements-reference-app-frontend.git',
+  'health-reference-app': 'https://github.com/affinidi/reference-app-health.git',
+  'education-reference-app': 'https://github.com/affinidi/reference-app-education.git',
+  'ticketing-reference-app': 'https://github.com/affinidi/reference-app-ticketing.git',
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 
@@ -53,7 +55,7 @@ const download = async (gitUrl: string, destination: string): Promise<void> => {
   }
 }
 
-const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput): Promise<void> => {
+const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
   const { apiKey, projectDid, projectId } = flags
 
   const activeProjectApiKey = apiKey
@@ -91,39 +93,19 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
       return
     }
 
-    if (withProxy) {
-      Writer.write(path.join(name, '.env'), [
-        'VITE_CLOUD_WALLET_URL=http://localhost:8080/cloud-wallet',
-        'VITE_VERIFIER_URL=http://localhost:8080/affinity-verifier',
-        'VITE_USER_MANAGEMENT_URL=http://localhost:8080/user-management',
-        'VITE_ISSUANCE_URL=http://localhost:8080/console-vc-issuance',
-      ])
-
-      Writer.write(path.join(`${name}-backend`, '.env'), [
-        'HOST=127.0.0.1',
-        'PORT=8080',
-        'NODE_ENV=dev',
-        'ENVIRONMENT=development',
-        'FRONTEND_HOST=http://localhost:3000',
-
-        `API_KEY_HASH=${activeProjectApiKey}`,
-        `ISSUER_DID=${activeProjectDid}`,
-        `PROJECT_ID=${activeProjectId}`,
-      ])
-
-      return
-    }
-
     Writer.write(path.join(name, '.env'), [
-      'VITE_CLOUD_WALLET_URL=https://cloud-wallet-api.prod.affinity-project.org',
-      'VITE_VERIFIER_URL=https://affinity-verifier.prod.affinity-project.org',
-      'VITE_USER_MANAGEMENT_URL=https://console-user-management.apse1.affinidi.com',
-      'VITE_ISSUANCE_URL=https://console-vc-issuance.apse1.affinidi.com',
-      'VITE_IAM_URL=https://affinidi-iam.apse1.affinidi.com',
-
-      `VITE_API_KEY=${activeProjectApiKey}`,
-      `VITE_PROJECT_DID=${activeProjectDid}`,
-      `VITE_PROJECT_ID=${activeProjectId}`,
+      '# frontend-only envs',
+      'NEXT_PUBLIC_HOST=http://localhost:3000',
+      '',
+      'NEXT_PUBLIC_ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
+      'NEXT_PUBLIC_USER_MANAGEMENT_API_URL=https://console-user-management.apse1.affinidi.com/api',
+      'NEXT_PUBLIC_VERIFIER_API_URL=https://affinity-verifier.prod.affinity-project.org/api',
+      'NEXT_PUBLIC_CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
+      'NEXT_PUBLIC_AFFINIDI_IAM_URL=https://affinidi-iam.apse1.affinidi.com/api',
+      '',
+      `NEXT_PUBLIC_API_KEY_HASH=${activeProjectApiKey}`,
+      `NEXT_PUBLIC_PROJECT_DID=${activeProjectDid}`,
+      `NEXT_PUBLIC_PROJECT_ID=${activeProjectId}`,
     ])
   } catch (error) {
     displayOutput({
@@ -135,7 +117,7 @@ const setUpProject = async (name: string, withProxy: boolean, flags: FlagsInput)
 }
 
 export const generateApplication = async (flags: FlagsInput, timeStamp?: number): Promise<void> => {
-  const { name, platform, use_case: useCase, withProxy } = flags
+  const { name, platform, use_case: useCase } = flags
   if (platform === Platforms.mobile) {
     throw new CliError(NotSupportedPlatform, 0, 'reference-app')
   }
@@ -160,7 +142,9 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
 
   try {
     switch (useCase) {
-      case UseCasesAppNames.certificationAndVerification:
+      case UseCasesAppNames.healthReferenceApp:
+      case UseCasesAppNames.educationReferenceApp:
+      case UseCasesAppNames.ticketingReferenceApp:
       case UseCasesAppNames.portableReputation:
         await download(UseCaseSources[useCase], name)
         await analyticsService.eventsControllerSend(analyticsData)
@@ -176,23 +160,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
     throw new CliError(`Failed to generate an application: ${error.message}`, 0, 'reference-app')
   }
 
-  try {
-    if (withProxy && useCase === UseCasesAppNames.certificationAndVerification) {
-      await download(
-        'https://github.com/affinidi/elements-reference-app-backend.git',
-        `${name}-backend`,
-      )
-    }
-  } catch (error) {
-    displayOutput({
-      itemToDisplay: `Failed to generate an application: ${error.message}`,
-      flag: flags.output,
-      err: true,
-    })
-    return
-  }
-
-  await setUpProject(name, withProxy, flags)
+  await setUpProject(name, flags)
   analyticsData.name =
     useCase === UseCasesAppNames.portableReputation
       ? 'APP_PORT_REP_GENERATION_COMPLETED'
@@ -202,7 +170,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
 
   const appPath = path.resolve(`${process.cwd()}/${name}`)
   displayOutput({
-    itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, withProxy, useCase),
+    itemToDisplay: buildGeneratedAppNextStepsMessage(name, appPath, useCase),
     flag: flags.output,
   })
 }

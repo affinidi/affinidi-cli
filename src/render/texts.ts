@@ -76,39 +76,19 @@ export const portableReputationNextSteps: { text: string; styled: string }[] = [
     styled: `  ${chalk.bgWhite('$ npm run dev')}`,
   },
 ]
-export const certificationAndVerificationNextSteps = (
-  withProxy: boolean,
-  name: string,
-  appPath: string,
-): { text: string; styled: string }[] => [
-  withProxy && {
-    text: `Successfully generated ${name}-backend at ${appPath}-backend`,
-    styled: `${chalk.green('Successfully')} generated ${chalk.italic(
-      `${name}-backend`,
-    )} at ${appPath}-backend`,
+export const certificationAndVerificationNextSteps = (): { text: string; styled: string }[] => [
+  {
+    text: 'open this directory in terminal and install the dependencies',
+    styled: 'open this directory in terminal and install the dependencies',
   },
-  withProxy
-    ? {
-        text: 'open each directory in separate terminals and install the dependencies',
-        styled: 'open each directory in separate terminals and install the dependencies',
-      }
-    : {
-        text: 'open this directory in terminal and install the dependencies',
-        styled: 'open this directory in terminal and install the dependencies',
-      },
   {
     text: '$ npm install',
     styled: `  ${chalk.bgWhite('$ npm install')}`,
   },
-  withProxy
-    ? {
-        text: 'then start both applications with the command:',
-        styled: 'then start both applications with the command:',
-      }
-    : {
-        text: 'then start the application with the command:',
-        styled: 'then start the application with the command:',
-      },
+  {
+    text: 'then start the application with the command:',
+    styled: 'then start the application with the command:',
+  },
   {
     text: '$ npm run start',
     styled: `  ${chalk.bgWhite('$ npm run start')}`,
@@ -117,13 +97,12 @@ export const certificationAndVerificationNextSteps = (
 export const buildGeneratedAppNextStepsMessageBlocks = (
   name: string,
   appPath: string,
-  withProxy: boolean,
   useCase: string,
 ): { text: string; styled: string }[] => {
   const message =
-    useCase === 'certification-and-verification'
-      ? certificationAndVerificationNextSteps(withProxy, name, appPath)
-      : portableReputationNextSteps
+    useCase === 'portable-reputation'
+      ? portableReputationNextSteps
+      : certificationAndVerificationNextSteps()
   return [
     {
       text: `Successfully generated ${name} at ${appPath}`,
@@ -140,10 +119,9 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
 export const buildGeneratedAppNextStepsMessage = (
   name: string,
   appPath: string,
-  withProxy: boolean,
   useCase: string,
 ): string => {
-  return buildGeneratedAppNextStepsMessageBlocks(name, appPath, withProxy, useCase)
+  return buildGeneratedAppNextStepsMessageBlocks(name, appPath, useCase)
     .map((b) => b.styled)
     .join('\n\n')
 }

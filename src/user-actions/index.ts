@@ -11,7 +11,6 @@ export {
   enterSchemaName,
   pathToVc,
   applicationName,
-  withProxy,
   schemaId,
   schemaJSONFilePath,
   schemaDescription,

@@ -54,7 +54,6 @@ import {
   schemaId,
   schemaJSONFilePath,
   applicationName,
-  withProxy,
   pathToCSV,
   pathToVc,
   schemaUrl,
@@ -377,14 +376,11 @@ export default class Start extends Command {
     const appName = await applicationName()
     const useCase = await chooseUseCase([
       UseCasesAppNames.portableReputation,
-      UseCasesAppNames.certificationAndVerification,
+      UseCasesAppNames.educationReferenceApp,
+      UseCasesAppNames.ticketingReferenceApp,
+      UseCasesAppNames.healthReferenceApp,
     ])
-    let withP = false
-    if (useCase === UseCasesAppNames.certificationAndVerification) {
-      withP = await withProxy()
-    }
     const flags = ['-n', appName, '-o', 'plaintext', '-u', `${useCase}`, `-w`]
-    if (!withP) flags.pop()
     await GenerateApplication.run(flags)
   }
 
