@@ -51,7 +51,7 @@ export default class GenerateApplication extends Command {
     'use-case': Flags.string({
       char: 'u',
       description: 'Use case',
-      default: 'ticketing',
+      default: UseCasesAppNames.ticketingReferenceApp,
       options: Object.values(UseCasesAppNames),
     }),
     output,
