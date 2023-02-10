@@ -50,3 +50,5 @@ out
 # dotenv environment variables file
 .env
 .npmrc
+
+my-app
