@@ -299,7 +299,7 @@ export default class Start extends Command {
   private async listSchemas() {
     ux.info(this.getStatus())
     this.breadcrumbs.push(showSchemas)
-    const chosenSchemaId = await chooseSchemaId()
+    const chosenSchemaId = await chooseSchemaId(0)
     await ShowSchema.run([`${chosenSchemaId}`])
   }
 
@@ -390,7 +390,7 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.ISSUANCE_SCHEMA_MENU))
     switch (nextStep) {
       case chooseSchmeaFromList:
-        await this.issuanceTypeMenu(await chooseSchemaUrl())
+        await this.issuanceTypeMenu(await chooseSchemaUrl(0))
         break
       case typeSchemaUrl:
         await this.issuanceTypeMenu(await schemaUrl())

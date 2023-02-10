@@ -4,7 +4,7 @@ import { SchemaDto } from '../services/schema-manager/schema-manager.api'
 import { selectSchemaId, selectSchemaUrl } from '../user-actions/inquirer'
 import { CliError } from '../errors'
 
-export const getSchemaList = async (): Promise<SchemaDto[]> => {
+export const getSchemaList = async (page: number): Promise<SchemaDto[]> => {
   const {
     apiKey: { apiKeyHash: apiKey },
     wallet: { did },
@@ -14,31 +14,37 @@ export const getSchemaList = async (): Promise<SchemaDto[]> => {
     apiKey,
     authorDid: did,
     did,
-    limit: Number.MAX_SAFE_INTEGER,
+    limit: 10,
     scope,
-    skip: 0,
+    skip: 10 * page,
   }
   const schemas = await schemaManagerService.search(params)
   return schemas
 }
 
-export const chooseSchemaId = async (): Promise<string> => {
-  const schemas = await getSchemaList()
+export const chooseSchemaId = async (page: number): Promise<string> => {
+  const schemas = await getSchemaList(page)
   const maxIdLength = schemas.map((p) => p.id.length).reduce((p, c) => Math.max(p, c), 0)
   const maxDescLength = schemas
     .map((p) => (p.description ? p.description.length : 0))
     .reduce((p, c) => Math.max(p, c), 0)
   const schemaId = await selectSchemaId(schemas, maxIdLength, maxDescLength)
+  if (schemaId === 'more') {
+    return chooseSchemaId(page + 1)
+  }
   return schemaId
 }
 
-export const chooseSchemaUrl = async (): Promise<string> => {
-  const schemas = await getSchemaList()
+export const chooseSchemaUrl = async (page: number): Promise<string> => {
+  const schemas = await getSchemaList(page)
   const maxIdLength = schemas.map((p) => p.id.length).reduce((p, c) => Math.max(p, c), 0)
   const maxUrlLength = schemas
     .map((p) => p.jsonSchemaUrl.length)
     .reduce((p, c) => Math.max(p, c), 0)
   const schemaUrl = await selectSchemaUrl(schemas, maxIdLength, maxUrlLength)
+  if (schemaUrl === 'more') {
+    return chooseSchemaUrl(page + 1)
+  }
   return schemaUrl
 }
 
