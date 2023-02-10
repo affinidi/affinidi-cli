@@ -1,4 +1,6 @@
 import * as inquirer from 'inquirer'
+import chalk from 'chalk'
+
 import { SchemaDto } from '../services/schema-manager/schema-manager.api'
 import { ProjectDto } from '../services/iam/iam.api'
 
@@ -33,12 +35,16 @@ export const selectSchemaId = async (
         type: 'list',
         name: 'schemaId',
         message: 'select a schema',
-        choices: schemaData.map((data) => ({
-          name: `${data.id.padEnd(maxIdLength)} ${(data.description ? data.description : '').padEnd(
-            maxDescLength,
-          )} ${data.version} ${data.type}`,
-          value: `${data.id}`,
-        })),
+        choices: [
+          ...schemaData.map((data) => ({
+            name: `${data.id.padEnd(maxIdLength)} ${(data.description
+              ? data.description
+              : ''
+            ).padEnd(maxDescLength)} ${data.version} ${data.type}`,
+            value: `${data.id}`,
+          })),
+          { name: chalk.greenBright('More schemas'), value: 'more' },
+        ],
       },
     ])
     .then((answer) => {
@@ -56,12 +62,15 @@ export const selectSchemaUrl = async (
         type: 'list',
         name: 'schemaUrl',
         message: 'select a schema',
-        choices: schemaData.map((data) => ({
-          name: `${data.jsonSchemaUrl.padEnd(maxUrlLength)} ${data.id.padEnd(maxIdLength)} ${
-            data.version
-          } ${data.type}`,
-          value: `${data.jsonSchemaUrl}`,
-        })),
+        choices: [
+          ...schemaData.map((data) => ({
+            name: `${data.jsonSchemaUrl.padEnd(maxUrlLength)} ${data.id.padEnd(maxIdLength)} ${
+              data.version
+            } ${data.type}`,
+            value: `${data.jsonSchemaUrl}`,
+          })),
+          { name: chalk.greenBright('More Schemas'), value: 'more' },
+        ],
       },
     ])
     .then((answer) => {

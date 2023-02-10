@@ -66,11 +66,15 @@ class ConfigService {
   }
 
   public userConfigMustBeVaild = (userId: string): boolean => {
-    const userConfig = this.store.getAllUserConfigs()[userId]
-    if (!userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
+    try {
+      const userConfig = this.store.getAllUserConfigs()[userId]
+      if (!userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
+        return false
+      }
+      return true
+    } catch (_) {
       return false
     }
-    return true
   }
 
   private readonly userConfigMustExist = (): void => {
@@ -155,7 +159,7 @@ class ConfigService {
     userId: string,
     analyticsOptIn: boolean | undefined = undefined,
   ): void => {
-    if (!this.configFileExists()) {
+    if (!this.configFileExists() || !this.userConfigMustBeVaild(userId)) {
       this.create(userId, '', analyticsOptIn)
       return
     }
