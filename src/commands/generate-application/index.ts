@@ -17,9 +17,9 @@ export enum Platforms {
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
   // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
-  healthReferenceApp = 'health-reference-app',
-  educationReferenceApp = 'education-reference-app',
-  ticketingReferenceApp = 'ticketing-reference-app',
+  healthReferenceApp = 'health',
+  educationReferenceApp = 'education',
+  ticketingReferenceApp = 'ticketing',
   // kycKyb = 'kyc-kyb',
 }
 
@@ -51,7 +51,7 @@ export default class GenerateApplication extends Command {
     'use-case': Flags.string({
       char: 'u',
       description: 'Use case',
-      default: 'ticketing-reference-app',
+      default: 'ticketing',
       options: Object.values(UseCasesAppNames),
     }),
     output,

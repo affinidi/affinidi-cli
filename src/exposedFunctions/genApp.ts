@@ -28,9 +28,9 @@ export enum Platforms {
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
   accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
-  healthReferenceApp = 'health-reference-app',
-  educationReferenceApp = 'education-reference-app',
-  ticketingReferenceApp = 'ticketing-reference-app',
+  healthReferenceApp = 'health',
+  educationReferenceApp = 'education',
+  ticketingReferenceApp = 'ticketing',
   kycKyb = 'kyc-kyb',
 }
 
@@ -39,9 +39,9 @@ type UseCaseType = `${UseCasesAppNames}`
 const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
-  'health-reference-app': 'https://github.com/affinidi/reference-app-health.git',
-  'education-reference-app': 'https://github.com/affinidi/reference-app-education.git',
-  'ticketing-reference-app': 'https://github.com/affinidi/reference-app-ticketing.git',
+  'health': 'https://github.com/affinidi/reference-app-health.git',
+  'education': 'https://github.com/affinidi/reference-app-education.git',
+  'ticketing': 'https://github.com/affinidi/reference-app-ticketing.git',
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 
