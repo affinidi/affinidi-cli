@@ -380,7 +380,7 @@ export default class Start extends Command {
       UseCasesAppNames.ticketingReferenceApp,
       UseCasesAppNames.healthReferenceApp,
     ])
-    const flags = ['-n', appName, '-o', 'plaintext', '-u', `${useCase}`, `-w`]
+    const flags = ['-n', appName, '-o', 'plaintext', '-u', `${useCase}`]
     await GenerateApplication.run(flags)
   }
 
