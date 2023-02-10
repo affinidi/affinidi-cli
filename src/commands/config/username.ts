@@ -1,9 +1,8 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { ux, Command, Flags, Args } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 import { StatusCodes } from 'http-status-codes'
 
 import { enterEmailPrompt } from '../../user-actions'
-import { ViewFormat } from '../../constants'
 import { CliError, getErrorOutput, Unauthorized, WrongEmailError } from '../../errors'
 import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
@@ -11,6 +10,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
+import { output } from '../../customFlags/outputFlag'
 
 const MAX_EMAIL_ATTEMPT = 3
 
@@ -30,14 +30,12 @@ export default class Username extends Command {
       description: 'remove username from config',
       default: false,
     }),
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['json', 'plaintext'],
-    }),
+    output,
   }
 
-  static args = [{ name: 'email' }]
+  static args = {
+    email: Args.string(),
+  }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Username)
@@ -73,7 +71,7 @@ export default class Username extends Command {
       email = await enterEmailPrompt()
       wrongEmailCount += 1
       if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-        CliUx.ux.error(WrongEmailError)
+        ux.error(WrongEmailError)
       }
     }
     configService.setUsername(email)
@@ -82,7 +80,7 @@ export default class Username extends Command {
   }
 
   async catch(error: CliError) {
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

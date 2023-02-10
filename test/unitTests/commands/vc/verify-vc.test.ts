@@ -1,4 +1,4 @@
-import { CliUx } from '@oclif/core'
+import { ux } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
@@ -34,8 +34,8 @@ describe('verify-vc command', () => {
       api.post('/verifier/verify-vcs').reply(StatusCodes.OK, verifyVcResponse),
     )
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-    .stub(CliUx.ux.action, 'start', () => () => doNothing)
-    .stub(CliUx.ux.action, 'stop', () => doNothing)
+    .stub(ux.action, 'start', () => () => doNothing)
+    .stub(ux.action, 'stop', () => doNothing)
     .stub(authentication, 'isAuthenticated', () => true)
     .stdout()
     .command(['verify-vc', `-d ${vcFile}`])
@@ -49,8 +49,8 @@ describe('verify-vc command', () => {
         api.post('/verifier/verify-vcs').reply(StatusCodes.BAD_REQUEST),
       )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(ux.action, 'start', () => () => doNothing)
+      .stub(ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
@@ -64,8 +64,8 @@ describe('verify-vc command', () => {
         api.post('/verifier/verify-vcs').reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(ux.action, 'start', () => () => doNothing)
+      .stub(ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
@@ -80,8 +80,8 @@ describe('verify-vc command', () => {
         api.post('/verifier/verify-vcs').reply(StatusCodes.UNAUTHORIZED),
       )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(ux.action, 'start', () => () => doNothing)
+      .stub(ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d ${vcFile}`])
@@ -95,8 +95,8 @@ describe('verify-vc command', () => {
       .stub(fs.promises, 'readFile', () => {
         throw Error(WrongFileType)
       })
-      .stub(CliUx.ux.action, 'start', () => () => doNothing)
-      .stub(CliUx.ux.action, 'stop', () => doNothing)
+      .stub(ux.action, 'start', () => () => doNothing)
+      .stub(ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['verify-vc', `-d file/systme`])

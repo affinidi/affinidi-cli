@@ -1,8 +1,8 @@
-import { Command, Flags, CliUx } from '@oclif/core'
+import { Command, ux } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { displayOutput, DisplayOptions } from '../../middleware/display'
-import { ViewFormat } from '../../constants'
+
 import { userManagementService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { configService } from '../../services/config'
@@ -10,6 +10,7 @@ import { CliError, Unauthorized, getErrorOutput } from '../../errors'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
+import { output } from '../../customFlags/outputFlag'
 
 export default class ShowUser extends Command {
   static command = 'affinidi show user'
@@ -21,11 +22,7 @@ export default class ShowUser extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
   public async run(): Promise<void> {
@@ -50,7 +47,7 @@ export default class ShowUser extends Command {
   }
 
   protected async catch(error: CliError): Promise<void> {
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

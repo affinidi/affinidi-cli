@@ -1,4 +1,4 @@
-import { Command, Flags, CliUx } from '@oclif/core'
+import { Command, Flags, ux, Args } from '@oclif/core'
 import fs from 'fs/promises'
 import FormData from 'form-data'
 import path from 'path'
@@ -29,8 +29,8 @@ import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services/config'
-import { ViewFormat } from '../constants'
 import { checkErrorFromWizard } from '../wizard/helpers'
+import { output } from '../customFlags/outputFlag'
 
 const MAX_EMAIL_ATTEMPT = 4
 
@@ -69,14 +69,10 @@ export default class IssueVc extends Command {
       description: 'configure your own wallet to store VCs',
       default: 'https://wallet.affinidi.com/claim',
     }),
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      options: ['plaintext', 'json'],
-      description: 'set flag to override default output format view',
-    }),
+    output,
   }
 
-  static args = [{ name: 'email', description: 'the email to whom the VC will be issued' }]
+  static args = { email: Args.string({ description: 'the email to whom the VC will be issued' }) }
 
   public async run(): Promise<void> {
     const { flags, args } = await this.parse(IssueVc)
@@ -113,7 +109,7 @@ export default class IssueVc extends Command {
         contentType: 'text/csv',
         filename: path.basename(flags.data),
       })
-      CliUx.ux.action.start('Issuing VC')
+      ux.action.start('Issuing VC')
       issuanceId = await issuanceService.createFromCsv(apiKeyHash, formData)
     } else if (!flags.bulk && fileExtension === 'json') {
       const file = await fs.readFile(flags.data, 'utf-8')
@@ -135,14 +131,14 @@ export default class IssueVc extends Command {
         },
         credentialSubject: JSON.parse(file),
       }
-      CliUx.ux.action.start('Issuing VC')
+      ux.action.start('Issuing VC')
       issuanceId = await issuanceService.createIssuance(apiKeyHash, issuanceJson)
       await issuanceService.createOffer(apiKeyHash, issuanceId.id, offerInput)
     } else {
       const expectedExtension = flags.bulk ? '.csv' : '.json'
       throw new CliError(`${WrongFileType}${expectedExtension} file`, 0, 'issuance')
     }
-    CliUx.ux.action.stop('')
+    ux.action.stop('')
     displayOutput({ itemToDisplay: JSON.stringify(issuanceId), flag: flags.output })
 
     const analyticsData: EventDTO = {
@@ -164,7 +160,7 @@ export default class IssueVc extends Command {
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError
     }
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

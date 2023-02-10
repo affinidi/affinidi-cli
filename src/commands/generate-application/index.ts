@@ -1,13 +1,13 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { ux, Command, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { ViewFormat } from '../../constants'
 import { configService } from '../../services/config'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 import { generateApplication } from '../../exposedFunctions/genApp'
 import { vaultService } from '../../services/vault/typedVaultService'
+import { output } from '../../customFlags/outputFlag'
 
 export enum Platforms {
   web = 'web',
@@ -23,8 +23,7 @@ export enum UseCasesAppNames {
   // kycKyb = 'kyc-kyb',
 }
 
-type PlatformType = `${Platforms}`
-type UseCaseType = `${UseCasesAppNames}`
+export type UseCaseType = `${UseCasesAppNames}`
 
 export const defaultAppName = 'my-app'
 export default class GenerateApplication extends Command {
@@ -37,7 +36,7 @@ export default class GenerateApplication extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    platform: Flags.enum<PlatformType>({
+    platform: Flags.string({
       char: 'p',
       description: 'Platform',
       default: 'web',
@@ -49,17 +48,13 @@ export default class GenerateApplication extends Command {
       description: 'Name of the application',
       default: defaultAppName,
     }),
-    'use-case': Flags.enum<UseCaseType>({
+    'use-case': Flags.string({
       char: 'u',
       description: 'Use case',
       default: 'ticketing-reference-app',
       options: Object.values(UseCasesAppNames),
     }),
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
   public async run(): Promise<void> {
@@ -91,7 +86,7 @@ export default class GenerateApplication extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(
