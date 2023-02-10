@@ -98,8 +98,7 @@ describe('generate-application command', () => {
           buildGeneratedAppNextStepsMessageBlocks(
             defaultAppName,
             `${process.cwd()}/${defaultAppName}`,
-            false,
-            UseCasesAppNames.certificationAndVerification,
+            UseCasesAppNames.ticketingReferenceApp,
           )
             .map((b) => b.text)
             .forEach((msg) => {
@@ -107,33 +106,5 @@ describe('generate-application command', () => {
             })
         })
     })
-  })
-
-  describe('Given -w (backend proxy)', () => {
-    after(() => {
-      vaultService.clear()
-    })
-    test
-      .stdout()
-      .stub(authentication, 'isAuthenticated', () => {
-        return true
-      })
-      .stub(GitService, 'clone', doNothing)
-      .stub(Writer, 'write', doNothing)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
-      .command(['generate-application', '-w'])
-      .it('it runs generate-application and shows the next steps long description', (ctx) => {
-        buildGeneratedAppNextStepsMessageBlocks(
-          defaultAppName,
-          `${process.cwd()}/${defaultAppName}`,
-          true,
-          UseCasesAppNames.certificationAndVerification,
-        )
-          .map((b) => b.text)
-          .forEach((msg) => {
-            expect(ctx.stdout).to.contain(msg)
-          })
-      })
   })
 })

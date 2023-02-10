@@ -82,13 +82,6 @@ export const schemaUrl = async (text: string = 'schema URL'): Promise<string> =>
   return prompt
 }
 
-export const withProxy = async (
-  text: string = 'create backend to hide credentials [y/n]',
-): Promise<boolean> => {
-  const prompt = await ux.prompt(text, { default: 'n' })
-  return prompt.toLowerCase() === 'y'
-}
-
 export const pathToCSV = async (text: string = 'Path to CSV file'): Promise<string> => {
   const prompt = await ux.prompt(text, { required: true })
   return prompt
