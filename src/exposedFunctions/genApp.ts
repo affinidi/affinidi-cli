@@ -39,9 +39,9 @@ type UseCaseType = `${UseCasesAppNames}`
 const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
   'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
-  'health': 'https://github.com/affinidi/reference-app-health.git',
-  'education': 'https://github.com/affinidi/reference-app-education.git',
-  'ticketing': 'https://github.com/affinidi/reference-app-ticketing.git',
+  health: 'https://github.com/affinidi/reference-app-health.git',
+  education: 'https://github.com/affinidi/reference-app-education.git',
+  ticketing: 'https://github.com/affinidi/reference-app-ticketing.git',
   'kyc-kyb': 'NOT IMPLEMENTED YET',
 }
 
