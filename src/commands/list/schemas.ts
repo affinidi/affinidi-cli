@@ -1,11 +1,11 @@
-import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
+import { ux, Command, Flags } from '@oclif/core'
 import { stringify as csvStringify } from 'csv-stringify'
 import { StatusCodes } from 'http-status-codes'
 
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { vaultService } from '../../services/vault/typedVaultService'
-import { schemaManagerService, ScopeType } from '../../services/schema-manager'
+import { schemaManagerService } from '../../services/schema-manager'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
@@ -14,11 +14,9 @@ import { configService } from '../../services/config'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 
-type OutputType = 'csv' | 'table' | 'json'
-
 const printData = (
   data: Record<string, unknown>[],
-  { extended, output }: { extended: boolean; output: OutputType },
+  { extended, output }: { extended: boolean; output: string },
 ): void => {
   let outputFormat = configService.getOutputFormat()
   outputFormat = outputFormat === undefined ? 'plaintext' : outputFormat
@@ -30,13 +28,13 @@ const printData = (
   }
   switch (confOutput) {
     case 'json':
-      CliUx.ux.info(JSON.stringify(data, null, ' '))
+      ux.info(JSON.stringify(data, null, ' '))
       break
     case 'csv':
       csvStringify(data, { header: true }).pipe(process.stdout)
       break
     case 'table':
-      CliUx.ux.table(
+      ux.table(
         data,
         {
           index: { header: '' },
@@ -67,7 +65,7 @@ export default class Schemas extends Command {
 
   static description = `Fetches and displays the schemas from the schema-manager.`
 
-  static examples: Interfaces.Example[] = [
+  static examples: Command.Example[] = [
     {
       description: 'Display in an extended table the schemas from the 5th to the 15th',
       command: '<%= config.bin %> <%= command.id %> --output table --extended --skip 5 --limit 10',
@@ -75,18 +73,18 @@ export default class Schemas extends Command {
   ]
 
   static flags = {
-    ...CliUx.ux.table.flags(),
+    ...ux.table.flags(),
     limit: Flags.integer({
       char: 'l',
       description: 'The number of schemas to display',
       default: 10,
     }),
-    output: Flags.enum<OutputType>({
+    output: Flags.string({
       char: 'o',
       options: ['csv', 'json', 'table'],
       description: 'The type of output',
     }),
-    scope: Flags.enum<ScopeType>({
+    scope: Flags.string({
       char: 'c',
       options: ['default', 'public', 'unlisted'],
       description: 'The type of scope',
@@ -95,8 +93,6 @@ export default class Schemas extends Command {
     // search: Flags.string({ char: 'q', description: 'The name of the schema to search for' }),
     skip: Flags.integer({ char: 's', description: 'The number of schemas to skip', default: 0 }),
   }
-
-  static args = [{ name: 'file' }]
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Schemas)
@@ -158,7 +154,7 @@ export default class Schemas extends Command {
 
   protected async catch(error: CliError): Promise<void> {
     if (checkErrorFromWizard(error)) throw error
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

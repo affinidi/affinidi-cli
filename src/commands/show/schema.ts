@@ -1,6 +1,6 @@
-import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
+import { ux, Command, Flags, Args } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
-import { anonymous, ViewFormat } from '../../constants'
+import { anonymous } from '../../constants'
 
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { vaultService } from '../../services/vault/typedVaultService'
@@ -12,6 +12,7 @@ import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
 import { checkErrorFromWizard } from '../../wizard/helpers'
+import { output } from '../../customFlags/outputFlag'
 
 export type ShowFieldType = 'info' | 'json' | 'jsonld'
 
@@ -22,7 +23,7 @@ export default class Schema extends Command {
 
   static description = `Fetches the information of a specific schema.`
 
-  static examples: Interfaces.Example[] = [
+  static examples: Command.Example[] = [
     {
       description: 'Shows the url to complete details of the given schema',
       command: '<%= config.bin %> <%= command.id %> [SCHEMA-ID]',
@@ -38,26 +39,21 @@ export default class Schema extends Command {
   ]
 
   static flags = {
-    show: Flags.enum<ShowFieldType>({
+    show: Flags.string({
       char: 's',
       options: ['info', 'json', 'jsonld'],
       description: 'The details of the schema to show',
       default: 'info',
     }),
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
-  static args: Interfaces.Arg[] = [
-    {
-      name: 'schema-id',
+  static args = {
+    'schema-id': Args.string({
       required: true,
       description: 'id or name of the schema to display',
-    },
-  ]
+    }),
+  }
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
@@ -67,7 +63,7 @@ export default class Schema extends Command {
     }
     const { account } = getSession()
 
-    CliUx.ux.action.start('Fetching schema')
+    ux.action.start('Fetching schema')
     let apiKey: string
     if (args['schema-id'].includes('@did:elem')) {
       const activeProject = vaultService.getActiveProject()
@@ -86,25 +82,25 @@ export default class Schema extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    let output = ''
+    let outputShow = ''
     switch (flags.show) {
       case 'json':
-        output = schema.jsonSchemaUrl
+        outputShow = schema.jsonSchemaUrl
         break
       case 'jsonld':
-        output = schema.jsonLdContextUrl
+        outputShow = schema.jsonLdContextUrl
         break
       default:
-        output = JSON.stringify(schema, null, '  ')
+        outputShow = JSON.stringify(schema, null, '  ')
     }
 
-    CliUx.ux.action.stop('')
-    displayOutput({ itemToDisplay: output, flag: flags.output })
+    ux.action.stop('')
+    displayOutput({ itemToDisplay: outputShow, flag: flags.output })
   }
 
   protected async catch(error: CliError): Promise<void> {
     if (checkErrorFromWizard(error)) throw error
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

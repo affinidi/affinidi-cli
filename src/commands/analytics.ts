@@ -1,11 +1,12 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { Command, Args, ux } from '@oclif/core'
 
 import { analyticsConsentPrompt } from '../user-actions'
 import { analyticsService, configService } from '../services'
-import { ViewFormat } from '../constants'
+
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { CliError, getErrorOutput } from '../errors'
 import { getSession } from '../services/user-management'
+import { output } from '../customFlags/outputFlag'
 
 export const OPTIN_MESSAGE = 'You have opted in to analytics'
 export const OPTOUT_MESSAGE = 'You have not opted in to analytics'
@@ -19,21 +20,16 @@ export default class Analytics extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = [
-    {
-      name: 'newValue',
+  static args = {
+    newValue: Args.string({
       required: false,
       description: 'Whether to send analytics to Affinidi',
       options: ['true', 'false'],
-    },
-  ]
+    }),
+  }
 
   static flags = {
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
   public async run(): Promise<void> {
@@ -68,7 +64,7 @@ export default class Analytics extends Command {
   }
 
   async catch(error: CliError) {
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

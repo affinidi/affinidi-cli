@@ -12,6 +12,22 @@ export const SCHEMA_MANAGER_URL =
 export type ScopeType = 'public' | 'unlisted' | 'default'
 const SERVICE = 'schema'
 
+const getTypedScope = (scope: string): ScopeType => {
+  let typedScope: ScopeType
+  switch (scope) {
+    case 'public':
+      typedScope = 'public'
+      break
+    case 'unlisted':
+      typedScope = 'unlisted'
+      break
+    default:
+      typedScope = 'default'
+      break
+  }
+  return typedScope
+}
+
 class SchemaManagerService {
   constructor(
     private readonly client = new SchemaManagerApi({
@@ -33,14 +49,14 @@ class SchemaManagerService {
     apiKey?: string
     authorDid?: string
     did?: string
-    scope: ScopeType
+    scope: string
     search?: string
     skip: number
     limit: number
   }): Promise<SchemaDto[]> => {
     try {
       const response = await this.client.schemas.searchSchemas(
-        { did, scope, skip, limit },
+        { did, scope: getTypedScope(scope), skip, limit },
         {
           headers: {
             'API-KEY': apiKey,

@@ -1,4 +1,4 @@
-import { Command, CliUx, Flags } from '@oclif/core'
+import { Command, ux, Args } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import chalk from 'chalk'
 
@@ -13,8 +13,8 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
-import { ViewFormat } from '../../constants'
 import { checkErrorFromWizard } from '../../wizard/helpers'
+import { output } from '../../customFlags/outputFlag'
 
 export default class Project extends Command {
   static command = 'affinidi create project'
@@ -25,14 +25,12 @@ export default class Project extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = [{ name: 'projectName' }]
+  static args = {
+    projectName: Args.string({}),
+  }
 
   static flags = {
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
   public async run(): Promise<void> {
@@ -50,10 +48,10 @@ export default class Project extends Command {
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
-    CliUx.ux.action.start('Creating project')
+    ux.action.start('Creating project')
     const projectData = await iAmService.createProject(token, projectNameInput)
     const projectDetails = await iAmService.getProjectSummary(token, projectData.projectId)
-    CliUx.ux.action.stop('Project has been successfully created: ')
+    ux.action.stop('Project has been successfully created: ')
     vaultService.setActiveProject(projectDetails)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_CREATED',
@@ -78,7 +76,7 @@ export default class Project extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

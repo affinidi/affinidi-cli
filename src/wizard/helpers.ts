@@ -14,7 +14,7 @@ export const getSchemaList = async (): Promise<SchemaDto[]> => {
     apiKey,
     authorDid: did,
     did,
-    limit: 10,
+    limit: Number.MAX_SAFE_INTEGER,
     scope,
     skip: 0,
   }

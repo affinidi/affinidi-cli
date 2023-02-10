@@ -1,4 +1,4 @@
-import { Command, CliUx, Flags } from '@oclif/core'
+import { Command, ux } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
@@ -11,8 +11,8 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { configService } from '../../services/config'
-import { ViewFormat } from '../../constants'
 import { checkErrorFromWizard } from '../../wizard/helpers'
+import { output } from '../../customFlags/outputFlag'
 
 export default class Logout extends Command {
   static command = 'affinidi logout'
@@ -22,11 +22,7 @@ export default class Logout extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    output: Flags.enum<ViewFormat>({
-      char: 'o',
-      description: 'set flag to override default output format view',
-      options: ['plaintext', 'json'],
-    }),
+    output,
   }
 
   public async run(): Promise<void> {
@@ -36,7 +32,7 @@ export default class Logout extends Command {
     }
     const answer = await confirmSignOut()
     if (answer !== 'y') {
-      await CliUx.ux.done()
+      await ux.done()
       return
     }
     const { account, consoleAuthToken } = getSession()

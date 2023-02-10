@@ -1,8 +1,7 @@
-import { CliUx } from '@oclif/core'
+import { ux } from '@oclif/core'
 import path from 'path'
 
 import { analyticsService, generateUserMetadata } from '../services/analytics'
-import { ViewFormat } from '../constants'
 import { CliError, InvalidUseCase, NotSupportedPlatform, Unauthorized } from '../errors'
 import { displayOutput } from '../middleware/display'
 import { getSession } from '../services/user-management'
@@ -12,11 +11,11 @@ import { buildGeneratedAppNextStepsMessage } from '../render/texts'
 import { fakeJWT } from '../render/functions'
 
 export interface FlagsInput {
-  platform?: PlatformType
+  platform?: string
   name?: string
-  use_case?: UseCaseType
+  use_case?: string
   withProxy?: boolean
-  output?: ViewFormat
+  output?: string
   apiKey: string
   projectDid: string
   projectId: string
@@ -35,7 +34,6 @@ export enum UseCasesAppNames {
 }
 
 type UseCaseType = `${UseCasesAppNames}`
-type PlatformType = `${Platforms}`
 
 const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
@@ -155,8 +153,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       ...generateUserMetadata(label),
     },
   }
-
-  CliUx.ux.action.start('Generating an application')
+  ux.action.start('Generating an application')
 
   try {
     switch (useCase) {
@@ -198,7 +195,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       ? 'APP_PORT_REP_GENERATION_COMPLETED'
       : 'APPLICATION_GENERATION_COMPLETED'
   await analyticsService.eventsControllerSend(analyticsData)
-  CliUx.ux.action.stop('\nApplication generated')
+  ux.action.stop('\nApplication generated')
 
   const appPath = path.resolve(`${process.cwd()}/${name}`)
   displayOutput({

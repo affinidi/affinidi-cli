@@ -1,4 +1,4 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { ux, Command, Flags } from '@oclif/core'
 
 import { wizardStatusMessage, wizardStatus, defaultWizardMessages } from '../render/functions'
 import { isTokenValid } from '../middleware/authentication'
@@ -118,7 +118,7 @@ export default class Start extends Command {
   }
 
   async catch(error: CliError) {
-    CliUx.ux.action.stop('failed')
+    ux.action.stop('failed')
     displayOutput({
       itemToDisplay: getErrorOutput(error, Start.command, Start.usage, Start.description, false),
       err: true,
@@ -133,7 +133,7 @@ export default class Start extends Command {
   }
 
   private async getAuthMenu() {
-    CliUx.ux.info(
+    ux.info(
       wizardStatusMessage(
         wizardStatus({ messages: defaultWizardMessages, breadcrumbs: this.breadcrumbs }),
       ),
@@ -154,7 +154,7 @@ export default class Start extends Command {
   }
 
   private async getMainMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.MAIN_MENU))
     switch (nextStep) {
       case manageProjects:
@@ -188,7 +188,7 @@ export default class Start extends Command {
 
   // Project Management
   private async getProjectMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.PROJECT_MENU))
     switch (nextStep) {
       case changeActiveProject:
@@ -222,7 +222,7 @@ export default class Start extends Command {
   }
 
   private async getGoBackProjectMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
 
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_PROJECT_MENU))
     switch (nextStep) {
@@ -241,7 +241,7 @@ export default class Start extends Command {
     const {
       account: { label: userEmail },
     } = getSession()
-    CliUx.ux.info(
+    ux.info(
       wizardStatusMessage(
         wizardStatus({
           messages: defaultWizardMessages,
@@ -255,12 +255,12 @@ export default class Start extends Command {
   }
 
   private async useProject() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     await UseProject.run(['-o', 'plaintext'])
   }
 
   private async showProject(active: boolean) {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     if (active) {
       await ShowProject.run(['-a', '-o', 'plaintext'])
       return
@@ -270,7 +270,7 @@ export default class Start extends Command {
 
   // Schema Management
   private async getSchemaMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SCHEMA_MENU))
     switch (nextStep) {
       case showSchemas:
@@ -298,14 +298,14 @@ export default class Start extends Command {
   }
 
   private async listSchemas() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     this.breadcrumbs.push(showSchemas)
     const chosenSchemaId = await chooseSchemaId()
     await ShowSchema.run([`${chosenSchemaId}`])
   }
 
   private async createSchema() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     this.breadcrumbs.push(createSchema)
     await CreateSchema.run([
       '-s',
@@ -318,7 +318,7 @@ export default class Start extends Command {
   }
 
   private async showDetailedSchemaMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
 
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SHOW_DETAILED_SCHEMA_MENU))
     switch (nextStep) {
@@ -338,7 +338,7 @@ export default class Start extends Command {
   }
 
   private async getGoBackSchemaMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
 
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_SCHEMA_MENU))
     switch (nextStep) {
@@ -373,7 +373,7 @@ export default class Start extends Command {
   }
 
   private async generateApplication() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const appName = await applicationName()
     const useCase = await chooseUseCase([
       UseCasesAppNames.portableReputation,
@@ -390,7 +390,7 @@ export default class Start extends Command {
 
   // VC issuance
   private async issuanceSchemaMenu() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.ISSUANCE_SCHEMA_MENU))
     switch (nextStep) {
       case chooseSchmeaFromList:
@@ -406,7 +406,7 @@ export default class Start extends Command {
   }
 
   private async getGoBackIssueVc() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_ISSUANCE))
     switch (nextStep) {
       case issueNewVc:
@@ -422,7 +422,7 @@ export default class Start extends Command {
   }
 
   private async issuanceTypeMenu(schemaInputUrl: string) {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.ISSUANCE_TYPE_MENU))
     switch (nextStep) {
       case bulkIssuance:
@@ -462,7 +462,7 @@ export default class Start extends Command {
   }
 
   private async getGoBackVerifyVc() {
-    CliUx.ux.info(this.getStatus())
+    ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_TO_VERIFICATION))
     switch (nextStep) {
       case verifyNewVc:

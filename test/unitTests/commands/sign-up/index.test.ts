@@ -1,4 +1,4 @@
-import { CliUx } from '@oclif/core'
+import { ux } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
@@ -50,8 +50,8 @@ describe('sign-up command', () => {
         .stdout()
         .stub(prompts, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerNo)
-        .stub(CliUx.ux.action, 'start', () => () => doNothing)
-        .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .stub(ux.action, 'start', () => () => doNothing)
+        .stub(ux.action, 'stop', () => doNothing)
         .command(['sign-up'])
         .it('runs sign-up and stops', (ctx) => {
           expect(ctx.stdout).to.be.string('')
@@ -89,8 +89,8 @@ describe('sign-up command', () => {
         .stub(prompts, 'acceptConditionsAndPolicy', () => async () => prompts.AnswerYes)
         .stub(prompts, 'enterOTPPrompt', () => async () => testOTP)
         .stub(prompts, 'analyticsConsentPrompt', () => async () => true)
-        .stub(CliUx.ux.action, 'start', () => () => doNothing)
-        .stub(CliUx.ux.action, 'stop', () => doNothing)
+        .stub(ux.action, 'start', () => () => doNothing)
+        .stub(ux.action, 'stop', () => doNothing)
         .command(['sign-up'])
         .it('runs sign-up, shows a welcome message, creates and activates a project', (ctx) => {
           const output = ctx.stdout
