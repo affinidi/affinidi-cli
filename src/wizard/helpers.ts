@@ -28,10 +28,12 @@ export const chooseSchemaId = async (page: number): Promise<string> => {
   const maxDescLength = schemas
     .map((p) => (p.description ? p.description.length : 0))
     .reduce((p, c) => Math.max(p, c), 0)
-  const schemaId = await selectSchemaId(schemas, maxIdLength, maxDescLength)
-  if (schemaId === 'more') {
-    return chooseSchemaId(page + 1)
-  }
+
+  const schemaId = await selectSchemaId(schemas, maxIdLength, maxDescLength, page)
+
+  if (schemaId === 'more') return chooseSchemaId(page + 1)
+  if (schemaId === 'previous') return chooseSchemaId(page - 1)
+
   return schemaId
 }
 
@@ -41,10 +43,12 @@ export const chooseSchemaUrl = async (page: number): Promise<string> => {
   const maxUrlLength = schemas
     .map((p) => p.jsonSchemaUrl.length)
     .reduce((p, c) => Math.max(p, c), 0)
-  const schemaUrl = await selectSchemaUrl(schemas, maxIdLength, maxUrlLength)
-  if (schemaUrl === 'more') {
-    return chooseSchemaUrl(page + 1)
-  }
+
+  const schemaUrl = await selectSchemaUrl(schemas, maxIdLength, maxUrlLength, page)
+
+  if (schemaUrl === 'more') return chooseSchemaUrl(page + 1)
+  if (schemaUrl === 'previous') return chooseSchemaUrl(page - 1)
+
   return schemaUrl
 }
 
