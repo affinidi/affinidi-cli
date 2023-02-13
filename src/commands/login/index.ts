@@ -131,7 +131,10 @@ export default class Login extends Command {
       await UseProject.run([projectId])
       return
     }
-    if (flags.output) await UseProject.run([`--output=${flags.output}`])
+    if (flags.output) {
+      await UseProject.run([`--output=${flags.output}`])
+      return
+    }
     await UseProject.run([])
   }
 
