@@ -28,6 +28,7 @@ export const selectSchemaId = async (
   schemaData: SchemaDto[],
   maxIdLength: number,
   maxDescLength: number,
+  page: number,
 ): Promise<string> => {
   return inquirer
     .prompt([
@@ -44,6 +45,9 @@ export const selectSchemaId = async (
             value: `${data.id}`,
           })),
           { name: chalk.greenBright('More schemas'), value: 'more' },
+          ...(page > 0
+            ? [{ name: chalk.yellowBright('Previous Schemas'), value: 'previous' }]
+            : []),
         ],
       },
     ])
@@ -55,6 +59,7 @@ export const selectSchemaUrl = async (
   schemaData: SchemaDto[],
   maxIdLength: number,
   maxUrlLength: number,
+  page: number,
 ): Promise<string> => {
   return inquirer
     .prompt([
@@ -70,6 +75,9 @@ export const selectSchemaUrl = async (
             value: `${data.jsonSchemaUrl}`,
           })),
           { name: chalk.greenBright('More Schemas'), value: 'more' },
+          ...(page > 0
+            ? [{ name: chalk.yellowBright('Previous Schemas'), value: 'previous' }]
+            : []),
         ],
       },
     ])
