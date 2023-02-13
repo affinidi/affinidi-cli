@@ -66,7 +66,9 @@ class ConfigService {
   }
 
   public userConfigMustBeVaild = (userId: string): boolean => {
-    const userConfig = this.store.getAllUserConfigs()[userId]
+    const configs = this.store.getAllUserConfigs()
+    if (!configs) return false
+    const userConfig = configs[userId]
     if (!userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
       return false
     }
@@ -77,7 +79,7 @@ class ConfigService {
     this.configFileMustExist()
     const userId = this.getCurrentUser() || vaultService.getSession()?.account.userId
     const configs = this.store.getAllUserConfigs()
-    if (!(userId in configs)) {
+    if (!configs || !(userId in configs)) {
       throw new Error(NoUserConfigFound)
     }
   }
@@ -155,12 +157,13 @@ class ConfigService {
     userId: string,
     analyticsOptIn: boolean | undefined = undefined,
   ): void => {
-    if (!this.configFileExists()) {
+    let configs = this.store.getAllUserConfigs()
+    if (!this.configFileExists() || !configs) {
       this.create(userId, '', analyticsOptIn)
       return
     }
 
-    const configs = this.updateConfigs(userId, analyticsOptIn)
+    configs = this.updateConfigs(userId, analyticsOptIn)
     this.store.save({
       currentUserId: userId,
       version: getMajorVersion(),
