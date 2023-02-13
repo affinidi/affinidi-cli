@@ -6,7 +6,7 @@ import { keys } from './constants'
 
 describe('test select schema id inquirer', () => {
   test.stdin(`${keys.down}\n`, 1000).it('select a schema from list', async () => {
-    const project = await selectSchemaUrl(mockSchemaDto.schemas, 10, 10)
+    const project = await selectSchemaUrl(mockSchemaDto.schemas, 10, 10, 0)
     expect(project).to.equal(mockSchemaDtoTwo.jsonSchemaUrl)
   })
 })
