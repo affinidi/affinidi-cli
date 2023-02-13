@@ -439,7 +439,7 @@ export default class Start extends Command {
     let walletCustomUrl: string
     const pathToFile = bulk ? await pathToCSV() : await pathToVc()
     const confirmWallet = await confirmConfigCustomWallet()
-    const flags = ['-s', `${schemaInputUrl}`, '-d', `${pathToFile}`, `w`]
+    const flags = ['-s', `${schemaInputUrl}`, '-d', `${pathToFile}`, `-w`]
     if (confirmWallet) {
       walletCustomUrl = await walletUrl()
       flags.push(`${walletCustomUrl}`)
