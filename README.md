@@ -60,11 +60,17 @@ With Affinidi CLI you can:
 
 ### Reference App
 
-Generate two ready-to-use applications that use Affinidi APIs.
+Generate four ready-to-use applications that use Affinidi APIs.
 
-The Certification and Verification app includes such features as: issuing a credential, claiming & storing it in your wallet, verifying it.
+**The Portable Reputation app** allows the builder to connect to different data sources to construct a portable, user-owned and -managed reputation app that provides access to specific experiences, events or memberships.
 
-The Portable Reputation app allows the builder to connect to different data sources to construct a portable, user-owned and -managed reputation app that provides access to specific experiences, events or memberships.
+**The Certification and Verification app** includes such features as: issuing a credential, claiming & storing it in your wallet, verifying it. It includes 3 use cases:
+
+  - **Ticketing** - uses event tickets;
+
+  - **Health** - uses medical prescriptions;
+
+  - **Education** - uses students' certificates.
 
 #
 
