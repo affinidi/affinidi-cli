@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { configService } from '../../services/config'
+import { configService } from '../../services'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 import { generateApplication } from '../../exposedFunctions/genApp'
 import { vaultService } from '../../services/vault/typedVaultService'
@@ -13,8 +13,7 @@ export enum Platforms {
   web = 'web',
   mobile = 'mobile',
 }
-// To ensure the quality and completeness of our codebase,
-// it would be helpful to include an integration test for any new cases that we add
+
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
   // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',

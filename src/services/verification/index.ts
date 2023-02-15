@@ -33,5 +33,5 @@ class VerifierService {
   }
 }
 
-const verfierService = new VerifierService()
-export { verfierService }
+const verifierService = new VerifierService()
+export { verifierService }

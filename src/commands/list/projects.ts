@@ -8,7 +8,7 @@ import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
-import { configService } from '../../services/config'
+import { configService } from '../../services'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 

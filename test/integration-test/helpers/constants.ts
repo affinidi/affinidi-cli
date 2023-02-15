@@ -1,7 +1,7 @@
 export const schemaPath = 'test/integration-test/testData/testSchema.json'
 export const unlistedDescription = 'test schema unlisted'
 export const publicDescription = 'test schema public'
-export const schmeaUrl = 'https://schema.stg.affinidi.com/TestSchemaPublicV1-12.json'
+export const schemaUrl = 'https://schema.stg.affinidi.com/TestSchemaPublicV1-12.json'
 export const credSubjectJSONPath = 'test/integration-test/testData/credSubject.json'
 export const credSubjectCSVPath = 'test/integration-test/testData/credSubject.csv'
 export const vcPath = 'test/integration-test/testData/vc.json'

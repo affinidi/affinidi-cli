@@ -10,7 +10,7 @@ import { analyticsService, generateUserMetadata } from '../../services/analytics
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { configService } from '../../services/config'
+import { configService } from '../../services'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 import { output } from '../../customFlags/outputFlag'
 

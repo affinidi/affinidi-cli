@@ -1,7 +1,7 @@
 import Conf from 'conf'
 import * as os from 'os'
 import * as path from 'path'
-import { Unauthorized, CliError, OldCredntials } from '../../errors'
+import { Unauthorized, CliError, OldCredentials } from '../../errors'
 import { ProjectSummary } from '../iam/iam.api'
 
 export const VAULT_KEYS = {
@@ -76,7 +76,7 @@ class VaultService {
   public getSession = (): SessionType => {
     const session = this.store.getSession()
     if (typeof session === 'string') {
-      throw new CliError(OldCredntials, 0, 'vault')
+      throw new CliError(OldCredentials, 0, 'vault')
     }
     if (session && !session.consoleAuthToken.includes('console_authtoken=')) {
       session.consoleAuthToken = `console_authtoken=${session.consoleAuthToken}`

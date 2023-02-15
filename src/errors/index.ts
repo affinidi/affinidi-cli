@@ -13,7 +13,7 @@ export const Unauthorized =
 export const notFoundProject = 'Please provide an existing project ID or activate a project.'
 export const CouldNotParseSchema = 'Could not parse schema URL, please provide a valid schema URl'
 export const EmptyIssueDataFlag = 'Please enter a directory to a json file.'
-export const NoSuchFileOrDir = 'Please provide a vaild directory for the json file'
+export const NoSuchFileOrDir = 'Please provide a valid directory for the json file'
 export const issuanceBadRequest =
   'Please check that your json file content is in the right structure as in the schema.'
 export const WrongFileType = 'Please provide a valid '
@@ -26,7 +26,7 @@ export const NotFound =
   "Please enter the email address you signed-up with or sign-up if you don't have an account."
 export const Conflict = 'This email has already been registered, please use the login command.'
 export const verifierBadRequest = 'Please make sure that the VC is valid.'
-export const schemaBadrequest = 'Please make sure to provide a valid schema credential subject.'
+export const schemaBadRequest = 'Please make sure to provide a valid schema credential subject.'
 export const notFoundSchema = 'Please provide an existing schema ID.'
 export const InvalidSchemaName = 'Please, enter a schema name using only alpha numeric characters'
 export const NotSupportedPlatform = 'This platform is not supported.'
@@ -34,9 +34,9 @@ export const InvalidUseCase = 'Invalid use-case'
 export const NoUserConfigFound =
   'No user configurations were found, to create a configuration please log-in again.'
 export const NoConfigFile = "The config file doesn't exist, please log-in again"
-export const UnsuportedConfig = 'Unsuported configuration version'
-export const UnsuportedCredential = 'Unsuported credential version'
-export const OldCredntials = 'Please login again to update your credentials to the latest version'
+export const UnsupportedConfig = 'Unsupported configuration version'
+export const UnsupportedCredential = 'Unsupported credential version'
+export const OldCredentials = 'Please login again to update your credentials to the latest version'
 
 export class CliError extends Error {
   code: number
@@ -65,7 +65,7 @@ const handleBadRequest = (service: string): string => {
     case 'verification':
       return verifierBadRequest
     case 'schema':
-      return schemaBadrequest
+      return schemaBadRequest
     default:
       return `${service} service bad request`
   }
@@ -111,8 +111,8 @@ export const errorToJSON = (err: string): string => {
   const jsonError = {
     error: errSplit || err,
   }
-  const jsonErroString = JSON.stringify(jsonError, null, ' ')
-  const cleanErr = jsonErroString.replace(ansiCodeRegex, '')
+  const jsonErrorString = JSON.stringify(jsonError, null, ' ')
+  const cleanErr = jsonErrorString.replace(ansiCodeRegex, '')
   return cleanErr
 }
 

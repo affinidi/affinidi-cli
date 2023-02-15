@@ -65,7 +65,7 @@ class ConfigService {
     return { version: configVersion, currentUserId, configs, username }
   }
 
-  public userConfigMustBeVaild = (userId: string): boolean => {
+  public userConfigMustBeValid = (userId: string): boolean => {
     const configs = this.store.getAllUserConfigs()
     if (!configs) return false
     const userConfig = configs[userId]

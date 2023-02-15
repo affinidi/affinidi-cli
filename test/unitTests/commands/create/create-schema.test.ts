@@ -7,7 +7,7 @@ import * as prompts from '../../../../src/user-actions'
 import * as authentication from '../../../../src/middleware/authentication'
 import {
   InvalidSchemaName,
-  schemaBadrequest,
+  schemaBadRequest,
   ServiceDownError,
   Unauthorized,
   WrongSchemaFileType,
@@ -155,7 +155,7 @@ describe('Create Schema', () => {
       .stub(ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])
       .it('runs create schema command when json file contains invalid info', (ctx) => {
-        expect(ctx.stdout).to.contain(schemaBadrequest)
+        expect(ctx.stdout).to.contain(schemaBadRequest)
       })
   })
   describe('Invalid Schema name', () => {

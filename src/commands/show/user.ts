@@ -3,9 +3,8 @@ import { StatusCodes } from 'http-status-codes'
 
 import { displayOutput, DisplayOptions } from '../../middleware/display'
 
-import { userManagementService } from '../../services'
+import { configService, userManagementService } from '../../services'
 import { getSession } from '../../services/user-management'
-import { configService } from '../../services/config'
 import { CliError, Unauthorized, getErrorOutput } from '../../errors'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'

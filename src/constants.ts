@@ -17,10 +17,10 @@ export const showDetailedProject = "show project's details"
 export const showSchemas = 'show schemas'
 export const showDetailedSchema = 'show schema details'
 export const createSchema = 'create schema'
-export const backToProjectMenu = 'go back to project managment'
+export const backToProjectMenu = 'go back to project management'
 export const genNewApp = 'generate a new application'
-export const backtoSchemaMenu = 'go back to schema managment'
-export const chooseSchmeaFromList = 'choose schema from list'
+export const backToSchemaMenu = 'go back to schema management'
+export const chooseSchemaFromList = 'choose schema from list'
 export const typeSchemaId = 'type schema ID'
 export const typeSchemaUrl = 'type schema URL'
 export const bulkIssuance = 'bulk issuance'
@@ -67,9 +67,9 @@ export const wizardMap = new Map<WizardMenus, string[]>([
   ],
   [WizardMenus.GO_BACK_PROJECT_MENU, [backToProjectMenu, backToMainMenu]],
   [WizardMenus.GO_BACK_TO_GEN_APP, [genNewApp, backToMainMenu]],
-  [WizardMenus.GO_BACK_SCHEMA_MENU, [backtoSchemaMenu, backToMainMenu]],
-  [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, [chooseSchmeaFromList, typeSchemaId]],
-  [WizardMenus.ISSUANCE_SCHEMA_MENU, [chooseSchmeaFromList, typeSchemaUrl]],
+  [WizardMenus.GO_BACK_SCHEMA_MENU, [backToSchemaMenu, backToMainMenu]],
+  [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, [chooseSchemaFromList, typeSchemaId]],
+  [WizardMenus.ISSUANCE_SCHEMA_MENU, [chooseSchemaFromList, typeSchemaUrl]],
   [WizardMenus.ISSUANCE_TYPE_MENU, [bulkIssuance, singleIssuance]],
   [WizardMenus.GO_BACK_TO_ISSUANCE, [issueNewVc, backToMainMenu]],
   [WizardMenus.GO_BACK_TO_VERIFICATION, [verifyNewVc, backToMainMenu]],

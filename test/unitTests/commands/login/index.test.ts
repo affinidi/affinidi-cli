@@ -17,8 +17,7 @@ import {
   WrongEmailError,
   notFoundProject,
 } from '../../../../src/errors'
-import { analyticsService } from '../../../../src/services/analytics'
-import { configService } from '../../../../src/services'
+import { analyticsService, configService } from '../../../../src/services'
 import { vaultService } from '../../../../src/services/vault/typedVaultService'
 import * as config from '../../../../src/services/config'
 
