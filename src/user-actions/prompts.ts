@@ -6,7 +6,7 @@ export const AnswerNo = 'n'
 export const AnswerYes = 'y'
 
 export const enterEmailPrompt = async (
-  text: string = 'Enter your Affinidi email address',
+  text: string = 'Enter your email address',
 ): Promise<string> => {
   return ux.prompt(text, { required: true })
 }
