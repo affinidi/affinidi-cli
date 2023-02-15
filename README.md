@@ -75,7 +75,7 @@ The Portable Reputation app allows the builder to connect to different data sour
 You need to have installed on your machine:
 
 - [git](https://git-scm.com/)
-- [NodeJs](https://nodejs.org). (it's recommended to use [nvm](https://github.com/nvm-sh/nvm))
+- [NodeJs v16 and higher](https://nodejs.org). (it's recommended to use [nvm](https://github.com/nvm-sh/nvm))
 
 Run the installation command:
 
