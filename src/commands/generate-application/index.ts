@@ -13,7 +13,8 @@ export enum Platforms {
   web = 'web',
   mobile = 'mobile',
 }
-
+// To ensure the quality and completeness of our codebase,
+// it would be helpful to include an integration test for any new cases that we add
 export enum UseCasesAppNames {
   portableReputation = 'portable-reputation',
   // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
