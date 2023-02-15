@@ -1,6 +1,6 @@
 {
   "name": "@affinidi/cli",
-  "version": "1.61.6",
+  "version": "1.61.7",
   "description": "Affinidi Elements command-line-interface",
   "author": "affinidi.com",
   "license": "Apache-2.0",
