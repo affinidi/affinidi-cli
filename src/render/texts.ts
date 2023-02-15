@@ -4,7 +4,7 @@ const buildCommandDescription = (command: string, subCommands: string[]): string
   return chalk`
   Use the ${chalk.bgCyanBright.black(command)} command if you want to display some of your resources
   like the ${subCommands.join(' or ')} that you've created.
-  The current available ressources are:
+  The current available resources are:
   ${subCommands.map((sc: string) => `\t- ${chalk.cyanBright(sc)}`).join('\n')}
   See the command examples in the help:
 
@@ -133,4 +133,4 @@ export const wrapError = (message: string, json: boolean): string => {
 
 export const welcomeWizard = 'Welcome to the Affinidi Wizard'
 export const notAuthenticated = 'You are not authenticated yet.'
-export const noActiveproject = 'Active project: no active projects'
+export const noActiveProject = 'Active project: no active projects'

@@ -2,7 +2,7 @@ import { ux, Command, Flags } from '@oclif/core'
 import fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
-import { verfierService } from '../services/verification'
+import { verifierService } from '../services/verification'
 
 import { vaultService } from '../services/vault/typedVaultService'
 import { VerifyCredentialInput } from '../services/verification/verifier.api'
@@ -18,7 +18,7 @@ import { analyticsService, generateUserMetadata } from '../services/analytics'
 import { getSession } from '../services/user-management'
 import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
-import { configService } from '../services/config'
+import { configService } from '../services'
 import { checkErrorFromWizard } from '../wizard/helpers'
 import { output } from '../customFlags/outputFlag'
 
@@ -54,7 +54,7 @@ export default class VerifyVc extends Command {
     const credentialData = await fs.readFile(flags.data, 'utf-8')
     ux.action.start('verifying')
     const verifyCredentialInput: VerifyCredentialInput = JSON.parse(credentialData)
-    const verification = await verfierService.verifyVC(apiKey, verifyCredentialInput)
+    const verification = await verifierService.verifyVC(apiKey, verifyCredentialInput)
     ux.action.stop()
     const analyticsData: EventDTO = {
       name: 'VC Verified',

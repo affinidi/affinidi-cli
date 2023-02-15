@@ -22,10 +22,10 @@ import { displayOutput } from '../middleware/display'
 import {
   backToMainMenu,
   backToProjectMenu,
-  backtoSchemaMenu,
+  backToSchemaMenu,
   bulkIssuance,
   changeActiveProject,
-  chooseSchmeaFromList,
+  chooseSchemaFromList,
   createProject,
   createSchema,
   generateApplication,
@@ -321,7 +321,7 @@ export default class Start extends Command {
 
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.SHOW_DETAILED_SCHEMA_MENU))
     switch (nextStep) {
-      case chooseSchmeaFromList:
+      case chooseSchemaFromList:
         this.breadcrumbs.push(showDetailedSchema)
         await this.listSchemas()
         await this.getGoBackSchemaMenu()
@@ -341,7 +341,7 @@ export default class Start extends Command {
 
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_SCHEMA_MENU))
     switch (nextStep) {
-      case backtoSchemaMenu:
+      case backToSchemaMenu:
         await this.getSchemaMenu()
         break
       case backToMainMenu:
@@ -389,7 +389,7 @@ export default class Start extends Command {
     ux.info(this.getStatus())
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.ISSUANCE_SCHEMA_MENU))
     switch (nextStep) {
-      case chooseSchmeaFromList:
+      case chooseSchemaFromList:
         await this.issuanceTypeMenu(await chooseSchemaUrl(0))
         break
       case typeSchemaUrl:

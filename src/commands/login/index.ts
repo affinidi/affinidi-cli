@@ -4,14 +4,13 @@ import * as EmailValidator from 'email-validator'
 import UseProject from '../use/project'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { NextStepsRawMessage } from '../../render/functions'
-import { iAmService, userManagementService } from '../../services'
+import { configService, iAmService, userManagementService } from '../../services'
 import { vaultService } from '../../services/vault/typedVaultService'
 import { analyticsConsentPrompt, enterEmailPrompt, enterOTPPrompt } from '../../user-actions'
 import { WrongEmailError, getErrorOutput, CliError } from '../../errors'
 import { createOrUpdateConfig, createSession, parseJwt } from '../../services/user-management'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { configService } from '../../services/config'
 import { CHECK_OPERATION } from '../../hooks/check/checkVersion'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 import { output } from '../../customFlags/outputFlag'
@@ -97,7 +96,7 @@ export default class Login extends Command {
     vaultService.clear()
     createSession(email, userId, sessionWithoutPrefix)
     configService.setCurrentUserId(userId)
-    if (confVersionError || !configService.userConfigMustBeVaild(userId)) {
+    if (confVersionError || !configService.userConfigMustBeValid(userId)) {
       const wantsToOptIn = await analyticsConsentPrompt()
       createOrUpdateConfig({ userId, analyticsOptIn: wantsToOptIn })
       await analyticsService.sendEnabledEvent(email, wantsToOptIn, 'affinidi.login')

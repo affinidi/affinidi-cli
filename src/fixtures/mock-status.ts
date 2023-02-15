@@ -1,5 +1,5 @@
 import { MessageBlock } from '../render/functions'
-import { noActiveproject, notAuthenticated, welcomeWizard } from '../render/texts'
+import { noActiveProject, notAuthenticated, welcomeWizard } from '../render/texts'
 import { projectSummary } from './mock-projects'
 
 export const unAuthNoProjMessage: MessageBlock[] = [
@@ -12,8 +12,8 @@ export const unAuthNoProjMessage: MessageBlock[] = [
     styled: notAuthenticated,
   },
   {
-    text: noActiveproject,
-    styled: noActiveproject,
+    text: noActiveProject,
+    styled: noActiveProject,
   },
 ]
 export const testUserEmail = 'test@email.com'
@@ -27,8 +27,8 @@ export const authNoProjMessage: MessageBlock[] = [
     styled: `You are authenticated as: ${testUserEmail}`,
   },
   {
-    text: noActiveproject,
-    styled: noActiveproject,
+    text: noActiveProject,
+    styled: noActiveProject,
   },
 ]
 

@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-import { noActiveproject, notAuthenticated, welcomeWizard } from './texts'
+import { noActiveProject, notAuthenticated, welcomeWizard } from './texts'
 
 const indent = '  '
 
@@ -69,8 +69,8 @@ export const defaultWizardMessages: MessageKeyBlock[] = [
   },
   {
     key: activeProjectKey,
-    text: noActiveproject,
-    styled: noActiveproject,
+    text: noActiveProject,
+    styled: noActiveProject,
   },
 ]
 

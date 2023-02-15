@@ -23,7 +23,7 @@ const MAX_EMAIL_ATTEMPT = 3
 export default class SignUp extends Command {
   static command = 'affinidi sign-up'
 
-  static description = 'Use this command with your email address to create a new Affinid account.'
+  static description = 'Use this command with your email address to create a new Affinidi account.'
 
   static examples = ['<%= config.bin %> <%= command.id %> example@email.com']
 

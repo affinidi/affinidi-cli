@@ -1,7 +1,7 @@
 import { Hook } from '@oclif/core'
 import { Hooks } from '@oclif/core/lib/interfaces'
 
-import { UnsuportedConfig } from '../../errors'
+import { UnsupportedConfig } from '../../errors'
 import { configService, validVersions } from '../../services/config'
 
 export const CHECK_OPERATION = Object.freeze({
@@ -20,7 +20,7 @@ const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function c
   let message = ''
   if (opts.id === CHECK_OPERATION.CONFIG) {
     version = configService.getVersion()
-    message = UnsuportedConfig
+    message = UnsupportedConfig
   }
 
   // the version was either not found in the config, or there was no config file.

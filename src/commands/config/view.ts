@@ -1,7 +1,7 @@
 import { ux, Command, Args } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
-import { configService } from '../../services/config'
+import { configService } from '../../services'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { isAuthenticated } from '../../middleware/authentication'
 import { displayOutput } from '../../middleware/display'

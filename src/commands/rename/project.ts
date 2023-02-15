@@ -64,7 +64,7 @@ export default class Project extends Command {
       newName = await newProjectName()
     }
     await iAmService.renameProject(projectId, newName, token)
-    const renamedProjectSumamry = await iAmService.getProjectSummary(token, projectId)
+    const renamedProjectSummary = await iAmService.getProjectSummary(token, projectId)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_RENAMED',
       category: 'APPLICATION',
@@ -72,26 +72,26 @@ export default class Project extends Command {
       uuid: userId,
       metadata: {
         commandId: 'affinidi.renameProject',
-        projectId: renamedProjectSumamry.project.projectId,
+        projectId: renamedProjectSummary.project.projectId,
         ...generateUserMetadata(label),
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
     const test = process.env.NODE_ENV === 'test'
-    if (renamedProjectSumamry.apiKey?.apiKeyHash && !test) {
-      renamedProjectSumamry.apiKey.apiKeyHash = ''.padEnd(
-        renamedProjectSumamry.apiKey.apiKeyHash?.length,
+    if (renamedProjectSummary.apiKey?.apiKeyHash && !test) {
+      renamedProjectSummary.apiKey.apiKeyHash = ''.padEnd(
+        renamedProjectSummary.apiKey.apiKeyHash?.length,
         '*',
       )
     }
-    if (renamedProjectSumamry.wallet?.didUrl && !test) {
-      renamedProjectSumamry.wallet.didUrl = ''.padEnd(
-        renamedProjectSumamry.wallet.didUrl?.length,
+    if (renamedProjectSummary.wallet?.didUrl && !test) {
+      renamedProjectSummary.wallet.didUrl = ''.padEnd(
+        renamedProjectSummary.wallet.didUrl?.length,
         '*',
       )
     }
     displayOutput({
-      itemToDisplay: JSON.stringify(renamedProjectSumamry, null, '  '),
+      itemToDisplay: JSON.stringify(renamedProjectSummary, null, '  '),
       flag: flags.output,
     })
   }

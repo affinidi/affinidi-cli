@@ -11,7 +11,7 @@ import { output } from '../../customFlags/outputFlag'
 export default class Config extends Command {
   static command = 'affinidi config'
 
-  static summary = 'Use this commmand to delete user saved configurations.'
+  static summary = 'Use this command to delete user saved configurations.'
 
   static usage = 'config [COMMAND] [ARGS...]'
 

@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 
 import { enterEmailPrompt } from '../../user-actions'
 import { CliError, getErrorOutput, Unauthorized, WrongEmailError } from '../../errors'
-import { configService } from '../../services/config'
+import { configService } from '../../services'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { isAuthenticated } from '../../middleware/authentication'
 import { EventDTO } from '../../services/analytics/analytics.api'

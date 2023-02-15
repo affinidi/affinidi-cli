@@ -1,6 +1,6 @@
 import { ux } from '@oclif/core'
 import { wrapError } from '../render/texts'
-import { configService } from '../services/config'
+import { configService } from '../services'
 
 export interface DisplayOptions {
   itemToDisplay: string
@@ -48,27 +48,27 @@ const buildJSONMessage = (message: string): string => {
 
 export const displayOutput = (displayOptions: DisplayOptions) => {
   const outputFormat = displayOptions.flag || configService.getOutputFormat()
-  let formatedOutput = displayOptions.itemToDisplay
+  let formattedOutput = displayOptions.itemToDisplay
   const nullRegex = new RegExp('null', 'g')
 
   if (outputFormat === 'plaintext') {
     try {
       const nullRemoved = displayOptions.itemToDisplay.replace(nullRegex, '"null"')
       const jsonObject = JSON.parse(nullRemoved)
-      formatedOutput = jsonToPlainText(jsonObject, [])
+      formattedOutput = jsonToPlainText(jsonObject, [])
     } catch (error) {
-      formatedOutput = displayOptions.itemToDisplay
+      formattedOutput = displayOptions.itemToDisplay
     }
   } else {
     try {
       JSON.parse(displayOptions.itemToDisplay)
     } catch (error) {
-      formatedOutput = buildJSONMessage(displayOptions.itemToDisplay)
+      formattedOutput = buildJSONMessage(displayOptions.itemToDisplay)
     }
   }
   if (displayOptions.err) {
-    ux.info(wrapError(formatedOutput, displayOptions.err))
+    ux.info(wrapError(formattedOutput, displayOptions.err))
     return
   }
-  ux.info(formatedOutput)
+  ux.info(formattedOutput)
 }

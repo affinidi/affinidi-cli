@@ -27,7 +27,7 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { getSession } from '../../services/user-management'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { configService } from '../../services/config'
+import { configService } from '../../services'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 import { output } from '../../customFlags/outputFlag'
 
