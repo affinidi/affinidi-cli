@@ -12,9 +12,8 @@ export const CHECK_OPERATION = Object.freeze({
 type CheckOperationKeys = keyof typeof CHECK_OPERATION
 
 type CheckVersionHookOptionType = Hooks & {
-  check: { options: { id: typeof CHECK_OPERATION[CheckOperationKeys] } }
+  check: { options: { id: (typeof CHECK_OPERATION)[CheckOperationKeys] } }
 }
-
 const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function checkVersion(opts) {
   let version: number
   let message = ''
@@ -25,7 +24,7 @@ const checkVersion: Hook<'check', CheckVersionHookOptionType> = async function c
 
   // the version was either not found in the config, or there was no config file.
   if (!version || !validVersions.includes(version)) {
-    this.error(message)
+    throw new Error(message)
   }
 }
 
