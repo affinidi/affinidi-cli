@@ -140,12 +140,12 @@ export default class Start extends Command {
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.AUTH_MENU))
     switch (nextStep) {
       case 'login':
-        await Login.run(['-o', 'plaintext', '-w'])
         this.breadcrumbs.push(nextStep)
+        await Login.run(['-o', 'plaintext', '-w'])
         break
       case 'sign-up':
-        await SignUp.run([])
         this.breadcrumbs.push(nextStep)
+        await SignUp.run([])
         break
       default:
         process.exit(0)
