@@ -1,4 +1,4 @@
-import { ux, Command, Flags, Args } from '@oclif/core'
+import { CliUx, Command, Flags } from '@oclif/core'
 import fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
@@ -40,7 +40,7 @@ export default class Schema extends Command {
     'Use this command to create a new Schema for a verifiable credential. Refer to https://github.com/affinidi/affinidi-cli/blob/main/README.md#schema-manager for more details and examples.'
 
   static flags = {
-    public: Flags.string({
+    public: Flags.enum<'true' | 'false'>({
       char: 'p',
       options: ['true', 'false'],
       description: 'To specify if you want to create public or private schemas',
@@ -57,7 +57,7 @@ export default class Schema extends Command {
     output,
   }
 
-  static args = { schemaName: Args.string() }
+  static args = [{ name: 'schemaName' }]
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Schema)
@@ -136,9 +136,9 @@ export default class Schema extends Command {
       authorDid: did,
       description: flags.description,
     }
-    ux.action.start('Creating Schema')
+    CliUx.ux.action.start('Creating Schema')
     const schemaInfo = await schemaManagerService.createSchema(apiKeyhash, createSchemaInput)
-    ux.action.stop('')
+    CliUx.ux.action.stop('')
     const analyticsData: EventDTO = {
       name: 'VC_SCHEMA_CREATED',
       category: 'APPLICATION',

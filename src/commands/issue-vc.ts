@@ -1,4 +1,4 @@
-import { Command, Flags, ux, Args } from '@oclif/core'
+import { Command, Flags, CliUx } from '@oclif/core'
 import fs from 'fs/promises'
 import FormData from 'form-data'
 import path from 'path'
@@ -72,7 +72,7 @@ export default class IssueVc extends Command {
     output,
   }
 
-  static args = { email: Args.string({ description: 'the email to whom the VC will be issued' }) }
+  static args = [{ name: 'email', description: 'the email to whom the VC will be issued' }]
 
   public async run(): Promise<void> {
     const { flags, args } = await this.parse(IssueVc)
@@ -109,7 +109,7 @@ export default class IssueVc extends Command {
         contentType: 'text/csv',
         filename: path.basename(flags.data),
       })
-      ux.action.start('Issuing VC')
+      CliUx.ux.action.start('Issuing VC')
       issuanceId = await issuanceService.createFromCsv(apiKeyHash, formData)
     } else if (!flags.bulk && fileExtension === 'json') {
       const file = await fs.readFile(flags.data, 'utf-8')
@@ -131,14 +131,14 @@ export default class IssueVc extends Command {
         },
         credentialSubject: JSON.parse(file),
       }
-      ux.action.start('Issuing VC')
+      CliUx.ux.action.start('Issuing VC')
       issuanceId = await issuanceService.createIssuance(apiKeyHash, issuanceJson)
       await issuanceService.createOffer(apiKeyHash, issuanceId.id, offerInput)
     } else {
       const expectedExtension = flags.bulk ? '.csv' : '.json'
       throw new CliError(`${WrongFileType}${expectedExtension} file`, 0, 'issuance')
     }
-    ux.action.stop('')
+    CliUx.ux.action.stop('')
     displayOutput({ itemToDisplay: JSON.stringify(issuanceId), flag: flags.output })
 
     const analyticsData: EventDTO = {
@@ -160,7 +160,7 @@ export default class IssueVc extends Command {
     if (error instanceof SyntaxError) {
       err.message = JsonFileSyntaxError
     }
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

@@ -1,4 +1,4 @@
-import { ux, Command, Flags } from '@oclif/core'
+import { CliUx, Command, Flags } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
 import { isAuthenticated } from '../../middleware/authentication'
@@ -23,7 +23,8 @@ export enum UseCasesAppNames {
   // kycKyb = 'kyc-kyb',
 }
 
-export type UseCaseType = `${UseCasesAppNames}`
+type PlatformType = `${Platforms}`
+type UseCaseType = `${UseCasesAppNames}`
 
 export const defaultAppName = 'my-app'
 export default class GenerateApplication extends Command {
@@ -36,7 +37,7 @@ export default class GenerateApplication extends Command {
   static examples = ['<%= config.bin %> <%= command.id %>']
 
   static flags = {
-    platform: Flags.string({
+    platform: Flags.enum<PlatformType>({
       char: 'p',
       description: 'Platform',
       default: 'web',
@@ -48,7 +49,7 @@ export default class GenerateApplication extends Command {
       description: 'Name of the application',
       default: defaultAppName,
     }),
-    'use-case': Flags.string({
+    'use-case': Flags.enum<UseCaseType>({
       char: 'u',
       description: 'Use case',
       default: UseCasesAppNames.ticketingReferenceApp,
@@ -86,7 +87,7 @@ export default class GenerateApplication extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

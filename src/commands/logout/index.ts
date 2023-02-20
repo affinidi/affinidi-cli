@@ -1,4 +1,4 @@
-import { Command, ux } from '@oclif/core'
+import { Command, CliUx } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { confirmSignOut } from '../../user-actions'
@@ -31,7 +31,7 @@ export default class Logout extends Command {
     }
     const answer = await confirmSignOut()
     if (answer !== 'y') {
-      await ux.done()
+      await CliUx.ux.done()
       return
     }
     const { account, consoleAuthToken } = getSession()

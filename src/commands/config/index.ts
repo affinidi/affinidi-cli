@@ -1,4 +1,4 @@
-import { ux, Command, Flags } from '@oclif/core'
+import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { configService } from '../../services'
@@ -17,7 +17,7 @@ export default class Config extends Command {
 
   static description = configCommandDescription
 
-  static examples: Command.Example[] = [
+  static examples: Interfaces.Example[] = [
     {
       description: 'Delete logged in user saved configuration:',
       command: '$ <%= config.bin %> <%= command.id %> --unset-all',
@@ -60,7 +60,7 @@ export default class Config extends Command {
   }
 
   async catch(error: CliError) {
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

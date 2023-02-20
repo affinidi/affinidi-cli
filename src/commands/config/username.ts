@@ -1,4 +1,4 @@
-import { ux, Command, Flags, Args } from '@oclif/core'
+import { CliUx, Command, Flags } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 import { StatusCodes } from 'http-status-codes'
 
@@ -33,9 +33,7 @@ export default class Username extends Command {
     output,
   }
 
-  static args = {
-    email: Args.string(),
-  }
+  static args = [{ name: 'email' }]
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Username)
@@ -71,7 +69,7 @@ export default class Username extends Command {
       email = await enterEmailPrompt()
       wrongEmailCount += 1
       if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-        ux.error(WrongEmailError)
+        CliUx.ux.error(WrongEmailError)
       }
     }
     configService.setUsername(email)
@@ -80,7 +78,7 @@ export default class Username extends Command {
   }
 
   async catch(error: CliError) {
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

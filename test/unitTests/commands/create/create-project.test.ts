@@ -1,4 +1,4 @@
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
@@ -51,8 +51,8 @@ describe('create project command', () => {
     .stdout()
     .stub(authentication, 'isAuthenticated', () => true)
     .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
-    .stub(ux.action, 'start', () => () => doNothing)
-    .stub(ux.action, 'stop', () => doNothing)
+    .stub(CliUx.ux.action, 'start', () => () => doNothing)
+    .stub(CliUx.ux.action, 'stop', () => doNothing)
     .command(['create project'])
     .it('runs create project with a project name', (ctx) => {
       expect(ctx.stdout).to.contain(projectSummary.project.name)
@@ -64,8 +64,8 @@ describe('create project command', () => {
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create project'])
       .it('runs create project command but the service is down', (ctx) => {
         expect(ctx.stdout).to.contain(ServiceDownError)
@@ -76,8 +76,8 @@ describe('create project command', () => {
     test
       .stdout()
       .stub(prompts, 'projectNamePrompt', () => async () => projectSummary.project.name)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create project'])
       .it('runs create project command but the user is unauthorized to use this service', (ctx) => {
         expect(ctx.stdout).to.contain(Unauthorized)

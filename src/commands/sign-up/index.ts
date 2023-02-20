@@ -1,4 +1,4 @@
-import { Command, ux, Args } from '@oclif/core'
+import { Command, CliUx } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import {
@@ -27,7 +27,7 @@ export default class SignUp extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %> example@email.com']
 
-  static args = { email: Args.string() }
+  static args = [{ name: 'email' }]
 
   public async run(): Promise<void> {
     const { args } = await this.parse(SignUp)
@@ -41,34 +41,34 @@ export default class SignUp extends Command {
       email = await enterEmailPrompt()
       wrongEmailCount += 1
       if (wrongEmailCount === MAX_EMAIL_ATTEMPT) {
-        ux.error(WrongEmailError)
+        CliUx.ux.error(WrongEmailError)
       }
     }
 
     const answer = await acceptConditionsAndPolicy()
     if (answer !== AnswerYes) {
-      ux.info("You must accept the conditions and policy to use Affinidi's services")
+      CliUx.ux.info("You must accept the conditions and policy to use Affinidi's services")
       return
     }
 
     const wantsToOptIn = await analyticsConsentPrompt()
 
     // http request to affinidi sign-up endpoint
-    ux.action.start('Start signing-up to Affinidi')
+    CliUx.ux.action.start('Start signing-up to Affinidi')
     const token = await userManagementService.signUp(email)
 
     // mask input after enter is pressed
-    ux.action.start('Verifying the OTP')
+    CliUx.ux.action.start('Verifying the OTP')
     const confirmationCode = await enterOTPPrompt()
 
-    ux.action.start('Verifying the OTP')
+    CliUx.ux.action.start('Verifying the OTP')
     const sessionToken = await userManagementService.confirmAndGetToken(
       token,
       confirmationCode,
       'signup',
     )
-    ux.action.stop('OTP verified')
-    ux.action.stop('Sign-up successful')
+    CliUx.ux.action.stop('OTP verified')
+    CliUx.ux.action.stop('Sign-up successful')
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
@@ -90,14 +90,14 @@ export default class SignUp extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    ux.info(`${WelcomeUserStyledMessage}\n`)
+    CliUx.ux.info(`${WelcomeUserStyledMessage}\n`)
 
     await CreateProject.run(['Default Project'])
   }
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
-    ux.info(getErrorOutput(error, SignUp.command, SignUp.command, SignUp.description, false))
+    CliUx.ux.action.stop('failed')
+    CliUx.ux.info(getErrorOutput(error, SignUp.command, SignUp.command, SignUp.description, false))
   }
 }

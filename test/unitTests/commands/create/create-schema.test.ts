@@ -1,4 +1,4 @@
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import fs from 'fs'
 
@@ -56,8 +56,8 @@ describe('Create Schema', () => {
       .stub(authentication, 'isAuthenticated', () => () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])
       .it('runs create schema command', (ctx) => {
         expect(ctx.stdout).to.contain(mockSchemaDtoUnlisted.id)
@@ -81,8 +81,8 @@ describe('Create Schema', () => {
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`, '--public=true'])
       .it('runs create schema command with public flag set to public', (ctx) => {
         expect(ctx.stdout).to.contain(mockSchemaDtoOne.id)
@@ -105,8 +105,8 @@ describe('Create Schema', () => {
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])
       .it('runs create schema command when service is down', (ctx) => {
         expect(ctx.stdout).to.contain(ServiceDownError)
@@ -118,8 +118,8 @@ describe('Create Schema', () => {
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
       .stub(authentication, 'isAuthenticated', () => false)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])
       .it('runs create schema command when unauthorized', (ctx) => {
         expect(ctx.stdout).to.contain(Unauthorized)
@@ -132,8 +132,8 @@ describe('Create Schema', () => {
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s some/file`, `-d ${description}`])
       .it('runs create schema command and source flag contains invalid extension', (ctx) => {
         expect(ctx.stdout).to.contain(WrongSchemaFileType)
@@ -151,8 +151,8 @@ describe('Create Schema', () => {
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => SCHEMA_NAME)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])
       .it('runs create schema command when json file contains invalid info', (ctx) => {
         expect(ctx.stdout).to.contain(schemaBadRequest)
@@ -163,8 +163,8 @@ describe('Create Schema', () => {
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .stub(prompts, 'enterSchemaName', () => async () => 'SCHEMA_NAME')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .command(['create schema', `-s ${schemaFile}`, `-d ${description}`])
       .it('runs create schema command given invalid schema name', (ctx) => {
         expect(ctx.stdout).to.contain(InvalidSchemaName)

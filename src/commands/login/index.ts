@@ -1,4 +1,4 @@
-import { Command, ux, Flags, Args } from '@oclif/core'
+import { Command, CliUx, Flags } from '@oclif/core'
 import * as EmailValidator from 'email-validator'
 
 import UseProject from '../use/project'
@@ -27,7 +27,7 @@ export default class Login extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = { email: Args.string() }
+  static args = [{ name: 'email' }]
 
   static flags = {
     output,
@@ -75,20 +75,20 @@ export default class Login extends Command {
     }
 
     // http request to affinidi sign-up endpoint
-    ux.action.start('Start logging in to Affinidi')
+    CliUx.ux.action.start('Start logging in to Affinidi')
     const token = await userManagementService.login(email)
 
     // mask input after enter is pressed
     const confirmationCode = await enterOTPPrompt()
 
-    ux.action.start('Verifying the OTP')
+    CliUx.ux.action.start('Verifying the OTP')
     const sessionToken = await userManagementService.confirmAndGetToken(
       token,
       confirmationCode,
       'login',
     )
-    ux.action.stop('OTP verified')
-    ux.action.stop('Log-in successful')
+    CliUx.ux.action.stop('OTP verified')
+    CliUx.ux.action.stop('Log-in successful')
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
@@ -139,7 +139,7 @@ export default class Login extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

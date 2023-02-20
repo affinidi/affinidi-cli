@@ -1,4 +1,4 @@
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import path from 'path'
 
 import { analyticsService, generateUserMetadata } from '../services/analytics'
@@ -9,12 +9,13 @@ import { EventDTO } from '../services/analytics/analytics.api'
 import { GitService, Writer } from '../services'
 import { buildGeneratedAppNextStepsMessage } from '../render/texts'
 import { fakeJWT } from '../render/functions'
+import { ViewFormat } from '../constants'
 
 export interface FlagsInput {
-  platform?: string
+  platform?: PlatformType
   name?: string
-  use_case?: string
-  output?: string
+  use_case?: UseCaseType
+  output?: ViewFormat
   apiKey: string
   projectDid: string
   projectId: string
@@ -35,6 +36,7 @@ export enum UseCasesAppNames {
 }
 
 type UseCaseType = `${UseCasesAppNames}`
+type PlatformType = `${Platforms}`
 
 const UseCaseSources: Record<UseCaseType, string> = {
   'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
@@ -135,7 +137,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       ...generateUserMetadata(label),
     },
   }
-  ux.action.start('Generating an application')
+  CliUx.ux.action.start('Generating an application')
 
   try {
     switch (useCase) {
@@ -163,7 +165,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       ? 'APP_PORT_REP_GENERATION_COMPLETED'
       : 'APPLICATION_GENERATION_COMPLETED'
   await analyticsService.eventsControllerSend(analyticsData)
-  ux.action.stop('\nApplication generated')
+  CliUx.ux.action.stop('\nApplication generated')
 
   const appPath = path.resolve(`${process.cwd()}/${name}`)
   displayOutput({

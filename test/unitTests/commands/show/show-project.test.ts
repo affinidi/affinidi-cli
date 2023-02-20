@@ -1,6 +1,6 @@
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 
 import { IAM_URL } from '../../../../src/services/iam'
 import { projectSummary } from '../../../../src/fixtures/mock-projects'
@@ -30,8 +30,8 @@ describe('show project command', () => {
         .get(`/projects/${projectSummary.project.projectId}/summary`)
         .reply(StatusCodes.OK, projectSummary),
     )
-    .stub(ux.action, 'start', () => () => doNothing)
-    .stub(ux.action, 'stop', () => doNothing)
+    .stub(CliUx.ux.action, 'start', () => () => doNothing)
+    .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
     .command(['show project', projectSummary.project.projectId])
     .it('runs show project with a specific project-id', (ctx) => {
@@ -47,8 +47,8 @@ describe('show project command', () => {
           .reply(StatusCodes.INTERNAL_SERVER_ERROR),
       )
       .stub(authentication, 'isAuthenticated', () => true)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['show project', projectSummary.project.projectId])
       .it('runs show project while the service is down', (ctx) => {
@@ -66,8 +66,8 @@ describe('show project command', () => {
           .reply(StatusCodes.OK, projectSummary),
       )
       .stub(authentication, 'isAuthenticated', () => true)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .stub(authentication, 'isAuthenticated', () => true)
       .command(['show project', '--active'])
@@ -87,8 +87,8 @@ describe('show project command', () => {
 
   describe('Showing a project while not authorized', () => {
     test
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stdout()
       .command(['show project', projectSummary.project.projectId])
       .it('runs show project while user is unauthorized', (ctx) => {

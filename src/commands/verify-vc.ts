@@ -1,4 +1,4 @@
-import { ux, Command, Flags } from '@oclif/core'
+import { CliUx, Command, Flags } from '@oclif/core'
 import fs from 'fs/promises'
 import { StatusCodes } from 'http-status-codes'
 
@@ -20,7 +20,7 @@ import { isAuthenticated } from '../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../middleware/display'
 import { configService } from '../services'
 import { checkErrorFromWizard } from '../wizard/helpers'
-import { output } from '../customFlags/outputFlag'
+import { ViewFormat } from '../constants'
 
 export default class VerifyVc extends Command {
   static command = 'affinidi verify-vc'
@@ -37,7 +37,11 @@ export default class VerifyVc extends Command {
       description: 'source JSON file with credentials to be verified',
       required: true,
     }),
-    output,
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      options: ['plaintext', 'json'],
+      description: 'set flag to override default output format view',
+    }),
   }
 
   public async run(): Promise<void> {
@@ -52,10 +56,10 @@ export default class VerifyVc extends Command {
       throw new Error(WrongSchemaFileType)
     }
     const credentialData = await fs.readFile(flags.data, 'utf-8')
-    ux.action.start('verifying')
+    CliUx.ux.action.start('verifying')
     const verifyCredentialInput: VerifyCredentialInput = JSON.parse(credentialData)
     const verification = await verifierService.verifyVC(apiKey, verifyCredentialInput)
-    ux.action.stop()
+    CliUx.ux.action.stop()
     const analyticsData: EventDTO = {
       name: 'VC Verified',
       category: 'APPLICATION',

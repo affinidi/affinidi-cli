@@ -1,4 +1,4 @@
-import { Command, Args, ux } from '@oclif/core'
+import { CliUx, Command } from '@oclif/core'
 
 import { analyticsConsentPrompt } from '../user-actions'
 import { analyticsService, configService } from '../services'
@@ -20,13 +20,14 @@ export default class Analytics extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = {
-    newValue: Args.string({
+  static args = [
+    {
+      name: 'newValue',
       required: false,
       description: 'Whether to send analytics to Affinidi',
       options: ['true', 'false'],
-    }),
-  }
+    },
+  ]
 
   static flags = {
     output,
@@ -64,7 +65,7 @@ export default class Analytics extends Command {
   }
 
   async catch(error: CliError) {
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(
