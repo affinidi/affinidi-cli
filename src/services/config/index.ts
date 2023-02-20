@@ -69,7 +69,7 @@ class ConfigService {
     const configs = this.store.getAllUserConfigs()
     if (!configs) return false
     const userConfig = configs[userId]
-    if (!userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
+    if (userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
       return false
     }
     return true
