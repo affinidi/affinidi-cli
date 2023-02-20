@@ -1,7 +1,7 @@
 import { test, expect } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 import fs from 'fs'
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 
 import { ServiceDownError, Unauthorized, WrongFileType } from '../../../../src/errors'
 import * as prompts from '../../../../src/user-actions'
@@ -68,8 +68,8 @@ describe('issue-vc command', () => {
     )
     .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
     .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-    .stub(ux.action, 'start', () => () => doNothing)
-    .stub(ux.action, 'stop', () => doNothing)
+    .stub(CliUx.ux.action, 'start', () => () => doNothing)
+    .stub(CliUx.ux.action, 'stop', () => doNothing)
     .stdout()
     .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
     .it('runs issue-vc single issuance', (ctx) => {
@@ -81,8 +81,8 @@ describe('issue-vc command', () => {
         api.post('/issuances/create-from-csv').reply(StatusCodes.OK, bulkIssuanceRespone),
       )
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
@@ -97,8 +97,8 @@ describe('issue-vc command', () => {
       )
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
@@ -112,8 +112,8 @@ describe('issue-vc command', () => {
       .nock(`${ISSUANCE_URL}`, (api) => api.post('/issuances').reply(StatusCodes.UNAUTHORIZED))
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
@@ -128,8 +128,8 @@ describe('issue-vc command', () => {
       )
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${csvFile}`, '-b'])
@@ -144,8 +144,8 @@ describe('issue-vc command', () => {
       )
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
       .stub(fs.promises, 'readFile', () => '{"data":"some-data"}')
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, `-d ${jsonFile}`])
@@ -159,8 +159,8 @@ describe('issue-vc command', () => {
         throw Error(WrongFileType)
       })
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, '-d file/system', '-b'])
@@ -175,8 +175,8 @@ describe('issue-vc command', () => {
         throw Error(WrongFileType)
       })
       .stub(prompts, 'enterIssuanceEmailPrompt', () => async () => EXAMPLE_EMAIL)
-      .stub(ux.action, 'start', () => () => doNothing)
-      .stub(ux.action, 'stop', () => doNothing)
+      .stub(CliUx.ux.action, 'start', () => () => doNothing)
+      .stub(CliUx.ux.action, 'stop', () => doNothing)
       .stub(authentication, 'isAuthenticated', () => true)
       .stdout()
       .command(['issue-vc', `-s ${schema}`, '-d file/system'])

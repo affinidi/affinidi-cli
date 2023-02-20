@@ -1,17 +1,17 @@
-import { Command, ux, Flags } from '@oclif/core'
+import { Command, Flags, CliUx } from '@oclif/core'
 import { stringify as csv_stringify } from 'csv-stringify'
 import { StatusCodes } from 'http-status-codes'
 
-import { iAmService } from '../../services'
+import { iAmService, configService } from '../../services'
 import { getSession } from '../../services/user-management'
 import { getErrorOutput, CliError, Unauthorized } from '../../errors'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { EventDTO } from '../../services/analytics/analytics.api'
 import { isAuthenticated } from '../../middleware/authentication'
-import { configService } from '../../services'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
 import { checkErrorFromWizard } from '../../wizard/helpers'
 
+type ListProjectsOutputType = 'json' | 'table' | 'csv'
 export default class Projects extends Command {
   static command = 'affinidi list projects'
 
@@ -35,7 +35,7 @@ export default class Projects extends Command {
       description: 'Maximum number of projects which will be listed',
       default: 10,
     }),
-    output: Flags.string({
+    output: Flags.enum<ListProjectsOutputType>({
       char: 'o',
       description: 'Project listing output format',
       options: ['json', 'table', 'csv'],
@@ -62,10 +62,10 @@ export default class Projects extends Command {
       },
     }
 
-    ux.action.start('Fetching list of projects')
+    CliUx.ux.action.start('Fetching list of projects')
     const projectData = await iAmService.listProjects(token, skip, limit)
     await analyticsService.eventsControllerSend(analyticsData)
-    ux.action.stop()
+    CliUx.ux.action.stop()
     const outputFormat = configService.getOutputFormat()
     if (!output && outputFormat === 'plaintext') {
       output = 'table'
@@ -74,7 +74,7 @@ export default class Projects extends Command {
     }
     switch (output) {
       case 'table':
-        ux.table(
+        CliUx.ux.table(
           projectData.map((data) => ({
             projectId: data.projectId,
             name: data.name,
@@ -87,7 +87,7 @@ export default class Projects extends Command {
         csv_stringify(projectData, { header: true }).pipe(process.stdout)
         break
       case 'json':
-        ux.info(JSON.stringify(projectData, null, '  '))
+        CliUx.ux.info(JSON.stringify(projectData, null, '  '))
         break
       default:
         throw new CliError('Unknown output format', 0, 'schema')
@@ -96,7 +96,7 @@ export default class Projects extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

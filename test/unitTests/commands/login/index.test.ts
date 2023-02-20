@@ -1,4 +1,4 @@
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import { expect, test } from '@oclif/test'
 import { StatusCodes } from 'http-status-codes'
 
@@ -49,8 +49,8 @@ const setupTest = (cookie: string, email: string) => {
     .stdout()
     .stub(userActions, 'enterEmailPrompt', () => async () => email)
     .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
-    .stub(ux.action, 'start', () => () => doNothing)
-    .stub(ux.action, 'stop', () => doNothing)
+    .stub(CliUx.ux.action, 'start', () => () => doNothing)
+    .stub(CliUx.ux.action, 'stop', () => doNothing)
 }
 
 describe('login command', () => {
@@ -79,8 +79,8 @@ describe('login command', () => {
           api.post('/auth/login').reply(StatusCodes.INTERNAL_SERVER_ERROR),
         )
         .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
-        .stub(ux.action, 'start', () => () => doNothing)
-        .stub(ux.action, 'stop', () => doNothing)
+        .stub(CliUx.ux.action, 'start', () => () => doNothing)
+        .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['login'])
         .it('runs login and shows the user that something went wrong', (ctx) => {
           // TODO: the error message is contained twice in the ctx.stdout
@@ -99,8 +99,8 @@ describe('login command', () => {
         .stdout()
         .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
         .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
-        .stub(ux.action, 'start', () => () => doNothing)
-        .stub(ux.action, 'stop', () => doNothing)
+        .stub(CliUx.ux.action, 'start', () => () => doNothing)
+        .stub(CliUx.ux.action, 'stop', () => doNothing)
         .command(['login'])
         .it('runs login explains to the user that the OTP was invalid', (ctx) => {
           expect(ctx.stdout).to.contain(InvalidOrExpiredOTPError)
@@ -162,8 +162,8 @@ describe('login command', () => {
               .get(`/projects/${projectSummary.project.projectId}/summary`)
               .reply(StatusCodes.OK, projectSummary),
           )
-          .stub(ux.action, 'start', () => () => doNothing)
-          .stub(ux.action, 'stop', () => doNothing)
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
           .stdout()
           .command(['show project', '-a'])
           .it("chains the show project and doesn't throw an error", (ctx) => {
@@ -211,8 +211,8 @@ describe('login command', () => {
           )
           .stub(userActions, 'enterEmailPrompt', () => async () => validEmailAddress)
           .stub(userActions, 'enterOTPPrompt', () => async () => testOTP)
-          .stub(ux.action, 'start', () => () => doNothing)
-          .stub(ux.action, 'stop', () => doNothing)
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
           .stub(userActions, 'selectProject', () => async () => projectId3)
           .stdout()
           .command(['login'])
@@ -230,8 +230,8 @@ describe('login command', () => {
               .get(`/projects/${projectSummary3.project.projectId}/summary`)
               .reply(StatusCodes.OK, projectSummary3),
           )
-          .stub(ux.action, 'start', () => () => doNothing)
-          .stub(ux.action, 'stop', () => doNothing)
+          .stub(CliUx.ux.action, 'start', () => () => doNothing)
+          .stub(CliUx.ux.action, 'stop', () => doNothing)
           .stdout()
           .command(['show project', '-a'])
           .it("chains the show project and doesn't throw an error", (ctx) => {

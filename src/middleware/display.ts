@@ -1,4 +1,4 @@
-import { ux } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import { wrapError } from '../render/texts'
 import { configService } from '../services'
 
@@ -67,8 +67,8 @@ export const displayOutput = (displayOptions: DisplayOptions) => {
     }
   }
   if (displayOptions.err) {
-    ux.info(wrapError(formattedOutput, displayOptions.err))
+    CliUx.ux.info(wrapError(formattedOutput, displayOptions.err))
     return
   }
-  ux.info(formattedOutput)
+  CliUx.ux.info(formattedOutput)
 }

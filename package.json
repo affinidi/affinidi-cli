@@ -52,7 +52,7 @@
   },
   "homepage": "https://github.com/affinidi/affinidi-cli#readme",
   "dependencies": {
-    "@oclif/core": "^2.0.11",
+    "@oclif/core": "^1.20.4",
     "@oclif/plugin-autocomplete": "^2.1.0",
     "@oclif/plugin-help": "^5.2.4",
     "@oclif/plugin-warn-if-update-available": "^2.0.26",

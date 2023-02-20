@@ -1,4 +1,4 @@
-import { ux, Command, Args } from '@oclif/core'
+import { CliUx, Command } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { configService } from '../../services'
@@ -21,13 +21,14 @@ export default class View extends Command {
 
   static usage = 'config view [plaintext | json]'
 
-  static args = {
-    format: Args.string({
+  static args = [
+    {
+      name: 'format',
       required: true,
       options: ['plaintext', 'json'],
       description: 'format of the output',
-    }),
-  }
+    },
+  ]
 
   public async run(): Promise<void> {
     const { args } = await this.parse(View)
@@ -54,7 +55,7 @@ export default class View extends Command {
   }
 
   async catch(error: CliError) {
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
 
     displayOutput({

@@ -1,4 +1,4 @@
-import { Command, ux, Args } from '@oclif/core'
+import { Command, CliUx } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 import chalk from 'chalk'
 
@@ -24,9 +24,7 @@ export default class Project extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = {
-    projectName: Args.string({}),
-  }
+  static args = [{ name: 'projectName' }]
 
   static flags = {
     output,
@@ -47,10 +45,10 @@ export default class Project extends Command {
     const projectNameInput: CreateProjectInput = {
       name: projectName,
     }
-    ux.action.start('Creating project')
+    CliUx.ux.action.start('Creating project')
     const projectData = await iAmService.createProject(token, projectNameInput)
     const projectDetails = await iAmService.getProjectSummary(token, projectData.projectId)
-    ux.action.stop('Project has been successfully created: ')
+    CliUx.ux.action.stop('Project has been successfully created: ')
     vaultService.setActiveProject(projectDetails)
     const analyticsData: EventDTO = {
       name: 'CONSOLE_PROJECT_CREATED',
@@ -75,7 +73,7 @@ export default class Project extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

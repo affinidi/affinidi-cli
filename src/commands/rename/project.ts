@@ -1,4 +1,4 @@
-import { Args, Command, Flags, ux } from '@oclif/core'
+import { Command, Flags, CliUx } from '@oclif/core'
 import { StatusCodes } from 'http-status-codes'
 
 import { CliError, getErrorOutput, Unauthorized } from '../../errors'
@@ -23,7 +23,7 @@ export default class Project extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
-  static args = { projectId: Args.string() }
+  static args = [{ name: 'projectId' }]
 
   static flags = {
     output,
@@ -46,14 +46,14 @@ export default class Project extends Command {
     let newName = flags.name
 
     if (!projectId) {
-      ux.action.start('Fetching projects')
+      CliUx.ux.action.start('Fetching projects')
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
-        ux.action.stop('No Projects were found')
+        CliUx.ux.action.stop('No Projects were found')
         displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
         return
       }
-      ux.action.stop('List of projects: ')
+      CliUx.ux.action.stop('List of projects: ')
       const maxNameLength = projectData
         .map((p) => p.name.length)
         .reduce((p, c) => Math.max(p, c), 0)
@@ -98,7 +98,7 @@ export default class Project extends Command {
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(

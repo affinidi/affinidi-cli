@@ -1,4 +1,4 @@
-import { ux, Command, Flags, Args } from '@oclif/core'
+import { CliUx, Command, Flags, Interfaces } from '@oclif/core'
 
 import { StatusCodes } from 'http-status-codes'
 
@@ -12,9 +12,9 @@ import { EventDTO } from '../../services/analytics/analytics.api'
 import { analyticsService, generateUserMetadata } from '../../services/analytics'
 import { isAuthenticated } from '../../middleware/authentication'
 import { DisplayOptions, displayOutput } from '../../middleware/display'
-import { configService } from '../../services'
+import { configService } from '../../services/config'
+import { ViewFormat } from '../../constants'
 import { checkErrorFromWizard } from '../../wizard/helpers'
-import { output } from '../../customFlags/outputFlag'
 
 export default class ShowProject extends Command {
   static command = 'affinidi show project'
@@ -29,10 +29,19 @@ export default class ShowProject extends Command {
     active: Flags.boolean({
       char: 'a',
     }),
-    output,
+    output: Flags.enum<ViewFormat>({
+      char: 'o',
+      description: 'set flag to override default output format view',
+      options: ['plaintext', 'json'],
+    }),
   }
 
-  static args = { 'project-id': Args.string({ description: 'id of the project to use' }) }
+  static args: Interfaces.Arg[] = [
+    {
+      name: 'project-id',
+      description: 'id of the project to use',
+    },
+  ]
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(ShowProject)
@@ -44,14 +53,14 @@ export default class ShowProject extends Command {
     let projectId = args['project-id']
 
     if (flags.active) {
-      ux.action.start('Fetching active project')
+      CliUx.ux.action.start('Fetching active project')
 
       let activeProject
       try {
         activeProject = vaultService.getActiveProject()
       } catch (err) {
         if (err instanceof CliError) {
-          ux.action.stop('No active project')
+          CliUx.ux.action.stop('No active project')
           displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
           return
         }
@@ -60,22 +69,22 @@ export default class ShowProject extends Command {
 
       projectId = activeProject.project.projectId
     } else if (projectId) {
-      ux.action.start(`Fetching project with id: ${projectId}`)
+      CliUx.ux.action.start(`Fetching project with id: ${projectId}`)
     } else {
-      ux.action.start('Fetching projects')
+      CliUx.ux.action.start('Fetching projects')
       const projectData = await iAmService.listProjects(token, 0, Number.MAX_SAFE_INTEGER)
       if (projectData.length === 0) {
-        ux.action.stop('No Projects were found')
+        CliUx.ux.action.stop('No Projects were found')
         displayOutput({ itemToDisplay: NextStepsRawMessage, flag: flags.output })
         return
       }
-      ux.action.stop('List of projects: ')
+      CliUx.ux.action.stop('List of projects: ')
       const maxNameLength = projectData
         .map((p) => p.name.length)
         .reduce((p, c) => Math.max(p, c), 0)
 
       projectId = await selectProject(projectData, maxNameLength)
-      ux.action.start(`Fetching project with id: ${projectId}`)
+      CliUx.ux.action.start(`Fetching project with id: ${projectId}`)
     }
 
     const projectData = await iAmService.getProjectSummary(token, projectId)
@@ -100,12 +109,12 @@ export default class ShowProject extends Command {
 
     displayOutput({ itemToDisplay: JSON.stringify(projectData, null, '  '), flag: flags.output })
 
-    ux.action.stop('')
+    CliUx.ux.action.stop('')
   }
 
   async catch(error: CliError) {
     if (checkErrorFromWizard(error)) throw error
-    ux.action.stop('failed')
+    CliUx.ux.action.stop('failed')
     const outputFormat = configService.getOutputFormat()
     const optionsDisplay: DisplayOptions = {
       itemToDisplay: getErrorOutput(
