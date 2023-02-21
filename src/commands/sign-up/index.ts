@@ -50,6 +50,7 @@ export default class SignUp extends Command {
       CliUx.ux.info("You must accept the conditions and policy to use Affinidi's services")
       return
     }
+    CliUx.ux.info('Thank you for accepting our terms and conditions!')
 
     const wantsToOptIn = await analyticsConsentPrompt()
 
@@ -68,7 +69,7 @@ export default class SignUp extends Command {
       'signup',
     )
     CliUx.ux.action.stop('OTP verified')
-    CliUx.ux.action.stop('Sign-up successful')
+    CliUx.ux.info('Sign-up successful')
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
