@@ -483,7 +483,7 @@ export default class Start extends Command {
       account: { label: userEmail },
     } = getSession()
     const {
-      project: { projectId },
+      project: { projectId, name },
     } = vaultService.getActiveProject()
     const status = wizardStatusMessage(
       wizardStatus({
@@ -491,6 +491,7 @@ export default class Start extends Command {
         breadcrumbs: this.breadcrumbs,
         userEmail,
         projectId,
+        projectName: name,
       }),
     )
     return `\n${status}\n`

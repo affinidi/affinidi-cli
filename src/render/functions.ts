@@ -54,7 +54,8 @@ type MessageKeyBlock = { key: string } & MessageBlock
 
 const welcomeKey = 'welcome'
 const authenticatedKey = 'authenticated'
-const activeProjectKey = 'activeProject'
+const activeProjectIdKey = 'activeProjectId'
+const activeProjectNameKey = 'activeProjectName'
 
 export const defaultWizardMessages: MessageKeyBlock[] = [
   {
@@ -68,9 +69,14 @@ export const defaultWizardMessages: MessageKeyBlock[] = [
     styled: notAuthenticated,
   },
   {
-    key: activeProjectKey,
+    key: activeProjectIdKey,
     text: noActiveProject,
     styled: noActiveProject,
+  },
+  {
+    key: activeProjectNameKey,
+    text: '',
+    styled: '',
   },
 ]
 
@@ -115,8 +121,16 @@ export const wizardStatusAuthenticated =
 export const wizardStatusWithActiveProject =
   (projectId: string) =>
   (message: MessageKeyBlock): MessageKeyBlock => {
-    return wizardStatusWithCondition(activeProjectKey)(projectId)(
-      (t: string) => `Active project: ${t}`,
+    return wizardStatusWithCondition(activeProjectIdKey)(projectId)(
+      (t: string) => `Active project ID: ${t}`,
+    )(message)
+  }
+
+export const wizardStatusWithActiveProjectName =
+  (projectName: string) =>
+  (message: MessageKeyBlock): MessageKeyBlock => {
+    return wizardStatusWithCondition(activeProjectNameKey)(projectName)(
+      (t: string) => `Active project name: ${t}`,
     )(message)
   }
 
@@ -125,15 +139,18 @@ export const wizardStatus = ({
   breadcrumbs,
   userEmail,
   projectId,
+  projectName,
 }: {
   messages: MessageKeyBlock[]
   breadcrumbs: string[]
   userEmail?: string
   projectId?: string
+  projectName?: string
 }): MessageBlock[] => {
   const buildMessages = messages
     .map(wizardStatusAuthenticated(userEmail))
     .map(wizardStatusWithActiveProject(projectId))
+    .map(wizardStatusWithActiveProjectName(projectName))
     .map(({ styled, text }) => ({ text, styled }))
 
   return appendBreadCrumbs(buildMessages, breadcrumbs)
