@@ -15,7 +15,7 @@ type ListProjectsOutputType = 'json' | 'table' | 'csv'
 export default class Projects extends Command {
   static command = 'affinidi list projects'
 
-  static usage = 'show projects [FLAGS]'
+  static usage = 'list projects [FLAGS]'
 
   static description = 'Listing of all projects you created.'
 

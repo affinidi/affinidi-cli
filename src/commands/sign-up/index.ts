@@ -27,6 +27,8 @@ export default class SignUp extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %> example@email.com']
 
+  static usage = 'sign-up'
+
   static args = [{ name: 'email' }]
 
   public async run(): Promise<void> {

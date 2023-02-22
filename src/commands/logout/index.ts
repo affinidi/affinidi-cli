@@ -20,6 +20,8 @@ export default class Logout extends Command {
 
   static examples = ['<%= config.bin %> <%= command.id %>']
 
+  static usage = 'logout'
+
   static flags = {
     output,
   }

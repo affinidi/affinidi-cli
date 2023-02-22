@@ -63,7 +63,7 @@ const printData = (
 export default class Schemas extends Command {
   static command = 'affinidi list schemas'
 
-  static usage = 'show schemas [FLAGS]'
+  static usage = 'list schemas [FLAGS]'
 
   static description = `Fetches and displays the schemas from the schema-manager.`
 
