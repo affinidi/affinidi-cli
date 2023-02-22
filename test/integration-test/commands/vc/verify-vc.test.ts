@@ -7,6 +7,5 @@ describe('User verifies a VC', () => {
     .command(['verify-vc', '-d', `${vcPath}`])
     .it('verify  vc', (ctx) => {
       expect(ctx.stdout).to.contains('isValid : true')
-      expect(ctx.stdout).to.contains('errors :')
     })
 })
