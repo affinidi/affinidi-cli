@@ -9,9 +9,9 @@ export class GitService {
     destination: string,
   ): Promise<void> => {
     return new Promise((resolve, reject) => {
-      exec(`git clone ${repository} "${process.cwd()}/temp-app"`, (e) => {
-        if (e) {
-          reject(e)
+      exec(`git clone ${repository} "${process.cwd()}/temp-app"`, (error) => {
+        if (error) {
+          reject(error)
         }
         mv(`${process.cwd()}/temp-app/use-cases/${useCase}`, `${destination}`, (error) => {
           if (error) {
