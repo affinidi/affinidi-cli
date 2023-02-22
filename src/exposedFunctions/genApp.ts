@@ -38,9 +38,16 @@ export enum UseCasesAppNames {
 type UseCaseType = `${UseCasesAppNames}`
 type PlatformType = `${Platforms}`
 
+const PORTABLE_REP_GITHUB = 'https://github.com/affinidi/reference-app-portable-rep.git'
+const REFERENCE_APP_GITHUB =
+  'https://github.com/affinidi/reference-app-certification-and-verification.git'
+
 const download = async (useCase: UseCaseType, destination: string): Promise<void> => {
+  const gitUrl =
+    useCase === UseCasesAppNames.portableReputation ? PORTABLE_REP_GITHUB : REFERENCE_APP_GITHUB
+
   try {
-    await GitService.clone(useCase, destination)
+    await GitService.clone(gitUrl, useCase, destination)
   } catch (error) {
     throw Error(`Download Failed: ${error.message}`)
   }
