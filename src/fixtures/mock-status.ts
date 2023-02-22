@@ -15,6 +15,10 @@ export const unAuthNoProjMessage: MessageBlock[] = [
     text: noActiveProject,
     styled: noActiveProject,
   },
+  {
+    text: '',
+    styled: '',
+  },
 ]
 export const testUserEmail = 'test@email.com'
 export const authNoProjMessage: MessageBlock[] = [
@@ -30,6 +34,10 @@ export const authNoProjMessage: MessageBlock[] = [
     text: noActiveProject,
     styled: noActiveProject,
   },
+  {
+    text: '',
+    styled: '',
+  },
 ]
 
 export const authProjMessage: MessageBlock[] = [
@@ -42,8 +50,12 @@ export const authProjMessage: MessageBlock[] = [
     styled: `You are authenticated as: ${testUserEmail}`,
   },
   {
-    text: `Active project: ${projectSummary.project.projectId}`,
-    styled: `Active project: ${projectSummary.project.projectId}`,
+    text: `Active project ID: ${projectSummary.project.projectId}`,
+    styled: `Active project ID: ${projectSummary.project.projectId}`,
+  },
+  {
+    text: `Active project name: ${projectSummary.project.name}`,
+    styled: `Active project name: ${projectSummary.project.name}`,
   },
 ]
 
@@ -63,8 +75,12 @@ export const authProjBCMessage: MessageBlock[] = [
     styled: `You are authenticated as: ${testUserEmail}`,
   },
   {
-    text: `Active project: ${projectSummary.project.projectId}`,
-    styled: `Active project: ${projectSummary.project.projectId}`,
+    text: `Active project ID: ${projectSummary.project.projectId}`,
+    styled: `Active project ID: ${projectSummary.project.projectId}`,
+  },
+  {
+    text: `Active project name: ${projectSummary.project.name}`,
+    styled: `Active project name: ${projectSummary.project.name}`,
   },
   {
     text: breadcrumbs.join(' > '),

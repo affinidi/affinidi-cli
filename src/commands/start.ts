@@ -58,6 +58,7 @@ import {
   pathToVc,
   schemaUrl,
   walletUrl,
+  credentialSubjectJSONFilePath,
 } from '../user-actions'
 import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
@@ -437,7 +438,7 @@ export default class Start extends Command {
 
   private async issueVc(bulk: boolean, schemaInputUrl: string) {
     let walletCustomUrl: string
-    const pathToFile = bulk ? await pathToCSV() : await pathToVc()
+    const pathToFile = bulk ? await pathToCSV() : await credentialSubjectJSONFilePath()
     const confirmWallet = await confirmConfigCustomWallet()
     const flags = ['-s', `${schemaInputUrl}`, '-d', `${pathToFile}`, `-w`]
     if (confirmWallet) {

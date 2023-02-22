@@ -13,6 +13,7 @@ export {
   applicationName,
   schemaId,
   schemaJSONFilePath,
+  credentialSubjectJSONFilePath,
   schemaDescription,
   schemaUrl,
   pathToCSV,

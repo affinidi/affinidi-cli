@@ -65,7 +65,15 @@ export const schemaId = async (text: string = 'schema ID'): Promise<string> => {
   return prompt
 }
 
-export const schemaJSONFilePath = async (text: string = 'path to JSON file'): Promise<string> => {
+export const schemaJSONFilePath = async (
+  text: string = 'path to the JSON file with schema properties(for detailed info refer to README file)',
+): Promise<string> => {
+  const prompt = await CliUx.ux.prompt(text, { required: true })
+  return prompt
+}
+export const credentialSubjectJSONFilePath = async (
+  text: string = 'path to the JSON file with credential subject(for detailed info refer to README file)',
+): Promise<string> => {
   const prompt = await CliUx.ux.prompt(text, { required: true })
   return prompt
 }
@@ -82,7 +90,9 @@ export const schemaUrl = async (text: string = 'schema URL'): Promise<string> =>
   return prompt
 }
 
-export const pathToCSV = async (text: string = 'Path to CSV file'): Promise<string> => {
+export const pathToCSV = async (
+  text: string = 'Path to CSV file with credential subject(for detailed info refer to README file)',
+): Promise<string> => {
   const prompt = await CliUx.ux.prompt(text, { required: true })
   return prompt
 }
