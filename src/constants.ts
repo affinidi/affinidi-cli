@@ -27,6 +27,7 @@ export const bulkIssuance = 'bulk issuance'
 export const singleIssuance = 'single issuance'
 export const issueNewVc = 'issue a new VC'
 export const verifyNewVc = 'verify a new VC'
+export const issueVcFromSchemaMenu = 'issue a vc with chosen or created schema'
 
 export enum WizardMenus {
   AUTH_MENU = 'authmenu',
@@ -67,7 +68,7 @@ export const wizardMap = new Map<WizardMenus, string[]>([
   ],
   [WizardMenus.GO_BACK_PROJECT_MENU, [backToProjectMenu, backToMainMenu]],
   [WizardMenus.GO_BACK_TO_GEN_APP, [genNewApp, backToMainMenu]],
-  [WizardMenus.GO_BACK_SCHEMA_MENU, [backToSchemaMenu, backToMainMenu]],
+  [WizardMenus.GO_BACK_SCHEMA_MENU, [issueVcFromSchemaMenu, backToSchemaMenu, backToMainMenu]],
   [WizardMenus.SHOW_DETAILED_SCHEMA_MENU, [chooseSchemaFromList, typeSchemaId]],
   [WizardMenus.ISSUANCE_SCHEMA_MENU, [chooseSchemaFromList, typeSchemaUrl]],
   [WizardMenus.ISSUANCE_TYPE_MENU, [bulkIssuance, singleIssuance]],

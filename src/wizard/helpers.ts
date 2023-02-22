@@ -22,6 +22,14 @@ export const getSchemaList = async (page: number): Promise<SchemaDto[]> => {
   return schemas
 }
 
+export const getSchemaUrl = async (schemaId: string): Promise<string> => {
+  const {
+    apiKey: { apiKeyHash: apiKey },
+  } = vaultService.getActiveProject()
+  const schema = await schemaManagerService.getById(schemaId, apiKey)
+  return schema.jsonSchemaUrl
+}
+
 export const chooseSchemaId = async (page: number): Promise<string> => {
   const schemas = await getSchemaList(page)
   const maxIdLength = schemas.map((p) => p.id.length).reduce((p, c) => Math.max(p, c), 0)
