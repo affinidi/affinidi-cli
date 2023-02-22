@@ -46,8 +46,10 @@ const download = async (useCase: UseCaseType, destination: string): Promise<void
   const gitUrl =
     useCase === UseCasesAppNames.portableReputation ? PORTABLE_REP_GITHUB : REFERENCE_APP_GITHUB
 
+  const useCaseName = UseCasesAppNames.portableReputation === useCase ? 'career' : useCase
+
   try {
-    await GitService.clone(gitUrl, useCase, destination)
+    await GitService.clone(gitUrl, destination, { subdirectory: `use-cases/${useCaseName}` })
   } catch (error) {
     throw Error(`Download Failed: ${error.message}`)
   }
@@ -66,7 +68,6 @@ const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
 
   displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.output })
 
-  console.log(flags.use_case)
   try {
     if (flags.use_case === UseCasesAppNames.portableReputation) {
       Writer.write(path.join(name, '.env'), [
