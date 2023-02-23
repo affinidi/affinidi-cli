@@ -59,7 +59,7 @@ export default class Schema extends Command {
 
   static args = [{ name: 'schemaName' }]
 
-  public async run(): Promise<void> {
+  public async run(): Promise<string> {
     const { args, flags } = await this.parse(Schema)
     if (!isAuthenticated()) {
       throw new CliError(Unauthorized, StatusCodes.UNAUTHORIZED, 'schema')
@@ -152,6 +152,7 @@ export default class Schema extends Command {
     }
     await analyticsService.eventsControllerSend(analyticsData)
     displayOutput({ itemToDisplay: JSON.stringify(schemaInfo, null, '  '), flag: flags.output })
+    return schemaInfo.id
   }
 
   async catch(error: CliError) {

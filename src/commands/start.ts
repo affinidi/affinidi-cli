@@ -32,6 +32,7 @@ import {
   genNewApp,
   issueNewVc,
   issueVC,
+  issueVcFromSchemaMenu,
   logout,
   manageProjects,
   manageSchemas,
@@ -58,11 +59,17 @@ import {
   pathToVc,
   schemaUrl,
   walletUrl,
+  credentialSubjectJSONFilePath,
 } from '../user-actions'
 import VerifyVc from './verify-vc'
 import GenerateApplication from './generate-application'
 import IssueVc from './issue-vc'
-import { chooseSchemaId, chooseSchemaUrl, nextFuncAfterError } from '../wizard/helpers'
+import {
+  chooseSchemaId,
+  chooseSchemaUrl,
+  getSchemaUrl,
+  nextFuncAfterError,
+} from '../wizard/helpers'
 import { UseCasesAppNames } from '../exposedFunctions/genApp'
 
 export default class Start extends Command {
@@ -275,7 +282,6 @@ export default class Start extends Command {
       case showSchemas:
         this.breadcrumbs.push(showDetailedSchema)
         await this.listSchemas()
-        await this.getGoBackSchemaMenu()
         break
       case showDetailedSchema:
         this.breadcrumbs.push(nextStep)
@@ -283,7 +289,6 @@ export default class Start extends Command {
         break
       case createSchema:
         await this.createSchema()
-        await this.getGoBackSchemaMenu()
         break
       case backToMainMenu:
         await this.getMainMenu()
@@ -301,12 +306,20 @@ export default class Start extends Command {
     this.breadcrumbs.push(showSchemas)
     const chosenSchemaId = await chooseSchemaId(0)
     await ShowSchema.run([`${chosenSchemaId}`])
+    await this.getGoBackSchemaMenu(chosenSchemaId)
+  }
+
+  private async showSchema() {
+    CliUx.ux.info(this.getStatus())
+    const chosenSchemaId = await schemaId()
+    await ShowSchema.run([`${chosenSchemaId}`])
+    await this.getGoBackSchemaMenu(chosenSchemaId)
   }
 
   private async createSchema() {
     CliUx.ux.info(this.getStatus())
     this.breadcrumbs.push(createSchema)
-    await CreateSchema.run([
+    const createdSchemaId = await CreateSchema.run([
       '-s',
       `${await schemaJSONFilePath()}`,
       `-p`,
@@ -314,6 +327,7 @@ export default class Start extends Command {
       '-d',
       `${await schemaDescription()}`,
     ])
+    await this.getGoBackSchemaMenu(createdSchemaId)
   }
 
   private async showDetailedSchemaMenu() {
@@ -324,23 +338,25 @@ export default class Start extends Command {
       case chooseSchemaFromList:
         this.breadcrumbs.push(showDetailedSchema)
         await this.listSchemas()
-        await this.getGoBackSchemaMenu()
+
         break
       case typeSchemaId:
         this.breadcrumbs.push(showDetailedSchema)
-        await ShowSchema.run([`${await schemaId()}`])
-        await this.getGoBackSchemaMenu()
+        await this.showSchema()
         break
       default:
         process.exit(0)
     }
   }
 
-  private async getGoBackSchemaMenu() {
+  private async getGoBackSchemaMenu(chosenSchemaId?: string) {
     CliUx.ux.info(this.getStatus())
-
+    const chosenSchemaUrl = await getSchemaUrl(chosenSchemaId)
     const nextStep = await selectNextStep(wizardMap.get(WizardMenus.GO_BACK_SCHEMA_MENU))
     switch (nextStep) {
+      case issueVcFromSchemaMenu:
+        await this.issuanceTypeMenu(chosenSchemaUrl)
+        break
       case backToSchemaMenu:
         await this.getSchemaMenu()
         break
@@ -437,7 +453,7 @@ export default class Start extends Command {
 
   private async issueVc(bulk: boolean, schemaInputUrl: string) {
     let walletCustomUrl: string
-    const pathToFile = bulk ? await pathToCSV() : await pathToVc()
+    const pathToFile = bulk ? await pathToCSV() : await credentialSubjectJSONFilePath()
     const confirmWallet = await confirmConfigCustomWallet()
     const flags = ['-s', `${schemaInputUrl}`, '-d', `${pathToFile}`, `-w`]
     if (confirmWallet) {
@@ -483,7 +499,7 @@ export default class Start extends Command {
       account: { label: userEmail },
     } = getSession()
     const {
-      project: { projectId },
+      project: { projectId, name },
     } = vaultService.getActiveProject()
     const status = wizardStatusMessage(
       wizardStatus({
@@ -491,6 +507,7 @@ export default class Start extends Command {
         breadcrumbs: this.breadcrumbs,
         userEmail,
         projectId,
+        projectName: name,
       }),
     )
     return `\n${status}\n`

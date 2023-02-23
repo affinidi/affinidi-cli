@@ -83,7 +83,7 @@ export const certificationAndVerificationNextSteps = (): { text: string; styled:
   },
   {
     text: '$ npm install',
-    styled: `  ${chalk.bgWhite('$ npm install')}`,
+    styled: `  ${chalk.bgWhite(chalk.black('$ npm install'))}`,
   },
   {
     text: 'then start the application with the command:',
@@ -91,7 +91,7 @@ export const certificationAndVerificationNextSteps = (): { text: string; styled:
   },
   {
     text: '$ npm run start',
-    styled: `  ${chalk.bgWhite('$ npm run start')}`,
+    styled: `  ${chalk.bgWhite(chalk.black('$ npm run start'))}`,
   },
 ]
 export const buildGeneratedAppNextStepsMessageBlocks = (

@@ -19,7 +19,7 @@ const toString = (messages: MessageBlock[]): string => {
 }
 
 const {
-  project: { projectId },
+  project: { projectId, name },
 } = projectSummary
 
 describe('wizard status', () => {
@@ -49,6 +49,7 @@ describe('wizard status', () => {
         breadcrumbs: [],
         userEmail: testUserEmail,
         projectId,
+        projectName: name,
       })
       expect(toString(result)).to.equal(toString(authProjMessage))
     })
@@ -60,6 +61,7 @@ describe('wizard status', () => {
         breadcrumbs,
         userEmail: testUserEmail,
         projectId,
+        projectName: name,
       })
       expect(toString(result)).to.equal(toString(authProjBCMessage))
     })
