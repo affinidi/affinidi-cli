@@ -38,18 +38,18 @@ export enum UseCasesAppNames {
 type UseCaseType = `${UseCasesAppNames}`
 type PlatformType = `${Platforms}`
 
-const UseCaseSources: Record<UseCaseType, string> = {
-  'portable-reputation': 'https://github.com/affinidi/reference-app-portable-reputation.git',
-  'access-without-ownership-of-data': 'NOT IMPLEMENTED YET',
-  health: 'https://github.com/affinidi/reference-app-health.git',
-  education: 'https://github.com/affinidi/reference-app-education.git',
-  ticketing: 'https://github.com/affinidi/reference-app-ticketing.git',
-  'kyc-kyb': 'NOT IMPLEMENTED YET',
-}
+const PORTABLE_REP_GITHUB = 'https://github.com/affinidi/reference-app-portable-rep.git'
+const REFERENCE_APP_GITHUB =
+  'https://github.com/affinidi/reference-app-certification-and-verification.git'
 
-const download = async (gitUrl: string, destination: string): Promise<void> => {
+const download = async (useCase: UseCaseType, destination: string): Promise<void> => {
+  const gitUrl =
+    useCase === UseCasesAppNames.portableReputation ? PORTABLE_REP_GITHUB : REFERENCE_APP_GITHUB
+
+  const useCaseName = UseCasesAppNames.portableReputation === useCase ? 'career' : useCase
+
   try {
-    await GitService.clone(gitUrl, destination)
+    await GitService.clone(gitUrl, destination, { subdirectory: `use-cases/${useCaseName}` })
   } catch (error) {
     throw Error(`Download Failed: ${error.message}`)
   }
@@ -75,6 +75,8 @@ const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
         'NEXT_PUBLIC_HOST=http://localhost:3000',
         '',
         '# backend-only envs',
+        'NEXTAUTH_URL=http://localhost:3000',
+        '',
         'CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
         'AFFINIDI_IAM_API_URL=https://affinidi-iam.apse1.affinidi.com/api',
         'ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
@@ -97,15 +99,16 @@ const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
       '# frontend-only envs',
       'NEXT_PUBLIC_HOST=http://localhost:3000',
       '',
-      'NEXT_PUBLIC_ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
-      'NEXT_PUBLIC_USER_MANAGEMENT_API_URL=https://console-user-management.apse1.affinidi.com/api',
-      'NEXT_PUBLIC_VERIFIER_API_URL=https://affinity-verifier.prod.affinity-project.org/api',
-      'NEXT_PUBLIC_CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
-      'NEXT_PUBLIC_AFFINIDI_IAM_URL=https://affinidi-iam.apse1.affinidi.com/api',
+      'ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
+      'VERIFIER_API_URL=https://affinity-verifier.prod.affinity-project.org/api',
+      'CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
       '',
-      `NEXT_PUBLIC_API_KEY_HASH=${activeProjectApiKey}`,
-      `NEXT_PUBLIC_PROJECT_DID=${activeProjectDid}`,
-      `NEXT_PUBLIC_PROJECT_ID=${activeProjectId}`,
+      'ISSUER_LOGIN=issuer@affinidi.com',
+      'ISSUER_PASSWORD=test',
+      '',
+      `ISSUER_API_KEY_HASH=${activeProjectApiKey}`,
+      `ISSUER_PROJECT_DID=${activeProjectDid}`,
+      `ISSUER_PROJECT_ID=${activeProjectId}`,
     ])
   } catch (error) {
     displayOutput({
@@ -145,7 +148,7 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       case UseCasesAppNames.educationReferenceApp:
       case UseCasesAppNames.ticketingReferenceApp:
       case UseCasesAppNames.portableReputation:
-        await download(UseCaseSources[useCase], name)
+        await download(useCase, name)
         await analyticsService.eventsControllerSend(analyticsData)
         break
       case UseCasesAppNames.accessWithoutOwnershipOfData:

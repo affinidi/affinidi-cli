@@ -45,7 +45,7 @@ describe('User generates application', () => {
         expect(fs.existsSync(`./${health}`)).to.be.true
         const packageJSON = await fs.readFileSync(`./${health}/package.json`, 'utf-8')
         const packageJSONObject = JSON.parse(packageJSON)
-        expect(packageJSONObject.name).to.equal(`${health}`)
+        expect(packageJSONObject.name).to.equal(`reference-app-${health}`)
       })
   })
   describe('Generate portable-reputation app', () => {
@@ -62,7 +62,7 @@ describe('User generates application', () => {
         expect(fs.existsSync(`./${portableReputation}`)).to.be.true
         const packageJSON = await fs.readFileSync(`./${portableReputation}/package.json`, 'utf-8')
         const packageJSONObject = JSON.parse(packageJSON)
-        expect(packageJSONObject.name).to.equal(`developer-reputation-app`)
+        expect(packageJSONObject.name).to.equal(`reference-app-career`)
       })
   })
   describe('Generate default app', () => {
