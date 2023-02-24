@@ -66,11 +66,11 @@ Generate four ready-to-use applications that use Affinidi APIs.
 
 **[The Certification and Verification app](https://github.com/affinidi/reference-app-certification-and-verification)** includes such features as: issuing a credential, claiming & storing it in your wallet, verifying it. It includes 3 use cases:
 
-  - **Ticketing** - uses event tickets;
+- **Ticketing** - uses event tickets;
 
-  - **Health** - uses medical prescriptions;
+- **Health** - uses medical prescriptions;
 
-  - **Education** - uses students' certificates.
+- **Education** - uses students' certificates.
 
 #
 
@@ -87,6 +87,12 @@ Run the installation command:
 
 ```
 npm install -g @affinidi/cli
+```
+
+To check Affinidi CLI version:
+
+```
+affinidi --version
 ```
 
 &nbsp;
