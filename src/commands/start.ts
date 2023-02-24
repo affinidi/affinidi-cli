@@ -73,7 +73,8 @@ import {
 import { UseCasesAppNames } from '../exposedFunctions/genApp'
 
 export default class Start extends Command {
-  static description = 'Start provides a way to guide you from end to end.'
+  static description =
+    'Use this command to guide you through a series of prompts to perform different commands in the CLI'
 
   static command = 'affinidi start'
 
