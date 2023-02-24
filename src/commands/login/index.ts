@@ -88,7 +88,7 @@ export default class Login extends Command {
       'login',
     )
     CliUx.ux.action.stop('OTP verified')
-    CliUx.ux.action.stop('Log-in successful')
+    CliUx.ux.info('Log-in successful')
 
     // Get userId from cookie. Slice removes `console_authtoken=` prefix.
     const { userId } = parseJwt(sessionToken.slice('console_authtoken='.length))
