@@ -71,7 +71,14 @@ export default class VerifyVc extends Command {
       },
     }
     await analyticsService.eventsControllerSend(analyticsData)
-    displayOutput({ itemToDisplay: JSON.stringify(verification, null, ' '), flag: flags.output })
+    displayOutput({
+      itemToDisplay: JSON.stringify(
+        verification.errors.length === 0 ? { isValid: verification.isValid } : verification,
+        null,
+        ' ',
+      ),
+      flag: flags.output,
+    })
   }
 
   async catch(error: CliError) {
