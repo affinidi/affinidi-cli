@@ -1,5 +1,7 @@
 import chalk from 'chalk'
 
+const isReputationApp = (useCase: string) => ['career', 'gaming'].includes(useCase)
+
 const buildCommandDescription = (command: string, subCommands: string[]): string => {
   return chalk`
   Use the ${chalk.bgCyanBright.black(command)} command if you want to display some of your resources
@@ -99,10 +101,9 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
   appPath: string,
   useCase: string,
 ): { text: string; styled: string }[] => {
-  const message =
-    useCase === 'portable-reputation'
-      ? portableReputationNextSteps
-      : certificationAndVerificationNextSteps()
+  const message = isReputationApp(useCase)
+    ? portableReputationNextSteps
+    : certificationAndVerificationNextSteps()
   return [
     {
       text: `Successfully generated ${name} at ${appPath}`,
