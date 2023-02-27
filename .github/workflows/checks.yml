@@ -54,3 +54,8 @@ jobs:
         env:
           MAIL_API_KEY: ${{secrets.MAIL_API_KEY}}
           MAIL_NAMESPACE: ${{secrets.MAIL_NAMESPACE}}
+  call-security-scanners-workflow:
+    uses: affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit
+    with:
+      config-path: .github/labeler.yml
+    secrets: inherit
