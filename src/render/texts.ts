@@ -50,17 +50,24 @@ export const useCommandDescription = chalk`
 
   ${chalk.bgWhite(`$ affinidi use --help`)}
 `
-export const portableReputationNextSteps: { text: string; styled: string }[] = [
+export const portableReputationNextSteps = (
+  useCase: string,
+): { text: string; styled: string }[] => [
   {
     text: 'Read the README file of the generated application to know the next steps.',
     styled: `${chalk.yellowBright(
       'Read the README file of the generated application to know the next steps.',
     )}`,
   },
-  {
-    text: 'Add github credentials to .env file',
-    styled: `${chalk.red('Add github credentials to .env file')}`,
-  },
+  useCase === 'career'
+    ? {
+        text: 'Add github credentials to .env file',
+        styled: `${chalk.red('Add github credentials to .env file')}`,
+      }
+    : {
+        text: 'Add battlenet credentials to .env file',
+        styled: `${chalk.red('Add battlenet credentials to .env file')}`,
+      },
   {
     text: 'open this directory in terminal and install the dependencies',
     styled: 'open this directory in terminal and install the dependencies',
@@ -92,7 +99,7 @@ export const certificationAndVerificationNextSteps = (): { text: string; styled:
     styled: 'then start the application with the command:',
   },
   {
-    text: '$ npm run start',
+    text: '$ npm run dev',
     styled: `  ${chalk.bgWhite(chalk.black('$ npm run start'))}`,
   },
 ]
@@ -102,7 +109,7 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
   useCase: string,
 ): { text: string; styled: string }[] => {
   const message = isPortableReputationReferenceApp(useCase)
-    ? portableReputationNextSteps
+    ? portableReputationNextSteps(useCase)
     : certificationAndVerificationNextSteps()
   return [
     {
