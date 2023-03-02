@@ -15,8 +15,8 @@ export enum Platforms {
 }
 
 export enum UseCasesAppNames {
-  gaming = 'gaming',
-  career = 'career',
+  gamingReferenceApp = 'gaming',
+  careerReferenceApp = 'career',
   // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
   healthReferenceApp = 'health',
   educationReferenceApp = 'education',
