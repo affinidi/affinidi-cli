@@ -15,7 +15,6 @@ export enum Platforms {
 }
 
 export enum UseCasesAppNames {
-  portableReputation = 'portable-reputation',
   gaming = 'gaming',
   career = 'career',
   // accessWithoutOwnershipOfData = 'access-without-ownership-of-data',

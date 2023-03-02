@@ -27,7 +27,6 @@ export enum Platforms {
 }
 
 export enum UseCasesAppNames {
-  portableReputation = 'portable-reputation',
   gaming = 'gaming',
   career = 'career',
   accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
@@ -147,7 +146,6 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       case UseCasesAppNames.healthReferenceApp:
       case UseCasesAppNames.educationReferenceApp:
       case UseCasesAppNames.ticketingReferenceApp:
-      case UseCasesAppNames.portableReputation:
       case UseCasesAppNames.gaming:
       case UseCasesAppNames.career:
         await download(useCase, name)

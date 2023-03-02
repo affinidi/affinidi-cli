@@ -65,7 +65,7 @@ describe('User generates application', () => {
     test
       .stdout()
       .command(['generate-application', '-n', `${gaming}`, '-u', `${gaming}`])
-      .it('generate portable-reputation app', async () => {
+      .it('generate gaming app', async () => {
         expect(fs.existsSync(`./${gaming}`)).to.be.true
         const packageJSON = await fs.readFileSync(`./${gaming}/package.json`, 'utf-8')
         const packageJSONObject = JSON.parse(packageJSON)
