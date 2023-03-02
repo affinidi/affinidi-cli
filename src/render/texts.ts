@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-const isReputationApp = (useCase: string) => ['career', 'gaming'].includes(useCase)
+const isPortableReputationReferenceApp = (useCase: string) => ['career', 'gaming'].includes(useCase)
 
 const buildCommandDescription = (command: string, subCommands: string[]): string => {
   return chalk`
@@ -101,7 +101,7 @@ export const buildGeneratedAppNextStepsMessageBlocks = (
   appPath: string,
   useCase: string,
 ): { text: string; styled: string }[] => {
-  const message = isReputationApp(useCase)
+  const message = isPortableReputationReferenceApp(useCase)
     ? portableReputationNextSteps
     : certificationAndVerificationNextSteps()
   return [
