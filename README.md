@@ -414,7 +414,7 @@ Use this command to generate a privacy-preserving app. Please see [Affinidi Refe
 USAGE
 
 ```
-$ affinidi generate-application [-n <value>] [-u <portable-reputation|health|education|ticketing>][-w]
+$ affinidi generate-application [-n <value>] [-u <health|education|ticketing|gaming|career>][-w]
 ```
 
 FLAGS
@@ -422,7 +422,7 @@ FLAGS
 ```
 -n, --name=<value>                                                  [default: my-app] Name of the application
 -o, --output=(plaintext|json)                                       [default: plaintext] Override default output format view
--u, --use-case=(portable-reputation|health|education|ticketing) [default: ticketing] Choose which app you want generate
+-u, --use-case=(health|education|ticketing|gaming|career) [default: ticketing] Choose which app you want generate
 ```
 
 You can use this to generate the application with the default values:
@@ -438,7 +438,7 @@ $ affinidi generate-application -n ExampleApp
 
 $ affinidi generate-application -n ExampleApp -u health
 
-$ affinidi generate-application -n ExampleApp -u portable-reputation
+$ affinidi generate-application -n ExampleApp -u gaming
 ```
 
 You can also see the help for the command in the CLI:
