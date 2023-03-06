@@ -72,27 +72,58 @@ const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
   displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.output })
 
   try {
-    if (isPortableReputationReferenceApp(flags.use_case)) {
+    if (flags.use_case === 'career') {
       Writer.write(path.join(name, '.env'), [
         '# frontend-only envs',
         'NEXT_PUBLIC_HOST=http://localhost:3000',
         '',
         '# backend-only envs',
+        'LOG_LEVEL=debug',
+        '',
         'NEXTAUTH_URL=http://localhost:3000',
+        `AUTH_JWT_SECRET=${fakeJWT() + fakeJWT() + fakeJWT()}`,
         '',
         'CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
         'AFFINIDI_IAM_API_URL=https://affinidi-iam.apse1.affinidi.com/api',
+        'VERIFIER_API_URL=https://affinity-verifier.prod.affinity-project.org/api',
         'ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
         '',
         `PROJECT_ID=${activeProjectId}`,
         `PROJECT_DID=${activeProjectDid}`,
         `API_KEY_HASH=${activeProjectApiKey}`,
         '',
-        `AUTH_JWT_SECRET=${fakeJWT() + fakeJWT() + fakeJWT()}`,
         'GITHUB_APP_CLIENT_ID=',
         'GITHUB_APP_CLIENT_SECRET=',
+      ])
+
+      return
+    }
+
+    if (flags.use_case === 'gaming') {
+      Writer.write(path.join(name, '.env'), [
+        '# frontend-only envs',
+        'NEXT_PUBLIC_HOST=http://localhost:3000',
         '',
+        '# backend-only envs',
         'LOG_LEVEL=debug',
+        '',
+        'NEXTAUTH_URL=http://localhost:3000',
+        `AUTH_JWT_SECRET=${fakeJWT() + fakeJWT() + fakeJWT()}`,
+        '',
+        'CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
+        'AFFINIDI_IAM_API_URL=https://affinidi-iam.apse1.affinidi.com/api',
+        'VERIFIER_API_URL=https://affinity-verifier.prod.affinity-project.org/api',
+        'ISSUANCE_API_URL=https://console-vc-issuance.apse1.affinidi.com/api',
+        '',
+        `PROJECT_ID=${activeProjectId}`,
+        `PROJECT_DID=${activeProjectDid}`,
+        `API_KEY_HASH=${activeProjectApiKey}`,
+        '',
+        '## data providers',
+        'BATTLENET_CLIENT_ID=',
+        'BATTLENET_CLIENT_SECRET=',
+        'BATTLENET_ISSUER=https://eu.battle.net/oauth',
+        'BATTLENET_REGION=eu',
       ])
 
       return
