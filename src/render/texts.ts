@@ -48,16 +48,20 @@ export const useCommandDescription = chalk`
 
   ${chalk.bgWhite(`$ affinidi use --help`)}
 `
-export const portableReputationNextSteps: { text: string; styled: string }[] = [
+export const referenceAppNextSteps = (useCase: string): { text: string; styled: string }[] => [
   {
     text: 'Read the README file of the generated application to know the next steps.',
     styled: `${chalk.yellowBright(
       'Read the README file of the generated application to know the next steps.',
     )}`,
   },
-  {
+  useCase === 'career' && {
     text: 'Add github credentials to .env file',
     styled: `${chalk.red('Add github credentials to .env file')}`,
+  },
+  useCase === 'gaming' && {
+    text: 'Add battlenet credentials to .env file',
+    styled: `${chalk.red('Add battlenet credentials to .env file')}`,
   },
   {
     text: 'open this directory in terminal and install the dependencies',
@@ -76,33 +80,12 @@ export const portableReputationNextSteps: { text: string; styled: string }[] = [
     styled: `  ${chalk.bgWhite('$ npm run dev')}`,
   },
 ]
-export const certificationAndVerificationNextSteps = (): { text: string; styled: string }[] => [
-  {
-    text: 'open this directory in terminal and install the dependencies',
-    styled: 'open this directory in terminal and install the dependencies',
-  },
-  {
-    text: '$ npm install',
-    styled: `  ${chalk.bgWhite(chalk.black('$ npm install'))}`,
-  },
-  {
-    text: 'then start the application with the command:',
-    styled: 'then start the application with the command:',
-  },
-  {
-    text: '$ npm run start',
-    styled: `  ${chalk.bgWhite(chalk.black('$ npm run start'))}`,
-  },
-]
 export const buildGeneratedAppNextStepsMessageBlocks = (
   name: string,
   appPath: string,
   useCase: string,
 ): { text: string; styled: string }[] => {
-  const message =
-    useCase === 'portable-reputation'
-      ? portableReputationNextSteps
-      : certificationAndVerificationNextSteps()
+  const message = referenceAppNextSteps(useCase)
   return [
     {
       text: `Successfully generated ${name} at ${appPath}`,

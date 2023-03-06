@@ -27,7 +27,8 @@ export enum Platforms {
 }
 
 export enum UseCasesAppNames {
-  portableReputation = 'portable-reputation',
+  gamingReferenceApp = 'gaming',
+  careerReferenceApp = 'career',
   accessWithoutOwnershipOfData = 'access-without-ownership-of-data',
   healthReferenceApp = 'health',
   educationReferenceApp = 'education',
@@ -42,14 +43,16 @@ const PORTABLE_REP_GITHUB = 'https://github.com/affinidi/reference-app-portable-
 const REFERENCE_APP_GITHUB =
   'https://github.com/affinidi/reference-app-certification-and-verification.git'
 
-const download = async (useCase: UseCaseType, destination: string): Promise<void> => {
-  const gitUrl =
-    useCase === UseCasesAppNames.portableReputation ? PORTABLE_REP_GITHUB : REFERENCE_APP_GITHUB
+const isPortableReputationReferenceApp = (useCase: UseCaseType) =>
+  ['career', 'gaming'].includes(useCase)
 
-  const useCaseName = UseCasesAppNames.portableReputation === useCase ? 'career' : useCase
+const download = async (useCase: UseCaseType, destination: string): Promise<void> => {
+  const gitUrl = isPortableReputationReferenceApp(useCase)
+    ? PORTABLE_REP_GITHUB
+    : REFERENCE_APP_GITHUB
 
   try {
-    await GitService.clone(gitUrl, destination, { subdirectory: `use-cases/${useCaseName}` })
+    await GitService.clone(gitUrl, destination, { subdirectory: `use-cases/${useCase}` })
   } catch (error) {
     throw Error(`Download Failed: ${error.message}`)
   }
@@ -69,7 +72,7 @@ const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
   displayOutput({ itemToDisplay: `Setting up the project`, flag: flags.output })
 
   try {
-    if (flags.use_case === UseCasesAppNames.portableReputation) {
+    if (isPortableReputationReferenceApp(flags.use_case)) {
       Writer.write(path.join(name, '.env'), [
         '# frontend-only envs',
         'NEXT_PUBLIC_HOST=http://localhost:3000',
@@ -126,10 +129,9 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
   }
   const { userId, label } = getSession()?.account
   const analyticsData: EventDTO = {
-    name:
-      useCase === UseCasesAppNames.portableReputation
-        ? 'APP_PORT_REP_GENERATION_STARTED'
-        : 'APPLICATION_GENERATION_STARTED',
+    name: isPortableReputationReferenceApp(useCase)
+      ? 'APP_PORT_REP_GENERATION_STARTED'
+      : 'APPLICATION_GENERATION_STARTED',
     category: 'APPLICATION',
     component: 'Cli',
     uuid: userId,
@@ -147,7 +149,8 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
       case UseCasesAppNames.healthReferenceApp:
       case UseCasesAppNames.educationReferenceApp:
       case UseCasesAppNames.ticketingReferenceApp:
-      case UseCasesAppNames.portableReputation:
+      case UseCasesAppNames.gamingReferenceApp:
+      case UseCasesAppNames.careerReferenceApp:
         await download(useCase, name)
         await analyticsService.eventsControllerSend(analyticsData)
         break
@@ -163,10 +166,9 @@ export const generateApplication = async (flags: FlagsInput, timeStamp?: number)
   }
 
   await setUpProject(name, flags)
-  analyticsData.name =
-    useCase === UseCasesAppNames.portableReputation
-      ? 'APP_PORT_REP_GENERATION_COMPLETED'
-      : 'APPLICATION_GENERATION_COMPLETED'
+  analyticsData.name = isPortableReputationReferenceApp(useCase)
+    ? 'APP_PORT_REP_GENERATION_COMPLETED'
+    : 'APPLICATION_GENERATION_COMPLETED'
   await analyticsService.eventsControllerSend(analyticsData)
   CliUx.ux.action.stop('\nApplication generated')
 

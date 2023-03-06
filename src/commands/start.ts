@@ -392,7 +392,8 @@ export default class Start extends Command {
     CliUx.ux.info(this.getStatus())
     const appName = await applicationName()
     const useCase = await chooseUseCase([
-      UseCasesAppNames.portableReputation,
+      UseCasesAppNames.gamingReferenceApp,
+      UseCasesAppNames.careerReferenceApp,
       UseCasesAppNames.educationReferenceApp,
       UseCasesAppNames.ticketingReferenceApp,
       UseCasesAppNames.healthReferenceApp,
