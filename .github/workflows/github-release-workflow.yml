@@ -28,6 +28,8 @@ jobs:
 
       - name: Build
         run: npm run build:binary
+        env:
+          ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
 
       - name: Run release
         run:

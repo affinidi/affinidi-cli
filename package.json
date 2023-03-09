@@ -18,8 +18,8 @@
   "scripts": {
     "dev": "./bin/dev",
     "semantic-release": "npx semantic-release",
-    "build": "npm run remove:dist && npm run tsc",
-    "build:binary": "npm run remove:dist && npm run tsc -b",
+    "build": "npm run remove:dist && npm run tsc && node bin/inject-secrets.js",
+    "build:binary": "npm run remove:dist && npm run tsc -b && node bin/inject-secrets.js",
     "start": "npm run build && node dist/index.js",
     "tsc": "tsc -p tsconfig-build.json",
     "lint": "eslint src/*.ts src/**/*.ts",
@@ -98,6 +98,7 @@
     "nyc": "15.1.0",
     "oclif": "^3.6.3",
     "prettier": "^2.7.1",
+    "replace-in-file": "^6.3.5",
     "semantic-release": "^19.0.5",
     "shx": "^0.3.4",
     "sinon": "^15.0.1",
@@ -146,6 +147,7 @@
   },
   "overrides": {
     "eta": "2.0.0",
-    "got": "12.5.3"
+    "got": "12.5.3",
+    "http-cache-semantics": "4.1.1"
   }
 }
