@@ -162,10 +162,9 @@ To issue a VC you first have to create a schema or choose an existing one:
  $ affinidi list schemas
 ```
 
-Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).
-
 You will need the value of the property `jsonSchemaUrl` of the created or chosen schema to issue VCs.  
 
+Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).
 Full reference for each command can be found here:  
 [`create`](#affinidi-create)  
 [`list`](#affinidi-list)
