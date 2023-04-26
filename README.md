@@ -64,7 +64,7 @@ Generate four ready-to-use applications that use Affinidi APIs.
 
 **[The Portable Reputation app](https://github.com/affinidi/reference-app-portable-rep)** allows the builder to connect to different data sources to construct a portable, user-owned and -managed reputation app that provides access to specific experiences, events or memberships.
 
-**[The Certification and Verification app](https://github.com/affinidi/reference-app-certification-and-verification)** includes such features as: issuing a credential, claiming & storing it in your wallet, verifying it. It includes 3 use cases:
+**[The Certification and Verification app](https://github.com/affinidi/reference-app-certification-and-verification)** includes such features as: issuing a credential, claiming & storing it in your wallet, verifying it. It includes the 3 use cases below as examples but VCs are not limited to these use cases.
 
 - **Ticketing** - uses event tickets;
 
@@ -89,8 +89,7 @@ Run the installation command:
 npm install -g @affinidi/cli
 ```
 
-To check Affinidi CLI version:
-
+To confirm successful installation:
 ```
 affinidi --version
 ```
@@ -152,23 +151,23 @@ Full reference for each command can be found here:
 
 To issue a VC you first have to create a schema or choose an existing one:
 
-1. A schema can be created using the `create` command. You will need to provide a _schemaName_ and a _description_ in text format as well as a _source_ with the path to the json file with the schema properties.
-
+1. A schema can be created using the `create` command. You will need to provide a _schemaName_ and a _description_ as well as a _source_ that's a `/path/to/schema.json` file describing the schema properties.
 ```
  $ affinidi create schema [schemaName] --description=<value> --source=<value>
 ```
-
+   
 2. To see available schemas:
 
 ```
  $ affinidi list schemas
 ```
 
-You will need the value of the property `jsonSchemaUrl` of the created or chosen schema to issue VCs.
-
 Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).
-Full reference for each command can be found here:
-[`create`](#affinidi-create)
+
+You will need the value of the property `jsonSchemaUrl` of the created or chosen schema to issue VCs.  
+
+Full reference for each command can be found here:  
+[`create`](#affinidi-create)  
 [`list`](#affinidi-list)
 
 ### Verifiable Credentials
@@ -189,8 +188,8 @@ Please see [How to structure a JSON file to issue a VC](#how-to-structure-a-json
 $ affinidi verify-vc --data=<value>
 ```
 
-Full reference for each command can be found here:
-[issue-vc](#affinidi-issue-vc)
+Full reference for each command can be found here:  
+[issue-vc](#affinidi-issue-vc)  
 [verify-vc](#affinidi-verify-vc)
 
 ### Generate an application
@@ -872,7 +871,7 @@ And here is an example of that structure used to represent a simple form with tw
 - Nested attribute – a container for attributes
 - DID – a decentralized identifier
   - Example of VC value: "did:example:123"
-- Text – a string value
+- string – a string value
   - Example of VC value: "my text"
 - URI – a link to a web resource
   - Example of VC value: "http://ui.schema.affinidi.com/"
