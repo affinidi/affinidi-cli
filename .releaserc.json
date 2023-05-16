@@ -1,6 +1,7 @@
 {
   "branches": [
-    "main"
+    "main",
+    { "name": "beta", "prerelease": true }
   ],
   "plugins": [
     ["@semantic-release/commit-analyzer", {
@@ -29,12 +30,6 @@
           "package-lock.json"
         ],
         "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
-      }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "successCmd": "echo RELEASE_TAG=v${nextRelease.version} > build.env"
       }
     ]
   ]

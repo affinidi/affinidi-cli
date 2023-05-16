@@ -16,7 +16,6 @@
 
 [FAQ](#faq)
 
-#
 
 ## Introduction
 
