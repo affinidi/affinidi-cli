@@ -58,7 +58,7 @@ class AnalyticsService {
 
     try {
       // TODO: this toke is going to expire in 180 days, generate new one before it expires. Created on 22/11/2022.
-      const JWT_TOKEN = 'ANALYTICS_JWT_TOKEN'
+      const JWT_TOKEN = '<ANALYTICS_JWT_TOKEN>'
       await this.client.api.eventsControllerSend(data, {
         headers: { authorization: `Bearer ${JWT_TOKEN}` },
       })

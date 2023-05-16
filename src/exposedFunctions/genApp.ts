@@ -138,7 +138,7 @@ const setUpProject = async (name: string, flags: FlagsInput): Promise<void> => {
       'CLOUD_WALLET_API_URL=https://cloud-wallet-api.prod.affinity-project.org/api',
       '',
       'ISSUER_LOGIN=issuer@affinidi.com',
-      'ISSUER_PASSWORD=test',
+      'ISSUER_HASH_PASSWORD=<ISSUER_HASH_PASSWORD>',
       '',
       `ISSUER_API_KEY_HASH=${activeProjectApiKey}`,
       `ISSUER_PROJECT_DID=${activeProjectDid}`,
