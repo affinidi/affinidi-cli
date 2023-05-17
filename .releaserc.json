@@ -1,11 +1,13 @@
 {
   "branches": [
-    "main"
+    "main",
+    { "name": "beta", "prerelease": true }
   ],
   "plugins": [
     ["@semantic-release/commit-analyzer", {
       "preset": "angular",
       "releaseRules": [
+        {"type": "release", "release": "major"},
         {"type": "feat", "release": "minor"},
         {"type": "fix", "release": "patch"},
         {"type": "test", "release": "patch"},
@@ -29,12 +31,6 @@
           "package-lock.json"
         ],
         "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
-      }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "successCmd": "echo RELEASE_TAG=v${nextRelease.version} > build.env"
       }
     ]
   ]
