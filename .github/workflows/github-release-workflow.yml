@@ -30,6 +30,7 @@ jobs:
         run: npm run build:binary
         env:
           ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
+          ISSUER_HASH_PASSWORD: ${{secrets.ISSUER_HASH_PASSWORD}}
 
       - name: Run release
         run:
