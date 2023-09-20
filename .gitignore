@@ -51,4 +51,4 @@ out
 .env
 .npmrc
 
-my-app
+*.pem

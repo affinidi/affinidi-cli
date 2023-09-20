@@ -1,44 +1,33 @@
-import Conf from 'conf'
 import * as os from 'os'
 import * as path from 'path'
+import Conf from 'conf'
+import { clientSDK } from '../affinidi'
 
-import { NoConfigFile, NoUserConfigFound } from '../../errors'
-import { version } from '../../constants'
-import { vaultService } from '../vault/typedVaultService'
+const NoUserConfigFound = 'No user configurations were found, to create a configuration please log-in again.'
+const NoConfigFile = "The config file doesn't exist, please log-in again"
 
-export const validVersions = [1]
+export const version = 2
+export const validVersions = [2]
 
 export const getMajorVersion = (): number => {
   return version
 }
 
-type UserId = string
-
-type UserConfig = {
-  activeProjectId: string
-  outputFormat: string
-  analyticsOptIn?: boolean
-}
+// eslint-disable-next-line @typescript-eslint/ban-types
+type UserConfig = {}
 
 type ConfigStoreFormat = {
-  username: string
-  version: number
+  version?: number
   currentUserId: string
-  configs: Record<UserId, UserConfig>
+  configs: Record<string, UserConfig>
 }
 
 interface IConfigStorer {
   save(params: ConfigStoreFormat): void
   clear(): void
-  setOutputFormat(outputFormat: string): void
-  getUsername: () => string
-  getVersion: () => number
+  getVersion: () => number | undefined
   getCurrentUser: () => string
-  getAllUserConfigs: () => Record<UserId, UserConfig>
-  getOutputFormat: () => string
-  setCurrentProjectId: (id: string) => void
-  setCurrentUserId: (id: string) => void
-  setUsername: (username: string) => void
+  getAllUserConfigs: () => Record<string, UserConfig>
   deleteUserConfig: () => void
 }
 
@@ -53,31 +42,20 @@ class ConfigService {
     this.store.clear()
   }
 
-  public getVersion = (): number => {
+  public getVersion = (): number | undefined => {
     return this.store.getVersion()
   }
 
   public show = (): ConfigStoreFormat => {
-    const currentUserId = this.getCurrentUser()
+    const currentUserId = clientSDK.auth.getPrincipalId()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
-    const username = this.store.getUsername()
-    return { version: configVersion, currentUserId, configs, username }
-  }
-
-  public userConfigMustBeValid = (userId: string): boolean => {
-    const configs = this.store.getAllUserConfigs()
-    if (!configs) return false
-    const userConfig = configs[userId]
-    if (userConfig?.analyticsOptIn === undefined || !userConfig?.activeProjectId) {
-      return false
-    }
-    return true
+    return { version: configVersion, currentUserId, configs }
   }
 
   private readonly userConfigMustExist = (): void => {
     this.configFileMustExist()
-    const userId = this.getCurrentUser() || vaultService.getSession()?.account.userId
+    const userId = this.getCurrentUser()
     const configs = this.store.getAllUserConfigs()
     if (!configs || !(userId in configs)) {
       throw new Error(NoUserConfigFound)
@@ -101,125 +79,51 @@ class ConfigService {
   }
 
   public getCurrentUser = (): string => {
-    return this.store.getCurrentUser()
+    return clientSDK.auth.getPrincipalId()
   }
 
-  public getOutputFormat = (): string => {
-    return this.store.getOutputFormat()
-  }
-
-  public getUsername = (): string => {
-    return this.store.getUsername()
-  }
-
-  public create = (
-    userId: string,
-    activeProjectId: string = '',
-    analyticsOptIn: boolean | undefined = undefined,
-  ): void => {
+  public create = (userId: string): void => {
     this.store.save({
       currentUserId: userId,
       version: getMajorVersion(),
-      username: '',
       configs: {
-        [userId]: {
-          activeProjectId,
-          outputFormat: 'plaintext',
-          analyticsOptIn,
-        },
+        [userId]: {},
       },
     })
   }
 
-  public updateConfigs = (
-    userId: string,
-    analyticsOptIn: boolean | undefined = undefined,
-  ): Record<UserId, UserConfig> => {
+  public updateConfigs = (userId: string): Record<string, UserConfig> => {
     const configs = this.store.getAllUserConfigs()
     if (!configs[userId]) {
-      configs[userId] = {
-        activeProjectId: '',
-        outputFormat: 'plaintext',
-        analyticsOptIn,
-      }
+      configs[userId] = {}
     } else {
-      const userConfig = configs[userId]
-      configs[userId] = {
-        activeProjectId: userConfig.activeProjectId || '',
-        outputFormat: userConfig.outputFormat || 'plaintext',
-        analyticsOptIn: userConfig.analyticsOptIn || analyticsOptIn || false,
-      }
+      configs[userId] = {}
     }
     return configs
   }
 
-  public createOrUpdate = (
-    userId: string,
-    analyticsOptIn: boolean | undefined = undefined,
-  ): void => {
+  public createOrUpdate = (userId: string): void => {
     let configs = this.store.getAllUserConfigs()
     if (!this.configFileExists() || !configs) {
-      this.create(userId, '', analyticsOptIn)
+      this.create(userId)
       return
     }
 
-    configs = this.updateConfigs(userId, analyticsOptIn)
+    configs = this.updateConfigs(userId)
     this.store.save({
       currentUserId: userId,
       version: getMajorVersion(),
-      username: this.getUsername(),
       configs,
     })
   }
 
-  public setOutputFormat = (format: string): void => {
-    this.userConfigMustExist()
-    this.store.setOutputFormat(format)
-  }
-
   public currentUserConfig = (): UserConfig => {
-    const user = this.store.getCurrentUser()
+    const user = clientSDK.auth.getPrincipalId()
     const configs = this.store.getAllUserConfigs()
     if (!configs[user]) {
       throw Error(NoUserConfigFound)
     }
     return configs[user]
-  }
-
-  public hasAnalyticsOptIn = (): boolean => {
-    try {
-      const config = this.currentUserConfig()
-      return config.analyticsOptIn
-    } catch (_) {
-      return false
-    }
-  }
-
-  public optInOrOut = (inOrOut: boolean) => {
-    this.userConfigMustExist()
-    const userConfig = this.currentUserConfig()
-    userConfig.analyticsOptIn = inOrOut
-    const all = this.show()
-    const user = all.currentUserId
-    const updateConfigFile = {
-      ...all,
-      configs: Object.assign(all.configs, { [user]: { ...userConfig } }),
-    }
-    this.store.save(updateConfigFile)
-  }
-
-  public setCurrentProjectId = (id: string): void => {
-    this.userConfigMustExist()
-    this.store.setCurrentProjectId(id)
-  }
-
-  public setCurrentUserId = (id: string): void => {
-    if (this.configFileExists()) this.store.setCurrentUserId(id)
-  }
-
-  public setUsername = (username: string): void => {
-    this.userConfigMustExist()
-    this.store.setUsername(username)
   }
 
   public deleteUserConfig = (): void => {
@@ -229,14 +133,13 @@ class ConfigService {
 
 const configConf = new Conf<ConfigStoreFormat>({
   cwd: path.join(os.homedir(), '.affinidi'),
-  configName: 'config',
+  configName: 'config-v2',
 })
 
 const store: IConfigStorer = {
   save: (params: ConfigStoreFormat): void => {
     // TODO validate the config before saving
     configConf.set('version', params.version)
-    configConf.set('currentUserId', params.currentUserId)
     configConf.set('configs', params.configs)
   },
 
@@ -244,56 +147,21 @@ const store: IConfigStorer = {
     configConf.clear()
   },
 
-  getVersion: (): number | null => {
+  getVersion: (): number | undefined => {
     const v = Number(configConf.get('version'))
-    return Number.isNaN(v) ? null : v
-  },
-  getCurrentUser: function getCurrentUser(): string {
-    return configConf.get('currentUserId')
+    return Number.isNaN(v) ? undefined : v
   },
   getAllUserConfigs: (): Record<string, UserConfig> => {
     return configConf.get('configs')
   },
-
-  setCurrentProjectId: function setCurrentProjectId(id: string): void {
-    const configs = configConf.get('configs')
-    configs[this.getCurrentUser()].activeProjectId = id
-    configConf.set('configs', configs)
-  },
-  getOutputFormat: function getOutputFormat(): string {
-    const configs = configConf.get('configs')
-    const userId = this.getCurrentUser()
-
-    if (!configs || !configs[userId]) {
-      return 'plaintext'
-    }
-
-    return configs[userId].outputFormat
-  },
-  setOutputFormat: function setOutputFormat(outputFormat: string): void {
-    const configs = configConf.get('configs')
-    const userId = this.getCurrentUser()
-    const newUserConfig: UserConfig = {
-      activeProjectId: configs[userId].activeProjectId,
-      outputFormat,
-    }
-    configs[userId] = newUserConfig
-    configConf.set('configs', configs)
-  },
-  getUsername: function getUsername(): string {
-    return configConf.get('username')
-  },
-  setUsername: function setUsername(username: string): void {
-    configConf.set('username', username)
+  getCurrentUser: (): string => {
+    return clientSDK.auth.getPrincipalId()
   },
   deleteUserConfig: function deleteUserConfig(): void {
     const userId = this.getCurrentUser()
     const configs = configConf.get('configs')
     delete configs[userId]
     configConf.set('configs', configs)
-  },
-  setCurrentUserId: function setCurrentUserId(id: string): void {
-    configConf.set('currentUserId', id)
   },
 }
 
@@ -312,51 +180,18 @@ const testStorer: IConfigStorer = {
   getVersion: (): number => {
     return testStore.get('version')
   },
-  getCurrentUser: function getCurrentUser(): string {
+  getCurrentUser: (): string => {
     return testStore.get('currentUserId')
   },
   getAllUserConfigs: function getAllUserConfigs(): Record<string, UserConfig> {
     return testStore.get('configs')
   },
-  setCurrentProjectId: function setCurrentProjectId(id: string): void {
-    const configs = this.getAllUserConfigs()
-    configs[this.getCurrentUser()].activeProjectId = id
-    testStore.set('configs', configs)
-  },
-  getOutputFormat: function getOutputFormat(): string {
-    const configs = configConf.get('configs')
-    const userId = this.getCurrentUser()
 
-    if (!configs || !configs[userId]) {
-      return 'plaintext'
-    }
-
-    return configs[userId].outputFormat
-  },
-  setOutputFormat: function setOutputFormat(outputFormat: string): void {
-    const configs = testStore.get('configs')
-    const userId = this.getCurrentUser()
-    const newUserConfig: UserConfig = {
-      activeProjectId: configs[userId].activeProjectId,
-      outputFormat,
-    }
-    configs[userId] = newUserConfig
-    testStore.set('configs', configs)
-  },
-  getUsername: function getUsername(): string {
-    return testStore.get('username')
-  },
-  setUsername: function setUsername(username: string): void {
-    testStore.set('username', username)
-  },
   deleteUserConfig: function deleteUserConfig(): void {
     const configs = testStore.get('configs')
     const userId = this.getCurrentUser()
     delete configs[userId]
     testStore.set('configs', configs)
-  },
-  setCurrentUserId: function setCurrentUserId(id: string): void {
-    testStore.set('currentUserId', id)
   },
 }
 

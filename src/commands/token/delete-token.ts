@@ -1,0 +1,34 @@
+import { ux, Flags } from '@oclif/core'
+import { z } from 'zod'
+import { BaseCommand } from '../../common'
+import { clientSDK } from '../../services/affinidi'
+import { iamService } from '../../services/affinidi/iam'
+
+export class DeleteToken extends BaseCommand<typeof DeleteToken> {
+  static summary = 'Deletes a token'
+  static examples = [
+    '<%= config.bin %> <%= command.id %> -i <uuid>',
+    '<%= config.bin %> <%= command.id %> --token-id <uuid>',
+  ]
+  static flags = {
+    'token-id': Flags.string({
+      char: 'i',
+      description: 'ID of the token',
+      required: true,
+    }),
+  }
+
+  public async run(): Promise<{ id: string }> {
+    const { flags } = await this.parse(DeleteToken)
+
+    const schema = z.string().uuid()
+    const tokenId = schema.parse(flags['token-id'])
+
+    ux.action.start('Deleting token')
+    await iamService.deleteMachineUser(clientSDK.config.getUserToken()?.access_token, tokenId)
+    ux.action.stop('Deleted successfully!')
+
+    if (!this.jsonEnabled()) this.logJson({ id: tokenId })
+    return { id: tokenId }
+  }
+}

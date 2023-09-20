@@ -1,7 +1,7 @@
 {
   "name": "@affinidi/cli",
-  "version": "1.66.0",
-  "description": "Affinidi Elements command-line-interface",
+  "version": "2.0.0-beta.68",
+  "description": "Affinidi Command Line Interface",
   "author": "affinidi.com",
   "license": "Apache-2.0",
   "typings": "dist/index.d.ts",
@@ -17,95 +17,77 @@
   ],
   "scripts": {
     "dev": "./bin/dev",
-    "semantic-release": "npx semantic-release",
-    "build": "npm run remove:dist && npm run tsc && node bin/inject-secrets.js",
-    "build:binary": "npm run remove:dist && npm run tsc -b && node bin/inject-secrets.js",
-    "start": "npm run build && node dist/index.js",
-    "tsc": "tsc -p tsconfig-build.json",
-    "lint": "eslint src/*.ts src/**/*.ts",
-    "lint:fix": "eslint src/*.ts src/**/*.ts test/**/*.ts --fix",
-    "test": "mocha \"test/unitTests/**/*.test.ts\"",
-    "test:integration": "mocha \"test/integration-test/**/*.test.ts\"",
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "mocha \"test/unit/**/*.test.ts\"",
+    "test:integration": "exit 0",
     "checkLicenses": "license-checker --production --failOn 'AGPL 3.0;LGPL 2.1'",
-    "prepare-commit-hooks": "npm install --global commitizen@4.2.4 cz-conventional-changelog@3.3.0 @commitlint/config-conventional@16.2.1 @commitlint/cli@16.2.3",
-    "prepare:dev": "is-ci || (husky install && npm run prepare-commit-hooks)",
-    "prepare": "node -e \"process.exit(process.env.NODE_ENV === 'production' ? 0 : 1)\" || npm run prepare:dev",
-    "remove:dist": "shx rm -rf dist",
-    "generate:api": "node scripts/generate-api.cjs",
-    "postinstall": "node bin/postinstall.js"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
+    "generate:readme": "npm run build && oclif readme",
+    "generate:api": "node scripts/generate-api.cjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/affinidi/affinidi-cli.git"
+    "url": "git+https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli.git"
   },
   "keywords": [
     "affinidi",
     "cli",
     "oclif"
   ],
-  "bugs": {
-    "url": "https://github.com/affinidi/affinidi-cli/issues"
-  },
-  "homepage": "https://github.com/affinidi/affinidi-cli#readme",
   "dependencies": {
-    "@oclif/core": "^1.20.4",
-    "@oclif/plugin-autocomplete": "^2.1.0",
-    "@oclif/plugin-help": "^5.2.4",
-    "@oclif/plugin-warn-if-update-available": "^2.0.26",
-    "app-root-path": "^3.1.0",
-    "axios": "^1.3.2",
+    "@inquirer/confirm": "^2.0.10",
+    "@inquirer/prompts": "^3.1.1",
+    "@inquirer/select": "^1.2.9",
+    "@oclif/core": "^2.13.0",
+    "@oclif/plugin-autocomplete": "^2.3.6",
+    "@oclif/plugin-commands": "^2.2.25",
+    "@oclif/plugin-help": "^5.2.18",
+    "@oclif/plugin-not-found": "^2.4.1",
+    "@oclif/plugin-search": "^0.0.22",
+    "@oclif/plugin-warn-if-update-available": "^2.0.49",
+    "axios": "^1.4.0",
     "chalk": "^4.1.2",
     "conf": "^10.2.0",
-    "csv-stringify": "^6.2.3",
-    "email-validator": "^2.0.4",
-    "form-data": "^4.0.0",
+    "express": "^4.18.2",
     "fs-extra": "^9.1.0",
     "http-status-codes": "^2.2.0",
-    "inquirer": "^8.2.3",
-    "nanoid": "^3.3.4",
-    "ts-toolbelt": "^9.6.0"
+    "open": "^8.4.1",
+    "pem-jwk": "^2.0.0",
+    "simple-oauth2": "^5.0.0",
+    "tcp-port-used": "^1.0.2",
+    "zod": "^3.22.2",
+    "zod-validation-error": "^1.5.0"
   },
   "devDependencies": {
-    "@affinidi/eslint-config": "2.0.0-beta.0",
-    "@affinidi/prettier-config": "2.0.0-beta.0",
-    "@oclif/test": "^2.3.5",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/npm": "^9.0.2",
+    "@oclif/test": "^2.4.8",
     "@types/chai": "4.3.5",
+    "@types/express": "^4.17.17",
     "@types/fs-extra": "^9.0.13",
-    "@types/inquirer": "^8.2.3",
     "@types/mocha": "10.0.1",
     "@types/node": "^18.11.19",
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
-    "@typescript-eslint/parser": "^5.50.0",
+    "@types/pem-jwk": "^2.0.0",
+    "@types/simple-oauth2": "^5.0.4",
+    "@types/tcp-port-used": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.59.9",
     "chai": "4.3.7",
-    "eslint": "^8.33.0",
-    "eslint-config-oclif": "^4",
-    "eslint-config-oclif-typescript": "^1.0.3",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-import-resolver-typescript": "^3.6.0",
+    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-mocha": "^10.1.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "fancy-test": "^2.0.12",
-    "husky": "^8.0.3",
-    "is-ci": "^3.0.1",
     "license-checker": "25.0.1",
     "mocha": "^10.2.0",
     "nyc": "15.1.0",
-    "oclif": "^3.6.3",
+    "oclif": "^3.9.0",
     "prettier": "^2.7.1",
-    "replace-in-file": "^6.3.5",
-    "semantic-release": "^19.0.5",
     "shx": "^0.3.4",
-    "sinon": "^15.0.1",
-    "swagger-typescript-api": "^12.0.3",
-    "ts-mockito": "^2.6.1",
+    "swagger-typescript-api": "^12.0.4",
     "ts-node": "^10.9.1",
-    "tslib": "^2.5.0",
+    "tslib": "^2.5.3",
     "typescript": "^4.9.5"
   },
   "oclif": {
@@ -114,38 +96,36 @@
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
+      "@oclif/plugin-not-found",
       "@oclif/plugin-autocomplete",
-      "@oclif/plugin-warn-if-update-available"
+      "@oclif/plugin-warn-if-update-available",
+      "@oclif/plugin-commands",
+      "@oclif/plugin-search"
     ],
     "topicSeparator": " ",
     "topics": {
-      "show": {
-        "description": "Use this command to display the details of a resource"
+      "project": {
+        "description": "Use these commands to manage your projects"
       },
-      "list": {
-        "description": "Use this command to display resources that you have created or are available"
+      "login": {
+        "description": "Use these commands for user login configuration and group management"
       },
-      "create": {
-        "description": "Use this command to create a new resource"
+      "token": {
+        "description": "Use these commands for token management to call Affinidi API's programmatically"
       },
-      "config": {
-        "description": "Use this command to to configure CLI settings"
-      },
-      "use": {
-        "description": "Use this command to choose and activate a project"
+      "iam": {
+        "description": "Use these commands to manage policies for access configuration"
       }
     },
     "warn-if-update-available": {
       "timeoutInDays": 7
     },
     "hooks": {
-      "check": "./dist/hooks/check/checkVersion"
+      "check": "./dist/hooks/check/check-version"
     }
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
-  "overrides": {
-    "http-cache-semantics": "4.1.1"
-  }
+  "types": "dist/index.d.ts"
 }

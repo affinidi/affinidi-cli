@@ -8,8 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment:
-      name: publishEnv
+    # environment:
+    #   name: publishEnv
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           registry-url: "https://registry.npmjs.org"
           scope: "@affinidi"
 
@@ -28,11 +28,9 @@ jobs:
 
       - name: Build
         run: npm run build:binary
-        env:
-          ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
-          ISSUER_HASH_PASSWORD: ${{secrets.ISSUER_HASH_PASSWORD}}
 
       - name: Run release
+        when: manual
         run:
           npm run semantic-release
         env:

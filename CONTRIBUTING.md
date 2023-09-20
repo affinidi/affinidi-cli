@@ -1,26 +1,28 @@
 # Contributing to Affinidi CLI
 
-## Getting started
+[[_TOC_]]
 
-Clone the repository and run `npm install` command.
+> The enforcing of this guidelines will be done gradually. We are aware that the current Greenfield CLI may not have all the necessary tooling to easily comply with everything. However please follow them as close as possible to prevent having to rewrite your commands when we set more strict rules. This will also prevent us from introducing breaking changes.
 
-Some useful commands:
+Before you start contributing please read the CLI's [#philosophy](#philosophy) and [#guidelines](#guidelines). There you will find important information on how to design and structure your commands, flags, outputs, errors, help texts, prompts and more
 
-- Use `npm run dev` to run the CLI locally.
-  > To execute commands, prefix them with `npm run dev` (and ommit the `affinidi` name).
-  > Check out the in-depth instructions in the [CLI ReadMe](README.md) file for using existing commands.
+## Getting Started
+
+- Run `npm install` to install dependencies
+- Use `npm run dev` to run the CLI locally
+
+  To execute commands, prefix them with `npm run dev` (omitting the `affinidi` program name)
+
 - Run `npm test` to execute unit tests
-  > You can find them in the `src/test/unit-tests` directory.
-  <!-- - Run `npm run test:integration` to execute integration tests
-    > You can find them in the `src/test/integration-test` directory. -->
-- `npm run lint` can be used to check for linting errors
+- Run `npm run lint` to check for linting errors
 
-## Implementing a new command
+### Implementing a new command
 
-We built the Affinidi CLI with the [Open CLI Framework](https://oclif.io/). We followed their patterns when implementing commands. Please see their [documentation](https://oclif.io/docs/introduction) for a deeper understanding.  
+Affinidi CLI is built with the [Open CLI Framework (oclif)](https://oclif.io/). It follows their patterns when implementing commands. Please see their [documentation](https://oclif.io/docs/introduction) for a deeper understanding.
+
 If you want to implement a new command, you must include an appropriately named file in the `src/commands/` directory. You can also add subcommands by using a nested folder structure.
 
-As an example, let's say you want to add an `auth` command with two subcommands: `get` and `set`.
+As an example, let's say you want to add an `auth` command with two subcommands: `get` and `set`:
 
 1. Create `src/commands/auth/` directory
 2. Add your main command logic to `src/commands/auth/index.ts`, and the logic for the subcommands `get` and `set` in their respective files:
@@ -33,66 +35,203 @@ As an example, let's say you want to add an `auth` command with two subcommands:
         └── get.ts
 ```
 
-For simple commands, you can also take advantage of OCLIF's [command generation tool](https://oclif.io/docs/generator_commands#oclif-generate-command-name) directly in the terminal, which will scaffold a single command file in the `src/commands/` directory and a test file in `src/test/commands/` directory. Please move the created test file to the `src/test/unit-tests/commands/` directory and delete the new `src/test/commands/` directory in order to comply with this repo's test structure.
+For simple commands, you can also take advantage of oclif's [command generation tool](https://oclif.io/docs/generator_commands#oclif-generate-command-name) directly in the terminal, which will scaffold a single command file in the `src/commands/` directory and a test file in `src/test/commands/` directory. Please move the created test file to the `test/unit-tests/commands/` directory and delete the new `src/test/commands/` directory in order to comply with this repo's test structure.
 
-## Analytics & telemetry
+### Beta Commands
 
-In order to send an analytics event, use the `eventsControllerSend()` method:
+If the command is beta and should be hidden in the release cli version, use `tsconfig-build.json` to exclude the
+command from the `dist` folder, e.g.:
 
-```ts
-import { analyticsService } from 'src/services/analytics'
-import { EventDTO } from '../services/analytics/analytics.api'
-
-// ...
-const analyticsData: EventDTO = {
-  name: 'EXAMPLE_EVENT',
-  category: 'APPLICATION',
-  component: 'Cli',
-  uuid: configService.getCurrentUser(),
-  metadata: {
-    commandId: 'affinidi.example-command',
-    ...generateUserMetadata(account.label),
-  },
+```
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    ...
+    "src/commands/<my-new-command>/**/*"
+    ...
+  ]
 }
-await analyticsService.eventsControllerSend(analyticsData)
 ```
 
-## Messages
+Pay attention to versioning, when developing beta commands only use the `fix` MR annotation, once we're ready to make the
+command public use `feat` for the MR enabling the command to increase the minor version.
 
-We store messages to the user (welcome, prompts, errors, etc.) in different places:
+### Messages
 
-1. For brief messages, we inline them in the command file.
-2. We store more complex user interactions in the `src/user-actions/` directory. For prompts, we use OCLIF's native [tool](https://oclif.io/docs/prompting) and store them in `src/user-actions/prompts.ts` as well as the [Inquirer library](https://www.npmjs.com/package/inquirer), which we store in `src/user-actions/inquirer.ts`.
-3. Longer messages and general command errors as well as some message-building logic are stored in the `src/render/` directory.
+CLI stores user messages (welcome, prompts, errors, etc.) in different places:
 
-We use [Chalk](https://www.npmjs.com/package/chalk) to style messages in the terminal.
+1. For brief messages, inline them in the command file.
+2. For prompting use [Inquirer](https://www.npmjs.com/package/inquirer).
+3. Longer messages, general command errors as well as some message-building logic are stored in the `src/render/` directory.
 
-## Configuration & credentials
+Use [Chalk](https://www.npmjs.com/package/chalk) to style messages in the terminal.
 
-CLI Configurations are stored in the `~/.affinidi/config.json` file.  
-This file persists even after user log out.
+### Github repository & pull requests
 
-Credentials and other sensitive data are stored in the `~/.affinidi/credentials.json` file.  
-This file is removed after user log out.
-
-You can access the data in these files by using `src/services/vault`:
-
-```ts
-import { vaultService } from './services/vault/typedVaultService'
-
-// ...
-
-const activeProject = vaultService.getActiveProject()
-const apiKeyhash = activeProject.apiKey.apiKeyHash
-console.log(apiKeyhash)
-```
-
-## Github repository & pull requests
-
-Please follow semantic release conventions for your commits and pull request names.  
-Read about it here: https://github.com/semantic-release/semantic-release
+Please follow semantic release conventions for your commits and pull request names. Read about it here: https://github.com/semantic-release/semantic-release
 
 For example, a correct commit name or pull request name is: `fix: add test` or `feat: implement a tree view`
 
-Don't forget to write a meaningful description to your pull request.  
-If necessary, attach a screenshot of UI changes.
+Don't forget to write a meaningful description to your pull request. If necessary, attach a screenshot of UI changes.
+
+## Philosophy
+
+- **Human-first design:** CLI is going to be used primarily by humans. Design it for them first, and for machines second.
+
+- **Simple parts that work together:** Make it modular and composable, with standards that make the pieces work together nicely. Embrace the different ways it may be used.
+
+- **Consistency across programs:** CLI should be intuitive, guessable and efficient. Where possible, follow existing patterns.
+
+- **Saying (just) enough:** Provide enough feedback to avoid confusion and frustration, without overwhelming the user with too much information.
+
+- **Ease of discovery:** Offer comprehensive help texts, provide examples, suggest follow-up commands, and assist with error handling.
+
+- **Conversations and Empathy:** Acknowledge the conversational nature. Suggest corrections, provide clarity during multi-step processes, ask for confirmation. Make the conversation empathetic and enjoyable.
+
+- **Robustness:** Make it _feel_ robust. Take attention to detail, address potential issues, keep user informed, avoid complexity.
+
+## Guidelines
+
+### Commands and Subcommands
+
+Commands in Affinidi CLI have the following structure:
+
+```console
+$ affinidi <command> <subcommand> [flags and arguments]
+```
+
+Where:
+
+- `affinidi` is the base program.
+
+- `<command>` is the top level command. Corresponds to a [domain](https://gitlab.com/affinidi/foundational/api-guidelines/-/blob/87428da4220609914ec561874325caae361c90cb/elements-platform.md) and contains one or multiple subcommands. They are called `Topics` by oclif. There are some exceptions for global commands like `affinidi login`.
+
+- `<subcommand>` is the specific operation to perform. When applicable use the `<verb>-<resource>` format. Use plurals when multiple resources are involved. Don't use ambiguous or similarly-named commands. Examples:
+
+  - `get-config`
+  - `list-users`
+  - `put-policies`
+  - `sign-credential`
+  - `remove-user-from-group`
+  - `update-connector`
+  - `delete-group`
+  - `create-seed`
+
+- `[flags and arguments]` are the parameters required by the operation.
+
+Commands should be single lowercase words. Subcommands and flags should also be lowercase, and when multiple words are required they should be in `kebab-case`.
+
+### Output
+
+Prioritize human-readable output over machine-readable. To not break machine integration, add flags like `--plain` and `--json` to specify the output format as plain tabular text or json respectively.
+
+- Send the primary output to `stdout`. Don't display animations here.
+
+- Send messaging like logs and errors to `stderr`. Don't display unnecessary contextual information here, unless in verbose mode.
+
+- Return zero exit code on success, non-zero codes on failure.
+
+- Display output on success, don't keep the user hanging.
+
+- Communicate changes to the state.
+
+- Communicate external actions like accessing files or remote servers.
+
+- Use (but don't abuse) colors, symbols and emojis.
+
+- Increase information density with ASCII art!
+
+### Errors
+
+- Catch errors and rewrite them for humans, with potential causes and suggestions.
+
+- Increase signal to noise ratio. Show only the relevant information that will help the user figure out what's wrong.
+
+### Flags and Arguments
+
+- Strongly prefer flags over arguments. Don't expect the user to remember the ordering of arguments. If you wan't to use an argument you will need to properly justify it.
+
+- Have full length descriptive names for all flags.
+
+- Only use one-letter names for commonly used flags.
+
+- Use standard and consistent names for flags. Follow existing patterns.
+
+- Have sensible defaults for flags when possible.
+
+- If input or output is a file, support `-` to read from `stdin` or write to `stdout`. This allows the output of another command to be the input of your command.
+
+- Do not read secrets directly from flags. They will leak into `ps` output and shell history. Instead, only accept secrets via files or `stdin`.
+
+Commonly used flags:
+
+- `-a`, `--all`: All. For example, `ps`, `fetchmail`.
+- `-d`, `--debug`: Show debugging output (verbose).
+- `-f`, `--force`: Force. For example, `rm -f` will force the removal of files, even if it thinks it does not have permission to do it. This is also useful for commands which are doing something destructive that usually require user confirmation, but you want to force it to do that destructive action in a script.
+- `--json`: Display JSON output. See the [output](#output) section.
+- `-h`, `--help`: Help. This should only mean help. See the [help](#help) section.
+- `--no-input`: See the [interactivity](#interactivity-and-prompting) section.
+- `-o`, `--output`: Output file. For example, `sort`, `gcc`.
+- `-p`, `--port`: Port. For example, `psql`, `ssh`.
+- `-q`, `--quiet`: Quiet. Display less output. This is particularly useful when displaying output for humans that you might want to hide when running in a script.
+- `-u`, `--user`: User. For example, `ps`, `ssh`.
+- `-v`, `--version`: Version.
+
+### Interactivity and prompting
+
+- Create a reaction for every action. Responsiveness is more important than speed.
+
+- Show progress visually, use a [spinner](https://oclif.io/docs/spinner) or a progress bar.
+
+- Break long running tasks into meaningful steps.
+
+- Make it easy to see the current state. Add state visualization commands like `git status`.
+
+- If a user doesn't pass a required flag or argument, prompt for it.
+
+- Never require prompting. Make sure to provide the required flags to bypass the prompt.
+
+- Confirm before doing anything dangerous. Prompt the user to type `y` or `yes`, or require the `--force` flag.
+
+- If you’re prompting for a secret, don’t print it as the user types it. Both `oclif` and `inquirer` have ways to hide them.
+
+### Help
+
+There should be two help texts:
+
+- A concise help text when running a command or subcommand without any inputs. Can be skipped if the command has a default action, such as `affinidi login`. Should include:
+
+  - Usage
+  - Description of command
+  - Example
+  - Description of most commonly used flags
+  - Instruction to pass the `--help` flag for more information
+
+- A more detailed help text. Displayed with `--help` or `-h` flags. Always displayed, no matter what other flags are given.
+
+  - Usage
+  - Description of command
+  - Examples
+  - Description of all supported flags
+
+### Future-proofing
+
+Introducing breaking changes will require a lengthy deprecation process. Keep these changes to a minimum, especially those that affect machine integration.
+
+- Keep changes additive. Prefer adding new flags than changing the behaviour of old ones.
+
+- Warn users when they are using a deprecated command or flag.
+
+- Changing output for humans is usually OK. Encourage the usage of machine flags like `--json` or `--quiet`.
+
+---
+
+> As we evolve the CLI tooling and introduce the SDK, we will provide updated guidelines on how to improve robustness, analytics, and usage of environnement variables and config files.
+
+## Further reading and acknowledgments
+
+These guidelines are strongly inspired by [clig.dev](https://clig.dev/), adjusted to Affinidi's needs and written specifically for CLI contributors. clig.dev is worth a read and we recommend doing so.
+
+- https://uxdesign.cc/user-experience-clis-and-breaking-the-world-baed8709244f
+- https://blog.developer.atlassian.com/10-design-principles-for-delightful-clis
+- https://devcenter.heroku.com/articles/cli-style-guide

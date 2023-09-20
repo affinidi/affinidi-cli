@@ -1,0 +1,8 @@
+name: affinidi-cli
+description: |-
+  Greenfield version of Affinidi CLI
+criticality: high
+visibility: internal
+tech-stack: lib
+team-name: phoenix
+code-repository: https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli.git

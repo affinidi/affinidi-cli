@@ -12,7 +12,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install dependencies
         run: npm ci
@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install dependencies
         run: npm ci
@@ -51,9 +51,6 @@ jobs:
 
       - name: Npm run test:integration
         run: npm run test:integration
-        env:
-          MAIL_API_KEY: ${{secrets.MAIL_API_KEY}}
-          MAIL_NAMESPACE: ${{secrets.MAIL_NAMESPACE}}
   call-security-scanners-workflow:
     uses: affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit
     with:

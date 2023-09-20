@@ -1,78 +1,17 @@
 # Affinidi CLI
 
-[Introduction](#introduction)
-
-[Features](#features)
-
-[Installation](#installation)
-
-[Quick Start](#quick-start)
-
-[CLI Commands](#cli-commands)
-
-[About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials)
-
-[Feedback & Support](#feedback--support)
-
-[FAQ](#faq)
-
-#
-
 ## Introduction
 
-Affinidi’s vision is to empower communities with control and ownership of their data,
-creating new business models and greater trust.
+The Affinidi Command Line Interface (Affinidi CLI) is a unified tool to manage your Affinidi services.
+With just one tool to download and configure,
+you can control multiple Affinidi services from the command line and automate them through scripts.
 
-As the customer demand for control and ownership of data continues to grow, it is
-becoming increasingly important for developers to better manage data privacy and portability
-within their apps. With our tooling, you can start creating a privacy-preserving app within minutes.
+In the context of software development, the term "Greenfield version" refers to a brand-new,
+from-scratch version of a software product or system that isn't constrained by existing versions -
+meaning it is different than the GitHub version (v1).
 
-### What are privacy-preserving apps?
-
-Privacy-preserving apps make it easy to give your customers more control over how their information is used and shared. We enable this data ownership and control through Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs).
-
-Learn more about [VCs](https://academy.affinidi.com/what-are-verifiable-credentials-79f1846a7b9), [trust triangle](https://academy.affinidi.com/what-is-the-trust-triangle-9a9caf36b321), [Decentralized Identifiers (DIDs)](https://academy.affinidi.com/demystifying-decentralized-identifiers-dids-2dc6fc3148fd), and [selective disclosure](https://academy.affinidi.com/a-detailed-guide-on-selective-disclosure-87b89cea1602).
-&nbsp;
-
-&nbsp;
-
-## Features
-
-The following features are available through Affinidi CLI:
-
-### Affinidi account
-
-- create and manage your Affinidi account
-- create projects, to better organise and manage what you are building
-- access your API keys
-
-### Schemas
-
-- create and manage schemas, which serve as templates to issue credentials
-
-### Verifiable Credentials (VCs)
-
-VCs are tamper-evident credentials that can be verified cryptographically.
-With Affinidi CLI you can:
-
-- issue VCs in bulk or individually
-- verify VCs
-
-### Reference App
-
-Generate four ready-to-use applications that use Affinidi APIs.
-
-**[The Portable Reputation app](https://github.com/affinidi/reference-app-portable-rep)** allows the builder to connect to different data sources to construct a portable, user-owned and -managed reputation app that provides access to specific experiences, events or memberships.
-
-**[The Certification and Verification app](https://github.com/affinidi/reference-app-certification-and-verification)** includes such features as: issuing a credential, claiming & storing it in your wallet, verifying it. It includes 3 use cases:
-
-- **Ticketing** - uses event tickets;
-
-- **Health** - uses medical prescriptions;
-
-- **Education** - uses students' certificates.
-
-#
+Internal Note: CLI green field version doesn't support core services.
+We have other version to support core services & API Key generation: https://github.com/affinidi/affinidi-cli
 
 ## Installation
 
@@ -81,923 +20,969 @@ Generate four ready-to-use applications that use Affinidi APIs.
 You need to have installed on your machine:
 
 - [git](https://git-scm.com/)
-- [NodeJs v16 and higher](https://nodejs.org). (it's recommended to use [nvm](https://github.com/nvm-sh/nvm))
+- [NodeJs v18 and higher](https://nodejs.org). (it's recommended to use [nvm](https://github.com/nvm-sh/nvm))
+- A chromium based browser (chrome, brave, etc) is your default browser.
+- Install Affinidi Browser Extension to your browser (:warning: Link is internal)
 
-Run the installation command:
-
+### Development mode:
 ```
-npm install -g @affinidi/cli
-```
-
-To check Affinidi CLI version:
-
-```
-affinidi --version
-```
-
-&nbsp;
-
-## Quick Start
-
-To start using our privacy-preserving tools, please follow the next two steps:
-
-1. authenticate by creating an account, or logging in to your account if you already have one
-2. create a project, or activate a project if you already created one
-
-### Authentication:
-
-You will need your email address, and then the code sent to your email to confirm authentication.
-
-To create an account:
-
-```
-affinidi sign-up
+git clone https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli
+cd affinidi-cli
+npm i
+npm run build
+./bin/dev [command]
 ```
 
-If you already have an account:
+Example:
 
 ```
-affinidi login
+./bin/dev help
 ```
 
-Full reference for each command can be found here:
-[`sign-up`](#affinidi-sign-up)
-[`login`](#affinidi-login)
+### Production mode:
 
-### Create or activate a project:
-
-The `create` command creates and activates a project. Follow the prompts to choose a name or add a name directly after the command.
-
+Uninstall all the previous versions of affinidi-cli
 ```
-affinidi create project
+npm uninstall -g @affinidi/cli
 ```
 
-The `use` command activates an already existing project:
-
+Install and link the package to use `affinidi` command
 ```
-affinidi use project [<project-id>]
-```
+git clone https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli
+cd affinidi-cli
+npm ci
+npm run build
+npm link
 
-You can also simply type this and follow the prompts to choose from a list of existing projects:
-
-```
-affinidi use project
-```
-
-Full reference for each command can be found here:
-[`create`](#affinidi-create)
-[`use`](#affinidi-use)
-
-### Schemas
-
-To issue a VC you first have to create a schema or choose an existing one:
-
-1. A schema can be created using the `create` command. You will need to provide a _schemaName_ and a _description_ in text format as well as a _source_ with the path to the json file with the schema properties.
-
-```
- $ affinidi create schema [schemaName] --description=<value> --source=<value>
+affinidi [command]
 ```
 
-2. To see available schemas:
-
+Example:
 ```
- $ affinidi list schemas
-```
-
-You will need the value of the property `jsonSchemaUrl` of the created or chosen schema to issue VCs.
-
-Please see [About Schemas and Verifiable Credentials](#about-schemas-and-verifiable-credentials) for a detailed explanation on schema structures and how to create and find schemas using the [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#).
-Full reference for each command can be found here:
-[`create`](#affinidi-create)
-[`list`](#affinidi-list)
-
-### Verifiable Credentials
-
-You can issue and verify VCs within Affinidi CLI.
-
-1. To issue a VC you need to provide the _email_ of the VC's owner, the `jsonSchemaUrl` of the _schema_ on which the VC is based, and a path to the json file with credential _data_.
-
-```
-$ affinidi issue-vc [EMAIL] --schema=<value> --data <value>
+affinidi help
 ```
 
-Please see [How to structure a JSON file to issue a VC](#how-to-structure-a-json-file-to-issue-a-vc) for more details.
+## Commands
+<!-- commands -->
+* [`affinidi autocomplete [SHELL]`](#affinidi-autocomplete-shell)
+* [`affinidi commands`](#affinidi-commands)
+* [`affinidi generate-application`](#affinidi-generate-application)
+* [`affinidi help [COMMANDS]`](#affinidi-help-commands)
+* [`affinidi iam add-principal`](#affinidi-iam-add-principal)
+* [`affinidi iam get-policies`](#affinidi-iam-get-policies)
+* [`affinidi iam list-principals`](#affinidi-iam-list-principals)
+* [`affinidi iam remove-principal`](#affinidi-iam-remove-principal)
+* [`affinidi iam update-policies`](#affinidi-iam-update-policies)
+* [`affinidi login add-user-to-group`](#affinidi-login-add-user-to-group)
+* [`affinidi login create-config`](#affinidi-login-create-config)
+* [`affinidi login create-group`](#affinidi-login-create-group)
+* [`affinidi login delete-config`](#affinidi-login-delete-config)
+* [`affinidi login delete-group`](#affinidi-login-delete-group)
+* [`affinidi login get-config`](#affinidi-login-get-config)
+* [`affinidi login get-group`](#affinidi-login-get-group)
+* [`affinidi login list-configs`](#affinidi-login-list-configs)
+* [`affinidi login list-groups`](#affinidi-login-list-groups)
+* [`affinidi login list-users-in-group`](#affinidi-login-list-users-in-group)
+* [`affinidi login remove-user-from-group`](#affinidi-login-remove-user-from-group)
+* [`affinidi login update-config`](#affinidi-login-update-config)
+* [`affinidi project create-project`](#affinidi-project-create-project)
+* [`affinidi project get-active-project`](#affinidi-project-get-active-project)
+* [`affinidi project list-projects`](#affinidi-project-list-projects)
+* [`affinidi project select-project`](#affinidi-project-select-project)
+* [`affinidi search`](#affinidi-search)
+* [`affinidi start`](#affinidi-start)
+* [`affinidi stop`](#affinidi-stop)
+* [`affinidi token create-token`](#affinidi-token-create-token)
+* [`affinidi token delete-token`](#affinidi-token-delete-token)
+* [`affinidi token get-token`](#affinidi-token-get-token)
+* [`affinidi token list-tokens`](#affinidi-token-list-tokens)
+* [`affinidi token update-token`](#affinidi-token-update-token)
 
-2. To verify a VC you need to provide a path to the json file with the credential _data_ to be verified.
+## `affinidi autocomplete [SHELL]`
+
+display autocomplete installation instructions
 
 ```
-$ affinidi verify-vc --data=<value>
-```
-
-Full reference for each command can be found here:
-[issue-vc](#affinidi-issue-vc)
-[verify-vc](#affinidi-verify-vc)
-
-### Generate an application
-
-The [Ticketing reference app](#reference-app) provides a simple web interface for issuing, claiming and verifying VCs. It can be quickly generated by typing:
-
-```
-$ affinidi generate-application --use-case=u ticketing
-```
-
-You can also specify a name with:
-
-```
-$ affinidi generate-application --name=<value> --use-case=ticketing
-```
-
-For the full reference, please see the [`affinidi generate-application`](#affinidi-generate-application) command below.
-
-&nbsp;
-
-&nbsp;
-
-#
-
-## CLI Commands
-
-### **affinidi analytics**
-
-The Analytics command lets you opt in or out of sending anonymous usage data..
-
 USAGE
-
-```
-$ affinidi analytics [true | false]
-```
-
-FLAGS
-
-```
--o, --output=(plaintext|json)   [default: plaintext] Formats output view of the chosen project's details
-```
-
-EXAMPLES
-
-```
-    $ affinidi analytics true
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi analytics --help
-```
-
-### **autocomplete**
-
-Display autocomplete installation instructions.
-
-USAGE
-
-```
-  $ affinidi autocomplete [SHELL] [FLAGS]
-```
+  $ affinidi autocomplete [SHELL] [-r]
 
 ARGUMENTS
-
-```
-  SHELL  Shell type
-```
+  SHELL  (zsh|bash|powershell) Shell type
 
 FLAGS
-
-```
   -r, --refresh-cache  Refresh cache (ignores displaying instructions)
-```
+
+DESCRIPTION
+  display autocomplete installation instructions
 
 EXAMPLES
-
-```
   $ affinidi autocomplete
 
   $ affinidi autocomplete bash
 
   $ affinidi autocomplete zsh
 
+  $ affinidi autocomplete powershell
+
   $ affinidi autocomplete --refresh-cache
 ```
 
-You can also see the help for the command in the CLI:
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v2.3.6/src/commands/autocomplete/index.ts)_
+
+## `affinidi commands`
+
+list all the commands
 
 ```
-$ affinidi autocomplete --help
-```
-
-### **affinidi config**
-
-Use this command to configure CLI settings or delete user saved configurations. Current config settings include:
-
-- Output format view
-- Saved Username
-
 USAGE
-
-```
-  $ affinidi config SUBCOMMAND [ARGS]
-```
-
-SUBCOMMAND
-
-```
-  view          Configures the output view format
-
-  username      Persists a username in config file to be used in the future when not providing a username when loggin in
-```
-
-CONFIG FLAGS
-
-```
--u, --unset-all                 Remove username from config
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
-
-USERNAME FLAGS
-
-```
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
-
-EXAMPLES
-
-```
- affinidi config --unset-all
-
- affinidi config view json
-
- affinidi config username email@example.com
-```
-
-You can also see the help for the command in the CLI:
-
-```
-affinidi config --help
-```
-
-### **affinidi create**
-
-Use this command to create a new resource. Current supported resource types are:
-
-- Affinidi project
-- schema
-
-USAGE
-
-```
-$ affinidi create SUBCOMMAND [ARGS...] [FLAGS]
-```
-
-SUBCOMMANDS
-
-```
-project          Creates a new Affinidi project.
-schema           Creates a new schema for a verifiable credential.
-```
-
-To create a project:
-
-```
-$ affinidi create project [projectName]
-```
-
-Or simply type this and follow the prompts:
-
-```
-$ affinidi create project
-```
-
-Note: When a project is created, its API keys are displayed only once. Full project details are stored locally in `~/.affinidi/credentials.json`. This file is deleted at the end of the authenticated session.
-
-PROJECT FLAGS
-
-```
-  -o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
-
-To create a schema:
-
-```
- $ affinidi create schema [schemaName] [FLAGS]
-```
-
-SCHEMA FLAGS
-
-```
-  -d, --description=<value>       (required) Description of schema
-  -o, --output=(plaintext|json)   [default: plaintext] Formats output view
-  -p, --public=(true|false)       [default: false] To specify if you want to create public or private schemas
-  -s, --source=<value>            (required) Path to the json file with schema properties
-```
-
-Please see [How to structure a schema](#how-to-structure-a-schema) for guidance on how to create the _source_ file.
-EXAMPLES
-
-```
-$ affinidi create project "Example Project"
-
-$ affinidi create schema "Example Name" -d "An example description" -s "/exampleSchema.json"
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi create --help
-$ affinidi create project --help
-$ affinidi create schema --help
-```
-
-### **affinidi generate-application**
-
-Use this command to generate a privacy-preserving app. Please see [Affinidi Reference App](#reference-app) for more details.
-
-USAGE
-
-```
-$ affinidi generate-application [-n <value>] [-u <health|education|ticketing|gaming|career>][-w]
-```
+  $ affinidi commands [--json] [-h] [--hidden] [--tree] [--columns <value> | -x] [--sort <value>] [--filter
+    <value>] [--output csv|json|yaml |  | [--csv | --no-truncate]] [--no-header | ]
 
 FLAGS
+  -h, --help         Show CLI help.
+  -x, --extended     show extra columns
+  --columns=<value>  only show provided columns (comma-separated)
+  --csv              output is csv format [alias: --output=csv]
+  --filter=<value>   filter property by partial string matching, ex: name=foo
+  --hidden           show hidden commands
+  --no-header        hide table header from output
+  --no-truncate      do not truncate output to fit screen
+  --output=<option>  output in a more machine friendly format
+                     <options: csv|json|yaml>
+  --sort=<value>     property to sort by (prepend '-' for descending)
+  --tree             show tree of commands
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  list all the commands
+```
+
+_See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blob/v2.2.25/src/commands/commands.ts)_
+
+## `affinidi generate-application`
+
+Generates a reference application with filled credentials
 
 ```
--n, --name=<value>                                                  [default: my-app] Name of the application
--o, --output=(plaintext|json)                                       [default: plaintext] Override default output format view
--u, --use-case=(health|education|ticketing|gaming|career) [default: ticketing] Choose which app you want generate
-```
+USAGE
+  $ affinidi generate-application [--json] [--log-level debug|info|warn|error] [--no-color]
 
-You can use this to generate the application with the default values:
-
-```
-$ affinidi generate-application
-```
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
 
 EXAMPLES
-
-```
-$ affinidi generate-application -n ExampleApp
-
-$ affinidi generate-application -n ExampleApp -u health
-
-$ affinidi generate-application -n ExampleApp -u gaming
+  $ affinidi generate-application
 ```
 
-You can also see the help for the command in the CLI:
+_See code: [dist/commands/generate-application/index.ts](https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli/blob/v2.0.0-beta.67/dist/commands/generate-application/index.ts)_
+
+## `affinidi help [COMMANDS]`
+
+Display help for affinidi.
 
 ```
-$ affinidi generate-application --help
-```
-
-### **affinidi help**
-
-Display help for affinidi
-
 USAGE
+  $ affinidi help [COMMANDS] [-n]
 
-```
-affinidi help
-```
-
-### **affinidi issue-vc**
-
-Issues a verifiable credential based on a given schema
-
-USAGE
-
-```
-$ affinidi issue-vc [EMAIL] [FLAGS]
-```
+ARGUMENTS
+  COMMANDS  Command to show help for.
 
 FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
 
-```
--b, --bulk            Defines that issuance happens in bulk
--d, --data=<value>    (required) The source file with credential data, either .json or .csv
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
--s, --schema=<value>  (required) Json schema url
--w, --wallet=<value>  [default: https://wallet.affinidi.com/claim] Configure your own wallet to store VCs
+DESCRIPTION
+  Display help for affinidi.
 ```
 
-EXAMPLES
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.18/src/commands/help.ts)_
+
+## `affinidi iam add-principal`
+
+Adds a principal (user or token) to the active project
 
 ```
-$ affinidi issue-vc example@email.com -s "https://example.org/exampleSchema.json" -d "/exampleCredential.json"
-
-$ affinidi issue-vc -s "https://example.org/exampleSchema.json" -d "/exampleCredential.csv" -b
-
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi issue-vc --help
-```
-
-### **affinidi list**
-
-Use the list command to display resources that you have created or are available.
-The current types of resources are:
-
-- schemas
-- projects
-
 USAGE
-
-```
-$ affinidi list [SUBCOMMAND] [ARGS...] [FLAGS]
-```
-
-SUBCOMMANDS
-
-```
-projects          Shows you the list of your projects
-schemas           Shows a list of available schemas
-```
-
-FLAGS for project listing
-
-```
--l, --limit=<value>                           [default: 10] Maximum number of projects which will be listed
--o, --output=(json|table|csv)  [default: json] Project listing output format
--s, --skip=<value>                            Index into projects list from which to start the listing
-```
-
-FLAGS for schema listing
-
-```
--c, --scope=(default|public|unlisted)  [default: default] The type of scope
--l, --limit=<value>                    [default: 10] The number of schemas to display
--o, --output=(json|table|csv)          [default: json] The type of output
--p, --public=(true|false)              [default: true] To specify if you want to get public or private schemas
--s, --skip=<value>                     The number of schemas to skip
--x, --extended                         show extra columns
---columns=<value>                      only show provided columns (comma-separated)
---csv                                  output is csv format [alias: --output=csv]
---filter=<value>                       filter property by partial string matching, ex: name=foo
---no-header                            hide table header from output
---no-truncate                          do not truncate output to fit screen
---sort=<value>                         property to sort by (prepend '-' for descending)
-```
-
-EXAMPLES
-
-```
-    $ affinidi list projects
-
-    $ affinidi list schemas
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi list --help
-$ affinidi list projects --help
-$ affinidi list schemas --help
-```
-
-### **affinidi login**
-
-Log in with your email address to use Affinidi privacy-preserving services. You will receive a confirmation code via email, which you will need to complete the authentication.
-
-USAGE
-
-```
-$ affinidi login [EMAIL]
-```
-
-You can also simply type this and follow the prompts:
-
-```
-$ affinidi login
-```
+  $ affinidi iam add-principal -i <value> [--json] [--log-level debug|info|warn|error] [--no-color] [-t
+    machine_user|user]
 
 FLAGS
+  -i, --principal-id=<value>     (required) ID of the principal
+  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+                                 <options: machine_user|user>
 
-```
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
 
-You can also see the help for the command in the CLI:
+DESCRIPTION
+  Adds a principal (user or token) to the active project
 
-```
-$ affinidi login --help
-```
-
-### **affinidi logout**
-
-Use this command to end your affinidi session
-
-USAGE
-
-```
-$ affinidi logout
-```
-
-You can also see the help for the command in the CLI:
-
-```
-affinidi logout --help
-```
-
-FLAGS
-
-```
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
-
-### **affinidi rename project**
-
-Use this command to change the name of an existing project
-
-USAGE
-
-```
-$ affinidi rename project [<project-id>] [FLAGS]
-```
-
-FLAGS
-
-```
--n, --name=<value>  (required) The new name of the project
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
+  To change your active project, use command affinidi project select-project
 
 EXAMPLES
+  $ affinidi iam add-principal -i <uuid>
+
+  $ affinidi iam add-principal --id <uuid> --type machine_user
+
+FLAG DESCRIPTIONS
+  -i, --principal-id=<value>  ID of the principal
+
+    Get a list of possible IDs with command affinidi token list-tokens
+```
+
+## `affinidi iam get-policies`
+
+Gets the policies of a principal (user or token)
 
 ```
-$ affinidi rename project example-id -n "New Name"
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi rename project --help
-```
-
-### **affinidi show**
-
-This command displays the details of a resource. The current available resource types are:
-
-- project
-- schema
-
 USAGE
-
-```
-$ affinidi show [SUBCOMMAND] [ARG...] [FLAGS]
-```
-
-SUBCOMMANDS
-
-```
-project         Shows information about a given project
-schema          Shows the details of a schema
-user            Shows info about logged-in user
-```
-
-PROJECT FLAGS
-
-```
--a, --active                    Set to show the active project
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
-
-To show a project:
-
-```
-$ affinidi show [<project-id>]
-```
-
-if you simply type this, the CLI will prompt you to choose from a list of available projects:
-
-```
-$ affinidi show project
-```
-
-SCHEMA FLAGS
-
-```
--o, --output=(plaintext|json)  Set this flag to override the default plain text format view
--s, --show=(info|json|jsonld)  [default: info] The details of the schema to show
-```
-
-To show a schema:
-
-```
-$ affinidi show schema [<schema-id>] [--output json]
-```
-
-USER FLAGS
-
-```
--o, --output=(plaintext|json)  Set this flag to override the default plain text format view
-```
-
-To show info of logged in user:
-
-```
-$ affinidi show user
-```
-
-EXAMPLES
-
-```
-$ affinidi show project example-id
-
-$ affinidi show schema example-id
-
-$ affinidi show user
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi show --help
-$ affinidi show project --help
-$ affinidi show schema --help
-$ affinidi show user --help
-```
-
-### **affinidi sign-up**
-
-Create an Affinidi account with this command to use our privacy-preserving tools. You will need your email address, and then confirm the authentication with the code sent to your email. After confirming the authentication a default project will be created so you can start using Affinidi services right away.
-
-USAGE
-
-```
-$ affinidi sign-up [EMAIL]
-```
-
-You can also simply type this and follow the prompts:
-
-```
-$ affinidi sign-up
-```
-
-You can also see the help for the command in the CLI:
-
-```
-$ affinidi sign-up --help
-```
-
-### **affinidi use**
-
-The Use command lets you choose and activate a project. An active project is a prerequisite for executing most commands.
-
-USAGE
-
-```
-$ affinidi use project [<project-id>] [FLAGS]
-```
+  $ affinidi iam get-policies -i <value> [--json] [--log-level debug|info|warn|error] [--no-color] [-t
+    machine_user|user]
 
 FLAGS
+  -i, --principal-id=<value>     (required) ID of the principal
+  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+                                 <options: machine_user|user>
 
-```
--o, --output=(plaintext|json)   [default: plaintext] Formats output view of the chosen project's details
-```
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+DESCRIPTION
+  Gets the policies of a principal (user or token)
+
+  Make sure the principal you are working with is part of the active project
+  Use command affinidi project select-project to change your active project
 
 EXAMPLES
+  $ affinidi iam get-policies -i <uuid>
 
-```
-    $ affinidi use project example-id
-```
+  $ affinidi iam get-policies --id <uuid> --type machine_user
 
-You can also see the help for the command in the CLI:
+FLAG DESCRIPTIONS
+  -i, --principal-id=<value>  ID of the principal
 
-```
-$ affinidi use --help
-$ affinidi use project --help
+    Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-### **affinidi verify-vc**
+## `affinidi iam list-principals`
 
-Verifies a verifiable credential
+Lists the principals (users and tokens) in the active project
 
+```
 USAGE
+  $ affinidi iam list-principals [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+DESCRIPTION
+  Lists the principals (users and tokens) in the active project
+
+  To change your active project, use command affinidi project select-project
+
+EXAMPLES
+  $ affinidi iam list-principals
+```
+
+## `affinidi iam remove-principal`
+
+Removes a principal (user or token) from the active project
 
 ```
-$ affinidi verify-vc -d <value>
-```
+USAGE
+  $ affinidi iam remove-principal -i <value> [--json] [--log-level debug|info|warn|error] [--no-color] [-t
+    machine_user|user]
 
 FLAGS
+  -i, --principal-id=<value>     (required) ID of the principal
+  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+                                 <options: machine_user|user>
 
-```
--d, --data=<value>  (required) Source json file with credentials to be verified
--o, --output=(plaintext|json)   [default: plaintext] Formats output view
-```
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+DESCRIPTION
+  Removes a principal (user or token) from the active project
+
+  To change your active project, use command affinidi project select-project
 
 EXAMPLES
+  $ affinidi iam remove-principal -i <uuid>
 
-```
-$ affinidi verify-vc -d "/exampleVc.json"
-```
+  $ affinidi iam remove-principal --id <uuid> --type machine_user
 
-You can also see the help for the command in the CLI:
+FLAG DESCRIPTIONS
+  -i, --principal-id=<value>  ID of the principal
 
-```
-$ affinidi verify-vc --help
-```
-
-### **affinidi start**
-
-Also called `wizard`.
-
-This command provides you with an end-to-end, step-by-step guide to the Affinidi CLI, with selectable options.
-
-You can imagine it like an installation wizard for an app on a desktop or a mobile-device.
-
-See documentation [here](./docs/wizard.md)
-
-&nbsp;
-
-&nbsp;
-
-#
-
-## About Schemas and Verifiable Credentials
-
-Schemas are representations of the properties that define a VC. They are a composite of [JSON Schema](https://json-schema.org/specification.html), [JSON-LD](https://www.w3.org/TR/json-ld11/) context and metadata (description, version and ownership). You can use Affinidi's [Schema Manager](https://affinidi-schema-manager.prod.affinity-project.org/api-docs) to find the right schema for your verifiable credential or to create a new one – either on the basis of an already existing schema,
-or completely from scratch.
-
-### What is Affinidi's Schema Manager?
-
-The Schema Manager provides URLs for two kinds of schema representations: JSON Schema and JSON-LD context.
-Any schema can be referenced in a verifiable credential or an application by these URLs. Before creating a new schema for your verifiable credentials, it is recommended to search for an existing one, which may fit your purpose. There are both a number of standard schemas and some user-generated schemas already available in the Schema Manager, and you can search for them by “Credential schema type”. That is why it is important to provide a meaningful and expressive type for your newly created schemas.
-
-### How to structure a schema
-
-The JSON representation of a schema must follow this structure:
-
-```
-{
-  "type": "object",
-  "properties": {
-    "<propertyName>": {
-      "title": "<Property title>",
-      "type": "<Property type (see available attribites below)>",
-      "description": "<Property description>"
-    },
-    <other properties>
-  },
-  "required": [
-    <list of required properties>
-  ]
-}
+    Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-And here is an example of that structure used to represent a simple form with two fields (`First Name` and `Last Name`):
+## `affinidi iam update-policies`
+
+Updates the policies of a principal (user or token) in the active project
 
 ```
-{
-  "type": "object",
-  "properties": {
-    "firstName": {
-      "title": "First Name",
-      "type": "string",
-      "description": "First name of a customer"
-    },
-    "lastName": {
-      "title": "Last Name",
-      "type": "string",
-      "description": "Last name of a customer"
-    }
-  },
-  "required": [
-    "lastName"
-  ]
-}
+USAGE
+  $ affinidi iam update-policies -i <value> [--json] [--log-level debug|info|warn|error] [--no-color] [-t
+    machine_user|user] [-f <value>]
+
+FLAGS
+  -f, --file=<value>             Location of a json file containing principal policies
+  -i, --principal-id=<value>     (required) ID of the principal
+  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+                                 <options: machine_user|user>
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+DESCRIPTION
+  Updates the policies of a principal (user or token) in the active project
+
+  Make sure the principal you are working with is part of the active project
+  Use command affinidi project select-project to change your active project
+
+EXAMPLES
+  $ affinidi iam update-policies -i <uuid>
+
+  $ affinidi iam update-policies --id <uuid> --type machine_user
+
+FLAG DESCRIPTIONS
+  -i, --principal-id=<value>  ID of the principal
+
+    Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-### What attribute types are available?
+## `affinidi login add-user-to-group`
 
-- Nested attribute – a container for attributes
-- DID – a decentralized identifier
-  - Example of VC value: "did:example:123"
-- Text – a string value
-  - Example of VC value: "my text"
-- URI – a link to a web resource
-  - Example of VC value: "http://ui.schema.affinidi.com/"
-- Date – a date (ISO 8601)
-  - Example of VC value: "2011-04-01"
-- DateTime – a specific point in time (ISO 8601)
-  - Example of VC value: "2011-05-08T19:30"
-- Number – a numerical value
-  - Example of VC value: 123.45
-- Boolean – a boolean value
-  - Example of VC value: true or false
-
-Example of schema source with all the types:
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "nestedType": {
-      "title": "nestedType",
-      "type": "object",
-      "description": "Field with nested attributes",
-      "properties": {
-        "nestedTextType": {
-          "title": "nestedTextType",
-          "type": "string",
-          "description": "Nested text field "
-        }
-      },
-      "required": []
-    },
-    "didType": {
-      "title": "didType",
-      "type": "string",
-      "format": "did",
-      "description": "DID attribute"
-    },
-    "testType": {
-      "title": "testType",
-      "type": "string",
-      "description": "Text attribute"
-    },
-    "uriType": {
-      "title": "uriType",
-      "type": "string",
-      "format": "uri",
-      "description": "URI attribute"
-    },
-    "dateType": {
-      "title": "dateType",
-      "type": "string",
-      "format": "date",
-      "description": "Date attribute"
-    },
-    "dateTimeType": {
-      "title": "dateTimeType",
-      "type": "string",
-      "format": "date-time",
-      "description": "DateTime attribute"
-    },
-    "numberType": {
-      "title": "numberType",
-      "type": "number",
-      "description": "Number attribute"
-    },
-    "booleanType": {
-      "title": "booleanType",
-      "type": "boolean",
-      "description": "Boolean attribute"
-    }
-  },
-  "required": []
-}
-```
-
-### How to create or find a schema
-
-1. You can directly create a schema in the CLI with the [`create`](#affinidi-create) command or using the [Schema Manager API](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#/Schema/CreateSchema).
-
-2. You can list available schemas with the [`list`](#affinidi-list) command or search via the [Schema Manager API](https://affinidi-schema-manager.prod.affinity-project.org/api-docs/#/Schema/SearchSchemas) specifying `scope`, `type` or `authorDID`.
-
-### What is the difference between a version and a revision?
-
-Essentially, all the revisions of the single version should be compatible with each other,
-whereas new versions could feature breaking changes, e.g. new mandatory fields. Currently, adherence to this principle is not enforced, but it is good to keep in mind when choosing between new version or revision for your forked schema.
-
-### What does it mean to “publish as searchable schema”?
-
-Schemas can be either public (visible and searchable for everyone ) or
-private (unlisted, visible and searchable only for you).
-When you “publish as searchable schema” (using flag `-p`), you make your schema public.
-
-It is important to remember, that versions and revisions of public and private
-(unlisted) schema are independent of each other,
-and are maintained by the system in parallel.
-However, you can always fork your private (unlisted) schema in order to make it public and vice versa.
-
-### How to structure a JSON file to issue a VC:
-
-The JSON file that is the source for the VC to be issued must follow the structure of the schema on which the VC is based. Use the properties of the schema's `credentialSubject` as the template for the new VC.
-
-Example for [Event Eligibility Schema](https://schema.affinidi.com/EventElegibilityV1-0.json):
+Adds a user to a user group
 
 ```
-{
-    "date": "2031-12-11T11:15:00Z",
-    "place": "Awesome Location",
-    "eventName": "Name of Your Event",
-    "eventDescription": "Your Event Description",
-    "name": "Holder Name",
-    "email": "mail@example.com"
-}
+USAGE
+  $ affinidi login add-user-to-group --group-name <value> --user-sub <value> [--json] [--log-level debug|info|warn|error]
+    [--no-color]
+
+FLAGS
+  --group-name=<value>  (required) Name of the user group
+  --user-sub=<value>    (required) Subject of the user. Currently the user's DID is supported.
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login add-user-to-group --group-name my_group --user-sub did:key:12345
 ```
 
-&nbsp;
+## `affinidi login create-config`
 
-&nbsp;
+Creates a login configuration in your active project
 
-#
+```
+USAGE
+  $ affinidi login create-config [--json] [--log-level debug|info|warn|error] [--no-color] [-f <value> | -n <value> | -u
+    <value> | --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --claim-format array|map |
+    --client-name <value> | --client-origin <value> | --client-logo <value>]
 
-## Feedback & Support
+FLAGS
+  -f, --file=<value>                     Location of a json file containing login configuration data
+  -n, --name=<value>                     Name of the login configuration
+  -u, --redirect-uris=<value>            OAuth 2.0 redirect URIs, separated by space
+  --claim-format=<option>                ID token claims output format. Defaults to array
+                                         <options: array|map>
+  --client-logo=<value>                  URL of a logo for the client, displayed in the consent page
+  --client-name=<value>                  Name of the client, displayed in the consent page
+  --client-origin=<value>                Origin of the client, displayed in the consent page
+  --token-endpoint-auth-method=<option>  Client authentication method for the token endpoint. Defaults to
+                                         client_secret_post
+                                         <options: client_secret_basic|client_secret_post|none>
 
-Click [here](https://github.com/affinidi/affinidi-cli/issues) to create a ticket and we will get on it right away. If you are facing technical or other issues, you can reach out to us on [Discord](https://discord.com/invite/jx2hGBk5xE).
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
 
-&nbsp;
+EXAMPLES
+  $ affinidi login create-config
+
+  $ affinidi login create-config -f loginConfig.json
+
+  $ affinidi login create-config -n MyLoginConfig -u http://localhost:8080/callback
+
+  $ affinidi login create-config --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --scope "my_user_group my_other_group" --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo
+
+FLAG DESCRIPTIONS
+  --token-endpoint-auth-method=client_secret_basic|client_secret_post|none
+
+    Client authentication method for the token endpoint. Defaults to client_secret_post
+
+    The options are:
+    client_secret_post: (default) Send client_id and client_secret as application/x-www-form-urlencoded in the HTTP body
+    client_secret_basic: Send client_id and client_secret as application/x-www-form-urlencoded encoded in the HTTP
+    Authorization header
+    none: For public clients (native/mobile apps) which can not have a secret
+```
+
+## `affinidi login create-group`
+
+Create a user group in your active project
+
+```
+USAGE
+  $ affinidi login create-group -n <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -n, --name=<value>  (required) Name of the user group, that follows url-friendly pattern ^[a-z_]+$
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login create-group -n my_new_group
+
+  $ affinidi login create-group --name my_new_group
+```
+
+## `affinidi login delete-config`
+
+Deletes a login configuration from your active project
+
+```
+USAGE
+  $ affinidi login delete-config -i <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -i, --id=<value>  (required) ID of the login configuration
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login delete-config -i <value>
+
+  $ affinidi login delete-config --id <value>
+```
+
+## `affinidi login delete-group`
+
+Deletes a user group from your active project
+
+```
+USAGE
+  $ affinidi login delete-group -n <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -n, --name=<value>  (required) Name of the user group
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login delete-group -n my_group
+
+  $ affinidi login delete-group --name my_group
+```
+
+## `affinidi login get-config`
+
+Gets the details of a login configuration in your active project
+
+```
+USAGE
+  $ affinidi login get-config -i <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -i, --id=<value>  (required) ID of the login configuration
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login get-config -i <value>
+
+  $ affinidi login get-config --id <value>
+```
+
+## `affinidi login get-group`
+
+Gets the details of a user group
+
+```
+USAGE
+  $ affinidi login get-group -n <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -n, --name=<value>  (required) Name of the user group
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login get-group -n my_group
+
+  $ affinidi login get-group --name my_group
+```
+
+## `affinidi login list-configs`
+
+Lists login configurations in your active project
+
+```
+USAGE
+  $ affinidi login list-configs [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login list-configs
+```
+
+## `affinidi login list-groups`
+
+Lists user groups in your active project
+
+```
+USAGE
+  $ affinidi login list-groups [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login list-groups
+```
+
+## `affinidi login list-users-in-group`
+
+Use this command to list users in the user group
+
+```
+USAGE
+  $ affinidi login list-users-in-group --group-name <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  --group-name=<value>  (required) Name of the user group
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login list-users-in-group --group-name my_group
+```
+
+## `affinidi login remove-user-from-group`
+
+Removes a user from a user group
+
+```
+USAGE
+  $ affinidi login remove-user-from-group --group-name <value> --user-mapping-id <value> [--json] [--log-level
+    debug|info|warn|error] [--no-color]
+
+FLAGS
+  --group-name=<value>       (required) Name of the user group
+  --user-mapping-id=<value>  (required) ID of the user mapping record
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login remove-user-from-group --group-name my_group --user-mapping-id <value>
+```
+
+## `affinidi login update-config`
+
+Updates a login configuration
+
+```
+USAGE
+  $ affinidi login update-config -i <value> [--json] [--log-level debug|info|warn|error] [--no-color] [-f <value> | -n
+    <value> | -u <value> | --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --client-name
+    <value> | --client-origin <value> | --client-logo <value>]
+
+FLAGS
+  -f, --file=<value>                     Location of a json file containing login configuration data
+  -i, --id=<value>                       (required) ID of the login configuration
+  -n, --name=<value>                     Name of the login configuration
+  -u, --redirect-uris=<value>            OAuth 2.0 redirect URIs, separated by space
+  --client-logo=<value>                  URL of a logo for the client, displayed in the consent page
+  --client-name=<value>                  Name of the client, displayed in the consent page
+  --client-origin=<value>                Origin of the client, displayed in the consent page
+  --token-endpoint-auth-method=<option>  Client authentication method for the token endpoint. Defaults to
+                                         client_secret_post
+                                         <options: client_secret_basic|client_secret_post|none>
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi login update-config --id <value> -f loginConfig.json
+
+  $ affinidi login update-config --id <value> -u http://localhost:8080/callback
+
+  $ affinidi login update-config --id <value> --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo
+
+FLAG DESCRIPTIONS
+  --token-endpoint-auth-method=client_secret_basic|client_secret_post|none
+
+    Client authentication method for the token endpoint. Defaults to client_secret_post
+
+    The options are:
+    client_secret_post: (default) Send client_id and client_secret as application/x-www-form-urlencoded in the HTTP body
+    client_secret_basic: Send client_id and client_secret as application/x-www-form-urlencoded encoded in the HTTP
+    Authorization header
+    none: For public clients (native/mobile apps) which can not have a secret
+```
+
+## `affinidi project create-project`
+
+Creates a project
+
+```
+USAGE
+  $ affinidi project create-project -n <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -n, --name=<value>  (required) Name of the project
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi project create-project -n MyProjectName
+
+  $ affinidi project create-project --name "My project name"
+```
+
+## `affinidi project get-active-project`
+
+Gets the current active project
+
+```
+USAGE
+  $ affinidi project get-active-project [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi project get-active-project
+```
+
+## `affinidi project list-projects`
+
+Lists your projects
+
+```
+USAGE
+  $ affinidi project list-projects [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi project list-projects
+```
+
+## `affinidi project select-project`
+
+Sets a project as the active project
+
+```
+USAGE
+  $ affinidi project select-project [--json] [--log-level debug|info|warn|error] [--no-color] [-i <value>]
+
+FLAGS
+  -i, --project-id=<value>  ID of the project
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi project select-project
+
+  $ affinidi project select-project -i <project-id>
+
+  $ affinidi project select-project --project-id <project-id>
+```
+
+## `affinidi search`
+
+Search for a command.
+
+```
+USAGE
+  $ affinidi search
+
+DESCRIPTION
+  Search for a command.
+
+  Once you select a command, hit enter and it will show the help for that command.
+```
+
+_See code: [@oclif/plugin-search](https://github.com/oclif/plugin-search/blob/v0.0.22/dist/commands/search.ts)_
+
+## `affinidi start`
+
+Log in to Affinidi
+
+```
+USAGE
+  $ affinidi start [--json] [--log-level debug|info|warn|error] [--no-color] [-i <value>]
+
+FLAGS
+  -i, --project-id=<value>  ID of the project to set as active
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi start
+
+  $ affinidi start -i <project-id>
+
+  $ affinidi start --project-id <project-id>
+```
+
+_See code: [dist/commands/start/index.ts](https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli/blob/v2.0.0-beta.67/dist/commands/start/index.ts)_
+
+## `affinidi stop`
+
+Log out from Affinidi
+
+```
+USAGE
+  $ affinidi stop [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi stop
+```
+
+_See code: [dist/commands/stop/index.ts](https://gitlab.com/affinidi/foundational/phoenix/affinidi-cli/blob/v2.0.0-beta.67/dist/commands/stop/index.ts)_
+
+## `affinidi token create-token`
+
+Creates a token
+
+```
+USAGE
+  $ affinidi token create-token -n <value> -k <value> -f <value> [--json] [--log-level debug|info|warn|error]
+    [--no-color] [--algorithm RS256|RS512|ES256|ES512]
+
+FLAGS
+  -f, --public-key-file=<value>  (required) Location of the public key PEM file
+  -k, --key-id=<value>           (required) Identifier of the key (kid)
+  -n, --name=<value>             (required) Name of the token, at least 8 chars long
+  --algorithm=<option>           [default: RS256] The specific cryptographic algorithm used with the key
+                                 <options: RS256|RS512|ES256|ES512>
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi token create-token -n MyNewToken -k MyKeyID -f publicKey.pem
+
+  $ affinidi token create-token --name "My new token" --key-id MyKeyID --public-key-file publicKey.pem --algorithm RS256
+```
+
+## `affinidi token delete-token`
+
+Deletes a token
+
+```
+USAGE
+  $ affinidi token delete-token -i <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -i, --token-id=<value>  (required) ID of the token
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi token delete-token -i <uuid>
+
+  $ affinidi token delete-token --token-id <uuid>
+```
+
+## `affinidi token get-token`
+
+Gets the details of a token
+
+```
+USAGE
+  $ affinidi token get-token -i <value> [--json] [--log-level debug|info|warn|error] [--no-color]
+
+FLAGS
+  -i, --token-id=<value>  (required) ID of the token
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi token get-token -i <uuid>
+
+  $ affinidi token get-token --token-id <uuid>
+```
+
+## `affinidi token list-tokens`
+
+Lists your tokens
+
+```
+USAGE
+  $ affinidi token list-tokens [--json] [--log-level debug|info|warn|error] [--no-color]
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi token list-tokens
+```
+
+## `affinidi token update-token`
+
+Updates a token
+
+```
+USAGE
+  $ affinidi token update-token -i <value> -n <value> -k <value> -f <value> [--json] [--log-level debug|info|warn|error]
+    [--no-color] [--algorithm RS256|RS512|ES256|ES512]
+
+FLAGS
+  -f, --public-key-file=<value>  (required) Location of the public key PEM file
+  -i, --token-id=<value>         (required) ID of the token
+  -k, --key-id=<value>           (required) Identifier of the key (kid)
+  -n, --name=<value>             (required) Name of the token, at least 8 chars long
+  --algorithm=<option>           [default: RS256] The specific cryptographic algorithm used with the key
+                                 <options: RS256|RS512|ES256|ES512>
+
+GLOBAL FLAGS
+  --json                Format output as json.
+  --log-level=<option>  Specify level for logging.
+                        <options: debug|info|warn|error>
+  --no-color            Disables color in the output. If you have trouble distinguishing colors, consider using this
+                        flag.
+
+EXAMPLES
+  $ affinidi token update-token -i <uuid> -n MyNewToken -k MyKeyID -f publicKey.pem
+
+  $ affinidi token update-token --token-id <uuid> --name "My new token" --key-id "My key ID" --public-key-file publicKey.pem --algorithm RS256
+```
+<!-- commandsstop -->
 
 ## FAQ
 

@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: affinidi-cli
+  description: Greenfield version of Affinifi CLI
+  tags:
+    - typescript
+spec:
+  type: library
+  lifecycle: production
+  owner: phoenix
