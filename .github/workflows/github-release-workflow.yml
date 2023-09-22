@@ -3,8 +3,6 @@ name: Public Release to npmjs.com
 on:
   workflow_dispatch:
     branches:
-      - main
-      - beta
       - rb-fix-manual-deployment
 
 jobs:
