@@ -33,7 +33,6 @@ jobs:
           ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
 
       - name: Run release
-        when: manual
         run:
           npm run semantic-release
         env:
