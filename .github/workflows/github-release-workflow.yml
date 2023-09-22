@@ -1,13 +1,15 @@
 name: Public Release to npmjs.com
 
 on:
-  push:
+  workflow_dispatch:
     branches:
       - main
       - beta
+      - rb-fix-manual-deployment
 
 jobs:
   release:
+    name: branch - ${{ github.ref_name }}
     runs-on: ubuntu-latest
     environment:
       name: publishEnv
@@ -33,7 +35,6 @@ jobs:
           ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
 
       - name: Run release
-        when: manual
         run:
           npm run semantic-release
         env:
