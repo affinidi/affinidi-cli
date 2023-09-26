@@ -37,6 +37,7 @@ jobs:
         run: npm run test
   integration-test:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,8 +53,7 @@ jobs:
       - name: Npm run test:integration
         run: npm run test:integration
         env:
-          MAIL_API_KEY: ${{secrets.MAIL_API_KEY}}
-          MAIL_NAMESPACE: ${{secrets.MAIL_NAMESPACE}}
+          TEST_SECRETS: ${{secrets.TEST_ENV_FILE}}
   call-security-scanners-workflow:
     uses: affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit
     with:

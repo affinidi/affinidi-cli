@@ -1,0 +1,1961 @@
+# ~~ Linted by affinidi-service-ts. Each change is linted and the file content is updated accordingly.
+# ~~
+# ~~ Notes:
+# ~~ 1. This file is linted and fixed/normalized on projen run.
+# ~~ 2. Errors (responses with HTTP status codes equal or grater than 400) shall be configured in error-catalog.yml.
+# ~~ 3. More info: https://gitlab.com/affinidi/foundational/genesis/projen/affinidi-service-ts/-/blob/main/ARCHITECTURE.md#openapi
+# ~~
+openapi: 3.0.3
+info:
+  title: OidcVpAdapterBackend
+  version: 1.0.0
+  description: >
+    Affinidi OIDC VP Adapter Backend
+
+
+    An authorization token is necessary to create or obtain a project Access
+    Token and access Admin APIs. Follow these step-by-step
+    [instructions](https://lemmatree.atlassian.net/wiki/spaces/NETCORE/pages/2735317648020/ASA+Developer+Flow#Instructions-on-how-to-create-the-Project.) 
+    to set up an authorization token
+  contact:
+    name: nucleus
+    email: nucleus.team@affinidi.com
+servers:
+  - url: /
+tags:
+  - name: configuration
+    description: Administering Configuration Management
+  - name: consent
+    description: Consent Flow
+  - name: cors
+    description: CORS Definitions
+  - name: session
+    description: Login Session
+  - name: group
+    description: Permission Groups to manage user access
+  - name: idp
+    description: idp endpoints for login
+security: []
+x-amazon-apigateway-request-validators:
+  basic:
+    validateRequestBody: true
+    validateRequestParameters: true
+x-amazon-apigateway-request-validator: basic
+components:
+  securitySchemes:
+    AwsSigV4:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: awsSigv4
+    ApiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+      x-amazon-apigateway-api-key-source: HEADER
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ConsumerTokenAuth:
+      type: apiKey
+      name: authorization
+      in: header
+    UserTokenAuth:
+      type: apiKey
+      name: authorization
+      in: header
+    ProjectTokenAuth:
+      type: apiKey
+      name: authorization
+      in: header
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: request
+        authorizerUri: >-
+          arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:792104784284:function:iam-dev-ProjectTokenAuthorizerC83BEF45-elvJgVdbp078:live-alias/invocations
+        authorizerResultTtlInSeconds: 0
+  headers:
+    Access-Control-Allow-Origin:
+      schema:
+        type: string
+    Access-Control-Allow-Methods:
+      schema:
+        type: string
+    Access-Control-Allow-Headers:
+      schema:
+        type: string
+  requestBodies:
+    LoginSessionForIdp:
+      description: LoginSessionForIdp
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionForIDPInput'
+    LoginSessionAcceptResponse:
+      description: LoginSessionAcceptResponse
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionAcceptResponseInput'
+    LoginSessionRejectResponse:
+      description: LoginSessionRejectResponse
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionRejectResponseInput'
+    CreateLoginConfigurations:
+      description: CreateLoginConfigurations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateLoginConfigurationInput'
+          examples:
+            Default:
+              $ref: '#/components/examples/CreateLoginConfigurationInput'
+            Full:
+              $ref: '#/components/examples/CreateLoginConfigurationInputFull'
+    UpdateLoginConfigurationsById:
+      description: UpdateLoginConfigurationsById
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateLoginConfigurationInput'
+          examples:
+            Default:
+              $ref: '#/components/examples/UpdateLoginConfigurationInput'
+    CreateGroup:
+      description: CreateGroup
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateGroupInput'
+    AddUserToGroup:
+      description: AddUserToGroup
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddUserToGroupInput'
+  responses:
+    CORSResponse:
+      description: Default response for CORS Method
+      content:
+        application/json:
+          examples: {}
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+        Access-Control-Allow-Methods:
+          schema:
+            type: string
+        Access-Control-Allow-Headers:
+          schema:
+            type: string
+    LoginSessionForIdp:
+      description: Login Session Created
+      headers:
+        Access-Control-Allow-Origin: &ref_0
+          $ref: '#/components/headers/Access-Control-Allow-Origin'
+        Access-Control-Allow-Methods: &ref_1
+          $ref: '#/components/headers/Access-Control-Allow-Methods'
+        Access-Control-Allow-Headers: &ref_2
+          $ref: '#/components/headers/Access-Control-Allow-Headers'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionForIDPOutput'
+    LoginSessionAcceptResponse:
+      description: Response Accepted
+      headers:
+        Access-Control-Allow-Origin: *ref_0
+        Access-Control-Allow-Methods: *ref_1
+        Access-Control-Allow-Headers: *ref_2
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionAcceptResponseOutput'
+    LoginSessionRejectResponse:
+      description: Response Declined
+      headers:
+        Access-Control-Allow-Origin: *ref_0
+        Access-Control-Allow-Methods: *ref_1
+        Access-Control-Allow-Headers: *ref_2
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionRejectResponseOutput'
+    ListLoginConfigurations:
+      description: ListLoginConfigurationOutput
+      headers:
+        Access-Control-Allow-Origin: *ref_0
+        Access-Control-Allow-Methods: *ref_1
+        Access-Control-Allow-Headers: *ref_2
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListLoginConfigurationOutput'
+          examples:
+            Default:
+              $ref: '#/components/examples/ListLoginConfigurationOutput'
+    CreateLoginConfigurations:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateLoginConfigurationOutput'
+          examples:
+            Default:
+              $ref: '#/components/examples/CreateLoginConfigurationOutput'
+    GetLoginConfigurationsById:
+      description: GetLoginConfigurationOutput
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetLoginConfigurationOutput'
+          examples:
+            Default:
+              $ref: '#/components/examples/ConfigurationObject'
+    UpdateLoginConfigurationsById:
+      description: UpdateLoginConfigurationOutput
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateLoginConfigurationOutput'
+          examples:
+            Default:
+              $ref: '#/components/examples/ConfigurationObject'
+    ListGroups:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupsList'
+    CreateGroup:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupDto'
+    GetGroupById:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupDto'
+    ListGroupUserMappings:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupUserMappingsList'
+    AddUserToGroup:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupUserMappingDto'
+    GetClientMetadataByClientId:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginConfigurationClientMetadata'
+    LoginSessionForIdpForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    LoginSessionAcceptResponseBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/InvalidParameterError'
+              - $ref: '#/components/schemas/VPTokenValidationError'
+    ListLoginConfigurationsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    ListLoginConfigurationsForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    CreateLoginConfigurationsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    CreateLoginConfigurationsForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    CreateLoginConfigurationsFailedDependencyError:
+      description: FailedDependencyError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceCreationError'
+    GetLoginConfigurationsByIdBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    GetLoginConfigurationsByIdForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    UpdateLoginConfigurationsByIdBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    UpdateLoginConfigurationsByIdForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    DeleteLoginConfigurationsByIdBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    DeleteLoginConfigurationsByIdForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    GetClientMetadataByClientIdBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    GetClientMetadataByClientIdNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    ListGroupsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    ListGroupsForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    ListGroupsNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    CreateGroupBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    CreateGroupForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    CreateGroupConflictError:
+      description: ConflictError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupsPerUserLimitExceededError'
+    GetGroupByIdBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    GetGroupByIdForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    GetGroupByIdNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    DeleteGroupBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    DeleteGroupForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    ListGroupUserMappingsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    ListGroupUserMappingsForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    ListGroupUserMappingsNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    AddUserToGroupBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    AddUserToGroupForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    AddUserToGroupNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    RemoveUserFromGroupBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    RemoveUserFromGroupForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    RemoveUserFromGroupNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+  schemas:
+    ServiceErrorResponse:
+      type: object
+      additionalProperties: false
+      description: Service Error Response
+      properties:
+        debugId:
+          type: string
+          format: uuid
+          description: unique id for correlating this specific error to logs
+        name:
+          type: string
+          description: name of the error
+        code:
+          type: string
+          description: backwards compatible Affinidi error code
+        details:
+          type: array
+          description: error details
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+                description: issue
+              field:
+                type: string
+                description: fields
+              value:
+                type: string
+                description: value
+              location:
+                type: string
+                description: location
+            required:
+              - issue
+      required:
+        - debugId
+        - name
+        - code
+    RedirectResponse:
+      type: object
+      additionalProperties: false
+      description: Redirect Response
+      properties:
+        type:
+          type: string
+          description: type
+          enum:
+            - REDIRECT_RESPONSE
+        to:
+          type: string
+          format: url
+          description: URL to redirect to
+      required:
+        - type
+        - to
+    ListLoginConfigurationOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoginConfigurationObject'
+      required:
+        - configurations
+    CreateLoginConfigurationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User defined login configuration name
+        redirectUris:
+          type: array
+          description: OAuth 2.0 Redirect URIs
+          items:
+            type: string
+        vpDefinition:
+          type: string
+          description: VP definition in JSON stringify format
+        presentationDefinition:
+          type: object
+          description: Presentation Definition
+        idTokenMapping:
+          $ref: '#/components/schemas/IdTokenMapping'
+        clientMetadata:
+          $ref: '#/components/schemas/LoginConfigurationClientMetadata'
+        claimFormat:
+          description: ID token claims output format. Default is array.
+          type: string
+          enum:
+            - array
+            - map
+        scope:
+          type: string
+          description: List of groups separated by space
+        tokenEndpointAuthMethod:
+          $ref: '#/components/schemas/TokenEndpointAuthMethod'
+      required:
+        - name
+        - redirectUris
+    CreateLoginConfigurationOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        ari:
+          type: string
+          description: Configuration ari
+        projectId:
+          type: string
+          description: Project id
+        id:
+          type: string
+          description: Configuration id
+        name:
+          type: string
+          description: User defined login configuration name
+        auth:
+          type: object
+          additionalProperties: false
+          description: OIDC Auth Credentials
+          properties:
+            clientId:
+              type: string
+              description: OAuth 2.0 Client ID
+            clientSecret:
+              type: string
+              description: OAuth 2.0 Client Secret
+            scope:
+              type: string
+              description: OAuth 2.0 Client Scope
+            issuer:
+              type: string
+              description: Issuer URL
+          required:
+            - clientId
+        redirectUris:
+          type: array
+          items:
+            type: string
+          description: OAuth 2.0 Redirect URIs
+        clientMetadata:
+          $ref: '#/components/schemas/LoginConfigurationClientMetadata'
+        creationDate:
+          type: string
+          description: OAuth 2.0 Client Creation Date
+      required:
+        - ari
+        - id
+        - name
+        - projectId
+        - auth
+        - redirectUris
+        - clientMetadata
+        - creationDate
+    GetLoginConfigurationOutput:
+      $ref: '#/components/schemas/LoginConfigurationObject'
+    UpdateLoginConfigurationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User defined login configuration name
+        redirectUris:
+          type: array
+          description: OAuth 2.0 Redirect URIs
+          items:
+            type: string
+        clientSecret:
+          type: string
+          description: OAuth2 client secret
+        vpDefinition:
+          type: string
+          description: VP definition in JSON stringify format
+        presentationDefinition:
+          type: object
+          description: Presentation Definition
+        idTokenMapping:
+          $ref: '#/components/schemas/IdTokenMapping'
+        clientMetadata:
+          $ref: '#/components/schemas/LoginConfigurationClientMetadata'
+        tokenEndpointAuthMethod:
+          $ref: '#/components/schemas/TokenEndpointAuthMethod'
+    UpdateLoginConfigurationOutput:
+      $ref: '#/components/schemas/LoginConfigurationObject'
+    LoginSessionDto:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: Session primary identifier
+        authorizationRequest:
+          type: object
+          additionalProperties: false
+          properties:
+            state:
+              type: string
+              description: State parameter
+            presentationDefinition:
+              type: string
+              description: >-
+                Presentation Definition to ask from the user. In JSON Stringify
+                format.
+            ari:
+              type: string
+              description: ARI is used for analytics proposals.
+            clientId:
+              type: string
+              description: clientId used for detect origin.
+          required:
+            - state
+            - presentationDefinition
+      required:
+        - id
+        - authorizationRequest
+    LoginSessionForIDPInput:
+      type: object
+      additionalProperties: false
+      description: Input for Creating a Login Session
+      properties:
+        loginChallenge:
+          type: string
+          description: IDP Login Challenge to Associate the Session with
+      required:
+        - loginChallenge
+    LoginSessionForIDPOutput:
+      $ref: '#/components/schemas/LoginSessionDto'
+    LoginSessionAcceptResponseInput:
+      type: object
+      additionalProperties: true
+      description: >-
+        Authorization Response per OpenID for Verifiable Presentations
+        Specification
+    LoginSessionAcceptResponseOutput:
+      type: object
+      additionalProperties: true
+      description: Direct Post Response URI endpoint result
+    LoginSessionRejectResponseInput:
+      type: object
+      additionalProperties: true
+      description: >-
+        Authorization Response per OpenID for Verifiable Presentations
+        Specification
+      properties:
+        error:
+          type: string
+          description: >-
+            The error should follow the OAuth2 error format (e.g.
+            invalid_request, login_required). Defaults to request_denied
+        errorDescription:
+          type: string
+          description: Description of the error in a human readable format
+        state:
+          type: string
+          description: Random state associated to the Session
+      required:
+        - state
+    LoginSessionRejectResponseOutput:
+      type: object
+      additionalProperties: true
+      description: Direct Post Response URI endpoint result
+    LoginConfigurationObject:
+      type: object
+      additionalProperties: true
+      properties:
+        ari:
+          type: string
+          description: Configuration ari
+        id:
+          type: string
+          description: Configuration id
+        projectId:
+          type: string
+          description: Project id
+        name:
+          type: string
+          description: User defined login configuration name
+        redirectUris:
+          type: array
+          items:
+            type: string
+          description: OAuth 2.0 Redirect URIs
+        scope:
+          type: string
+          description: OAuth 2.0 Client Scope
+        clientId:
+          type: string
+          description: OAuth 2.0 Client ID
+        creationDate:
+          type: string
+          description: OAuth 2.0 Client Creation Date
+        vpDefinition:
+          type: string
+          description: VP definition in JSON stringify format
+        presentationDefinition:
+          type: object
+          description: Presentation Definition
+        idTokenMapping:
+          $ref: '#/components/schemas/IdTokenMapping'
+        clientMetadata:
+          $ref: '#/components/schemas/LoginConfigurationClientMetadata'
+      required:
+        - ari
+        - id
+        - name
+        - clientId
+        - vpDefinition
+        - projectId
+        - creationDate
+        - idTokenMapping
+        - clientMetadata
+    IdTokenMapping:
+      minItems: 1
+      items:
+        type: object
+        additionalProperties: false
+        properties:
+          sourceField:
+            type: string
+            description: Name(path) of the corresponding field in the vp_token
+          idTokenClaim:
+            type: string
+            description: Name of the corresponding field in the id_token
+        required:
+          - sourceField
+          - idTokenClaim
+      type: array
+      description: Fields name/path mapping between the vp_token and the id_token
+    CreateGroupInput:
+      type: object
+      additionalProperties: false
+      properties:
+        groupName:
+          type: string
+          pattern: ^[a-z_]+$
+          maxLength: 24
+          description: name of the group for users, used as an id
+      required:
+        - groupName
+    GroupDto:
+      type: object
+      additionalProperties: false
+      properties:
+        ari:
+          type: string
+          description: Group ari
+        projectId:
+          type: string
+          description: Project id
+        groupName:
+          type: string
+          description: name of the group, identifier within a project
+        creationDate:
+          type: string
+          description: Group creation date
+      required:
+        - ari
+        - projectId
+        - groupName
+        - creationDate
+    GroupUserMappingDto:
+      type: object
+      additionalProperties: false
+      properties:
+        ari:
+          type: string
+          description: Group user mapping ari
+        id:
+          type: string
+          description: Group user mapping id
+        projectId:
+          type: string
+          description: Project id
+        groupName:
+          type: string
+          description: Group name
+        sub:
+          type: string
+          description: Unique identifier of the user, subject of the token
+        creationDate:
+          type: string
+          description: Group to user mapping creation date
+      required:
+        - ari
+        - id
+        - projectId
+        - groupName
+        - sub
+        - creationDate
+    AddUserToGroupInput:
+      type: object
+      description: >-
+        input used to create a user group mapping or in other words add user to
+        group
+      properties:
+        sub:
+          type: string
+          description: Unique identifier of the user, subject of the token
+      required:
+        - sub
+    GroupsList:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupDto'
+    GroupUserMappingsList:
+      type: object
+      properties:
+        mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupUserMappingDto'
+    LoginConfigurationClientMetadata:
+      type: object
+      additionalProperties: true
+      description: login configuration client metadata
+      properties:
+        name:
+          type: string
+          description: application name that will be displayed in consent page
+        origin:
+          type: string
+          description: origin url that will be displayed in consent page
+        logo:
+          type: string
+          description: logo url that will be displayed in consent page
+      required:
+        - name
+        - origin
+        - logo
+    TokenEndpointAuthMethod:
+      enum:
+        - client_secret_basic
+        - client_secret_post
+        - none
+      type: string
+      description: >
+        Requested Client Authentication method for the Token Endpoint. The
+        options are: `client_secret_post`: (default) Send client_id and
+        client_secret as application/x-www-form-urlencoded in the HTTP body.
+        `client_secret_basic`: Send client_id and client_secret as
+        application/x-www-form-urlencoded encoded in the HTTP Authorization
+        header. `none`: For public clients (native/mobile apps) which can not
+        have secret.
+    InvalidParameterError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - InvalidParameterError
+        message:
+          type: string
+          enum:
+            - 'Invalid parameter: ${param}.'
+        httpStatusCode:
+          type: number
+          enum:
+            - 400
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    NotFoundError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - NotFoundError
+        message:
+          type: string
+          enum:
+            - 'Not found: ${param}.'
+        httpStatusCode:
+          type: number
+          enum:
+            - 404
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    ResourceCreationError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - ResourceCreationError
+        message:
+          type: string
+          enum:
+            - Failed to create resources.
+        httpStatusCode:
+          type: number
+          enum:
+            - 424
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    GroupsPerUserLimitExceededError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - GroupsPerUserLimitExceededError
+        message:
+          type: string
+          enum:
+            - Amount of groups per user is limited.
+        httpStatusCode:
+          type: number
+          enum:
+            - 409
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    ActionForbiddenError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - ActionForbiddenError
+        message:
+          type: string
+          enum:
+            - Principal can not execute action on given resource
+        httpStatusCode:
+          type: number
+          enum:
+            - 403
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    VPTokenValidationError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - VPTokenValidationError
+        message:
+          type: string
+          enum:
+            - VP token validation ended with an error
+        httpStatusCode:
+          type: number
+          enum:
+            - 400
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+  examples:
+    ConfigurationObject:
+      value:
+        ari: ari:identity:...:28ed0f663884ff70bf3
+        name: Reference App Client
+        clientId: client-id here
+        projectId: 8000c3a4-aa3b-4d14-9c9b-cddaa324c9e9
+        creationDate: '2023-05-11T10:15:44Z'
+        idTokenMapping:
+          - sourceField: $.type
+            idTokenClaim: type
+          - sourceField: $.credentialSubject.email
+            idTokenClaim: email
+          - sourceField: $.credentialSubject.data.score
+            idTokenClaim: vp_score
+          - sourceField: $.credentialSubject.data.like
+            idTokenClaim: vp_likes
+        vpDefinition: >-
+          {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
+          VC type\",\"purpose\":\"Check if VC type is
+          correct\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}}]}},{\"id\":\"email_vc_data\",\"name\":\"Email
+          VC data\",\"purpose\":\"Check if data contains necessary
+          fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Email
+          address\",\"filter\":{\"type\":\"string\"}}]}}]}
+        presentationDefinition: |-
+          {
+            "id": "vp_token_with_email_vc",
+            "input_descriptors": [
+              {
+                "id": "email_vc",
+                "name": "EmailVC type",
+                "purpose": "Check if VC type iscorrect",
+                "constraints": {
+                  "fields": [
+                    {
+                      "path": ["$.type"],
+                      "filter": { "type": "array", "pattern": "Email" }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "email_vc_data",
+                "name": "EmailVC data",
+                "purpose": "Check if data contains necessary fields",
+                "constraints": {
+                  "fields": [
+                    {
+                      "path": ["$.credentialSubject.email"],
+                      "purpose": "Email address",
+                      "filter": { "type": "string" }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        id: c13de9cd6f19f28ed0f663884ff70bf3
+        clientMetadata:
+          name: insurance
+          origin: https://insurance.com
+          logo: https://insurance.com/logo.png
+    CreateLoginConfigurationOutput:
+      value:
+        ari: ari:identity:...:28ed0f663884ff70bf3
+        name: Reference App Client
+        auth:
+          clientId: 47d8ef82-edb4-4752-8a8d-e8bc8aad4b48
+          clientSecret: '**************'
+          issuer: http://affinidi.com
+        projectId: 8000c3a4-aa3b-4d14-9c9b-cddaa324c9e9
+        creationDate: '2023-05-11T10:15:44Z'
+        redirectUris:
+          - https://my-fancy-project.eu.auth0.com/login/callback
+        id: c13de9cd6f19f28ed0f663884ff70bf3
+        clientMetadata:
+          name: insurance
+          origin: https://insurance.com
+          logo: https://insurance.com/logo.png
+    CreateLoginConfigurationInput:
+      value:
+        name: Reference App Client
+        redirectUris:
+          - https://my-fancy-project.eu.auth0.com/login/callback
+    CreateLoginConfigurationInputFull:
+      value:
+        name: Reference App Client
+        redirectUris:
+          - https://my-fancy-project.eu.auth0.com/login/callback
+        idTokenMapping:
+          - sourceField: $.type
+            idTokenClaim: type
+          - sourceField: $.credentialSubject.email
+            idTokenClaim: email
+          - sourceField: $.credentialSubject.data.score
+            idTokenClaim: vp_score
+          - sourceField: $.credentialSubject.data.like
+            idTokenClaim: vp_likes
+        vpDefinition: >-
+          {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
+          VC type\",\"purpose\":\"Check if VC type is
+          correct\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}}]}},{\"id\":\"email_vc_data\",\"name\":\"Email
+          VC data\",\"purpose\":\"Check if data contains necessary
+          fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Email
+          address\",\"filter\":{\"type\":\"string\"}}]}}]}
+        presentationDefinition: |-
+          {
+            "id": "vp_token_with_email_vc",
+            "input_descriptors": [
+              {
+                "id": "email_vc",
+                "name": "EmailVC type",
+                "purpose": "Check if VC type iscorrect",
+                "constraints": {
+                  "fields": [
+                    {
+                      "path": ["$.type"],
+                      "filter": { "type": "array", "pattern": "Email" }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "email_vc_data",
+                "name": "EmailVC data",
+                "purpose": "Check if data contains necessary fields",
+                "constraints": {
+                  "fields": [
+                    {
+                      "path": ["$.credentialSubject.email"],
+                      "purpose": "Email address",
+                      "filter": { "type": "string" }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        clientMetadata:
+          name: insurance
+          origin: https://insurance.com
+          logo: https://insurance.com/logo.png
+    UpdateLoginConfigurationOutput:
+      $ref: '#/components/examples/ConfigurationObject'
+    UpdateLoginConfigurationInput:
+      value:
+        name: Reference App Client
+        idTokenMapping:
+          - sourceField: $.type
+            idTokenClaim: type
+          - sourceField: $.credentialSubject.email
+            idTokenClaim: email
+          - sourceField: $.credentialSubject.data.score
+            idTokenClaim: vp_score
+          - sourceField: $.credentialSubject.data.like
+            idTokenClaim: vp_likes
+    ListLoginConfigurationOutput:
+      value:
+        configurations:
+          - ari: ari:identity:...:28ed0f663884ff70bf3
+            name: Reference App Client
+            clientId: client-id here
+            projectId: 8000c3a4-aa3b-4d14-9c9b-cddaa324c9e9
+            creationDate: '2023-05-11T10:15:44Z'
+            idTokenMapping:
+              - sourceField: $.type
+                idTokenClaim: type
+              - sourceField: $.credentialSubject.email
+                idTokenClaim: email
+              - sourceField: $.credentialSubject.data.score
+                idTokenClaim: vp_score
+              - sourceField: $.credentialSubject.data.like
+                idTokenClaim: vp_likes
+            vpDefinition: >-
+              {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
+              VC type\",\"purpose\":\"Check if VC type is
+              correct\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}}]}},{\"id\":\"email_vc_data\",\"name\":\"Email
+              VC data\",\"purpose\":\"Check if data contains necessary
+              fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Email
+              address\",\"filter\":{\"type\":\"string\"}}]}}]}
+            presentationDefinition: |-
+              { "id": "vp_token_with_email_vc", "input_descriptors": [
+                {
+                  "id": "email_vc",
+                  "name": "EmailVC type",
+                  "purpose": "Check if VC type iscorrect",
+                  "constraints": {
+                    "fields": [
+                      {
+                        "path": ["$.type"],
+                        "filter": { "type": "array", "pattern": "Email" }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "email_vc_data",
+                  "name": "EmailVC data",
+                  "purpose": "Check if data contains necessary fields",
+                  "constraints": {
+                    "fields": [
+                      {
+                        "path": ["$.credentialSubject.email"],
+                        "purpose": "Email address",
+                        "filter": { "type": "string" }
+                      }
+                    ]
+                  }
+                }
+              ] }
+            id: c13de9cd6f19f28ed0f663884ff70bf3
+            clientMetadata:
+              name: insurance
+              origin: https://insurance.com
+              logo: https://insurance.com/logo.png
+    RedirectResponse:
+      value:
+        type: REDIRECT_RESPONSE
+        to: https://url-to-redirect-ro
+    ConsentRequestOutputInfo:
+      value:
+        type: CONSENT_REQUEST_INFO
+        user:
+          subject: '4984389384938498349'
+        client:
+          id: 01b2c41a-b723-4fbf-a917-1280ac26f3ba
+          name: client 1
+          logoUri: https://logo.png
+        requestedScopes:
+          - ''
+        consentChallenge: e1ef8c2b5cd74482b6812dafba81bcf9
+paths:
+  /v1/consent/request:
+    get:
+      operationId: consentRequest
+      summary: IDP consent request automated by adapter frontend
+      description: IDP consent request automated by adapter frontend
+      parameters:
+        - in: query
+          name: consent_challenge
+          schema:
+            type: string
+          description: Consent challenge provided by IDP
+      responses:
+        '200':
+          description: Ok
+        '307':
+          description: 307 Temporary Redirect
+          headers:
+            Location:
+              schema:
+                type: string
+      tags:
+        - consent
+  /v1/login/sessions/for-idp:
+    post:
+      operationId: loginSessionForIdp
+      summary: Create Login Session for IDP Login
+      description: Creates Login Session for IDP Login by using the Login Challenge
+      requestBody:
+        $ref: '#/components/requestBodies/LoginSessionForIdp'
+      responses:
+        '201':
+          $ref: '#/components/responses/LoginSessionForIdp'
+        '403':
+          $ref: '#/components/responses/LoginSessionForIdpForbiddenError'
+      tags:
+        - session
+    options:
+      operationId: corsLoginSessionForIdp
+      summary: CORS Support
+      description: Enable CORS by returning correct headers
+      x-amazon-apigateway-integration: &ref_3
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+              method.response.header.Access-Control-Allow-Methods: '''*'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            responseTemplates:
+              application/json: |
+                {}
+      responses: &ref_4
+        '200':
+          $ref: '#/components/responses/CORSResponse'
+      tags:
+        - cors
+  /v1/login/sessions/{sessionId}/accept-response:
+    post:
+      operationId: loginSessionAcceptResponse
+      summary: Accept OIDC VP Response for Login Session
+      description: Accepts and Validates the OIDC VP Response sent by the Wallet
+      parameters:
+        - description: The id of the login session
+          in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/LoginSessionAcceptResponse'
+      responses:
+        '200':
+          $ref: '#/components/responses/LoginSessionAcceptResponse'
+        '400':
+          $ref: '#/components/responses/LoginSessionAcceptResponseBadRequestError'
+      tags:
+        - session
+    options:
+      operationId: corsLoginSessionAcceptResponse
+      summary: CORS Support
+      description: Enable CORS by returning correct headers
+      x-amazon-apigateway-integration: *ref_3
+      parameters:
+        - description: The id of the login session
+          in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses: *ref_4
+      tags:
+        - cors
+  /v1/login/sessions/{sessionId}/reject-response:
+    post:
+      operationId: loginSessionRejectResponse
+      summary: Reject Response for Login Session
+      description: The user declines the request for access to their data
+      parameters:
+        - description: The id of the login session
+          in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/LoginSessionRejectResponse'
+      responses:
+        '200':
+          $ref: '#/components/responses/LoginSessionRejectResponse'
+      tags:
+        - session
+    options:
+      operationId: corsLoginSessionRejectResponse
+      summary: CORS Support
+      description: Enable CORS by returning correct headers
+      x-amazon-apigateway-integration: *ref_3
+      parameters:
+        - description: The id of the login session
+          in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses: *ref_4
+      tags:
+        - cors
+  /v1/login/configurations:
+    get:
+      operationId: listLoginConfigurations
+      summary: List login configurations
+      description: Endpoint to retrieve list of login configurations
+      security:
+        - ProjectTokenAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ListLoginConfigurations'
+        '400':
+          $ref: '#/components/responses/ListLoginConfigurationsBadRequestError'
+        '403':
+          $ref: '#/components/responses/ListLoginConfigurationsForbiddenError'
+      tags:
+        - configuration
+    post:
+      operationId: createLoginConfigurations
+      summary: Create a new login configuration
+      description: >
+        Create a new login configuration
+
+
+        `vpDefinition` and `idTokenMapping` have default settings that provide
+        user email VP presentation definitions.
+
+
+        An essential default definition is in place when it comes to the login
+        process for end users using the Chrome extension. 
+
+
+        This definition requires users to input their email address as OIDCVP
+        compliant, which is then verified by the Affinidi verification service.
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateLoginConfigurations'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateLoginConfigurations'
+        '400':
+          $ref: '#/components/responses/CreateLoginConfigurationsBadRequestError'
+        '403':
+          $ref: '#/components/responses/CreateLoginConfigurationsForbiddenError'
+        '424':
+          $ref: >-
+            #/components/responses/CreateLoginConfigurationsFailedDependencyError
+      tags:
+        - configuration
+  /v1/login/configurations/{configurationId}:
+    get:
+      operationId: getLoginConfigurationsById
+      summary: Get login configuration by ID
+      description: Get login configuration by ID
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - description: The id of the login configuration
+          in: path
+          name: configurationId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GetLoginConfigurationsById'
+        '400':
+          $ref: '#/components/responses/GetLoginConfigurationsByIdBadRequestError'
+        '403':
+          $ref: '#/components/responses/GetLoginConfigurationsByIdForbiddenError'
+      tags:
+        - configuration
+    patch:
+      operationId: updateLoginConfigurationsById
+      summary: Update login configurations by ID
+      description: Update login configurations by ID
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - description: The id of the login configuration
+          in: path
+          name: configurationId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateLoginConfigurationsById'
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdateLoginConfigurationsById'
+        '400':
+          $ref: '#/components/responses/UpdateLoginConfigurationsByIdBadRequestError'
+        '403':
+          $ref: '#/components/responses/UpdateLoginConfigurationsByIdForbiddenError'
+      tags:
+        - configuration
+    delete:
+      operationId: deleteLoginConfigurationsById
+      summary: Delete login configurations by ID
+      description: Delete login configurations by ID
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - description: The id of the login configuration
+          in: path
+          name: configurationId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/DeleteLoginConfigurationsByIdBadRequestError'
+        '403':
+          $ref: '#/components/responses/DeleteLoginConfigurationsByIdForbiddenError'
+      tags:
+        - configuration
+  /v1/login/configurations/metadata/{clientId}:
+    get:
+      operationId: getClientMetadataByClientId
+      summary: Get Client Metadata By  OAuth 2.0 Client ID
+      description: Get Client Metadata By  OAuth 2.0 Client ID
+      security:
+        - ConsumerTokenAuth: []
+      parameters:
+        - description: OAuth 2.0 Client ID
+          name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GetClientMetadataByClientId'
+        '400':
+          $ref: '#/components/responses/GetClientMetadataByClientIdBadRequestError'
+        '404':
+          $ref: '#/components/responses/GetClientMetadataByClientIdNotFoundError'
+      tags:
+        - configuration
+  /v1/groups:
+    get:
+      operationId: listGroups
+      security:
+        - ProjectTokenAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ListGroups'
+        '400':
+          $ref: '#/components/responses/ListGroupsBadRequestError'
+        '403':
+          $ref: '#/components/responses/ListGroupsForbiddenError'
+        '404':
+          $ref: '#/components/responses/ListGroupsNotFoundError'
+      tags:
+        - group
+    post:
+      operationId: createGroup
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateGroup'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateGroup'
+        '400':
+          $ref: '#/components/responses/CreateGroupBadRequestError'
+        '403':
+          $ref: '#/components/responses/CreateGroupForbiddenError'
+        '409':
+          $ref: '#/components/responses/CreateGroupConflictError'
+      tags:
+        - group
+  /v1/groups/{groupName}:
+    get:
+      operationId: getGroupById
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - name: groupName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GetGroupById'
+        '400':
+          $ref: '#/components/responses/GetGroupByIdBadRequestError'
+        '403':
+          $ref: '#/components/responses/GetGroupByIdForbiddenError'
+        '404':
+          $ref: '#/components/responses/GetGroupByIdNotFoundError'
+      tags:
+        - group
+    delete:
+      operationId: deleteGroup
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - name: groupName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: NoContent
+        '400':
+          $ref: '#/components/responses/DeleteGroupBadRequestError'
+        '403':
+          $ref: '#/components/responses/DeleteGroupForbiddenError'
+      tags:
+        - group
+  /v1/groups/{groupName}/users:
+    get:
+      operationId: listGroupUserMappings
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - name: groupName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ListGroupUserMappings'
+        '400':
+          $ref: '#/components/responses/ListGroupUserMappingsBadRequestError'
+        '403':
+          $ref: '#/components/responses/ListGroupUserMappingsForbiddenError'
+        '404':
+          $ref: '#/components/responses/ListGroupUserMappingsNotFoundError'
+      tags:
+        - group
+    post:
+      operationId: addUserToGroup
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - name: groupName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/AddUserToGroup'
+      responses:
+        '201':
+          $ref: '#/components/responses/AddUserToGroup'
+        '400':
+          $ref: '#/components/responses/AddUserToGroupBadRequestError'
+        '403':
+          $ref: '#/components/responses/AddUserToGroupForbiddenError'
+        '404':
+          $ref: '#/components/responses/AddUserToGroupNotFoundError'
+      tags:
+        - group
+  /v1/groups/{groupName}/users/{groupUserMappingId}:
+    delete:
+      operationId: removeUserFromGroup
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - name: groupName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: groupUserMappingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: NoContent
+        '400':
+          $ref: '#/components/responses/RemoveUserFromGroupBadRequestError'
+        '403':
+          $ref: '#/components/responses/RemoveUserFromGroupForbiddenError'
+        '404':
+          $ref: '#/components/responses/RemoveUserFromGroupNotFoundError'
+      tags:
+        - group
+  /v1/login/admin/{proxy+}:
+    get:
+      x-amazon-apigateway-integration:
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1029/admin/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: 9ueyrd
+        cacheKeyParameters:
+          - method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+    post:
+      x-amazon-apigateway-integration:
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1029/admin/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: 9ueyrd
+        cacheKeyParameters:
+          - method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+    delete:
+      x-amazon-apigateway-integration:
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1029/admin/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: 9ueyrd
+        cacheKeyParameters:
+          - method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: DELETE
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+    put:
+      x-amazon-apigateway-integration:
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1029/admin/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: 9ueyrd
+        cacheKeyParameters:
+          - method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: PUT
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+    patch:
+      x-amazon-apigateway-integration:
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1029/admin/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: 9ueyrd
+        cacheKeyParameters:
+          - method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: PATCH
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+  /v1/login/{proxy+}:
+    get:
+      x-amazon-apigateway-integration:
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1026/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: ea8leu
+        cacheKeyParameters:
+          - method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - idp
+    post:
+      x-amazon-apigateway-integration:
+        uri: >-
+          http://internal-oidc-Hydra-1A6G3P0W16PW1-830701863.ap-southeast-1.elb.amazonaws.com:1026/{proxy}
+        connectionId: vptyoj
+        connectionType: VPC_LINK
+        cacheNamespace: ea8leu
+        cacheKeyParameters:
+          - method.request.path.proxy
+        requestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - idp

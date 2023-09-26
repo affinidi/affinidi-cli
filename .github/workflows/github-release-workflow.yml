@@ -21,8 +21,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          registry-url: "https://registry.npmjs.org"
-          scope: "@affinidi"
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@affinidi'
 
       - name: Install dependencies
         run: npm ci
@@ -33,8 +33,7 @@ jobs:
           ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
 
       - name: Run release
-        run:
-          npm run semantic-release
+        run: npx semantic-release@21
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
