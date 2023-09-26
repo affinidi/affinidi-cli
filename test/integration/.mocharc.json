@@ -1,0 +1,7 @@
+{
+  "require": ["test/helpers/init.js", "ts-node/register", "test/integration/init.ts"],
+  "watch-extensions": ["ts"],
+  "recursive": true,
+  "reporter": "spec",
+  "timeout": 60000
+}

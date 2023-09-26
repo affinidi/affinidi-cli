@@ -1,0 +1,8 @@
+name: affinidi-cli
+description: |-
+  Greenfield version of Affinidi CLI
+criticality: high
+visibility: internal
+tech-stack: lib
+team-name: developer-experience
+code-repository: https://github.com/affinidi/affinidi-cli.git
