@@ -28,9 +28,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build:binary
-        env:
-          ANALYTICS_JWT_TOKEN: ${{secrets.ANALYTICS_JWT_TOKEN}}
+        run: npm run build
 
       - name: Run release
         run: npx semantic-release@21
