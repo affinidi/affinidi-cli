@@ -30,6 +30,10 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
+  "bugs": {
+    "url": "https://github.com/affinidi/affinidi-cli/issues"
+  },
+  "homepage": "https://github.com/affinidi/affinidi-cli#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/affinidi/affinidi-cli.git"

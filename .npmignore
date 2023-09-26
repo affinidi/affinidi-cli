@@ -7,7 +7,6 @@ coverage
 .docs
 .scripts
 .eslintrc.json
-.huskyrc.json
 .env.example
 .prettierrc.json
 .prettierignore
