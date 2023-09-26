@@ -26,6 +26,10 @@
     "generate:readme": "npm run build && oclif readme",
     "generate:api": "node scripts/generate-api.cjs"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/affinidi/affinidi-cli.git"
