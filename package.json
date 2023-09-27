@@ -66,7 +66,6 @@
     "jose": "^4.14.6",
     "open": "^8.4.1",
     "qs": "^6.11.2",
-    "shelljs": "^0.8.5",
     "simple-oauth2": "^5.0.0",
     "tcp-port-used": "^1.0.2",
     "zod": "^3.22.2",
@@ -83,7 +82,6 @@
     "@types/jsonwebtoken": "^9.0.3",
     "@types/mocha": "10.0.1",
     "@types/node": "^18.11.19",
-    "@types/shelljs": "^0.8.12",
     "@types/simple-oauth2": "^5.0.4",
     "@types/tcp-port-used": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -134,6 +132,9 @@
       },
       "iam": {
         "description": "Use these commands to manage policies for access configuration"
+      },
+      "generate": {
+        "description": "Use these commands to generate code to get started or to scaffold your solution"
       }
     },
     "warn-if-update-available": {
