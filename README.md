@@ -555,7 +555,7 @@ _See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blo
 
 ## `affinidi generate app`
 
-Generates a reference application and creates an Auth0 connection. Requires git
+Generates a reference application and configures an Auth0 connection. Requires git
 
 ```
 USAGE
@@ -572,9 +572,9 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p <path_to_clone_reference_app>
+  $ affinidi generate app -p <destination_path>
 
-  $ affinidi generate app --path <path_to_clone_reference_app> --force
+  $ affinidi generate app --path <destination_path> --force
 ```
 
 ## `affinidi help [COMMANDS]`
