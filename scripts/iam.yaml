@@ -579,7 +579,7 @@ components:
           type: string
       required:
         - principalId
-    AddUserToProjectInput:
+    TypedPricipalId:
       type: object
       additionalProperties: false
       properties:
@@ -587,6 +587,17 @@ components:
           type: string
       required:
         - principalId
+    AddUserToProjectInput:
+      type: object
+      additionalProperties: false
+      properties:
+        principalId:
+          type: string
+        principalType:
+          type: string
+      required:
+        - principalId
+        - principalType
     CreateProjectScopedTokenInput:
       type: object
       additionalProperties: false
@@ -617,6 +628,11 @@ components:
           type: string
         name:
           type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          description: creation date and time in ISO-8601 format, e.g. 2023-09-20T07:12:13
       required:
         - id
         - name
@@ -625,6 +641,8 @@ components:
       additionalProperties: false
       properties:
         name:
+          type: string
+        description:
           type: string
       required:
         - name
