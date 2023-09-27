@@ -807,7 +807,7 @@ EXAMPLES
 
   $ affinidi login create-config -n MyLoginConfig -u http://localhost:8080/callback
 
-  $ affinidi login create-config --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --scope "my_user_group my_other_group" --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo
+  $ affinidi login create-config --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo
 
 FLAG DESCRIPTIONS
   --token-endpoint-auth-method=client_secret_basic|client_secret_post|none
