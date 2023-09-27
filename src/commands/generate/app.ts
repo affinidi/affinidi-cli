@@ -1,22 +1,19 @@
 import password from '@inquirer/password'
 import { input } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
-import chalk from 'chalk'
-import degit from 'degit'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { cloneWithDegit } from '../../helpers/degit'
 import { auth0Service } from '../../services/auth0'
 
-const REFERENCE_APP_REPO_NAME = 'reference-app-affinidi-vault'
-const REFERENCE_APP_SUB_DIRECTORY = 'use-cases/default'
-const GIT_URL = `affinidi/${REFERENCE_APP_REPO_NAME}/${REFERENCE_APP_SUB_DIRECTORY}`
+const GIT_URL = `affinidi/reference-app-affinidi-vault/use-cases/default`
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
-  static summary = 'Clone a reference application and create Auth0 connection'
+  static summary = 'Generates a reference application and creates an Auth0 connection. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p <PATH_WHERE_TO_CLONE_REFERENCE_APP>',
-    '<%= config.bin %> <%= command.id %> --path <PATH_WHERE_TO_CLONE_REFERENCE_APP> --force',
+    '<%= config.bin %> <%= command.id %> -p <path_to_clone_reference_app>',
+    '<%= config.bin %> <%= command.id %> --path <path_to_clone_reference_app> --force',
   ]
 
   static flags = {
@@ -32,43 +29,21 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApp)
     const promptFlags = await promptRequiredParameters(['path'], flags)
-    const appPath = promptFlags.path
 
-    ux.action.start('Cloning reference application')
-
-    const emitter = degit(GIT_URL, {
-      cache: true,
-      force: flags.force ? true : false,
-      verbose: false,
-    })
-
-    emitter
-      .clone(appPath)
-      .then(() => {
-        ux.action.stop('Cloned successfully!')
-      })
-      .catch((error) => {
-        ux.action.stop('Failed 🧨')
-
-        // NOTE: Using CLIError prints stacktrace which doesn't bring value
-        this.warn(new Error(this.chalk.red.bold(error.message)))
-        // NOTE: this.exit(1) prints stacktrace which doesn't bring value
-        process.exit(1)
-      })
+    ux.action.start('Generating reference application')
+    await cloneWithDegit(GIT_URL, promptFlags.path, flags.force)
+    ux.action.stop('Generated successfully!')
 
     const clientId = await input({ message: 'What is your Affinidi login configurations clientId?' })
-
     const clientSecret = await password({
       message: 'What is your Affinidi login configurations clientSecret?',
       mask: true,
     })
-
     const accessToken = await password({ message: 'What is your IDP access token?' })
-
     const domain = await input({ message: 'What is your tenant domain?' })
 
     ux.action.start('Generating Auth0 application')
-    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, appPath)
+    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, promptFlags.path)
     ux.action.stop()
   }
 }

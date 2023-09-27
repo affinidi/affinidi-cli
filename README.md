@@ -555,7 +555,7 @@ _See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blo
 
 ## `affinidi generate app`
 
-Clone a reference application and create Auth0 connection
+Generates a reference application and creates an Auth0 connection. Requires git
 
 ```
 USAGE
@@ -572,9 +572,9 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p <PATH_WHERE_TO_CLONE_REFERENCE_APP>
+  $ affinidi generate app -p <path_to_clone_reference_app>
 
-  $ affinidi generate app --path <PATH_WHERE_TO_CLONE_REFERENCE_APP> --force
+  $ affinidi generate app --path <path_to_clone_reference_app> --force
 ```
 
 ## `affinidi help [COMMANDS]`
@@ -607,7 +607,7 @@ USAGE
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -640,7 +640,7 @@ USAGE
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -695,7 +695,7 @@ USAGE
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -729,7 +729,7 @@ USAGE
 FLAGS
   -f, --file=<value>             Location of a json file containing principal policies
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -1157,7 +1157,7 @@ EXAMPLES
   $ affinidi start --project-id <project-id>
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.76/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.5/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1175,7 +1175,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.76/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.5/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 

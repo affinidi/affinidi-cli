@@ -132,6 +132,9 @@
       },
       "iam": {
         "description": "Use these commands to manage policies for access configuration"
+      },
+      "generate": {
+        "description": "Use these commands to generate code to get started or to scaffold your solution"
       }
     },
     "warn-if-update-available": {
