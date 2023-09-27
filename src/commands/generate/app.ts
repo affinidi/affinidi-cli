@@ -9,11 +9,11 @@ import { auth0Service } from '../../services/auth0'
 const GIT_URL = `affinidi/reference-app-affinidi-vault/use-cases/default`
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
-  static summary = 'Generates a reference application and creates an Auth0 connection. Requires git'
+  static summary = 'Generates a reference application and configures an Auth0 connection. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p <path_to_clone_reference_app>',
-    '<%= config.bin %> <%= command.id %> --path <path_to_clone_reference_app> --force',
+    '<%= config.bin %> <%= command.id %> -p <destination_path>',
+    '<%= config.bin %> <%= command.id %> --path <destination_path> --force',
   ]
 
   static flags = {
@@ -42,8 +42,8 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     const accessToken = await password({ message: 'What is your IDP access token?' })
     const domain = await input({ message: 'What is your tenant domain?' })
 
-    ux.action.start('Generating Auth0 application')
+    ux.action.start('Configuring Auth0 application')
     await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, promptFlags.path)
-    ux.action.stop()
+    ux.action.stop('Configured successfully!')
   }
 }
