@@ -2,8 +2,7 @@ import password from '@inquirer/password'
 import { input } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import chalk from 'chalk'
-import shell from 'shelljs'
-import { CLIError } from '@oclif/core/lib/errors'
+import degit from 'degit'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { auth0Service } from '../../services/auth0'
@@ -37,16 +36,25 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
     ux.action.start('Cloning reference application')
 
-    // NOTE: using shelljs instead of child_process as shelljs handles errors better
-    const { code, stderr } = shell.exec(`npx degit ${GIT_URL} ${appPath} ${flags.force ? '--force' : ''}`)
+    const emitter = degit(GIT_URL, {
+      cache: true,
+      force: flags.force ? true : false,
+      verbose: false,
+    })
 
-    if (code !== 0) {
-      ux.action.stop('Failed 🧨')
+    emitter
+      .clone(appPath)
+      .then(() => {
+        ux.action.stop('Cloned successfully!')
+      })
+      .catch((error) => {
+        ux.action.stop('Failed 🧨')
 
-      this.exit(1)
-    } else {
-      ux.action.stop('Cloned successfully!')
-    }
+        // NOTE: Using CLIError prints stacktrace which doesn't bring value
+        this.warn(new Error(this.chalk.red.bold(error.message)))
+        // NOTE: this.exit(1) prints stacktrace which doesn't bring value
+        process.exit(1)
+      })
 
     const clientId = await input({ message: 'What is your Affinidi login configurations clientId?' })
 
