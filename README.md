@@ -440,7 +440,7 @@ We may from time to time impose limits on your use of the Affinidi CLI, such as 
 
 ### Do I need to provide you with anything?
 
-From time to time, we may request certain information from you to ensure that you are complying with the [Terms of Use](https://www.affinidi.com/terms-of-use).
+From time to time, we may request certain information from you to ensure that you are complying with the [Terms and Conditions](https://www.affinidi.com/terms-conditions).
 
 ### Can I share my developer’s account with others?
 
@@ -448,10 +448,10 @@ When you create a developer’s account with us, we will issue you your private 
 
 ### Telemetry
 
-Affinidi collects usage data to improve our products and services. For information on what data we collect and how we use your data, please refer to our [Privacy Policy](https://www.affinidi.com/privacy-policy).
+Affinidi collects usage data to improve our products and services. For information on what data we collect and how we use your data, please refer to our [Privacy Notice](https://www.affinidi.com/privacy-notice).
 
 _Disclaimer:
-Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi CLI, please refer to our [Terms of Use](https://www.affinidi.com/terms-of-use)._
+Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi CLI, please refer to our [Terms and Conditions](https://www.affinidi.com/terms-conditions)._
 
 ## All commands
 
