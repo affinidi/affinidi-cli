@@ -1,3 +1,4 @@
+import { select } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import chalk from 'chalk'
 import { z } from 'zod'
@@ -23,7 +24,6 @@ export class RemovePrincipal extends BaseCommand<typeof RemovePrincipal> {
       char: 't',
       summary: 'Type of the principal',
       options: Object.values(PrincipalTypes),
-      default: PrincipalTypes.TOKEN,
     }),
   }
 
@@ -33,6 +33,13 @@ export class RemovePrincipal extends BaseCommand<typeof RemovePrincipal> {
   }> {
     const { flags } = await this.parse(RemovePrincipal)
     const promptFlags = await promptRequiredParameters(['principal-id'], flags)
+    promptFlags['principal-type'] ??= await select({
+      message: 'Select the principal-type',
+      choices: Object.values(PrincipalTypes).map((value) => ({
+        name: value,
+        value,
+      })),
+    })
     const schema = z.object({
       'principal-id': z.string().uuid(),
       'principal-type': z.nativeEnum(PrincipalTypes),

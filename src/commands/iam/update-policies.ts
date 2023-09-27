@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { confirm, input } from '@inquirer/prompts'
+import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
@@ -28,7 +28,6 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
       char: 't',
       summary: 'Type of the principal',
       options: Object.values(PrincipalTypes),
-      default: PrincipalTypes.TOKEN,
     }),
     file: Flags.string({
       char: 'f',
@@ -39,6 +38,13 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
   public async run(): Promise<PolicyDto> {
     const { flags } = await this.parse(UpdatePolicies)
     const promptFlags = await promptRequiredParameters(['principal-id'], flags)
+    promptFlags['principal-type'] ??= await select({
+      message: 'Select the principal-type',
+      choices: Object.values(PrincipalTypes).map((value) => ({
+        name: value,
+        value,
+      })),
+    })
     const flagsSchema = z.object({
       'principal-id': z.string().uuid(),
       'principal-type': z.nativeEnum(PrincipalTypes),

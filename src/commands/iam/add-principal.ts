@@ -1,3 +1,4 @@
+import { select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import chalk from 'chalk'
 import { z } from 'zod'
@@ -23,13 +24,19 @@ export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
       char: 't',
       summary: 'Type of the principal',
       options: Object.values(PrincipalTypes),
-      default: PrincipalTypes.TOKEN,
     }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(AddPrincipal)
     const promptFlags = await promptRequiredParameters(['principal-id'], flags)
+    promptFlags['principal-type'] ??= await select({
+      message: 'Select the principal-type',
+      choices: Object.values(PrincipalTypes).map((value) => ({
+        name: value,
+        value,
+      })),
+    })
     const schema = z.object({
       'principal-id': z.string().uuid(),
       'principal-type': z.nativeEnum(PrincipalTypes),
@@ -38,7 +45,8 @@ export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
 
     ux.action.start('Adding principal to project')
     await iamService.addPrincipalToProject(clientSDK.config.getProjectToken()?.projectAccessToken, {
-      principalId: `${validatedFlags['principal-type']}/${validatedFlags['principal-id']}`,
+      principalId: validatedFlags['principal-id'],
+      principalType: validatedFlags['principal-type'],
     })
     ux.action.stop('Added successfully!')
   }
