@@ -1,8 +1,8 @@
 import { Flags } from '@oclif/core'
+import z from 'zod'
 import { BaseCommand } from '../common'
 import { configService } from '../services'
 import { clientSDK } from '../services/affinidi'
-import z from 'zod'
 
 export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'
