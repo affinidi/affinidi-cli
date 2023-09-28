@@ -12,6 +12,8 @@ const required = (name: string) => {
   return ''
 }
 
+const TEST_SECRETS = process.env?.TEST_SECRETS || ''
+
 const {
   KEY_ID = required('KEY_ID'),
   PASSPHRASE = required('PASSPHRASE'),
@@ -20,7 +22,7 @@ const {
   MACHINE_USER_ID = required('MACHINE_USER_ID'),
   PROJECT_ID = required('PROJECT_ID'),
   API_GATEWAY_URL = required('API_GATEWAY_URL'),
-} = process.env
+} = JSON.parse(TEST_SECRETS)
 
 const keyId = KEY_ID
 const passphrase = PASSPHRASE

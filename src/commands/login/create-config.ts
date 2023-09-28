@@ -19,7 +19,7 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> -f loginConfig.json',
     '<%= config.bin %> <%= command.id %> -n MyLoginConfig -u http://localhost:8080/callback',
-    '<%= config.bin %> <%= command.id %> --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --scope "my_user_group my_other_group" --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo',
+    '<%= config.bin %> <%= command.id %> --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo',
   ]
   static flags = {
     file: Flags.string({

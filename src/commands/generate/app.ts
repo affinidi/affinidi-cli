@@ -2,23 +2,20 @@ import password from '@inquirer/password'
 import { input } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import chalk from 'chalk'
-import shell from 'shelljs'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
 import { auth0Service } from '../../services/auth0'
 
-const REFERENCE_APP_REPO_NAME = 'reference-app-affinidi-vault'
-const REFERENCE_APP_SUB_DIRECTORY = 'use-cases/default'
-const GIT_URL = `affinidi/${REFERENCE_APP_REPO_NAME}/${REFERENCE_APP_SUB_DIRECTORY}`
+const GIT_URL = `affinidi/reference-app-affinidi-vault/use-cases/default`
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
-  static summary = 'Clone a reference application and create Auth0 connection'
+  static summary = 'Generates a reference application and configures an Auth0 connection. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p <PATH_WHERE_TO_CLONE_REFERENCE_APP>',
-    '<%= config.bin %> <%= command.id %> --path <PATH_WHERE_TO_CLONE_REFERENCE_APP> --force',
+    '<%= config.bin %> <%= command.id %> -p <destination_path>',
+    '<%= config.bin %> <%= command.id %> --path <destination_path> --force',
   ]
 
   static flags = {
@@ -46,20 +43,10 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApp)
     const promptFlags = await promptRequiredParameters(['path'], flags)
-    const appPath = promptFlags.path
 
-    ux.action.start('Cloning reference application')
-
-    // NOTE: using shelljs instead of child_process as shelljs handles errors better
-    const { code, stderr } = shell.exec(`npx degit ${GIT_URL} ${appPath} ${flags.force ? '--force' : ''}`)
-
-    if (code !== 0) {
-      ux.action.stop('Failed 🧨')
-
-      this.exit(1)
-    } else {
-      ux.action.stop('Cloned successfully!')
-    }
+    ux.action.start('Generating reference application')
+    await cloneWithDegit(GIT_URL, promptFlags.path, flags.force)
+    ux.action.stop('Generated successfully!')
 
     if (flags['no-input']) {
       if (!flags['client-id']) {
@@ -90,8 +77,8 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
     const domain = flags.domain ?? (await input({ message: 'What is your tenant domain?' }))
 
-    ux.action.start('Generating Auth0 application')
-    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, appPath)
-    ux.action.stop()
+    ux.action.start('Configuring Auth0 application')
+    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, promptFlags.path)
+    ux.action.stop('Configured successfully!')
   }
 }

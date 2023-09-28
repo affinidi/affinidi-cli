@@ -440,7 +440,7 @@ We may from time to time impose limits on your use of the Affinidi CLI, such as 
 
 ### Do I need to provide you with anything?
 
-From time to time, we may request certain information from you to ensure that you are complying with the [Terms of Use](https://www.affinidi.com/terms-of-use).
+From time to time, we may request certain information from you to ensure that you are complying with the [Terms and Conditions](https://www.affinidi.com/terms-conditions).
 
 ### Can I share my developer’s account with others?
 
@@ -448,10 +448,10 @@ When you create a developer’s account with us, we will issue you your private 
 
 ### Telemetry
 
-Affinidi collects usage data to improve our products and services. For information on what data we collect and how we use your data, please refer to our [Privacy Policy](https://www.affinidi.com/privacy-policy).
+Affinidi collects usage data to improve our products and services. For information on what data we collect and how we use your data, please refer to our [Privacy Notice](https://www.affinidi.com/privacy-notice).
 
 _Disclaimer:
-Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi CLI, please refer to our [Terms of Use](https://www.affinidi.com/terms-of-use)._
+Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi CLI, please refer to our [Terms and Conditions](https://www.affinidi.com/terms-conditions)._
 
 ## All commands
 
@@ -555,7 +555,7 @@ _See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blo
 
 ## `affinidi generate app`
 
-Clone a reference application and create Auth0 connection
+Generates a reference application and configures an Auth0 connection. Requires git
 
 ```
 USAGE
@@ -578,9 +578,9 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p <PATH_WHERE_TO_CLONE_REFERENCE_APP>
+  $ affinidi generate app -p <destination_path>
 
-  $ affinidi generate app --path <PATH_WHERE_TO_CLONE_REFERENCE_APP> --force
+  $ affinidi generate app --path <destination_path> --force
 ```
 
 ## `affinidi help [COMMANDS]`
@@ -613,7 +613,7 @@ USAGE
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -647,7 +647,7 @@ USAGE
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -704,7 +704,7 @@ USAGE
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -739,7 +739,7 @@ USAGE
 FLAGS
   -f, --file=<value>             Location of a json file containing principal policies
   -i, --principal-id=<value>     ID of the principal
-  -t, --principal-type=<option>  [default: machine_user] Type of the principal
+  -t, --principal-type=<option>  Type of the principal
                                  <options: machine_user|user>
 
 GLOBAL FLAGS
@@ -820,7 +820,7 @@ EXAMPLES
 
   $ affinidi login create-config -n MyLoginConfig -u http://localhost:8080/callback
 
-  $ affinidi login create-config --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --scope "my_user_group my_other_group" --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo
+  $ affinidi login create-config --name "My Login Config" --redirect-uris "https://my-fancy-project.eu.auth0.com/login/callback http://localhost:8080/callback" --token-endpoint-auth-method client_secret_post --claim-format array --client-name "My App Name" --client-origin http://localhost:8080 --client-logo http://localhost:8080/logo
 
 FLAG DESCRIPTIONS
   --token-endpoint-auth-method=client_secret_basic|client_secret_post|none
@@ -1186,7 +1186,7 @@ EXAMPLES
   $ affinidi start --project-id <project-id>
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.5/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1205,7 +1205,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.5/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
