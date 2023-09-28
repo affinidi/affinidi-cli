@@ -4,6 +4,7 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
+import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
@@ -83,6 +84,9 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
     }
     // Flag/prompt input
     else {
+      if (flags['no-input']) {
+        throw new CLIError(giveFlagInputErrorMessage('file'))
+      }
       data = {
         name: flags.name ?? (await input({ message: 'Enter the login configuration name' })),
         redirectUris: (
