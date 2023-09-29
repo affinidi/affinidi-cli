@@ -559,15 +559,21 @@ Generates a reference application and configures an Auth0 connection. Requires g
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [-p <value>] [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-p <value>] [--force] [--client-id <value>]
+    [--client-secret <value>] [--access-token <value>] [--domain <value>]
 
 FLAGS
-  -p, --path=<value>  Relative or absolute path where reference application should be cloned into
-  --force             Override destination directory if exists
+  -p, --path=<value>       Relative or absolute path where reference application should be cloned into
+  --access-token=<value>   IDP access token
+  --client-id=<value>      Affinidi login configurations clientId
+  --client-secret=<value>  Affinidi login configurations clientSecret
+  --domain=<value>         Tenant domain
+  --force                  Override destination directory if exists
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi generate app
@@ -603,7 +609,7 @@ Adds a principal (user or token) to the active project
 
 ```
 USAGE
-  $ affinidi iam add-principal [--json] [--no-color] [-i <value>] [-t machine_user|user]
+  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
@@ -613,6 +619,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 DESCRIPTION
   Adds a principal (user or token) to the active project
@@ -636,7 +643,7 @@ Gets the policies of a principal (user or token)
 
 ```
 USAGE
-  $ affinidi iam get-policies [--json] [--no-color] [-i <value>] [-t machine_user|user]
+  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
@@ -646,6 +653,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 DESCRIPTION
   Gets the policies of a principal (user or token)
@@ -670,11 +678,12 @@ Lists the principals (users and tokens) in the active project
 
 ```
 USAGE
-  $ affinidi iam list-principals [--json] [--no-color]
+  $ affinidi iam list-principals [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 DESCRIPTION
   Lists the principals (users and tokens) in the active project
@@ -691,7 +700,7 @@ Removes a principal (user or token) from the active project
 
 ```
 USAGE
-  $ affinidi iam remove-principal [--json] [--no-color] [-i <value>] [-t machine_user|user]
+  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
@@ -701,6 +710,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 DESCRIPTION
   Removes a principal (user or token) from the active project
@@ -724,7 +734,7 @@ Updates the policies of a principal (user or token) in the active project
 
 ```
 USAGE
-  $ affinidi iam update-policies [--json] [--no-color] [-i <value>] [-t machine_user|user] [-f <value>]
+  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user] [-f <value>]
 
 FLAGS
   -f, --file=<value>             Location of a json file containing principal policies
@@ -735,6 +745,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 DESCRIPTION
   Updates the policies of a principal (user or token) in the active project
@@ -759,7 +770,7 @@ Adds a user to a user group
 
 ```
 USAGE
-  $ affinidi login add-user-to-group [--json] [--no-color] [--group-name <value>] [--user-sub <value>]
+  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-sub <value>]
 
 FLAGS
   --group-name=<value>  Name of the user group
@@ -768,6 +779,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login add-user-to-group --group-name my_group --user-sub did:key:12345
@@ -779,7 +791,7 @@ Creates a login configuration in your active project
 
 ```
 USAGE
-  $ affinidi login create-config [--json] [--no-color] [-f <value> | -n <value> | -u <value> |
+  $ affinidi login create-config [--json] [--no-color] [--no-input] [-f <value> | -n <value> | -u <value> |
     --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --claim-format array|map | --client-name
     <value> | --client-origin <value> | --client-logo <value>]
 
@@ -799,6 +811,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login create-config
@@ -827,7 +840,7 @@ Create a user group in your active project
 
 ```
 USAGE
-  $ affinidi login create-group [--json] [--no-color] [-n <value>]
+  $ affinidi login create-group [--json] [--no-color] [--no-input] [-n <value>]
 
 FLAGS
   -n, --name=<value>  Name of the user group, that follows url-friendly pattern ^[a-z_]+$
@@ -835,6 +848,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login create-group -n my_new_group
@@ -848,7 +862,7 @@ Deletes a login configuration from your active project
 
 ```
 USAGE
-  $ affinidi login delete-config [--json] [--no-color] [-i <value>]
+  $ affinidi login delete-config [--json] [--no-color] [--no-input] [-i <value>]
 
 FLAGS
   -i, --id=<value>  ID of the login configuration
@@ -856,6 +870,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login delete-config -i <value>
@@ -869,7 +884,7 @@ Deletes a user group from your active project
 
 ```
 USAGE
-  $ affinidi login delete-group [--json] [--no-color] [-n <value>]
+  $ affinidi login delete-group [--json] [--no-color] [--no-input] [-n <value>]
 
 FLAGS
   -n, --name=<value>  Name of the user group
@@ -877,6 +892,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login delete-group -n my_group
@@ -890,7 +906,7 @@ Gets the details of a login configuration in your active project
 
 ```
 USAGE
-  $ affinidi login get-config [--json] [--no-color] [-i <value>]
+  $ affinidi login get-config [--json] [--no-color] [--no-input] [-i <value>]
 
 FLAGS
   -i, --id=<value>  ID of the login configuration
@@ -898,6 +914,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login get-config -i <value>
@@ -911,7 +928,7 @@ Gets the details of a user group
 
 ```
 USAGE
-  $ affinidi login get-group [--json] [--no-color] [-n <value>]
+  $ affinidi login get-group [--json] [--no-color] [--no-input] [-n <value>]
 
 FLAGS
   -n, --name=<value>  Name of the user group
@@ -919,6 +936,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login get-group -n my_group
@@ -932,11 +950,12 @@ Lists login configurations in your active project
 
 ```
 USAGE
-  $ affinidi login list-configs [--json] [--no-color]
+  $ affinidi login list-configs [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login list-configs
@@ -948,11 +967,12 @@ Lists user groups in your active project
 
 ```
 USAGE
-  $ affinidi login list-groups [--json] [--no-color]
+  $ affinidi login list-groups [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login list-groups
@@ -964,7 +984,7 @@ Use this command to list users in the user group
 
 ```
 USAGE
-  $ affinidi login list-users-in-group [--json] [--no-color] [--group-name <value>]
+  $ affinidi login list-users-in-group [--json] [--no-color] [--no-input] [--group-name <value>]
 
 FLAGS
   --group-name=<value>  Name of the user group
@@ -972,6 +992,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login list-users-in-group --group-name my_group
@@ -983,7 +1004,8 @@ Removes a user from a user group
 
 ```
 USAGE
-  $ affinidi login remove-user-from-group [--json] [--no-color] [--group-name <value>] [--user-mapping-id <value>]
+  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-mapping-id
+  <value>]
 
 FLAGS
   --group-name=<value>       Name of the user group
@@ -992,6 +1014,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login remove-user-from-group --group-name my_group --user-mapping-id <value>
@@ -1003,7 +1026,7 @@ Updates a login configuration
 
 ```
 USAGE
-  $ affinidi login update-config [--json] [--no-color] [-i <value>] [-f <value> | -n <value> | -u <value> |
+  $ affinidi login update-config [--json] [--no-color] [--no-input] [-i <value>] [-f <value> | -n <value> | -u <value> |
     --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --client-name <value> | --client-origin
     <value> | --client-logo <value>]
 
@@ -1022,6 +1045,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi login update-config --id <value> -f loginConfig.json
@@ -1048,7 +1072,7 @@ Creates a project
 
 ```
 USAGE
-  $ affinidi project create-project [--json] [--no-color] [-n <value>]
+  $ affinidi project create-project [--json] [--no-color] [--no-input] [-n <value>]
 
 FLAGS
   -n, --name=<value>  Name of the project
@@ -1056,6 +1080,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi project create-project -n MyProjectName
@@ -1069,11 +1094,12 @@ Gets the current active project
 
 ```
 USAGE
-  $ affinidi project get-active-project [--json] [--no-color]
+  $ affinidi project get-active-project [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi project get-active-project
@@ -1085,11 +1111,12 @@ Lists your projects
 
 ```
 USAGE
-  $ affinidi project list-projects [--json] [--no-color]
+  $ affinidi project list-projects [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi project list-projects
@@ -1101,7 +1128,7 @@ Sets a project as the active project
 
 ```
 USAGE
-  $ affinidi project select-project [--json] [--no-color] [-i <value>]
+  $ affinidi project select-project [--json] [--no-color] [--no-input] [-i <value>]
 
 FLAGS
   -i, --project-id=<value>  ID of the project
@@ -1109,6 +1136,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi project select-project
@@ -1140,7 +1168,7 @@ Log in to Affinidi
 
 ```
 USAGE
-  $ affinidi start [--json] [--no-color] [-i <value>]
+  $ affinidi start [--json] [--no-color] [--no-input] [-i <value>]
 
 FLAGS
   -i, --project-id=<value>  ID of the project to set as active
@@ -1148,6 +1176,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi start
@@ -1157,7 +1186,7 @@ EXAMPLES
   $ affinidi start --project-id <project-id>
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.5/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1165,17 +1194,18 @@ Log out from Affinidi
 
 ```
 USAGE
-  $ affinidi stop [--json] [--no-color]
+  $ affinidi stop [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.5/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1183,7 +1213,7 @@ Creates a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token create-token [--json] [--no-color] [-n <value>] [-k <value>] [-f <value>] [--algorithm
+  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k <value>] [-f <value>] [--algorithm
     RS256|RS512|ES256|ES512]
 
 FLAGS
@@ -1196,6 +1226,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi token create-token -n MyNewToken -k MyKeyID -f publicKey.pem
@@ -1209,7 +1240,7 @@ Deletes a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token delete-token [--json] [--no-color] [-i <value>]
+  $ affinidi token delete-token [--json] [--no-color] [--no-input] [-i <value>]
 
 FLAGS
   -i, --token-id=<value>  ID of the Personal Access Token
@@ -1217,6 +1248,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi token delete-token -i <uuid>
@@ -1230,7 +1262,7 @@ Gets the details of a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token get-token [--json] [--no-color] [-i <value>]
+  $ affinidi token get-token [--json] [--no-color] [--no-input] [-i <value>]
 
 FLAGS
   -i, --token-id=<value>  ID of the Personal Access Token
@@ -1238,6 +1270,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi token get-token -i <uuid>
@@ -1251,11 +1284,12 @@ Lists your Personal Access Tokens (PATs)
 
 ```
 USAGE
-  $ affinidi token list-tokens [--json] [--no-color]
+  $ affinidi token list-tokens [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi token list-tokens
@@ -1267,8 +1301,8 @@ Updates a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token update-token [--json] [--no-color] [-i <value>] [-n <value>] [-k <value>] [-f <value>] [--algorithm
-    RS256|RS512|ES256|ES512]
+  $ affinidi token update-token [--json] [--no-color] [--no-input] [-i <value>] [-n <value>] [-k <value>] [-f <value>]
+    [--algorithm RS256|RS512|ES256|ES512]
 
 FLAGS
   -f, --public-key-file=<value>  Location of the public key PEM file
@@ -1281,6 +1315,7 @@ FLAGS
 GLOBAL FLAGS
   --json      Format output as json.
   --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
 
 EXAMPLES
   $ affinidi token update-token -i <uuid> -n MyNewToken -k MyKeyID -f publicKey.pem

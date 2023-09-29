@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { PolicyDto } from '../../services/affinidi/iam/iam.api'
@@ -38,6 +39,11 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
   public async run(): Promise<PolicyDto> {
     const { flags } = await this.parse(UpdatePolicies)
     const promptFlags = await promptRequiredParameters(['principal-id'], flags)
+    if (flags['no-input']) {
+      if (!promptFlags['principal-type']) {
+        throw new CLIError(giveFlagInputErrorMessage('principal-type'))
+      }
+    }
     promptFlags['principal-type'] ??= await select({
       message: 'Select the principal-type',
       choices: Object.values(PrincipalTypes).map((value) => ({
@@ -73,6 +79,9 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
         throw new CLIError(`Provided file is not a valid JSON\n${(error as Error).message}`)
       }
     } else {
+      if (flags['no-input']) {
+        throw new CLIError(giveFlagInputErrorMessage('file'))
+      }
       this.log(
         `Assigning a single policy statement to a principal. To assign multiple statements please use the ${chalk.inverse(
           '--file',
@@ -102,12 +111,15 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
 
     this.log(`The following policies will be updated for principal ${chalk.inverse(validatedFlags['principal-id'])}:`)
     this.logJson(validatedPolicies)
-    const confirmPolicies = await confirm({
-      message: 'Update policies?',
-    })
 
-    if (!confirmPolicies) {
-      throw new CLIError('Action canceled')
+    if (!flags['no-input']) {
+      const confirmPolicies = await confirm({
+        message: 'Update policies?',
+      })
+
+      if (!confirmPolicies) {
+        throw new CLIError('Action canceled')
+      }
     }
     ux.action.start('Updating principal policies')
     const out = await iamService.updatePolicies(

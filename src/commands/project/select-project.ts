@@ -1,7 +1,9 @@
 import select from '@inquirer/select'
 import { ux, Flags } from '@oclif/core'
+import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
+import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
 import { configService } from '../../services'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
@@ -41,6 +43,10 @@ export class SelectProject extends BaseCommand<typeof SelectProject> {
     }
 
     if (!projectId) {
+      if (flags['no-input']) {
+        throw new CLIError(giveFlagInputErrorMessage('project-id'))
+      }
+
       const choices = userProjects.map((project) => ({
         value: project.id,
         name: `${project.name} [id: ${project.id}]`,

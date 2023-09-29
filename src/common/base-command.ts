@@ -19,6 +19,10 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       summary: 'Disables color in the output. If you have trouble distinguishing colors, consider using this flag.',
       helpGroup: 'GLOBAL',
     }),
+    'no-input': Flags.boolean({
+      summary: 'Disables all the interactive prompts',
+      helpGroup: 'GLOBAL',
+    }),
   }
 
   protected flags!: FlagsType<T>
