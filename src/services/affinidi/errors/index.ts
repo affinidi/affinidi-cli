@@ -3,7 +3,9 @@ import { AxiosError } from 'axios'
 import chalk from 'chalk'
 import { StatusCodes } from 'http-status-codes'
 
-const AuthTokenExpired = "Your session has expired. Please, run command 'affinidi start' and try again."
+export const AuthTokenExpired = "Your session has expired. Please, run command 'affinidi start' and try again."
+export const InvalidOrMissingAuthToken =
+  "Your session token is invalid or missing. Please, run command 'affinidi start' and try again."
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 const getCommonAPIErrorMessage = (response: any): string => {

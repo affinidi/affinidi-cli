@@ -343,6 +343,7 @@ Please note that this FAQ is provided for informational purposes only and is not
 * [`affinidi token get-token`](#affinidi-token-get-token)
 * [`affinidi token list-tokens`](#affinidi-token-list-tokens)
 * [`affinidi token update-token`](#affinidi-token-update-token)
+* [`affinidi whoami`](#affinidi-whoami)
 
 ## `affinidi autocomplete [SHELL]`
 
@@ -1176,4 +1177,23 @@ EXAMPLES
 
   $ affinidi token update-token --token-id <uuid> --name "My new token" --key-id "My key ID" --public-key-file publicKey.pem --algorithm RS256
 ```
+
+## `affinidi whoami`
+
+Returns user's subject and principalId from his active session
+
+```
+USAGE
+  $ affinidi whoami [--json] [--no-color] [--no-input]
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi whoami
+```
+
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/whoami.ts)_
 <!-- commandsstop -->
