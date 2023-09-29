@@ -45,7 +45,7 @@ Your login configuration will be created under your CLI's active project. Learn 
 
 #### User Groups
 
-You may also want to create user groups for your application. They allow you to set access privileges for your users inside your application. Learn more about user groups [here](https://docs.affinidi.com/docs/affinidi-login/user-groups/).
+You may also want to create user groups for your application. They allow you to set access privileges for your users inside your application. A user's Affinidi Login ID token contains the groups the user belongs to, which can be used in your application to differentiate users and grant them access. Learn more about user groups [here](https://docs.affinidi.com/docs/affinidi-login/user-groups/).
 
 To create a user group use: [`affinidi login create-group`](#affinidi-login-create-group)
 
@@ -102,7 +102,9 @@ For convenience, the CLI adds the concept of Active Project. This is the project
 
 To programmatically call Affinidi APIs in your applications or in your automation you will require a Personal Access Token (PAT). Think of Personal Access Tokens as machine users that can perform operations on your behalf. PATs live outside of projects, meaning that they can be granted access to multiple projects.
 
-PATs use asymmetric keys where you are responsible of creating and maintaining the key pair. Please read about more about how PAT authentication works and how you can create the keys [here](#how-does-pat-authentication-work).
+PATs use asymmetric keys where you are responsible of creating and maintaining the key pair. 
+
+Please read about more about how PAT authentication works and how you can create the keys [here](https://docs.affinidi.com/dev-tools/affinidi-cli/manage-token/#how-does-pat-authentication-works).
 
 All PAT commands can be found under `affinidi token <command>`
 
@@ -118,7 +120,7 @@ All IAM commands can be found under `affinidi iam <command>`
 
 1. Add a user or a PAT to the project with [`affinidi iam add-principal`](#affinidi-iam-add-principal) - _Principals are either users or PATs (machine users)_
 
-2. Set the principal's access policies with [`affinidi iam update-policies`](#affinidi-iam-update-policies) - _Read more about policies [here](#how-do-policies-work)_
+2. Set the principal's access policies with [`affinidi iam update-policies`](#affinidi-iam-update-policies) - _Read more about policies [here](https://docs.affinidi.com/dev-tools/affinidi-cli/manage-iam/#defining-a-policy)_
 
 #### Journey summary
 
@@ -160,7 +162,7 @@ Once you have registered, authenticate in the CLI with:
 affinidi start
 ```
 
-### Command structure and ways to call commands
+### Understanding commands
 
 Commands in Affinidi CLI have the following structure:
 
@@ -173,7 +175,51 @@ affinidi <topic> <command> [flags]
 3. Commands corresponds to the actions to perform
 4. Flags are a way to provide the parameters required by the command
 
-You can input flags in different ways. All of the following will work:
+### Available commands
+
+In the [All Commands](#all-commands) section below you can find all of the CLI commands, with their help information, which includes usage, descriptions, flags and examples.
+
+#### Useful commands:
+
+[`affinidi start`](#affinidi-start) Log in to Affinidi
+
+[`affinidi stop`](#affinidi-stop) Log out of Affinidi
+
+[`affinidi help`](#affinidi-help-commands) - Print the help information of a topic or command
+
+[`affinidi search`](#affinidi-search) - Search and navigate through available commands
+
+[`affinidi commands`](#affinidi-commands) - List all available commands
+
+[`affinidi generate app`](#affinidi-generate-app) Clones and configures a reference application
+
+[`affinidi autocomplete`](#affinidi-autocomplete-shell) - Print the instructions to set up command autocomplete
+
+`affinidi --version` - Show the current version of the Affinidi CLI installed on your machine
+
+### Help
+
+All commands and topics have a help document with usage, descriptions, flags and examples.
+
+View it with the help flag: `affinidi login create-config --help`
+
+With the help root command: `affinidi help login create-config`
+
+Or by searching and selecting a command: `affinidi search`
+
+### Flags
+
+All commands have some global flags at their disposal.
+
+`--help` Prints the command's help information.
+
+`--json` Enforce printing the output in json format. Useful for programmatic usage of CLI.
+
+`--no-color` Disables color in the output. Useful if you have trouble distinguishing colors.
+
+`--no-input` Disables all the interactive prompts. Useful for automation anc ci.
+
+You can input flags in multiple ways. All of the following will work:
 
 ```bash
 affinidi login create-config --file="config.json"
@@ -187,34 +233,6 @@ affinidi login create-config -f config.json
 affinidi login create-config -f=config.json
 affinidi login create-config -fconfig.json
 ```
-
-### Finding commands
-
-In the [All Commands](#all-commands) section below you can find all of the CLI commands, with their help information, which includes usage, descriptions, flags and examples.
-
-There are some notable commands that don't belong to any topic and may be of use for you:
-
-[`affinidi commands`](#affinidi-commands) - List all available commands
-
-[`affinidi search`](#affinidi-search) - Search and navigate through available commands
-
-[`affinidi autocomplete`](#affinidi-autocomplete-shell) - Print the instructions to set up command autocomplete
-
-[`affinidi help`](#affinidi-help-commands) - Print the help information of a topic or command
-
-[`affinidi start`](#affinidi-start) Log in to Affinidi
-
-[`affinidi stop`](#affinidi-stop) Log out of Affinidi
-
-### Global flags
-
-All commands have some global flags at their disposal.
-
-`--help` Prints the command's help information.
-
-`--json` Enforce printing the output in json format. Useful for programmatic usage of CLI.
-
-`--no-color` Disables color in the output. Useful if you have trouble distinguishing colors.
 
 ### Active Project
 
@@ -235,170 +253,6 @@ When you authenticate to Affinidi with `affinidi start` the CLI will create a fo
 `~/.affinidi/config-v2.json` - Stores user's CLI configurations (currently none)
 
 When you run `affinidi stop` your session information is deleted.
-
-## How does PAT authentication work?
-
-In the following diagram you can find the flow of how you can set up a Personal Access Token and use it to call Affinidi APIs.
-
-```mermaid
-  flowchart TB
-    subgraph CLI
-      user_token["1.1. Authenticate to Affinidi"]
-      create_project["1.2. Create project"]
-      project_access["1.3. Get project credentials"]
-      create_token["3.1. Create PAT"]
-      add_token_project["3.2. Add PAT to project"]
-      set_policies["3.3. Set PAT policies"]
-
-      user_token --> create_project
-      create_project --> project_access
-      user_token --> create_token
-      create_token --> add_token_project
-      project_access --> add_token_project
-      add_token_project --> set_policies
-    end
-
-    subgraph Application
-      direction TB
-      sign_jwt["4.1. Sign JWT"]
-      delegate_token["4.2. Exchange for delegate token"]
-      call_project_api["4.3. Call Affinidi APIs"]
-
-      sign_jwt --> delegate_token
-      delegate_token --> call_project_api
-    end
-
-    create_keys["2. Create key pair"]
-    create_keys -. "public key PEM" .-> create_token
-    create_keys -. "private key PEM" .-> sign_jwt
-    set_policies -. "allows" .-> call_project_api
-```
-
-1. Authenticate with Affinidi and set up your project
-
-   1. Authenticate with Affinidi - [`affinidi start`](#affinidi-start)
-   2. Create project - [`affinidi project create-project`](#affinidi-project-create-project)
-   3. Get project credentials - [`affinidi project select-project`](#affinidi-project-select-project)
-
-2. Create and secure a key pair
-
-You can create a key pair using [openssl](https://www.openssl.org/docs/man1.1.1/man1/):
-
-```bash
-# Create an encrypted RSA private key with passphrase "hello"
-openssl genpkey -algorithm RSA -out privateKey.pem -aes-128-cbc -pass pass:hello
-
-# Extract the public key from the private key
-openssl rsa -in privateKey.pem -pubout -out publicKey.pem
-```
-
-Remember your passphrase as you will need it later to sign with your private key.
-
-Optionally you can rely on a cloud provider to securely manage your keys, such as [AWS KMS](https://aws.amazon.com/kms/), [GCP's Cloud KMS](https://cloud.google.com/security-key-management) or [Azure Key Vault](https://azure.microsoft.com/products/key-vault/)
-
-3. Create a PAT and grant it permissions
-
-   1. Create PAT - [`affinidi token create-token`](#affinidi-token-create-token)
-   2. Add PAT to project - [`affinidi iam add-principal`](#affinidi-iam-add-principal)
-   3. Set PAT policies - [`affinidi iam update-policies`](#affinidi-iam-update-policies)
-
-Remember the PAT Key ID as you will need it to sign with your private key. Read more about how to set policies [below](#how-do-policies-work).
-
-4. Use the private key to call Affinidi APIs from your application
-
-Learn more how to create a Delegate Tokens to call APIs in the next section.
-
-### Delegate tokens
-
-1. To create a delegate token you first need to sign a JWT with your private key. In the snippet below this is done with `signJWT(...)`. This should also be possible with third party key managers.
-
-2. Once you have a signed JWT you can use it to exchange it for a user scoped token. In the snippet this is done with `getUserToken(...)`. You can use this token to call some Affinidi APIs, however most APIs require a project scoped token.
-
-3. In the snippet we get a project scope token with `getProjectToken(...)`.
-
-```javascript
-import jwt from 'jsonwebtoken'
-import qs from 'qs'
-
-// Parameters required to sign JWT
-const PRIVATE_KEY = process.env.PRIVATE_KEY
-const ALGORITHM = process.env.ALGORITHM
-const PASSPHRASE = process.env.PASSPHRASE
-const KEY_ID = process.env.KEY_ID
-
-// Parameter required to sign JWT and get User Scoped Token
-const TOKEN_ID = process.env.TOKEN_ID
-
-// Parameter required to get Project Scoped Token
-const PROJECT_ID = process.env.PROJECT_ID
-
-function signJWT(privateKey, algorithm, passphrase, keyId, tokenId) {
-  const issueTimeSeconds = Math.floor(new Date().getTime() / 1000)
-  const payload = {
-    iss: tokenId,
-    sub: tokenId,
-    aud: 'https://euw1.elements.auth.affinidi.io/oauth2/token',
-    jti: new Date().toString() + Math.random(),
-    exp: issueTimeSeconds + 5 * 60,
-    iat: issueTimeSeconds,
-  }
-  const secret = { key: privateKey, passphrase }
-  const options = { algorithm: algorithm, keyid: keyId }
-  return jwt.sign(payload, secret, options)
-}
-
-async function getUserToken(tokenId, signedJWT) {
-  const formData = qs.stringify({
-    grant_type: 'client_credentials',
-    scope: 'openid',
-    client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-    client_assertion: signedJWT,
-    client_id: tokenId,
-  })
-  const response = await fetch('https://euw1.elements.auth.affinidi.io/oauth2/token', {
-    method: 'POST',
-    body: formData,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  })
-  if (response.status !== 200) throw new Error('Could not get user token')
-  return response.json()
-}
-
-async function getProjectToken(projectId, userScopeToken) {
-  const response = await fetch('https://apse1.api.affinidi.io/iam/v1/create-project-scoped-token', {
-    method: 'POST',
-    body: JSON.stringify({ projectId }),
-    headers: {
-      Authorization: `Bearer ${userScopeToken}`,
-      'Content-Type': 'application/json',
-    },
-  })
-  if (response.status !== 200) throw new Error('Could not get project token')
-  return response.json()
-}
-
-const signedJWT = signJWT(PRIVATE_KEY, ALGORITHM, PASSPHRASE, KEY_ID, TOKEN_ID)
-const userScopeToken = (await getUserToken(TOKEN_ID, signedJWT)).access_token
-const projectScopeToken = (await getProjectToken(PROJECT_ID, userScopeToken)).accessToken
-```
-
-4. With these tokens you can now call Affinidi APIs:
-
-```javascript
-const response = await fetch('https://apse1.api.affinidi.io/vpa/v1/login/configurations', {
-  headers: {
-    Authorization: `Bearer ${projectScopeToken}`,
-  },
-})
-const configurations = await response.json()
-console.log(configurations)
-```
-
-## How do policies work?
-
-WIP
 
 ## Support & Feedback
 

@@ -40,7 +40,7 @@ const getCommonAPIErrorMessage = (response: any): string => {
         case 'QuotaExceededError':
           return `You have exceeded your quota.\nIf you think this is a mistake please contact customer support ${chalk.underline(
             'https://share.hsforms.com/1i-4HKZRXSsmENzXtPdIG4g8oa2v',
-          )}.\n`
+          )}.`
         default:
           return 'Conflicting action with the current state of your resources'
       }
@@ -54,7 +54,7 @@ const getCommonAPIErrorMessage = (response: any): string => {
               })}`
             : ''
         }
-        \n\nReport above error to ${chalk.underline('https://share.hsforms.com/1i-4HKZRXSsmENzXtPdIG4g8oa2v')}.\n`
+        \nReport above error to ${chalk.underline('https://share.hsforms.com/1i-4HKZRXSsmENzXtPdIG4g8oa2v')}`
   }
 }
 
