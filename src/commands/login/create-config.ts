@@ -85,7 +85,8 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
     // Flag/prompt input
     else {
       if (flags['no-input']) {
-        throw new CLIError(giveFlagInputErrorMessage('file'))
+        if (!flags.name) throw new CLIError(giveFlagInputErrorMessage('name'))
+        if (!flags['redirect-uris']) throw new CLIError(giveFlagInputErrorMessage('redirect-uris'))
       }
       data = {
         name: flags.name ?? (await input({ message: 'Enter the login configuration name' })),

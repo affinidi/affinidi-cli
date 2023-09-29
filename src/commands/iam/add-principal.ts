@@ -1,9 +1,11 @@
 import { select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
+import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
 import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 
@@ -30,6 +32,12 @@ export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
   public async run(): Promise<void> {
     const { flags } = await this.parse(AddPrincipal)
     const promptFlags = await promptRequiredParameters(['principal-id'], flags)
+
+    if (flags['no-input']) {
+      if (!promptFlags['principal-type']) {
+        throw new CLIError(giveFlagInputErrorMessage('principal-type'))
+      }
+    }
     promptFlags['principal-type'] ??= await select({
       message: 'Select the principal-type',
       choices: Object.values(PrincipalTypes).map((value) => ({

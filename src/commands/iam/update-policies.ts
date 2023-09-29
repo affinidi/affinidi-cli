@@ -39,6 +39,11 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
   public async run(): Promise<PolicyDto> {
     const { flags } = await this.parse(UpdatePolicies)
     const promptFlags = await promptRequiredParameters(['principal-id'], flags)
+    if (flags['no-input']) {
+      if (!promptFlags['principal-type']) {
+        throw new CLIError(giveFlagInputErrorMessage('principal-type'))
+      }
+    }
     promptFlags['principal-type'] ??= await select({
       message: 'Select the principal-type',
       choices: Object.values(PrincipalTypes).map((value) => ({

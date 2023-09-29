@@ -1,3 +1,3 @@
 export function giveFlagInputErrorMessage(name: string) {
-  return `Please enter the value for ${name} through flag.`
+  return `The --no-input flag disables interactive input. Please provide the value for "${name}" through a flag instead.`
 }
