@@ -1,24 +1,33 @@
 import password from '@inquirer/password'
-import { input } from '@inquirer/prompts'
+import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import { BaseCommand } from '../../common'
+import chalk from 'chalk'
+import { BaseCommand, RefAppUseCases } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { auth0Service } from '../../services/auth0'
-
-const GIT_URL = `affinidi/reference-app-affinidi-vault/use-cases/default`
+import { clientSDK } from '../../services/affinidi'
+import { vpAdapterService } from '../../services/affinidi/vp-adapter'
+import { createAuth0Resources } from '../../services/generator/auth0'
+import { configureAppEnvironment } from '../../services/generator/env-configurer'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
-  static summary = 'Generates a reference application and configures an Auth0 connection. Requires git'
+  static summary = 'Generates a NextJS reference application that integrates Affinidi Login. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p <destination_path>',
-    '<%= config.bin %> <%= command.id %> --path <destination_path> --force',
+    '<%= config.bin %> <%= command.id %> -p "../my-app" -u affinidi',
+    '<%= config.bin %> <%= command.id %> --path "../my-app" --use-case auth0 --force',
   ]
 
   static flags = {
+    'use-case': Flags.string({
+      char: 'u',
+      summary: 'Use case to generate',
+      description: `Use ${chalk.italic('affinidi')} to generate an app that integrates Affinidi Login directly\n\
+      Use ${chalk.italic('auth0')} to generate an app that integrates Affinidi Login through Auth0`,
+      options: Object.values(RefAppUseCases),
+    }),
     path: Flags.string({
       char: 'p',
       summary: 'Relative or absolute path where reference application should be cloned into',
@@ -26,59 +35,82 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     force: Flags.boolean({
       summary: 'Override destination directory if exists',
     }),
-    'client-id': Flags.string({
-      summary: 'Affinidi login configurations clientId',
-    }),
-    'client-secret': Flags.string({
-      summary: 'Affinidi login configurations clientSecret',
-    }),
-    'access-token': Flags.string({
-      summary: 'IDP access token',
-    }),
-    domain: Flags.string({
-      summary: 'Tenant domain',
-    }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApp)
+    if (flags['no-input'] && !flags['use-case']) {
+      throw new CLIError(giveFlagInputErrorMessage('use-case'))
+    }
+    const useCase =
+      flags['use-case'] ??
+      (await select({
+        message: `Select the app to generate. ${chalk.italic('affinidi')} for basic Affinidi Login, ${chalk.italic(
+          'auth0',
+        )} for Affinidi Login through Auth0`,
+        choices: Object.values(RefAppUseCases).map((value) => ({
+          name: value,
+          value,
+        })),
+      }))
     const promptFlags = await promptRequiredParameters(['path'], flags)
 
     ux.action.start('Generating reference application')
-    await cloneWithDegit(GIT_URL, promptFlags.path, flags.force)
+    await cloneWithDegit(`affinidi/reference-app-affinidi-vault/use-cases/${useCase}`, promptFlags.path, flags.force)
     ux.action.stop('Generated successfully!')
 
-    if (flags['no-input']) {
-      if (!flags['client-id']) {
-        throw new CLIError(giveFlagInputErrorMessage('client-id'))
-      }
-      if (!flags['client-secret']) {
-        throw new CLIError(giveFlagInputErrorMessage('client-secret'))
-      }
-      if (!flags['access-token']) {
-        throw new CLIError(giveFlagInputErrorMessage('access-token'))
-      }
-      if (!flags.domain) {
-        throw new CLIError(giveFlagInputErrorMessage('domain'))
+    if (!flags['no-input']) {
+      const configure = await confirm({
+        message: 'Automatically configure reference app environment?',
+      })
+      if (configure) {
+        ux.action.start('Fetching available login configurations')
+        const configs = await vpAdapterService.listLoginConfigurations(
+          clientSDK.config.getProjectToken()?.projectAccessToken,
+        )
+        ux.action.stop('Fetched successfully!')
+        const choices = configs.configurations.map((config) => ({
+          value: {
+            id: config.id,
+            auth: config.auth,
+          },
+          name: `${config.name} [id: ${config.id}]`,
+        }))
+        const selectedConfig = await select({
+          message: 'Select a login configuration to use in your reference application',
+          choices,
+        })
+        const clientSecret = await password({
+          message: "What is the login configuration's client secret?",
+          mask: true,
+        })
+
+        if (useCase === RefAppUseCases.AFFINIDI) {
+          ux.action.start('Configuring reference application')
+          await configureAppEnvironment(
+            promptFlags.path,
+            selectedConfig.auth.clientId,
+            clientSecret,
+            selectedConfig.auth.issuer,
+          )
+          ux.action.stop('Configured successfully!')
+        } else if (useCase === RefAppUseCases.AUTH0) {
+          const domain = await input({ message: 'What is your Auth0 tenant URL?' })
+          const accessToken = await password({ message: 'What is your Auth0 access token?' })
+          ux.action.start('Creating Auth0 resources and configuring reference application')
+          const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+            accessToken,
+            domain,
+            selectedConfig.auth.clientId,
+            clientSecret,
+            selectedConfig.auth.issuer,
+          )
+          await configureAppEnvironment(promptFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
+          ux.action.stop('Configured successfully!')
+        }
       }
     }
 
-    const clientId =
-      flags['client-id'] ?? (await input({ message: 'What is your Affinidi login configurations clientId?' }))
-
-    const clientSecret =
-      flags['client-secret'] ??
-      (await password({
-        message: 'What is your Affinidi login configurations clientSecret?',
-        mask: true,
-      }))
-
-    const accessToken = flags['access-token'] ?? (await password({ message: 'What is your IDP access token?' }))
-
-    const domain = flags.domain ?? (await input({ message: 'What is your tenant domain?' }))
-
-    ux.action.start('Configuring Auth0 application')
-    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, promptFlags.path)
-    ux.action.stop('Configured successfully!')
+    this.log('Please read the generated README for instructions on how to run your reference application')
   }
 }

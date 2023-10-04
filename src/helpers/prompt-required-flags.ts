@@ -11,7 +11,7 @@ export async function promptRequiredParameters(
       if (inputFlags['no-input']) {
         throw new CLIError(giveFlagInputErrorMessage(requiredFlags[key]))
       }
-      inputFlags[requiredFlags[key]] = await input({ message: `Enter the value for ${requiredFlags[key]}` })
+      inputFlags[requiredFlags[key]] = await input({ message: `Enter the ${requiredFlags[key]}` })
     }
   }
 
