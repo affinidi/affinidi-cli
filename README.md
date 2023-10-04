@@ -927,10 +927,11 @@ Creates a project
 
 ```
 USAGE
-  $ affinidi project create-project [--json] [--no-color] [--no-input] [-n <value>]
+  $ affinidi project create-project [--json] [--no-color] [--no-input] [-n <value>] [-d <value>]
 
 FLAGS
-  -n, --name=<value>  Name of the project
+  -d, --description=<value>  Description of the project
+  -n, --name=<value>         Name of the project
 
 GLOBAL FLAGS
   --json      Format output as json.

@@ -16,6 +16,10 @@ export class CreateProject extends BaseCommand<typeof CreateProject> {
       char: 'n',
       summary: 'Name of the project',
     }),
+    description: Flags.string({
+      char: 'd',
+      summary: 'Description of the project',
+    }),
   }
 
   public async run(): Promise<ProjectDto> {
@@ -26,6 +30,7 @@ export class CreateProject extends BaseCommand<typeof CreateProject> {
 
     const createProjectOutput = await iamService.createProject(clientSDK.config.getUserToken()?.access_token, {
       name: promptFlags.name,
+      description: promptFlags.description,
     })
 
     ux.action.stop('Created successfully!')
