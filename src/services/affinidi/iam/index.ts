@@ -25,9 +25,9 @@ class IAMService {
     }),
   ) {}
 
-  public createProject = async (token: string, projectName: CreateProjectInput): Promise<ProjectDto> => {
+  public createProject = async (token: string, projectInput: CreateProjectInput): Promise<ProjectDto> => {
     try {
-      const result = await this.client.v1.createProject(projectName, {
+      const result = await this.client.v1.createProject(projectInput, {
         headers: {
           Authorization: `Bearer ${token}`,
           'content-type': 'application/json',
