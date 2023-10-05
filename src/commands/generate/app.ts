@@ -12,6 +12,8 @@ import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
 
+const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/use-cases'
+
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static summary = 'Generates a NextJS reference application that integrates Affinidi Login. Requires git'
   static examples = [
@@ -56,7 +58,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     const promptFlags = await promptRequiredParameters(['path'], flags)
 
     ux.action.start('Generating reference application')
-    await cloneWithDegit(`affinidi/reference-app-affinidi-vault/use-cases/${useCase}`, promptFlags.path, flags.force)
+    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${useCase}`, promptFlags.path, flags.force)
     ux.action.stop('Generated successfully!')
 
     if (!flags['no-input']) {
