@@ -1,6 +1,5 @@
 import { CLIError } from '@oclif/core/lib/errors'
 
-export const CREATE_GROUP_NAME_LIMIT = 24
 export const INPUT_LIMIT = 2000
 export const PRESENTATION_DEFINITION_LIMIT = 5000
 
