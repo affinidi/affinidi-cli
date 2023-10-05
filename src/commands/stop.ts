@@ -18,7 +18,8 @@ export class Stop extends BaseCommand<typeof Stop> {
 
     if (!flags['no-input']) {
       const stop = await confirm({
-        message: 'Are you sure that you want to log out from Affinidi',
+        message:
+          'Are you sure that you want to log out from Affinidi? Type "n" if you wish to continue using Affinidi CLI, type anything else to log out',
       })
       if (!stop) throw new CLIError('Action canceled')
     }

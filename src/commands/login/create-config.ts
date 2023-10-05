@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFile } from 'fs/promises'
 import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
@@ -76,7 +76,7 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
     let data: CreateLoginConfigurationInput
     // File input
     if (flags.file) {
-      const rawData = readFileSync(flags.file, 'utf8')
+      const rawData = await readFile(flags.file, 'utf8')
       try {
         data = JSON.parse(rawData)
         if (data.presentationDefinition) {

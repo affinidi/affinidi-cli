@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFile } from 'fs/promises'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
@@ -68,7 +68,7 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
     let data: UpdateLoginConfigurationInput = {}
     // File input
     if (promptFlags.file) {
-      const rawData = readFileSync(promptFlags.file, 'utf8')
+      const rawData = await readFile(promptFlags.file, 'utf8')
       try {
         data = JSON.parse(rawData)
         if (data.presentationDefinition) {

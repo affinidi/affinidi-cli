@@ -185,6 +185,8 @@ In the [All Commands](#all-commands) section below you can find all of the CLI c
 
 [`affinidi stop`](#affinidi-stop) Log out of Affinidi
 
+[`affinidi whoami`](#affinidi-whoami) - Show the current signed in user identifiers
+
 [`affinidi help`](#affinidi-help-commands) - Print the help information of a topic or command
 
 [`affinidi search`](#affinidi-search) - Search and navigate through available commands
@@ -410,19 +412,16 @@ _See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blo
 
 ## `affinidi generate app`
 
-Generates a reference application and configures an Auth0 connection. Requires git
+Generates a NextJS reference application that integrates Affinidi Login. Requires git
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-p <value>] [--force] [--client-id <value>]
-    [--client-secret <value>] [--access-token <value>] [--domain <value>]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-u affinidi|auth0] [-p <value>] [--force]
 
 FLAGS
   -p, --path=<value>       Relative or absolute path where reference application should be cloned into
-  --access-token=<value>   IDP access token
-  --client-id=<value>      Affinidi login configurations clientId
-  --client-secret=<value>  Affinidi login configurations clientSecret
-  --domain=<value>         Tenant domain
+  -u, --use-case=<option>  Use case to generate
+                           <options: affinidi|auth0>
   --force                  Override destination directory if exists
 
 GLOBAL FLAGS
@@ -433,9 +432,15 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p <destination_path>
+  $ affinidi generate app -p "../my-app" -u affinidi
 
-  $ affinidi generate app --path <destination_path> --force
+  $ affinidi generate app --path "../my-app" --use-case auth0 --force
+
+FLAG DESCRIPTIONS
+  -u, --use-case=affinidi|auth0  Use case to generate
+
+    Use affinidi to generate an app that integrates Affinidi Login directly
+    Use auth0 to generate an app that integrates Affinidi Login through Auth0
 ```
 
 ## `affinidi help [COMMANDS]`
