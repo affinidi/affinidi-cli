@@ -29,7 +29,7 @@ export class CreateProject extends BaseCommand<typeof CreateProject> {
     const promptFlags = await promptRequiredParameters(['name'], flags)
     const schema = z.object({
       name: z.string().max(INPUT_LIMIT),
-      description: z.string().max(INPUT_LIMIT),
+      description: z.string().max(INPUT_LIMIT).optional(),
     })
     const validatedFlags = schema.parse(promptFlags)
 

@@ -47,10 +47,10 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     const promptFlags = await promptRequiredParameters(['path'], flags)
     const schema = z.object({
       path: z.string().max(INPUT_LIMIT),
-      'client-id': z.string().max(INPUT_LIMIT),
-      'client-secret': z.string().max(INPUT_LIMIT),
-      'access-token': z.string().max(INPUT_LIMIT),
-      domain: z.string().max(INPUT_LIMIT),
+      'client-id': z.string().max(INPUT_LIMIT).uuid().optional(),
+      'client-secret': z.string().max(INPUT_LIMIT).optional(),
+      'access-token': z.string().max(INPUT_LIMIT).optional(),
+      domain: z.string().max(INPUT_LIMIT).optional(),
     })
     const validatedFlags = schema.parse(promptFlags)
 
