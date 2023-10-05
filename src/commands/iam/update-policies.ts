@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
+import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { PolicyDto } from '../../services/affinidi/iam/iam.api'
@@ -52,19 +53,19 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
       })),
     })
     const flagsSchema = z.object({
-      'principal-id': z.string().uuid(),
+      'principal-id': z.string().max(INPUT_LIMIT).uuid(),
       'principal-type': z.nativeEnum(PrincipalTypes),
       file: z.string().optional(),
     })
     const validatedFlags = flagsSchema.parse(promptFlags)
 
     const policiesDataSchema = z.object({
-      version: z.string(),
+      version: z.string().max(INPUT_LIMIT),
       statement: z
         .object({
-          principal: z.string().array().length(1),
-          action: z.string().array().nonempty(),
-          resource: z.string().array().nonempty(),
+          principal: z.string().max(INPUT_LIMIT).array().length(1),
+          action: z.string().max(INPUT_LIMIT).array().nonempty(),
+          resource: z.string().max(INPUT_LIMIT).array().nonempty(),
           effect: z.literal('Allow'),
         })
         .array()
@@ -88,8 +89,14 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
         )} flag instead.`,
       )
       this.warn('\nThis will override the existing principal statements')
-      const resourceFilters = await input({ message: 'Enter the resource filters, separated by space' })
-      const actions = await input({ message: 'Enter the allowed actions, separated by space' })
+      const resourceFilters = validateInputLength(
+        await input({ message: 'Enter the resource filters, separated by space' }),
+        INPUT_LIMIT,
+      )
+      const actions = validateInputLength(
+        await input({ message: 'Enter the allowed actions, separated by space' }),
+        INPUT_LIMIT,
+      )
 
       policiesData = {
         version: '2022-12-15',

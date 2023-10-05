@@ -1,6 +1,8 @@
 import { ux, Flags } from '@oclif/core'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupUserMappingsList } from '../../services/affinidi/vp-adapter/vp-adapter.api'
@@ -17,11 +19,15 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
   public async run(): Promise<GroupUserMappingsList> {
     const { flags } = await this.parse(ListUsersInGroup)
     const promptFlags = await promptRequiredParameters(['group-name'], flags)
+    const schema = z.object({
+      'group-name': z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Fetching users in the user group')
     const listGroupUsersOutput = await vpAdapterService.listGroupUsers(
       clientSDK.config.getProjectToken()?.projectAccessToken,
-      promptFlags['group-name'],
+      validatedFlags['group-name'],
     )
     ux.action.stop('Fetched successfully!')
 

@@ -5,6 +5,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
+import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
@@ -89,10 +90,17 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
         if (!flags['redirect-uris']) throw new CLIError(giveFlagInputErrorMessage('redirect-uris'))
       }
       data = {
-        name: flags.name ?? (await input({ message: 'Enter the login configuration name' })),
+        name:
+          flags.name ??
+          validateInputLength(await input({ message: 'Enter the login configuration name' }), INPUT_LIMIT),
         redirectUris: (
-          flags['redirect-uris'] ?? (await input({ message: 'Enter the OAuth 2.0 redirect URIs, separated by space' }))
-        ).split(' '),
+          flags['redirect-uris'] ??
+          validateInputLength(
+            await input({ message: 'Enter the OAuth 2.0 redirect URIs, separated by space' }),
+            INPUT_LIMIT,
+          )
+        ) // TODO: Confirm the value for this
+          .split(' '),
         claimFormat: flags['claim-format'],
         tokenEndpointAuthMethod: flags['token-endpoint-auth-method'],
       }
@@ -106,9 +114,8 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
     }
 
     const createConfigSchema = z.object({
-      name: z.string().min(1),
-      redirectUris: z.string().url().array(),
-      // TODO improve Presentation Definition validation
+      name: z.string().min(1).max(INPUT_LIMIT),
+      redirectUris: z.string().max(INPUT_LIMIT).url().array(),
       presentationDefinition: z.object({}).passthrough().optional(),
       idTokenMapping: z
         .object({
@@ -120,9 +127,9 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
       claimFormat: z.nativeEnum(IdTokenClaimFormats).optional(),
       clientMetadata: z
         .object({
-          name: z.string(),
-          origin: z.string(),
-          logo: z.string(),
+          name: z.string().max(INPUT_LIMIT),
+          origin: z.string().max(INPUT_LIMIT),
+          logo: z.string().max(INPUT_LIMIT),
         })
         .optional(),
       tokenEndpointAuthMethod: z.nativeEnum(TokenEndpointAuthMethod).optional(),

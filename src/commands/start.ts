@@ -1,6 +1,7 @@
 import { Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../common'
+import { INPUT_LIMIT } from '../helpers/input-length-validation'
 import { configService } from '../services'
 import { clientSDK } from '../services/affinidi'
 
@@ -20,7 +21,7 @@ export class Start extends BaseCommand<typeof Start> {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Start)
-    const schema = z.string().uuid().optional()
+    const schema = z.string().uuid().max(INPUT_LIMIT).optional()
     const projectId = schema.parse(flags['project-id'])
 
     const { principalId } = await clientSDK.login({

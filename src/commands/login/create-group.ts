@@ -1,7 +1,9 @@
 import { Flags, ux } from '@oclif/core'
 import chalk from 'chalk'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupDto } from '../../services/affinidi/vp-adapter/vp-adapter.api'
@@ -22,11 +24,15 @@ export class CreateGroup extends BaseCommand<typeof CreateGroup> {
   public async run(): Promise<GroupDto> {
     const { flags } = await this.parse(CreateGroup)
     const promptFlags = await promptRequiredParameters(['name'], flags)
+    const schema = z.object({
+      name: z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Creating user group')
     const createGroupOutput = await vpAdapterService.createGroup(
       clientSDK.config.getProjectToken()?.projectAccessToken,
-      promptFlags.name,
+      validatedFlags.name,
     )
     ux.action.stop('Created successfully!')
 

@@ -3,6 +3,7 @@ import { Flags, ux } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand, SupportedAlgorithms } from '../../common'
 import { getKeyType, promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { pemToJWK } from '../../helpers/jwk'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
@@ -39,10 +40,10 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     const promptFlags = await promptRequiredParameters(['name', 'key-id', 'public-key-file'], flags)
 
     const schema = z.object({
-      name: z.string().min(8),
+      name: z.string().max(INPUT_LIMIT).min(8),
       algorithm: z.nativeEnum(SupportedAlgorithms),
-      'key-id': z.string(),
-      'public-key-file': z.string(),
+      'key-id': z.string().max(INPUT_LIMIT),
+      'public-key-file': z.string().max(INPUT_LIMIT),
     })
     const validatedFlags = schema.parse(promptFlags)
 

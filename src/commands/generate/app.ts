@@ -2,10 +2,12 @@ import password from '@inquirer/password'
 import { input } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
+import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { auth0Service } from '../../services/auth0'
 
 const GIT_URL = `affinidi/reference-app-affinidi-vault/use-cases/default`
@@ -43,9 +45,17 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApp)
     const promptFlags = await promptRequiredParameters(['path'], flags)
+    const schema = z.object({
+      path: z.string().max(INPUT_LIMIT),
+      'client-id': z.string().max(INPUT_LIMIT),
+      'client-secret': z.string().max(INPUT_LIMIT),
+      'access-token': z.string().max(INPUT_LIMIT),
+      domain: z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Generating reference application')
-    await cloneWithDegit(GIT_URL, promptFlags.path, flags.force)
+    await cloneWithDegit(GIT_URL, validatedFlags.path, flags.force)
     ux.action.stop('Generated successfully!')
 
     if (flags['no-input']) {
@@ -64,21 +74,28 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     }
 
     const clientId =
-      flags['client-id'] ?? (await input({ message: 'What is your Affinidi login configurations clientId?' }))
+      flags['client-id'] ??
+      validateInputLength(await input({ message: 'What is your Affinidi login configurations clientId?' }), INPUT_LIMIT)
 
     const clientSecret =
       flags['client-secret'] ??
-      (await password({
-        message: 'What is your Affinidi login configurations clientSecret?',
-        mask: true,
-      }))
+      validateInputLength(
+        await password({
+          message: 'What is your Affinidi login configurations clientSecret?',
+          mask: true,
+        }),
+        INPUT_LIMIT,
+      )
 
-    const accessToken = flags['access-token'] ?? (await password({ message: 'What is your IDP access token?' }))
+    const accessToken =
+      flags['access-token'] ??
+      validateInputLength(await password({ message: 'What is your IDP access token?' }), INPUT_LIMIT)
 
-    const domain = flags.domain ?? (await input({ message: 'What is your tenant domain?' }))
+    const domain =
+      flags.domain ?? validateInputLength(await input({ message: 'What is your tenant domain?' }), INPUT_LIMIT)
 
     ux.action.start('Configuring Auth0 application')
-    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, promptFlags.path)
+    await auth0Service.generateAuth0Application(accessToken, domain, clientId, clientSecret, validatedFlags.path)
     ux.action.stop('Configured successfully!')
   }
 }

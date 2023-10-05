@@ -1,6 +1,8 @@
 import { ux, Flags } from '@oclif/core'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { ProjectDto } from '../../services/affinidi/iam/iam.api'
@@ -25,12 +27,17 @@ export class CreateProject extends BaseCommand<typeof CreateProject> {
   public async run(): Promise<ProjectDto> {
     const { flags } = await this.parse(CreateProject)
     const promptFlags = await promptRequiredParameters(['name'], flags)
+    const schema = z.object({
+      name: z.string().max(INPUT_LIMIT),
+      description: z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Creating the project')
 
     const createProjectOutput = await iamService.createProject(clientSDK.config.getUserToken()?.access_token, {
-      name: promptFlags.name,
-      description: promptFlags.description,
+      name: validatedFlags.name,
+      description: validatedFlags.description,
     })
 
     ux.action.stop('Created successfully!')

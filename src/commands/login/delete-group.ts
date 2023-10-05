@@ -1,6 +1,8 @@
 import { ux, Flags } from '@oclif/core'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 
@@ -20,12 +22,16 @@ export class DeleteGroup extends BaseCommand<typeof DeleteGroup> {
   public async run(): Promise<{ name: string }> {
     const { flags } = await this.parse(DeleteGroup)
     const promptFlags = await promptRequiredParameters(['name'], flags)
+    const schema = z.object({
+      name: z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Deleting user group')
-    await vpAdapterService.deleteGroup(clientSDK.config.getProjectToken()?.projectAccessToken, promptFlags.name)
+    await vpAdapterService.deleteGroup(clientSDK.config.getProjectToken()?.projectAccessToken, validatedFlags.name)
     ux.action.stop('Deleted successfully!')
 
-    if (!this.jsonEnabled()) this.logJson({ name: promptFlags.name })
-    return { name: promptFlags.name }
+    if (!this.jsonEnabled()) this.logJson({ name: validatedFlags.name })
+    return { name: validatedFlags.name }
   }
 }

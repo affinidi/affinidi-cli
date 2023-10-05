@@ -4,6 +4,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
@@ -62,6 +63,7 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
   public async run(): Promise<LoginConfigurationObject> {
     const { flags } = await this.parse(UpdateLoginConfiguration)
     const promptFlags = await promptRequiredParameters(['id'], flags)
+    promptFlags.id = validateInputLength(promptFlags.id, INPUT_LIMIT)
 
     let data: UpdateLoginConfigurationInput = {}
     // File input
@@ -90,9 +92,8 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
     }
 
     const updateConfigSchema = z.object({
-      name: z.string().min(1).optional(),
-      redirectUris: z.string().url().array().optional(),
-      // TODO improve Presentation Definition validation
+      name: z.string().min(1).max(INPUT_LIMIT).optional(),
+      redirectUris: z.string().max(INPUT_LIMIT).url().array().optional(),
       presentationDefinition: z.object({}).passthrough().optional(),
       idTokenMapping: z
         .object({
@@ -103,9 +104,9 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
         .optional(),
       clientMetadata: z
         .object({
-          name: z.string(),
-          origin: z.string(),
-          logo: z.string(),
+          name: z.string().max(INPUT_LIMIT),
+          origin: z.string().max(INPUT_LIMIT),
+          logo: z.string().max(INPUT_LIMIT),
         })
         .optional(),
       tokenEndpointAuthMethod: z.nativeEnum(TokenEndpointAuthMethod).optional(),
