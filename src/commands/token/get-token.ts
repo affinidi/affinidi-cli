@@ -2,6 +2,7 @@ import { ux, Flags } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { MachineUserDto } from '../../services/affinidi/iam/iam.api'
@@ -23,7 +24,7 @@ export class GetToken extends BaseCommand<typeof GetToken> {
     const { flags } = await this.parse(GetToken)
     const promptFlags = await promptRequiredParameters(['token-id'], flags)
 
-    const schema = z.string().uuid()
+    const schema = z.string().max(INPUT_LIMIT).uuid()
     const tokenId = schema.parse(promptFlags['token-id'])
 
     ux.action.start('Fetching Personal Access Token details')

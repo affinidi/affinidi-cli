@@ -1,6 +1,8 @@
 import { ux, Flags } from '@oclif/core'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 
@@ -20,15 +22,19 @@ export class DeleteLoginConfiguration extends BaseCommand<typeof DeleteLoginConf
   public async run(): Promise<{ id: string }> {
     const { flags } = await this.parse(DeleteLoginConfiguration)
     const promptFlags = await promptRequiredParameters(['id'], flags)
+    const schema = z.object({
+      id: z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Deleting login configuration')
     await vpAdapterService.deleteLoginConfigurationById(
       clientSDK.config.getProjectToken()?.projectAccessToken,
-      promptFlags.id,
+      validatedFlags.id,
     )
     ux.action.stop('Deleted successfully!')
 
-    if (!this.jsonEnabled()) this.logJson({ id: promptFlags.id })
-    return { id: promptFlags.id }
+    if (!this.jsonEnabled()) this.logJson({ id: validatedFlags.id })
+    return { id: validatedFlags.id }
   }
 }

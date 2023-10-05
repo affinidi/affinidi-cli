@@ -1,6 +1,7 @@
 import { input } from '@inquirer/prompts'
 import { CLIError } from '@oclif/core/lib/errors'
 import { giveFlagInputErrorMessage } from './generate-error-message'
+import { INPUT_LIMIT, validateInputLength } from './input-length-validation'
 
 export async function promptRequiredParameters(
   requiredFlags: string[],
@@ -11,7 +12,11 @@ export async function promptRequiredParameters(
       if (inputFlags['no-input']) {
         throw new CLIError(giveFlagInputErrorMessage(requiredFlags[key]))
       }
-      inputFlags[requiredFlags[key]] = await input({ message: `Enter the ${requiredFlags[key]}` })
+      const validatedInput = validateInputLength(
+        await input({ message: `Enter the value for ${requiredFlags[key]}` }),
+        INPUT_LIMIT,
+      )
+      inputFlags[requiredFlags[key]] = validatedInput
     }
   }
 

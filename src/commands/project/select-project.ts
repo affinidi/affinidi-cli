@@ -4,6 +4,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { configService } from '../../services'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
@@ -25,7 +26,7 @@ export class SelectProject extends BaseCommand<typeof SelectProject> {
 
   public async run(): Promise<ProjectDto> {
     const { flags } = await this.parse(SelectProject)
-    const schema = z.string().uuid().optional()
+    const schema = z.string().max(INPUT_LIMIT).uuid().optional()
     let projectId = schema.parse(flags['project-id'])
 
     ux.action.start('Fetching available projects')

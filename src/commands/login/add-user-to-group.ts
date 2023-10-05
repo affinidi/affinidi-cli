@@ -1,6 +1,8 @@
 import { ux, Flags } from '@oclif/core'
+import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupUserMappingDto } from '../../services/affinidi/vp-adapter/vp-adapter.api'
@@ -20,12 +22,17 @@ export class AddUserToGroup extends BaseCommand<typeof AddUserToGroup> {
   public async run(): Promise<GroupUserMappingDto> {
     const { flags } = await this.parse(AddUserToGroup)
     const promptFlags = await promptRequiredParameters(['group-name', 'user-sub'], flags)
+    const schema = z.object({
+      'group-name': z.string().max(INPUT_LIMIT),
+      'user-sub': z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Adding user to group')
     const addUserToGroupOutput = await vpAdapterService.addUserToGroup(
       clientSDK.config.getProjectToken()?.projectAccessToken,
-      promptFlags['group-name'],
-      promptFlags['user-sub'],
+      validatedFlags['group-name'],
+      validatedFlags['user-sub'],
     )
     ux.action.stop('Added successfully!')
 

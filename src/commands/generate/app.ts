@@ -3,10 +3,12 @@ import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
+import z from 'zod'
 import { BaseCommand, RefAppUseCases } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
+import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
@@ -56,9 +58,14 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         })),
       }))
     const promptFlags = await promptRequiredParameters(['path'], flags)
+    const schema = z.object({
+      path: z.string().max(INPUT_LIMIT),
+      'use-case': z.string().max(INPUT_LIMIT),
+    })
+    const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Generating reference application')
-    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${useCase}`, promptFlags.path, flags.force)
+    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${useCase}`, validatedFlags.path, flags.force)
     ux.action.stop('Generated successfully!')
 
     if (!flags['no-input']) {
@@ -82,23 +89,29 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           message: 'Select a login configuration to use in your reference application',
           choices,
         })
-        const clientSecret = await password({
-          message: "What is the login configuration's client secret?",
-          mask: true,
-        })
+        const clientSecret = validateInputLength(
+          await password({
+            message: "What is the login configuration's client secret?",
+            mask: true,
+          }),
+          INPUT_LIMIT,
+        )
 
         if (useCase === RefAppUseCases.AFFINIDI) {
           ux.action.start('Configuring reference application')
           await configureAppEnvironment(
-            promptFlags.path,
+            validatedFlags.path,
             selectedConfig.auth.clientId,
             clientSecret,
             selectedConfig.auth.issuer,
           )
           ux.action.stop('Configured successfully!')
         } else if (useCase === RefAppUseCases.AUTH0) {
-          const domain = await input({ message: 'What is your Auth0 tenant URL?' })
-          const accessToken = await password({ message: 'What is your Auth0 access token?' })
+          const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
+          const accessToken = validateInputLength(
+            await password({ message: 'What is your Auth0 access token?' }),
+            INPUT_LIMIT,
+          )
           ux.action.start('Creating Auth0 resources and configuring reference application')
           const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
             accessToken,
@@ -107,7 +120,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             clientSecret,
             selectedConfig.auth.issuer,
           )
-          await configureAppEnvironment(promptFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
+          await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
           ux.action.stop('Configured successfully!')
         }
       }

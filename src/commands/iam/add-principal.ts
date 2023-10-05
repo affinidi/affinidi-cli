@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
+import { INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 
@@ -46,7 +47,7 @@ export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
       })),
     })
     const schema = z.object({
-      'principal-id': z.string().uuid(),
+      'principal-id': z.string().max(INPUT_LIMIT).uuid(),
       'principal-type': z.nativeEnum(PrincipalTypes),
     })
     const validatedFlags = schema.parse(promptFlags)
