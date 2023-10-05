@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFile } from 'fs/promises'
 import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
@@ -72,7 +72,7 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
     })
     let policiesData = null
     if (validatedFlags.file) {
-      const rawData = readFileSync(validatedFlags.file, 'utf8')
+      const rawData = await readFile(validatedFlags.file, 'utf8')
       try {
         policiesData = JSON.parse(rawData)
       } catch (error) {

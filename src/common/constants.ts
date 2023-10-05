@@ -19,3 +19,8 @@ export enum IdTokenClaimFormats {
   ARRAY = 'array',
   MAP = 'map',
 }
+
+export enum RefAppUseCases {
+  AFFINIDI = 'affinidi',
+  AUTH0 = 'auth0',
+}
