@@ -4,7 +4,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
-import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
@@ -71,6 +71,9 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
       const rawData = readFileSync(promptFlags.file, 'utf8')
       try {
         data = JSON.parse(rawData)
+        if (data.presentationDefinition) {
+          validateInputLength(JSON.stringify(data.presentationDefinition), PRESENTATION_DEFINITION_LIMIT)
+        }
       } catch (error) {
         throw new CLIError(`Provided file is not a valid JSON\n${(error as Error).message}`)
       }

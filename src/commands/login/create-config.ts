@@ -5,7 +5,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
@@ -79,6 +79,9 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
       const rawData = readFileSync(flags.file, 'utf8')
       try {
         data = JSON.parse(rawData)
+        if (data.presentationDefinition) {
+          validateInputLength(JSON.stringify(data.presentationDefinition), PRESENTATION_DEFINITION_LIMIT)
+        }
       } catch (error) {
         throw new CLIError(`Provided file is not a valid JSON\n${(error as Error).message}`)
       }
@@ -99,8 +102,7 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
             await input({ message: 'Enter the OAuth 2.0 redirect URIs, separated by space' }),
             INPUT_LIMIT,
           )
-        ) // TODO: Confirm the value for this
-          .split(' '),
+        ).split(' '),
         claimFormat: flags['claim-format'],
         tokenEndpointAuthMethod: flags['token-endpoint-auth-method'],
       }

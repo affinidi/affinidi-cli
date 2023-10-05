@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
-import { INPUT_LIMIT } from '../../helpers/input-length-validation'
+import { CREATE_GROUP_NAME_LIMIT, INPUT_LIMIT } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupDto } from '../../services/affinidi/vp-adapter/vp-adapter.api'
@@ -25,7 +25,7 @@ export class CreateGroup extends BaseCommand<typeof CreateGroup> {
     const { flags } = await this.parse(CreateGroup)
     const promptFlags = await promptRequiredParameters(['name'], flags)
     const schema = z.object({
-      name: z.string().max(INPUT_LIMIT),
+      name: z.string().max(CREATE_GROUP_NAME_LIMIT),
     })
     const validatedFlags = schema.parse(promptFlags)
 
