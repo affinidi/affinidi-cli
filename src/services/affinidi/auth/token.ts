@@ -20,6 +20,11 @@ export type ProjectToken = {
   scope: string
 }
 
+type Principal = {
+  id: string
+  type: string
+}
+
 type CredsType = {
   userToken: UserToken
   projectToken: ProjectToken
@@ -34,6 +39,8 @@ export interface CredSetterGetter {
   setProjectToken: (token: ProjectToken) => void
   getPrincipalId: () => string
   setPrincipalId: (principalId: string) => void
+  setPrincipal: (principal: Principal) => void
+  getPrincipal: () => Principal
 }
 
 class TokenService {
@@ -73,6 +80,12 @@ class TokenService {
 
   public setPrincipalId = (principalId: string): void => {
     this.store.setPrincipalId(principalId)
+    const principalComponents = principalId.split('/');
+    const principal: Principal = {
+      id: principalComponents[1],
+      type: principalComponents[0]
+    }
+    this.store.setPrincipal(principal)
   }
 
   public clear = (): void => {
@@ -107,6 +120,12 @@ const storer: CredSetterGetter = {
   setPrincipalId: (principalId: string): void => {
     credentialConf.set('principalId', principalId)
   },
+  setPrincipal: (principal: Principal): void => {
+    credentialConf.set('principal', principal)
+  },
+  getPrincipal: (): Principal => {
+    return credentialConf.get('principal')
+  }
 }
 
 // TODO should be platform-agnostic
@@ -120,6 +139,11 @@ const initUserToken: UserToken = {
   refresh_token: '',
   scope: '',
   token_type: '',
+}
+
+const initPrincipal: Principal = {
+  id: '',
+  type: ''
 }
 
 const initProjectToken: ProjectToken = {
@@ -137,10 +161,13 @@ export class MockStorer implements CredSetterGetter {
 
   private principalId = 'AwesomePrincipalId'
 
+  private principal = {...initPrincipal}
+
   public clear(): void {
     this.userToken = { ...initUserToken }
     this.projectToken = { ...initProjectToken }
     this.principalId = 'AwesomePrincipalId'
+    this.principal = {...initPrincipal}
   }
 
   public getUserToken(): UserToken {
@@ -165,6 +192,14 @@ export class MockStorer implements CredSetterGetter {
 
   public setPrincipalId(principalId: string): void {
     this.principalId = principalId
+  }
+
+  public setPrincipal(principal: Principal): void {
+    this.principal = principal
+  }
+
+  public getPrincipal(): Principal {
+    return this.principal
   }
 }
 
