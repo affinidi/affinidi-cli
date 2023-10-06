@@ -20,7 +20,7 @@ export enum IdTokenClaimFormats {
   MAP = 'map',
 }
 
-export enum RefAppUseCases {
-  AFFINIDI = 'affinidi',
-  AUTH0 = 'auth0',
+export enum RefAppSamples {
+  AFFINIDI_NEXTJS_NEXTAUTHJS = 'affinidi-nextjs-nextauthjs',
+  AUTH0_NEXTJS_NEXTAUTHJS = 'auth0-nextjs-nextauthjs',
 }

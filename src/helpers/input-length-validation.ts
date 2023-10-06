@@ -1,6 +1,7 @@
 import { CLIError } from '@oclif/core/lib/errors'
 
 export const INPUT_LIMIT = 2000
+export const TOKEN_LIMIT = 5000
 export const PRESENTATION_DEFINITION_LIMIT = 5000
 
 export function validateInputLength(text: string, maxlength: number): string {

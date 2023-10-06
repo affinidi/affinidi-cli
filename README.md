@@ -416,13 +416,14 @@ Generates a NextJS reference application that integrates Affinidi Login. Require
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-u affinidi|auth0] [-p <value>] [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-s
+    affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs] [-p <value>] [--force]
 
 FLAGS
-  -p, --path=<value>       Relative or absolute path where reference application should be cloned into
-  -u, --use-case=<option>  Use case to generate
-                           <options: affinidi|auth0>
-  --force                  Override destination directory if exists
+  -p, --path=<value>     Relative or absolute path where reference application should be cloned into
+  -s, --sample=<option>  Sample to generate
+                         <options: affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs>
+  --force                Override destination directory if exists
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -432,15 +433,15 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p "../my-app" -u affinidi
+  $ affinidi generate app -p "../my-app" -s affinidi-nextjs-nextauthjs
 
-  $ affinidi generate app --path "../my-app" --use-case auth0 --force
+  $ affinidi generate app --path "../my-app" --sample auth0-nextjs-nextauthjs --force
 
 FLAG DESCRIPTIONS
-  -u, --use-case=affinidi|auth0  Use case to generate
+  -s, --sample=affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs  Sample to generate
 
-    Use affinidi to generate an app that integrates Affinidi Login directly
-    Use auth0 to generate an app that integrates Affinidi Login through Auth0
+    Use affinidi-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login directly
+    Use auth0-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0
 ```
 
 ## `affinidi help [COMMANDS]`

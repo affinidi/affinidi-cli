@@ -4,33 +4,37 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
 import z from 'zod'
-import { BaseCommand, RefAppUseCases } from '../../common'
+import { BaseCommand, RefAppSamples } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
+import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
 
-const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/use-cases'
+const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static summary = 'Generates a NextJS reference application that integrates Affinidi Login. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p "../my-app" -u affinidi',
-    '<%= config.bin %> <%= command.id %> --path "../my-app" --use-case auth0 --force',
+    '<%= config.bin %> <%= command.id %> -p "../my-app" -s affinidi-nextjs-nextauthjs',
+    '<%= config.bin %> <%= command.id %> --path "../my-app" --sample auth0-nextjs-nextauthjs --force',
   ]
 
   static flags = {
-    'use-case': Flags.string({
-      char: 'u',
-      summary: 'Use case to generate',
-      description: `Use ${chalk.italic('affinidi')} to generate an app that integrates Affinidi Login directly\n\
-      Use ${chalk.italic('auth0')} to generate an app that integrates Affinidi Login through Auth0`,
-      options: Object.values(RefAppUseCases),
+    sample: Flags.string({
+      char: 's',
+      summary: 'Sample to generate',
+      description: `Use ${chalk.italic(
+        'affinidi-nextjs-nextauthjs',
+      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login directly\n\
+      Use ${chalk.italic(
+        'auth0-nextjs-nextauthjs',
+      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0`,
+      options: Object.values(RefAppSamples),
     }),
     path: Flags.string({
       char: 'p',
@@ -43,29 +47,30 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApp)
-    if (flags['no-input'] && !flags['use-case']) {
-      throw new CLIError(giveFlagInputErrorMessage('use-case'))
+    if (flags['no-input'] && !flags.sample) {
+      throw new CLIError(giveFlagInputErrorMessage('sample'))
     }
-    const useCase =
-      flags['use-case'] ??
+    const sample =
+      flags.sample ??
       (await select({
-        message: `Select the app to generate. ${chalk.italic('affinidi')} for basic Affinidi Login, ${chalk.italic(
-          'auth0',
+        message: `Select the app to generate. ${chalk.italic('affinidi-*')} for basic Affinidi Login, ${chalk.italic(
+          'auth0-*',
         )} for Affinidi Login through Auth0`,
-        choices: Object.values(RefAppUseCases).map((value) => ({
+        choices: Object.values(RefAppSamples).map((value) => ({
           name: value,
           value,
         })),
       }))
     const promptFlags = await promptRequiredParameters(['path'], flags)
+    promptFlags.sample = sample
     const schema = z.object({
       path: z.string().max(INPUT_LIMIT),
-      'use-case': z.string().max(INPUT_LIMIT),
+      sample: z.string().max(INPUT_LIMIT),
     })
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Generating reference application')
-    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${useCase}`, validatedFlags.path, flags.force)
+    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${sample}`, validatedFlags.path, flags.force)
     ux.action.stop('Generated successfully!')
 
     if (!flags['no-input']) {
@@ -97,7 +102,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           INPUT_LIMIT,
         )
 
-        if (useCase === RefAppUseCases.AFFINIDI) {
+        if (sample === RefAppSamples.AFFINIDI_NEXTJS_NEXTAUTHJS) {
           ux.action.start('Configuring reference application')
           await configureAppEnvironment(
             validatedFlags.path,
@@ -106,11 +111,11 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             selectedConfig.auth.issuer,
           )
           ux.action.stop('Configured successfully!')
-        } else if (useCase === RefAppUseCases.AUTH0) {
+        } else if (sample === RefAppSamples.AUTH0_NEXTJS_NEXTAUTHJS) {
           const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
           const accessToken = validateInputLength(
             await password({ message: 'What is your Auth0 access token?' }),
-            INPUT_LIMIT,
+            TOKEN_LIMIT,
           )
           ux.action.start('Creating Auth0 resources and configuring reference application')
           const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
