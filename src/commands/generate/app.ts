@@ -8,7 +8,7 @@ import { BaseCommand, RefAppSamples } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
+import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
 import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
@@ -62,6 +62,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         })),
       }))
     const promptFlags = await promptRequiredParameters(['path'], flags)
+    promptFlags.sample = sample
     const schema = z.object({
       path: z.string().max(INPUT_LIMIT),
       sample: z.string().max(INPUT_LIMIT),
@@ -114,7 +115,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
           const accessToken = validateInputLength(
             await password({ message: 'What is your Auth0 access token?' }),
-            INPUT_LIMIT,
+            TOKEN_LIMIT,
           )
           ux.action.start('Creating Auth0 resources and configuring reference application')
           const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
