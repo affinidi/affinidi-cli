@@ -139,7 +139,7 @@ export class Auth implements AuthSDK {
 
     const projectScopedToken = await this.createProjectScopedToken(accessToken, activeProject.id)
     tokenService.setProjectToken(projectScopedToken, activeProject.id, activeProject.name)
-    tokenService.setPrincipalId(principalId)
+    tokenService.setPrincipal(principalId)
 
     if (!param.hideProjectHints) {
       this.logger.info(
@@ -178,6 +178,6 @@ export class Auth implements AuthSDK {
    * @returns {string} - A value of PrincipalId
    */
   public getPrincipalId(): string {
-    return tokenService.getPrincipalId()
+    return tokenService.getPrincipal()?.id
   }
 }

@@ -37,8 +37,6 @@ export interface CredSetterGetter {
   setUserToken: (token: UserToken) => void
   getProjectToken: () => ProjectToken
   setProjectToken: (token: ProjectToken) => void
-  getPrincipalId: () => string
-  setPrincipalId: (principalId: string) => void
   setPrincipal: (principal: Principal) => void
   getPrincipal: () => Principal
 }
@@ -58,8 +56,17 @@ class TokenService {
     return this.store.getProjectToken()
   }
 
-  public getPrincipalId = (): string => {
-    return this.store.getPrincipalId()
+  public getPrincipal = (): Principal => {
+    return this.store.getPrincipal()
+  }
+
+  public setPrincipal = (principalId: string): void => {
+    const principalComponents = principalId.split('/');
+    const principal: Principal = {
+      id: principalComponents[1],
+      type: principalComponents[0]
+    }
+    this.store.setPrincipal(principal)
   }
 
   public setUserToken = (token: UserToken): void => {
@@ -76,16 +83,6 @@ class TokenService {
       scope: project.scope,
     }
     this.store.setProjectToken(projectToken)
-  }
-
-  public setPrincipalId = (principalId: string): void => {
-    this.store.setPrincipalId(principalId)
-    const principalComponents = principalId.split('/');
-    const principal: Principal = {
-      id: principalComponents[1],
-      type: principalComponents[0]
-    }
-    this.store.setPrincipal(principal)
   }
 
   public clear = (): void => {
@@ -113,12 +110,6 @@ const storer: CredSetterGetter = {
   },
   setProjectToken: (token: ProjectToken): void => {
     credentialConf.set('projectToken', token)
-  },
-  getPrincipalId: (): string => {
-    return credentialConf.get('principalId')
-  },
-  setPrincipalId: (principalId: string): void => {
-    credentialConf.set('principalId', principalId)
   },
   setPrincipal: (principal: Principal): void => {
     credentialConf.set('principal', principal)
@@ -184,14 +175,6 @@ export class MockStorer implements CredSetterGetter {
 
   public setProjectToken(token: ProjectToken): void {
     this.projectToken = token
-  }
-
-  public getPrincipalId(): string {
-    return this.principalId
-  }
-
-  public setPrincipalId(principalId: string): void {
-    this.principalId = principalId
   }
 
   public setPrincipal(principal: Principal): void {
