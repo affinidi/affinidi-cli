@@ -2,7 +2,7 @@ import { ux } from '@oclif/core'
 import jwt from 'jsonwebtoken'
 import { BaseCommand } from '../common'
 import { clientSDK } from '../services/affinidi'
-import { InvalidOrMissingAuthToken, AuthTokenExpired, DataCorruptionInOAuth } from '../services/affinidi/errors'
+import { InvalidOrMissingAuthToken, AuthTokenExpired } from '../services/affinidi/errors'
 
 export class WhoAmI extends BaseCommand<typeof WhoAmI> {
   static summary = "Returns user's subject and principalId from his active session"
@@ -13,14 +13,9 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
 
     const principal = clientSDK.config.getPrincipal()
     const principalId = principal?.id
-    
-    if(!principalId){
-      throw new Error(DataCorruptionInOAuth)
-    }
-    
     const token = clientSDK.config.getUserToken()?.access_token
 
-    if (!token) {
+    if (!token || !principalId) {
       throw new Error(InvalidOrMissingAuthToken)
     }
 

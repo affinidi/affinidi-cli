@@ -61,10 +61,10 @@ class TokenService {
   }
 
   public setPrincipal = (principalId: string): void => {
-    const principalComponents = principalId.split('/');
+    const principalComponents = principalId.split('/')
     const principal: Principal = {
       id: principalComponents[1],
-      type: principalComponents[0]
+      type: principalComponents[0],
     }
     this.store.setPrincipal(principal)
   }
@@ -116,7 +116,7 @@ const storer: CredSetterGetter = {
   },
   getPrincipal: (): Principal => {
     return credentialConf.get('principal')
-  }
+  },
 }
 
 // TODO should be platform-agnostic
@@ -134,7 +134,7 @@ const initUserToken: UserToken = {
 
 const initPrincipal: Principal = {
   id: '',
-  type: ''
+  type: '',
 }
 
 const initProjectToken: ProjectToken = {
@@ -152,13 +152,13 @@ export class MockStorer implements CredSetterGetter {
 
   private principalId = 'AwesomePrincipalId'
 
-  private principal = {...initPrincipal}
+  private principal = { ...initPrincipal }
 
   public clear(): void {
     this.userToken = { ...initUserToken }
     this.projectToken = { ...initProjectToken }
     this.principalId = 'AwesomePrincipalId'
-    this.principal = {...initPrincipal}
+    this.principal = { ...initPrincipal }
   }
 
   public getUserToken(): UserToken {
