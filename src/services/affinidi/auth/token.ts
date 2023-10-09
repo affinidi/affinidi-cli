@@ -20,7 +20,7 @@ export type ProjectToken = {
   scope: string
 }
 
-type Principal = {
+export type Principal = {
   id: string
   type: string
 }
@@ -60,12 +60,7 @@ class TokenService {
     return this.store.getPrincipal()
   }
 
-  public setPrincipal = (principalId: string): void => {
-    const principalComponents = principalId.split('/')
-    const principal: Principal = {
-      id: principalComponents[1],
-      type: principalComponents[0],
-    }
+  public setPrincipal = (principal: Principal): void => {
     this.store.setPrincipal(principal)
   }
 
@@ -90,32 +85,32 @@ class TokenService {
   }
 }
 
-const credentialConf = new Conf<CredsType>({
+const credentialConfig = new Conf<CredsType>({
   cwd: path.join(os.homedir(), '.affinidi'),
   configName: 'oAuthCred',
 })
 
 const storer: CredSetterGetter = {
   clear: (): void => {
-    credentialConf.clear()
+    credentialConfig.clear()
   },
   getUserToken: (): UserToken => {
-    return credentialConf.get('userToken')
+    return credentialConfig.get('userToken')
   },
   setUserToken: (token: UserToken): void => {
-    credentialConf.set('userToken', token)
+    credentialConfig.set('userToken', token)
   },
   getProjectToken: (): ProjectToken => {
-    return credentialConf.get('projectToken')
+    return credentialConfig.get('projectToken')
   },
   setProjectToken: (token: ProjectToken): void => {
-    credentialConf.set('projectToken', token)
+    credentialConfig.set('projectToken', token)
   },
   setPrincipal: (principal: Principal): void => {
-    credentialConf.set('principal', principal)
+    credentialConfig.set('principal', principal)
   },
   getPrincipal: (): Principal => {
-    return credentialConf.get('principal')
+    return credentialConfig.get('principal')
   },
 }
 
@@ -150,14 +145,11 @@ export class MockStorer implements CredSetterGetter {
 
   private projectToken: ProjectToken = { ...initProjectToken }
 
-  private principalId = 'AwesomePrincipalId'
-
   private principal = { ...initPrincipal }
 
   public clear(): void {
     this.userToken = { ...initUserToken }
     this.projectToken = { ...initProjectToken }
-    this.principalId = 'AwesomePrincipalId'
     this.principal = { ...initPrincipal }
   }
 

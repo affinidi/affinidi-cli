@@ -2,7 +2,7 @@ import process from 'process'
 import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
 import { AuthProvider, AuthProviderConfig, OryAuthenticator, OryAuthenticatorPKCE } from './providers'
-import { tokenService } from './token'
+import { Principal, tokenService } from './token'
 import { LoggerAdapter } from '../adapters'
 import { iamService } from '../iam'
 import { ProjectDto } from '../iam/iam.api'
@@ -106,8 +106,14 @@ export class Auth implements AuthSDK {
     const accessToken = (userAccessToken ?? (await this.authenticate())) as string
     if (!param.hideProjectHints) {
       this.logger.info('\nSetting your active project...')
-    }
+    } 
     const principalId = await this.receivePrincipalId(accessToken)
+    const principalComponents = principalId.split('/')
+    const principal: Principal = {
+      id: principalComponents[1],
+      type: principalComponents[0],
+    }
+
     let projects = await this.fetchProjects(accessToken)
 
     let activeProject: ProjectDto | undefined
@@ -139,7 +145,7 @@ export class Auth implements AuthSDK {
 
     const projectScopedToken = await this.createProjectScopedToken(accessToken, activeProject.id)
     tokenService.setProjectToken(projectScopedToken, activeProject.id, activeProject.name)
-    tokenService.setPrincipal(principalId)
+    tokenService.setPrincipal(principal)
 
     if (!param.hideProjectHints) {
       this.logger.info(
