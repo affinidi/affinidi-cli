@@ -106,7 +106,7 @@ export class Auth implements AuthSDK {
     const accessToken = (userAccessToken ?? (await this.authenticate())) as string
     if (!param.hideProjectHints) {
       this.logger.info('\nSetting your active project...')
-    } 
+    }
     const principalId = await this.receivePrincipalId(accessToken)
     const principalComponents = principalId.split('/')
     const principal: Principal = {
