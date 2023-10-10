@@ -20,6 +20,11 @@ export type ProjectToken = {
   scope: string
 }
 
+export type Principal = {
+  id: string
+  type: string
+}
+
 type CredsType = {
   userToken: UserToken
   projectToken: ProjectToken
@@ -32,8 +37,8 @@ export interface CredSetterGetter {
   setUserToken: (token: UserToken) => void
   getProjectToken: () => ProjectToken
   setProjectToken: (token: ProjectToken) => void
-  getPrincipalId: () => string
-  setPrincipalId: (principalId: string) => void
+  setPrincipal: (principal: Principal) => void
+  getPrincipal: () => Principal
 }
 
 class TokenService {
@@ -51,8 +56,12 @@ class TokenService {
     return this.store.getProjectToken()
   }
 
-  public getPrincipalId = (): string => {
-    return this.store.getPrincipalId()
+  public getPrincipal = (): Principal => {
+    return this.store.getPrincipal()
+  }
+
+  public setPrincipal = (principal: Principal): void => {
+    this.store.setPrincipal(principal)
   }
 
   public setUserToken = (token: UserToken): void => {
@@ -71,41 +80,37 @@ class TokenService {
     this.store.setProjectToken(projectToken)
   }
 
-  public setPrincipalId = (principalId: string): void => {
-    this.store.setPrincipalId(principalId)
-  }
-
   public clear = (): void => {
     this.store.clear()
   }
 }
 
-const credentialConf = new Conf<CredsType>({
+const credentialConfig = new Conf<CredsType>({
   cwd: path.join(os.homedir(), '.affinidi'),
   configName: 'oAuthCred',
 })
 
 const storer: CredSetterGetter = {
   clear: (): void => {
-    credentialConf.clear()
+    credentialConfig.clear()
   },
   getUserToken: (): UserToken => {
-    return credentialConf.get('userToken')
+    return credentialConfig.get('userToken')
   },
   setUserToken: (token: UserToken): void => {
-    credentialConf.set('userToken', token)
+    credentialConfig.set('userToken', token)
   },
   getProjectToken: (): ProjectToken => {
-    return credentialConf.get('projectToken')
+    return credentialConfig.get('projectToken')
   },
   setProjectToken: (token: ProjectToken): void => {
-    credentialConf.set('projectToken', token)
+    credentialConfig.set('projectToken', token)
   },
-  getPrincipalId: (): string => {
-    return credentialConf.get('principalId')
+  setPrincipal: (principal: Principal): void => {
+    credentialConfig.set('principal', principal)
   },
-  setPrincipalId: (principalId: string): void => {
-    credentialConf.set('principalId', principalId)
+  getPrincipal: (): Principal => {
+    return credentialConfig.get('principal')
   },
 }
 
@@ -122,6 +127,11 @@ const initUserToken: UserToken = {
   token_type: '',
 }
 
+const initPrincipal: Principal = {
+  id: '',
+  type: '',
+}
+
 const initProjectToken: ProjectToken = {
   projectName: '',
   projectId: '',
@@ -135,12 +145,12 @@ export class MockStorer implements CredSetterGetter {
 
   private projectToken: ProjectToken = { ...initProjectToken }
 
-  private principalId = 'AwesomePrincipalId'
+  private principal = { ...initPrincipal }
 
   public clear(): void {
     this.userToken = { ...initUserToken }
     this.projectToken = { ...initProjectToken }
-    this.principalId = 'AwesomePrincipalId'
+    this.principal = { ...initPrincipal }
   }
 
   public getUserToken(): UserToken {
@@ -159,12 +169,12 @@ export class MockStorer implements CredSetterGetter {
     this.projectToken = token
   }
 
-  public getPrincipalId(): string {
-    return this.principalId
+  public setPrincipal(principal: Principal): void {
+    this.principal = principal
   }
 
-  public setPrincipalId(principalId: string): void {
-    this.principalId = principalId
+  public getPrincipal(): Principal {
+    return this.principal
   }
 }
 

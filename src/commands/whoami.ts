@@ -11,10 +11,11 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
   public async run() {
     ux.action.start('Retrieving user data')
 
-    const principalId = clientSDK.config.getPrincipalId()?.split('/')[1] || clientSDK.config.getPrincipalId()
+    const principal = clientSDK.config.getPrincipal()
+    const principalId = principal?.id
     const token = clientSDK.config.getUserToken()?.access_token
 
-    if (!token) {
+    if (!token || !principalId) {
       throw new Error(InvalidOrMissingAuthToken)
     }
 
