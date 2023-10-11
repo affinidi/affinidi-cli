@@ -100,7 +100,7 @@ export class Auth implements AuthSDK {
     if (!param.hideProjectHints) {
       this.logger.info('\nSetting your active project...')
     }
-    
+
     const principal: Principal = await iamService.whoAmI(accessToken)
 
     let projects = await this.fetchProjects(accessToken)

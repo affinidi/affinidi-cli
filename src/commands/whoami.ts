@@ -1,9 +1,9 @@
 import { ux } from '@oclif/core'
+import { CLIError } from '@oclif/core/lib/errors'
 import jwt from 'jsonwebtoken'
 import { BaseCommand } from '../common'
 import { clientSDK } from '../services/affinidi'
 import { InvalidOrMissingAuthToken, AuthTokenExpired } from '../services/affinidi/errors'
-import { CLIError } from '@oclif/core/lib/errors'
 
 export class WhoAmI extends BaseCommand<typeof WhoAmI> {
   static summary = "Returns user's subject and principalId from his active session"

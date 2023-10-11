@@ -70,7 +70,7 @@ class IAMService {
       })
 
       //TODO Remove this backwards compatibility
-      if (!data.principalType){
+      if (!data.principalType) {
         const principalComponents = data.principalId.split('/')
         data.principalId = principalComponents[1]
         data.principalType = principalComponents[0]
