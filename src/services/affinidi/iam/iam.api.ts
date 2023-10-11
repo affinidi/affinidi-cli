@@ -80,6 +80,7 @@ export interface PolicyStatementDto {
 
 export interface WhoamiDto {
   principalId: string
+  principalType: string
 }
 
 export interface PolicyDto {

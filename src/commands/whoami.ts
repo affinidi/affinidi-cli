@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { BaseCommand } from '../common'
 import { clientSDK } from '../services/affinidi'
 import { InvalidOrMissingAuthToken, AuthTokenExpired } from '../services/affinidi/errors'
+import { CLIError } from '@oclif/core/lib/errors'
 
 export class WhoAmI extends BaseCommand<typeof WhoAmI> {
   static summary = "Returns user's subject and principalId from his active session"
@@ -12,11 +13,10 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
     ux.action.start('Retrieving user data')
 
     const principal = clientSDK.config.getPrincipal()
-    const principalId = principal?.id
     const token = clientSDK.config.getUserToken()?.access_token
 
-    if (!token || !principalId) {
-      throw new Error(InvalidOrMissingAuthToken)
+    if (!token || !principal) {
+      throw new CLIError(InvalidOrMissingAuthToken)
     }
 
     ux.action.stop('Retrieved successfully!')
@@ -24,7 +24,7 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
     const payload = jwt.decode(token)
 
     if (!payload || typeof payload !== 'object') {
-      throw new Error(InvalidOrMissingAuthToken)
+      throw new CLIError(InvalidOrMissingAuthToken)
     }
 
     const { sub, exp } = payload
@@ -32,11 +32,11 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
     const isJwtExpired = Date.now() >= (exp as number) * 1000
 
     if (isJwtExpired) {
-      throw new Error(AuthTokenExpired)
+      throw new CLIError(AuthTokenExpired)
     }
 
-    if (!this.jsonEnabled()) this.logJson({ principalId, sub })
+    if (!this.jsonEnabled()) this.logJson({ principal, sub })
 
-    return { principalId, sub }
+    return { principal, sub }
   }
 }

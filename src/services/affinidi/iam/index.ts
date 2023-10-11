@@ -10,6 +10,7 @@ import {
   ProjectDto,
   UpdateMachineUserInput,
   UserList,
+  WhoamiDto,
 } from './iam.api'
 import { IAM_URL } from '../../../services/urls'
 import { handleServiceError } from '../errors'
@@ -58,7 +59,7 @@ class IAMService {
     }
   }
 
-  public whoAmI = async (token: string): Promise<string> => {
+  public whoAmI = async (token: string): Promise<WhoamiDto> => {
     try {
       const { data } = await this.client.v1.whoami({
         headers: {
@@ -68,7 +69,14 @@ class IAMService {
         },
       })
 
-      return data.principalId
+      //TODO Remove this backwards compatibility
+      if (!data.principalType){
+        const principalComponents = data.principalId.split('/')
+        data.principalId = principalComponents[1]
+        data.principalType = principalComponents[0]
+      }
+
+      return data
     } catch (error) {
       handleServiceError(error)
     }

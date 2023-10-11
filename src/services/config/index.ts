@@ -47,7 +47,7 @@ class ConfigService {
   }
 
   public show = (): ConfigStoreFormat => {
-    const currentUserId = clientSDK.auth.getPrincipalId()
+    const currentUserId = clientSDK.auth.getPrincipalString()
     const configVersion = this.store.getVersion()
     const configs = this.store.getAllUserConfigs()
     return { version: configVersion, currentUserId, configs }
@@ -79,7 +79,7 @@ class ConfigService {
   }
 
   public getCurrentUser = (): string => {
-    return clientSDK.auth.getPrincipalId()
+    return clientSDK.auth.getPrincipalString()
   }
 
   public create = (userId: string): void => {
@@ -118,7 +118,7 @@ class ConfigService {
   }
 
   public currentUserConfig = (): UserConfig => {
-    const user = clientSDK.auth.getPrincipalId()
+    const user = clientSDK.auth.getPrincipalString()
     const configs = this.store.getAllUserConfigs()
     if (!configs[user]) {
       throw Error(NoUserConfigFound)
@@ -155,7 +155,7 @@ const store: IConfigStorer = {
     return configConf.get('configs')
   },
   getCurrentUser: (): string => {
-    return clientSDK.auth.getPrincipalId()
+    return clientSDK.auth.getPrincipalString()
   },
   deleteUserConfig: function deleteUserConfig(): void {
     const userId = this.getCurrentUser()

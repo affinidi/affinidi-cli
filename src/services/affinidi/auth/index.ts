@@ -11,13 +11,13 @@ export type AuthResult = {
   projectScopedToken: string
   activeProject: ProjectDto
   projects: ProjectDto[]
-  principalId: string
+  principal: Principal
 }
 
 export interface AuthSDK {
   login(params: { projectId?: string; userAccessToken?: string }): Promise<AuthResult>
   logout(): Promise<void>
-  getPrincipalId(): string
+  getPrincipalString(): string
   getActiveProject(projects: Array<ProjectDto>): ProjectDto
 }
 
@@ -50,13 +50,6 @@ export class Auth implements AuthSDK {
     const accessToken = await this.authProvider.authenticate()
     this.logger.debug(`Authenticated successfully!`)
     return accessToken
-  }
-
-  private async receivePrincipalId(accessToken: string) {
-    this.logger.debug('Receiving principalId')
-    const principalId = await iamService.whoAmI(accessToken)
-    this.logger.debug(`PrincipalId has been received: ${principalId}`)
-    return principalId
   }
 
   private async fetchProjects(accessToken: string) {
@@ -107,12 +100,8 @@ export class Auth implements AuthSDK {
     if (!param.hideProjectHints) {
       this.logger.info('\nSetting your active project...')
     }
-    const principalId = await this.receivePrincipalId(accessToken)
-    const principalComponents = principalId.split('/')
-    const principal: Principal = {
-      id: principalComponents[1],
-      type: principalComponents[0],
-    }
+    
+    const principal: Principal = await iamService.whoAmI(accessToken)
 
     let projects = await this.fetchProjects(accessToken)
 
@@ -163,7 +152,7 @@ export class Auth implements AuthSDK {
     return {
       projectScopedToken: projectScopedToken.accessToken,
       activeProject,
-      principalId,
+      principal,
       projects,
     }
   }
@@ -183,7 +172,8 @@ export class Auth implements AuthSDK {
    *
    * @returns {string} - A value of PrincipalId
    */
-  public getPrincipalId(): string {
-    return tokenService.getPrincipal()?.id
+  public getPrincipalString(): string {
+    const principal = tokenService.getPrincipal()
+    return `${principal.principalType}/${principal.principalId}`
   }
 }
