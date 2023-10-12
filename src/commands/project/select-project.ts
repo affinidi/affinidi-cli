@@ -66,7 +66,7 @@ export class SelectProject extends BaseCommand<typeof SelectProject> {
     })
     ux.action.stop('Set successfully!')
 
-    configService.createOrUpdate(signInResult.principalId)
+    configService.createOrUpdate(`${signInResult.principal.principalType}/${signInResult.principal.principalId}`)
 
     const response = {
       id: signInResult.activeProject.id,

@@ -24,10 +24,10 @@ export class Start extends BaseCommand<typeof Start> {
     const schema = z.string().uuid().max(INPUT_LIMIT).optional()
     const projectId = schema.parse(flags['project-id'])
 
-    const { principalId } = await clientSDK.login({
+    const { principal } = await clientSDK.login({
       projectId,
     })
 
-    configService.createOrUpdate(principalId)
+    configService.createOrUpdate(`${principal.principalType}/${principal.principalId}`)
   }
 }

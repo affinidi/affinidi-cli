@@ -21,8 +21,8 @@ export type ProjectToken = {
 }
 
 export type Principal = {
-  id: string
-  type: string
+  principalId: string
+  principalType: string
 }
 
 type CredsType = {
@@ -128,8 +128,8 @@ const initUserToken: UserToken = {
 }
 
 const initPrincipal: Principal = {
-  id: '',
-  type: '',
+  principalId: '',
+  principalType: '',
 }
 
 const initProjectToken: ProjectToken = {

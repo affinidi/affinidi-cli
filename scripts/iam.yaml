@@ -695,8 +695,11 @@ components:
       properties:
         principalId:
           type: string
+        principalType:
+          type: string
       required:
         - principalId
+        - principalType
     PolicyDto:
       type: object
       additionalProperties: false
