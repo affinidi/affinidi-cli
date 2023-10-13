@@ -23,4 +23,5 @@ export enum IdTokenClaimFormats {
 export enum RefAppSamples {
   AFFINIDI_NEXTJS_NEXTAUTHJS = 'affinidi-nextjs-nextauthjs',
   AUTH0_NEXTJS_NEXTAUTHJS = 'auth0-nextjs-nextauthjs',
+  FIREBASE_NEXTJS_NEXTAUTHJS = 'firebase-nextjs-nextauthjs',
 }

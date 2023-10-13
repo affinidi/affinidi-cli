@@ -417,12 +417,12 @@ Generates a NextJS reference application that integrates Affinidi Login. Require
 ```
 USAGE
   $ affinidi generate app [--json] [--no-color] [--no-input] [-s
-    affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs] [-p <value>] [--force]
+    affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs|firebase-nextjs-nextauthjs] [-p <value>] [--force]
 
 FLAGS
   -p, --path=<value>     Relative or absolute path where reference application should be cloned into
   -s, --sample=<option>  Sample to generate
-                         <options: affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs>
+                         <options: affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs|firebase-nextjs-nextauthjs>
   --force                Override destination directory if exists
 
 GLOBAL FLAGS
@@ -437,11 +437,14 @@ EXAMPLES
 
   $ affinidi generate app --path "../my-app" --sample auth0-nextjs-nextauthjs --force
 
+  $ affinidi generate app --path "../my-app" --sample firebase-nextjs-nextauthjs --force
+
 FLAG DESCRIPTIONS
-  -s, --sample=affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs  Sample to generate
+  -s, --sample=affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs|firebase-nextjs-nextauthjs  Sample to generate
 
     Use affinidi-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login directly
     Use auth0-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0
+    Use firebase-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Firebase
 ```
 
 ## `affinidi help [COMMANDS]`

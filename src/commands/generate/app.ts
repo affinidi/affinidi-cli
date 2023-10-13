@@ -22,6 +22,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> -p "../my-app" -s affinidi-nextjs-nextauthjs',
     '<%= config.bin %> <%= command.id %> --path "../my-app" --sample auth0-nextjs-nextauthjs --force',
+    '<%= config.bin %> <%= command.id %> --path "../my-app" --sample firebase-nextjs-nextauthjs --force',
   ]
 
   static flags = {
@@ -33,7 +34,10 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login directly\n\
       Use ${chalk.italic(
         'auth0-nextjs-nextauthjs',
-      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0`,
+      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0\n\
+      Use ${chalk.italic(
+        'firebase-nextjs-nextauthjs',
+      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Firebase`,
       options: Object.values(RefAppSamples),
     }),
     path: Flags.string({
