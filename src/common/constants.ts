@@ -20,7 +20,26 @@ export enum IdTokenClaimFormats {
   MAP = 'map',
 }
 
-export enum RefAppSamples {
-  AFFINIDI_NEXTJS_NEXTAUTHJS = 'affinidi-nextjs-nextauthjs',
-  AUTH0_NEXTJS_NEXTAUTHJS = 'auth0-nextjs-nextauthjs',
+export enum RefAppProvider {
+  AFFINIDI = 'affinidi',
+  AUTH0 = 'auth0',
+}
+
+export enum RefAppFramework {
+  DJANGO = 'django',
+  NEXTJS = 'nextjs',
+}
+
+export enum RefAppDjangoLibrary {
+  AUTHLIB = 'authlib',
+}
+
+export enum RefAppNextJsLibrary {
+  NEXTAUTHJS = 'nextauthjs',
+}
+
+export interface Auth0Config {
+  callbackUrl: string
+  webOriginUrl: string
+  logOutUrl: string
 }

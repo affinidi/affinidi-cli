@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { Auth0Config } from '../../common'
 
 export async function createAuth0Resources(
   accessToken: string,
@@ -6,9 +7,10 @@ export async function createAuth0Resources(
   affinidiClientId: string,
   affinidiClientSecret: string,
   affinidiIssuer: string,
+  connectionName: string,
+  config: Auth0Config,
 ) {
-  const { auth0ClientId, auth0ClientSecret } = await createApplication(accessToken, domain)
-  const connectionName = 'Affinidi'
+  const { auth0ClientId, auth0ClientSecret } = await createApplication(accessToken, domain, config)
   await createSocialConnection(
     accessToken,
     domain,
@@ -21,7 +23,7 @@ export async function createAuth0Resources(
   return { auth0ClientId, auth0ClientSecret, connectionName }
 }
 
-const createApplication = async (accessToken: string, domain: string): Promise<any> => {
+const createApplication = async (accessToken: string, domain: string, config: Auth0Config): Promise<any> => {
   const myHeaders = new Headers()
   myHeaders.append('Authorization', `Bearer ${accessToken}`)
   myHeaders.append('Content-Type', 'application/json')
@@ -30,9 +32,9 @@ const createApplication = async (accessToken: string, domain: string): Promise<a
     name: 'Affinidi Reference App',
     description: 'Generated Reference Application from Affinidi CLI',
     logo_uri: '',
-    callbacks: ['http://localhost:3000/api/auth/callback/auth0'],
-    web_origins: ['http://localhost:3000'],
-    allowed_logout_urls: ['http://localhost:3000'],
+    callbacks: [config.callbackUrl],
+    web_origins: [config.webOriginUrl],
+    allowed_logout_urls: [config.logOutUrl],
     jwt_configuration: {
       alg: 'RS256',
     },
