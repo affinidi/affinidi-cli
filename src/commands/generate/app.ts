@@ -20,18 +20,18 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static summary = 'Generates a NextJS reference application that integrates Affinidi Login. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p "../my-app" -s affinidi-nextjs-nextauthjs',
-    '<%= config.bin %> <%= command.id %> --path "../my-app" --provider auth0-nextjs-nextauthjs --force',
+    '<%= config.bin %> <%= command.id %> -p "../my-app" -f django -a affinidi',
+    '<%= config.bin %> <%= command.id %> --path "../my-app" --framework django --provider affinidi --force',
   ]
 
   static flags = {
     framework: Flags.string({
-      char: 's',
+      char: 'f',
       summary: 'Framework for the reference app',
       options: Object.values(RefAppFramework),
     }),
     provider: Flags.string({
-      char: 's',
+      char: 'a',
       summary: 'Authentication provider for the reference app',
       options: Object.values(RefAppProvider),
     }),
