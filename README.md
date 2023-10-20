@@ -416,14 +416,16 @@ Generates a NextJS reference application that integrates Affinidi Login. Require
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-s
-    affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs] [-p <value>] [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-f django|nextjs] [-a affinidi|auth0] [-p <value>]
+    [--force]
 
 FLAGS
-  -p, --path=<value>     Relative or absolute path where reference application should be cloned into
-  -s, --sample=<option>  Sample to generate
-                         <options: affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs>
-  --force                Override destination directory if exists
+  -a, --provider=<option>   Authentication provider for the reference app
+                            <options: affinidi|auth0>
+  -f, --framework=<option>  Framework for the reference app
+                            <options: django|nextjs>
+  -p, --path=<value>        Relative or absolute path where reference application should be cloned into
+  --force                   Override destination directory if exists
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -433,15 +435,9 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p "../my-app" -s affinidi-nextjs-nextauthjs
+  $ affinidi generate app -p "../my-app" -f django -a affinidi
 
-  $ affinidi generate app --path "../my-app" --sample auth0-nextjs-nextauthjs --force
-
-FLAG DESCRIPTIONS
-  -s, --sample=affinidi-nextjs-nextauthjs|auth0-nextjs-nextauthjs  Sample to generate
-
-    Use affinidi-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login directly
-    Use auth0-nextjs-nextauthjs to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0
+  $ affinidi generate app --path "../my-app" --framework django --provider affinidi --force
 ```
 
 ## `affinidi help [COMMANDS]`
@@ -1048,7 +1044,7 @@ EXAMPLES
   $ affinidi start --project-id <project-id>
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1067,7 +1063,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1202,5 +1198,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.6/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/whoami.ts)_
 <!-- commandsstop -->

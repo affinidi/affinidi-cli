@@ -2,10 +2,10 @@ import password from '@inquirer/password'
 import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import chalk from 'chalk'
 import z from 'zod'
-import { BaseCommand, RefAppSamples } from '../../common'
+import { BaseCommand, RefAppFramework, RefAppProvider } from '../../common'
 import { promptRequiredParameters } from '../../helpers'
+import { getAppName } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
@@ -20,21 +20,20 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static summary = 'Generates a NextJS reference application that integrates Affinidi Login. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p "../my-app" -s affinidi-nextjs-nextauthjs',
-    '<%= config.bin %> <%= command.id %> --path "../my-app" --sample auth0-nextjs-nextauthjs --force',
+    '<%= config.bin %> <%= command.id %> -p "../my-app" -f django -a affinidi',
+    '<%= config.bin %> <%= command.id %> --path "../my-app" --framework django --provider affinidi --force',
   ]
 
   static flags = {
-    sample: Flags.string({
-      char: 's',
-      summary: 'Sample to generate',
-      description: `Use ${chalk.italic(
-        'affinidi-nextjs-nextauthjs',
-      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login directly\n\
-      Use ${chalk.italic(
-        'auth0-nextjs-nextauthjs',
-      )} to generate a Next.js+NextAuth.js app that integrates Affinidi Login through Auth0`,
-      options: Object.values(RefAppSamples),
+    framework: Flags.string({
+      char: 'f',
+      summary: 'Framework for the reference app',
+      options: Object.values(RefAppFramework),
+    }),
+    provider: Flags.string({
+      char: 'a',
+      summary: 'Authentication provider for the reference app',
+      options: Object.values(RefAppProvider),
     }),
     path: Flags.string({
       char: 'p',
@@ -47,30 +46,44 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(GenerateApp)
-    if (flags['no-input'] && !flags.sample) {
-      throw new CLIError(giveFlagInputErrorMessage('sample'))
+    if (flags['no-input']) {
+      if (!flags.provider) throw new CLIError(giveFlagInputErrorMessage('provider'))
+      if (!flags.framework) throw new CLIError(giveFlagInputErrorMessage('framework'))
     }
-    const sample =
-      flags.sample ??
+    const provider =
+      flags.provider ??
       (await select({
-        message: `Select the app to generate. ${chalk.italic('affinidi-*')} for basic Affinidi Login, ${chalk.italic(
-          'auth0-*',
-        )} for Affinidi Login through Auth0`,
-        choices: Object.values(RefAppSamples).map((value) => ({
+        message: 'Select the provider for the reference app.',
+        choices: Object.values(RefAppProvider).map((value) => ({
+          name: value,
+          value,
+        })),
+      }))
+    const framework =
+      flags.framework ??
+      (await select({
+        message: 'Select the framework for the reference app.',
+        choices: Object.values(RefAppFramework).map((value) => ({
           name: value,
           value,
         })),
       }))
     const promptFlags = await promptRequiredParameters(['path'], flags)
-    promptFlags.sample = sample
+    promptFlags.framework = framework
+    promptFlags.provider = provider
+
     const schema = z.object({
       path: z.string().max(INPUT_LIMIT),
-      sample: z.string().max(INPUT_LIMIT),
+      framework: z.string().max(INPUT_LIMIT),
+      provider: z.string().max(INPUT_LIMIT),
     })
     const validatedFlags = schema.parse(promptFlags)
+    const appName = getAppName(framework, provider)
 
     ux.action.start('Generating reference application')
-    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${sample}`, validatedFlags.path, flags.force)
+
+    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
+
     ux.action.stop('Generated successfully!')
 
     if (!flags['no-input']) {
@@ -102,31 +115,74 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           INPUT_LIMIT,
         )
 
-        if (sample === RefAppSamples.AFFINIDI_NEXTJS_NEXTAUTHJS) {
-          ux.action.start('Configuring reference application')
-          await configureAppEnvironment(
-            validatedFlags.path,
-            selectedConfig.auth.clientId,
-            clientSecret,
-            selectedConfig.auth.issuer,
-          )
-          ux.action.stop('Configured successfully!')
-        } else if (sample === RefAppSamples.AUTH0_NEXTJS_NEXTAUTHJS) {
-          const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
-          const accessToken = validateInputLength(
-            await password({ message: 'What is your Auth0 access token?' }),
-            TOKEN_LIMIT,
-          )
-          ux.action.start('Creating Auth0 resources and configuring reference application')
-          const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
-            accessToken,
-            domain,
-            selectedConfig.auth.clientId,
-            clientSecret,
-            selectedConfig.auth.issuer,
-          )
-          await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
-          ux.action.stop('Configured successfully!')
+        if (framework === RefAppFramework.NEXTJS) {
+          if (provider === RefAppProvider.AFFINIDI) {
+            ux.action.start('Configuring reference application')
+            await configureAppEnvironment(
+              validatedFlags.path,
+              selectedConfig.auth.clientId,
+              clientSecret,
+              selectedConfig.auth.issuer,
+            )
+            ux.action.stop('Configured successfully!')
+          } else if (provider === RefAppProvider.AUTH0) {
+            const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
+            const accessToken = validateInputLength(
+              await password({ message: 'What is your Auth0 access token?' }),
+              TOKEN_LIMIT,
+            )
+            ux.action.start('Creating Auth0 resources and configuring reference application')
+            const socialConnectionName = `Affinidi-${RefAppFramework.NEXTJS}`
+            const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+              accessToken,
+              domain,
+              selectedConfig.auth.clientId,
+              clientSecret,
+              selectedConfig.auth.issuer,
+              socialConnectionName,
+              {
+                callbackUrl: 'http://localhost:3000/api/auth/callback/auth0',
+                logOutUrl: 'http://localhost:3000',
+                webOriginUrl: 'http://localhost:3000',
+              },
+            )
+            await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
+            ux.action.stop('Configured successfully!')
+          }
+        } else if (framework === RefAppFramework.DJANGO) {
+          if (provider === RefAppProvider.AFFINIDI) {
+            ux.action.start('Configuring reference application')
+            await configureAppEnvironment(
+              validatedFlags.path,
+              selectedConfig.auth.clientId,
+              clientSecret,
+              selectedConfig.auth.issuer,
+            )
+            ux.action.stop('Configured successfully!')
+          } else if (provider === RefAppProvider.AUTH0) {
+            const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
+            const accessToken = validateInputLength(
+              await password({ message: 'What is your Auth0 access token?' }),
+              TOKEN_LIMIT,
+            )
+            ux.action.start('Creating Auth0 resources and configuring reference application')
+            const socialConnectionName = `Affinidi-${RefAppFramework.DJANGO}`
+            const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+              accessToken,
+              domain,
+              selectedConfig.auth.clientId,
+              clientSecret,
+              selectedConfig.auth.issuer,
+              socialConnectionName,
+              {
+                callbackUrl: 'http://localhost:8000/callback',
+                logOutUrl: 'http://localhost:8000',
+                webOriginUrl: 'http://localhost:8000',
+              },
+            )
+            await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain)
+            ux.action.stop('Configured successfully!')
+          }
         }
       }
     }
