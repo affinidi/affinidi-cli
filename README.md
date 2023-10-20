@@ -416,15 +416,15 @@ Generates a NextJS reference application that integrates Affinidi Login. Require
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-s django|nextjs] [-s affinidi|auth0] [-p <value>]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-f django|nextjs] [-a affinidi|auth0] [-p <value>]
     [--force]
 
 FLAGS
-  -p, --path=<value>        Relative or absolute path where reference application should be cloned into
-  -s, --framework=<option>  Framework for the reference app
-                            <options: django|nextjs>
-  -s, --provider=<option>   Authentication provider for the reference app
+  -a, --provider=<option>   Authentication provider for the reference app
                             <options: affinidi|auth0>
+  -f, --framework=<option>  Framework for the reference app
+                            <options: django|nextjs>
+  -p, --path=<value>        Relative or absolute path where reference application should be cloned into
   --force                   Override destination directory if exists
 
 GLOBAL FLAGS
@@ -435,9 +435,9 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi generate app
 
-  $ affinidi generate app -p "../my-app" -s affinidi-nextjs-nextauthjs
+  $ affinidi generate app -p "../my-app" -f django -a affinidi
 
-  $ affinidi generate app --path "../my-app" --provider auth0-nextjs-nextauthjs --force
+  $ affinidi generate app --path "../my-app" --framework django --provider affinidi --force
 ```
 
 ## `affinidi help [COMMANDS]`
