@@ -1,7 +1,8 @@
 import process from 'process'
 import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
-import { AuthProvider, AuthProviderConfig, OryAuthenticator, OryAuthenticatorPKCE } from './providers'
+import { BFFAuthProvider } from './providers/bff-auth-provider'
+import { AuthProvider, AuthProviderConfig } from './providers/types'
 import { Principal, tokenService } from './token'
 import { LoggerAdapter } from '../adapters'
 import { iamService } from '../iam'
@@ -39,10 +40,7 @@ export class Auth implements AuthSDK {
    */
   constructor(config: AuthProviderConfig) {
     this.logger = config.logger
-
-    // Ory project for prod uses PKCE, meanwhile for dev - doesn't
-    this.authProvider =
-      process.env.AFFINIDI_CLI_ENVIRONMENT === 'dev' ? new OryAuthenticator(config) : new OryAuthenticatorPKCE(config)
+    this.authProvider = new BFFAuthProvider(config)
   }
 
   private async authenticate() {

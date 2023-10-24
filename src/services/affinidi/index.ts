@@ -30,7 +30,6 @@ export class ClientSDK {
 
     this.auth = new Auth({
       logger: this.logger,
-      clientId: this.clientId,
       host: this.host,
     })
   }

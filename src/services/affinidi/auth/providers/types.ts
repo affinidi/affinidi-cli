@@ -6,7 +6,6 @@ export interface AuthProvider {
 }
 
 export type AuthProviderConfig = {
-  clientId: string
   host: string
   logger: LoggerAdapter
 }

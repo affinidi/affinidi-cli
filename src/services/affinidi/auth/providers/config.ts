@@ -5,10 +5,6 @@ import { successfulLoginPage } from './successful-login-page'
 
 const oryAuthCallbackPort = 2777
 
-export const isOryAuthCallbackPortInUse = async () => {
-  return check(oryAuthCallbackPort)
-}
-
 export const config = {
   redirectHost: 'http://127.0.0.1',
   expressPort: oryAuthCallbackPort,
@@ -20,16 +16,13 @@ export const config = {
   PKCEBytes: 64,
   scope: 'openid offline_access',
 
-  getSSOMessage: (ssoUrl: string) => {
+  getAuthUrlMessage: (authUrl: string) => {
     return (
-      `\nAttempting to automatically open the SSO authorization page in your default browser.\n` +
+      `\nAttempting to automatically open the authentication page in your default browser.\n` +
       `\nIf the browser doesn't open automatically, or if your default browser isn't Google Chrome, please open the following URL in the Chrome browser:\n` +
-      `\n${chalk.underline(ssoUrl)}\n`
+      `\n${chalk.underline(authUrl)}\n`
     )
   },
   successHTML: successfulLoginPage,
   erroredLoginPage: erroredLoginPage,
-  oryAuthCallbackPortUnavailableMessage:
-    `\n💥 Port [${oryAuthCallbackPort}] is unavailable. Affinidi CLI is currently relying on it.\n` +
-    `Please close the process that is using port [${oryAuthCallbackPort}] and try again.`,
 }
