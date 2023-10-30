@@ -1,8 +1,7 @@
-import { LoggerAdapter } from '../adapters'
+import { LoggerAdapter } from '../logger'
 
 export interface AuthProvider {
   authenticate(): Promise<string>
-  logout(): Promise<void>
 }
 
 export type AuthProviderConfig = {

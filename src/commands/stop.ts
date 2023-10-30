@@ -2,7 +2,8 @@ import confirm from '@inquirer/confirm'
 import { ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import { BaseCommand } from '../common'
-import { clientSDK } from '../services/affinidi'
+import { credentialsVault } from '../services/credentials-vault'
+import { bffClient } from '../services/affinidi/bff-client'
 
 export class Stop extends BaseCommand<typeof Stop> {
   static summary = 'Log out from Affinidi'
@@ -10,8 +11,8 @@ export class Stop extends BaseCommand<typeof Stop> {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Stop)
-    const userToken = clientSDK.config.getUserToken()
-    if (!userToken) {
+    const sessionId = credentialsVault.getSessionId()
+    if (!sessionId) {
       this.warn('You are not logged in')
       return
     }
@@ -25,7 +26,7 @@ export class Stop extends BaseCommand<typeof Stop> {
     }
 
     ux.action.start('Logging out')
-    await clientSDK.logout()
+    await bffClient.logout()
     ux.action.stop('Logged out successfully!')
   }
 }

@@ -1,5 +1,5 @@
 import z from 'zod'
-import { LogLevel } from './affinidi/adapters/logger/logger-adapter'
+import { LogLevel } from './affinidi/logger/logger-adapter'
 import * as dotenv from 'dotenv'
 
 dotenv.config()

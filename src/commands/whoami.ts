@@ -8,13 +8,9 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
 
   public async run() {
     ux.action.start('Retrieving user data')
-
     const data = await bffClient.whoami()
-
     ux.action.stop('Retrieved successfully!')
-
     if (!this.jsonEnabled()) this.logJson(data)
-
     return data
   }
 }

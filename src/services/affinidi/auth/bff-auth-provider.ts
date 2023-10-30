@@ -3,7 +3,7 @@ import axios from 'axios'
 import express from 'express'
 import open from 'open'
 import { AuthProvider, AuthProviderConfig } from './types'
-import { LoggerAdapter } from '../adapters'
+import { LoggerAdapter } from '../logger'
 import { check } from 'tcp-port-used'
 import cookieParser from 'cookie-parser'
 import { authResultPage } from './auth-result-page'
@@ -61,12 +61,6 @@ export class BFFAuthProvider implements AuthProvider {
       )
 
       open(authUrl)
-    })
-  }
-
-  public async logout(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      resolve()
     })
   }
 

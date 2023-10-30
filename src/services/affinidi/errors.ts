@@ -12,7 +12,7 @@ const getCommonAPIErrorMessage = (response: any): string => {
   switch (response.status) {
     case StatusCodes.FORBIDDEN:
     case StatusCodes.UNAUTHORIZED:
-      return "You are not authorized to perform this action\nPlease, make sure you are logged in and have an active project by running command 'affinidi start'"
+      return "You are not authorized to perform this action\nPlease, make sure you are logged in by running command 'affinidi start'"
     case StatusCodes.NOT_FOUND:
       return 'The resource you are trying to access was not found\nPlease, check the entered resource identifier'
     case StatusCodes.TOO_MANY_REQUESTS:

@@ -1,25 +1,26 @@
-import { ConsoleLoggerAdapter, LoggerAdapter } from './adapters'
+import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
 import { config } from '../env-config'
 import { credentialsVault } from '../credentials-vault'
 import { AuthProvider } from './auth/types'
 import { BFFAuthProvider } from './auth/bff-auth-provider'
 import { handleServiceError } from './errors'
+import axios, { RawAxiosRequestHeaders } from 'axios'
 
-function getBFFHeaders(): RequestInit {
+export const instance = axios.create({
+  baseURL: config.bffHost,
+})
+
+export function getBFFHeaders(): RawAxiosRequestHeaders {
   return {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Cookie: `${config.bffCookieName}=${credentialsVault.getSessionId()}`,
-    },
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    'Accept-Encoding': 'gzip, deflate, br',
+    Cookie: `${config.bffCookieName}=${credentialsVault.getSessionId()}`,
   }
 }
 
 export class BFFClient {
   private readonly logger: LoggerAdapter
-
   public readonly authProvider: AuthProvider
 
   constructor() {
@@ -33,15 +34,19 @@ export class BFFClient {
     return this.authProvider.authenticate()
   }
 
-  public logout(): Promise<void> {
-    credentialsVault.clear()
-    return this.authProvider.logout()
+  public async logout(): Promise<void> {
+    try {
+      await instance.get('/api/logout', { headers: getBFFHeaders() })
+      credentialsVault.clear()
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async whoami(): Promise<any> {
     try {
-      const response = await fetch(`${config.bffHost}/api/whoami`, getBFFHeaders())
-      return (await response.json()).data
+      const res = await instance.get('/api/whoami', { headers: getBFFHeaders() })
+      return res.data.data
     } catch (error) {
       handleServiceError(error)
     }

@@ -1,1 +1,0 @@
-export { configService } from './config'
