@@ -1,4 +1,4 @@
-import { LoggerAdapter } from '../../adapters'
+import { LoggerAdapter } from '../adapters'
 
 export interface AuthProvider {
   authenticate(): Promise<string>
@@ -6,6 +6,5 @@ export interface AuthProvider {
 }
 
 export type AuthProviderConfig = {
-  host: string
   logger: LoggerAdapter
 }

@@ -1,8 +1,7 @@
-import process from 'process'
 import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
-import { BFFAuthProvider } from './providers/bff-auth-provider'
-import { AuthProvider, AuthProviderConfig } from './providers/types'
+import { BFFAuthProvider } from './bff-auth-provider'
+import { AuthProvider, AuthProviderConfig } from './types'
 import { Principal, tokenService } from './token'
 import { LoggerAdapter } from '../adapters'
 import { iamService } from '../iam'
@@ -56,13 +55,6 @@ export class Auth implements AuthSDK {
     this.logger.debug(`Successfully fetched the list of projects`)
     this.logger.debug(`Projects: ${JSON.stringify(projects)}`)
     return projects
-  }
-
-  public getActiveProject(projects: Array<ProjectDto>): ProjectDto {
-    const savedProjectId = tokenService.getProjectToken()?.projectId
-    this.logger.debug(`Saved projectId: ${savedProjectId}`)
-    const savedProject = savedProjectId && projects.find((project) => project.id === savedProjectId)
-    return savedProject || projects[0]
   }
 
   private async createProject(accessToken: string) {
@@ -173,5 +165,12 @@ export class Auth implements AuthSDK {
   public getPrincipalString(): string {
     const principal = tokenService.getPrincipal()
     return `${principal.principalType}/${principal.principalId}`
+  }
+
+  public getActiveProject(projects: Array<ProjectDto>): ProjectDto {
+    const savedProjectId = tokenService.getProjectToken()?.projectId
+    this.logger.debug(`Saved projectId: ${savedProjectId}`)
+    const savedProject = savedProjectId && projects.find((project) => project.id === savedProjectId)
+    return savedProject || projects[0]
   }
 }

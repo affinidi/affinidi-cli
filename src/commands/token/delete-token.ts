@@ -1,8 +1,8 @@
 import { ux, Flags } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
-import { INPUT_LIMIT } from '../../helpers/input-length-validation'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT } from '../../common/validators'
 import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 

@@ -1,9 +1,10 @@
-import { Flags } from '@oclif/core'
+import { Flags, ux } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../common'
-import { INPUT_LIMIT } from '../helpers/input-length-validation'
+import { INPUT_LIMIT } from '../common/validators'
 import { configService } from '../services'
 import { clientSDK } from '../services/affinidi'
+import { bffClient } from '../services/affinidi/bff-client'
 
 export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'
@@ -20,14 +21,17 @@ export class Start extends BaseCommand<typeof Start> {
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(Start)
-    const schema = z.string().uuid().max(INPUT_LIMIT).optional()
-    const projectId = schema.parse(flags['project-id'])
+    // const { flags } = await this.parse(Start)
+    // const schema = z.string().uuid().max(INPUT_LIMIT).optional()
+    // const projectId = schema.parse(flags['project-id'])
 
-    const { principal } = await clientSDK.login({
-      projectId,
-    })
-
-    configService.createOrUpdate(`${principal.principalType}/${principal.principalId}`)
+    ux.action.start('Authenticating in browser')
+    try {
+      await bffClient.login()
+      ux.action.start('Authenticated successfully!')
+    } catch (error) {
+      ux.action.stop('Authentication failed!')
+      this.error(error as string)
+    }
   }
 }

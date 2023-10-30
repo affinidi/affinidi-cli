@@ -1,4 +1,4 @@
-export const successfulLoginPage = `<!DOCTYPE html>
+export const authResultPage = (title: string, content: string) => `<!DOCTYPE html>
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
@@ -94,10 +94,9 @@ export const successfulLoginPage = `<!DOCTYPE html>
 
   <div class="outer-container">
     <div class="inner-container">
-      <h1>Logged in successfully.</h1>
-
+      <h1>${title}</h1>
       <p>
-        Head back to the command prompt or terminal to continue using our services.<br>You can also access our services from the <a href="https://portal.affinidi.com" target="_blank">Affindi Portal</a>.
+        ${content}
       </p>
     </div>
   </div>
