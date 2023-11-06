@@ -18,7 +18,7 @@ const APPS_INFORMATION_GITHUB_LOCATION = 'samples/auth0-nextjs-nextauthjs/tsconf
 const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
-  static apps: any;
+  static apps: any
   static providers: string[] = []
   static frameworks: string[] = []
   static libraries: Map<string, string[]>
@@ -48,14 +48,14 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       summary: 'Override destination directory if exists',
     }),
   }
-  
+
   async init() {
-    GenerateApp.apps = await getApps(APPS_INFORMATION_GITHUB_LOCATION);
-    const { providers, frameworks, libraries} = getSupportedAppsInformation(GenerateApp.apps)
+    GenerateApp.apps = await getApps(APPS_INFORMATION_GITHUB_LOCATION)
+    const { providers, frameworks, libraries } = getSupportedAppsInformation(GenerateApp.apps)
     GenerateApp.providers = providers
     GenerateApp.frameworks = frameworks
     GenerateApp.libraries = libraries
-    
+
     GenerateApp.flags.framework = Flags.string({
       char: 'f',
       summary: 'Framework for the reference app',
@@ -138,7 +138,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           }),
           INPUT_LIMIT,
         )
-        
+
         if (provider === RefAppProvider.AFFINIDI) {
           ux.action.start('Configuring reference application')
           await configureAppEnvironment(
