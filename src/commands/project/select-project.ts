@@ -5,8 +5,8 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { INPUT_LIMIT } from '../../common/validators'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 import { bffService } from '../../services/affinidi/bff-service'
+import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 
 export class SelectProject extends BaseCommand<typeof SelectProject> {
   static summary = 'Sets a project as the active project'
@@ -56,7 +56,7 @@ export class SelectProject extends BaseCommand<typeof SelectProject> {
       })
     }
 
-    let selectedProject = userProjects.find((project) => project.id === projectId)
+    const selectedProject = userProjects.find((project) => project.id === projectId)
     if (!selectedProject) {
       throw new CLIError('Project not found')
     }

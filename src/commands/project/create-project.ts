@@ -3,8 +3,8 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 import { bffService } from '../../services/affinidi/bff-service'
+import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 
 export class CreateProject extends BaseCommand<typeof CreateProject> {
   static summary = 'Creates a project and sets it as the active project'

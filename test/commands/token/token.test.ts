@@ -1,10 +1,12 @@
 import { expect, test } from '@oclif/test'
-import { IAM_URL } from '../../../../src/services/urls'
+import { config } from '../../../src/services/env-config'
+
+const IAM_URL = `${config.bffHost}/iam`
 
 const data = {
   newTokenName: 'new-token-name',
   keyId: '12345',
-  publicKeyFilePath: 'test/unit/helpers/public_key.pem',
+  publicKeyFilePath: 'test/helpers/public_key.pem',
   tokenId: 'c4a32776-3203-4bf7-87d9-a6e6f9ddd09e',
 }
 

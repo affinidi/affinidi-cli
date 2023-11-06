@@ -1,11 +1,11 @@
-import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
-import { config } from '../env-config'
-import { credentialsVault } from '../credentials-vault'
-import { AuthProvider } from './auth/types'
-import { BFFAuthProvider } from './auth/bff-auth-provider'
-import { handleServiceError } from './errors'
 import axios, { RawAxiosRequestHeaders } from 'axios'
+import { BFFAuthProvider } from './auth/bff-auth-provider'
+import { AuthProvider } from './auth/types'
+import { handleServiceError } from './errors'
 import { CreateProjectInput, ProjectDto } from './iam/iam.api'
+import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
+import { credentialsVault } from '../credentials-vault'
+import { config } from '../env-config'
 
 export const instance = axios.create({
   baseURL: config.bffHost,

@@ -12,9 +12,9 @@ import {
   UserList,
   WhoamiDto,
 } from './iam.api'
-import { handleServiceError } from '../errors'
 import { config } from '../../env-config'
 import { getBFFHeaders } from '../bff-service'
+import { handleServiceError } from '../errors'
 
 class IAMService {
   constructor(

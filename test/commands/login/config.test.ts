@@ -1,5 +1,7 @@
 import { expect, test } from '@oclif/test'
-import { VP_ADAPTER_URL } from '../../../../src/services/urls'
+import { config } from '../../../src/services/env-config'
+
+const VP_ADAPTER_URL = `${config.bffHost}/vpa`
 
 const data = {
   newConfigName: 'new-config',

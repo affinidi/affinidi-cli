@@ -4,11 +4,11 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, RefAppFramework, RefAppProvider } from '../../common'
+import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
 import { getAppName } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
-import { giveFlagInputErrorMessage } from '../../common/error-messages'
-import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
@@ -164,7 +164,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             )
             ux.action.start('Creating Auth0 resources and configuring reference application')
             const socialConnectionName = `Affinidi-${RefAppFramework.DJANGO}`
-            const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+            const { auth0ClientId, auth0ClientSecret } = await createAuth0Resources(
               accessToken,
               domain,
               selectedConfig.auth.clientId,

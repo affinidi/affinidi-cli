@@ -1,15 +1,14 @@
 import http from 'http'
+import chalk from 'chalk'
 import express from 'express'
 import open from 'open'
-import { AuthProvider, AuthProviderConfig } from './types'
-import { LoggerAdapter } from '../logger'
 import { check } from 'tcp-port-used'
-import cookieParser from 'cookie-parser'
 import { authResultPage } from './auth-result-page'
-import chalk from 'chalk'
-import { config } from '../../env-config'
+import { AuthProvider, AuthProviderConfig } from './types'
 import { credentialsVault } from '../../credentials-vault'
+import { config } from '../../env-config'
 import { bffService } from '../bff-service'
+import { LoggerAdapter } from '../logger'
 
 export class BFFAuthProvider implements AuthProvider {
   private readonly logger: LoggerAdapter
@@ -38,7 +37,6 @@ export class BFFAuthProvider implements AuthProvider {
       this.logger.debug('Start express server')
 
       const app = express()
-      app.use(cookieParser())
       const server = app.listen(port, () => {
         this.logger.debug(`Express server started listening on port ${port}`)
       })
@@ -64,6 +62,7 @@ export class BFFAuthProvider implements AuthProvider {
           `\n${chalk.underline(authUrl)}\n\n`,
       )
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       open(authUrl.href)
     })
   }

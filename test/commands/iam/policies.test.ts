@@ -1,9 +1,7 @@
 import { expect, test } from '@oclif/test'
-import { configService } from '../../../../src/services'
-import { clientSDK } from '../../../../src/services/affinidi'
-import { IAM_URL } from '../../../../src/services/urls'
+import { config } from '../../../src/services/env-config'
 
-const testUserId = '38efcc70-bbe1-457a-a6c7-b29ad9913648'
+const IAM_URL = `${config.bffHost}/iam`
 const principalId = 'b2ce7675-5418-4058-b973-d254270de2d4'
 const principalType = 'machine_user'
 const getPoliciesApiResponse = {
@@ -19,13 +17,6 @@ const getPoliciesApiResponse = {
 }
 describe('iam: commands', function () {
   describe('get-policies', function () {
-    beforeEach(function () {
-      configService.create(testUserId)
-    })
-    afterEach(function () {
-      configService.clear()
-      clientSDK.config.clear()
-    })
     test
       .nock(IAM_URL, (api) =>
         api
@@ -35,7 +26,7 @@ describe('iam: commands', function () {
       .stdout()
       .command(['iam get-policies', `--principal-id=${principalId}`, `--principal-type=${principalType}`])
       .it('Should return list of projects', (ctx) => {
-        const response: any = JSON.parse(ctx.stdout)
+        const response = JSON.parse(ctx.stdout)
 
         expect(response).to.have.a.property('version')
         expect(response).to.have.a.property('statement')

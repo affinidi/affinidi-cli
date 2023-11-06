@@ -1,7 +1,7 @@
 import { ux } from '@oclif/core'
 import { BaseCommand } from '../../common'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 import { bffService } from '../../services/affinidi/bff-service'
+import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 
 export class GetActiveProject extends BaseCommand<typeof GetActiveProject> {
   static summary = 'Gets the current active project'
