@@ -10,6 +10,7 @@ import { authResultPage } from './auth-result-page'
 import chalk from 'chalk'
 import { config } from '../../env-config'
 import { credentialsVault, sessionIdSchema } from '../../credentials-vault'
+import { bffClient } from '../bff-client'
 
 export class BFFAuthProvider implements AuthProvider {
   private readonly logger: LoggerAdapter
@@ -28,7 +29,11 @@ export class BFFAuthProvider implements AuthProvider {
       )
     }
 
-    const authUrl = await this.getAuthUrl()
+    const authUrl = await bffClient.getAuthUrl()
+    const state = authUrl.searchParams.get('state')
+    if (!state) {
+      throw new Error('Unexpected error occurred. state parameter missing')
+    }
 
     return new Promise<string>((resolve, reject) => {
       this.logger.debug('Start express server')
@@ -49,7 +54,7 @@ export class BFFAuthProvider implements AuthProvider {
           this.handleError({ reject, req, res, timeout })
           this.shutDownServer(server)
         } else {
-          await this.handleSuccess({ resolve, reject, req, res, timeout })
+          await this.handleSuccess({ resolve, reject, res, timeout, state })
           this.shutDownServer(server)
         }
       })
@@ -60,17 +65,8 @@ export class BFFAuthProvider implements AuthProvider {
           `\n${chalk.underline(authUrl)}\n\n`,
       )
 
-      open(authUrl)
+      open(authUrl.href)
     })
-  }
-
-  private async getAuthUrl(): Promise<string> {
-    const instance = axios.create({
-      baseURL: config.bffHost,
-      withCredentials: true,
-    })
-    const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`)
-    return response.data.authUrl
   }
 
   /**
@@ -84,14 +80,16 @@ export class BFFAuthProvider implements AuthProvider {
   private async handleSuccess(params: {
     resolve: (value: string | PromiseLike<string>) => void
     reject: (reason?: any) => void
-    req: express.Request
     res: express.Response
     timeout: NodeJS.Timeout
+    state: string
   }) {
-    const { resolve, reject, req, res, timeout } = params
+    const { resolve, reject, res, timeout, state } = params
+
     clearTimeout(timeout)
     try {
-      const sessionId = sessionIdSchema.parse(req.cookies[config.bffCookieName])
+      this.logger.debug(`Getting sessionId for state: ${JSON.stringify(state)}`)
+      const sessionId = await bffClient.getSessionId(state)
       this.logger.debug(`Received session: ${JSON.stringify(sessionId)}`)
       credentialsVault.setSessionId(sessionId)
       this.logger.debug(`Session stored in vault`)
@@ -103,7 +101,7 @@ export class BFFAuthProvider implements AuthProvider {
         ),
       )
     } catch (error) {
-      this.logger.debug(error as string)
+      this.logger.info(error as string)
       const errorMessage = this.generateErrorMessage()
       reject(errorMessage)
       res.end(authResultPage('Login failed', errorMessage))

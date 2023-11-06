@@ -51,6 +51,25 @@ export class BFFClient {
       handleServiceError(error)
     }
   }
+
+  public async getAuthUrl(): Promise<URL> {
+    try {
+      const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`)
+      return new URL(response.data.authUrl)
+    } catch (error) {
+      handleServiceError(error)
+    }
+  }
+
+  public async getSessionId(state: string): Promise<string> {
+    try {
+      const res = await instance.get('/api/session-id', { params: { state: state } })
+      console.log(res.data)
+      return res.data.sessionId
+    } catch (error) {
+      handleServiceError(error)
+    }
+  }
 }
 
 export const bffClient = new BFFClient()
