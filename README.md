@@ -925,7 +925,7 @@ FLAG DESCRIPTIONS
 
 ## `affinidi project create-project`
 
-Creates a project
+Creates a project and sets it as the active project
 
 ```
 USAGE
@@ -1026,10 +1026,7 @@ Log in to Affinidi
 
 ```
 USAGE
-  $ affinidi start [--json] [--no-color] [--no-input] [-i <value>]
-
-FLAGS
-  -i, --project-id=<value>  ID of the project to set as active
+  $ affinidi start [--json] [--no-color] [--no-input]
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -1038,10 +1035,6 @@ GLOBAL FLAGS
 
 EXAMPLES
   $ affinidi start
-
-  $ affinidi start -i <project-id>
-
-  $ affinidi start --project-id <project-id>
 ```
 
 _See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/start.ts)_
