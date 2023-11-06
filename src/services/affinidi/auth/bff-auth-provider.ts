@@ -135,7 +135,7 @@ export class BFFAuthProvider implements AuthProvider {
         errorMessage =
           errorDescription === 'request_declined'
             ? 'You have declined access to your data. Granting access to your data is necessary to avail our services.'
-            : `Access denied with the description: ${errorDescription}.`
+            : 'Access denied.'
         break
       default:
         errorMessage = 'Unexpected error occurred'
