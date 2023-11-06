@@ -5,7 +5,6 @@ import { BaseCommand, SupportedAlgorithms } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
 import { getKeyType, pemToJWK } from '../../helpers/jwk'
-import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { MachineUserDto } from '../../services/affinidi/iam/iam.api'
 
@@ -56,31 +55,27 @@ export class UpdateToken extends BaseCommand<typeof UpdateToken> {
 
     const publicKeyPEM = await readFile(validatedFlags['public-key-file'], 'utf8')
     const jwk = await pemToJWK(publicKeyPEM, validatedFlags.algorithm)
-    const out = await iamService.updateMachineUser(
-      clientSDK.config.getUserToken()?.access_token,
-      validatedFlags['token-id'],
-      {
-        name: validatedFlags.name,
-        authenticationMethod: {
-          type: 'PRIVATE_KEY',
-          signingAlgorithm: validatedFlags.algorithm,
-          publicKeyInfo: {
-            jwks: {
-              keys: [
-                {
-                  kid: validatedFlags['key-id'],
-                  alg: validatedFlags.algorithm,
-                  use: 'sig',
-                  kty: jwk.kty ?? getKeyType(validatedFlags.algorithm),
-                  n: jwk.n,
-                  e: jwk.e,
-                },
-              ],
-            },
+    const out = await iamService.updateMachineUser(validatedFlags['token-id'], {
+      name: validatedFlags.name,
+      authenticationMethod: {
+        type: 'PRIVATE_KEY',
+        signingAlgorithm: validatedFlags.algorithm,
+        publicKeyInfo: {
+          jwks: {
+            keys: [
+              {
+                kid: validatedFlags['key-id'],
+                alg: validatedFlags.algorithm,
+                use: 'sig',
+                kty: jwk.kty ?? getKeyType(validatedFlags.algorithm),
+                n: jwk.n,
+                e: jwk.e,
+              },
+            ],
           },
         },
       },
-    )
+    })
     ux.action.stop('Updated successfully!')
 
     if (!this.jsonEnabled()) this.logJson(out)

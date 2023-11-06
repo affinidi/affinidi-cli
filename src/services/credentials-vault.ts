@@ -4,7 +4,7 @@ import path from 'path'
 import z from 'zod'
 import { config } from './env-config'
 
-export const sessionIdSchema = z.string()
+const sessionIdSchema = z.string()
 const credentialsSchema = z.object({
   sessionId: sessionIdSchema,
 })

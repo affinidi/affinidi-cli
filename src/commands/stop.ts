@@ -3,7 +3,7 @@ import { ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import { BaseCommand } from '../common'
 import { credentialsVault } from '../services/credentials-vault'
-import { bffClient } from '../services/affinidi/bff-client'
+import { bffService } from '../services/affinidi/bff-service'
 
 export class Stop extends BaseCommand<typeof Stop> {
   static summary = 'Log out from Affinidi'
@@ -26,7 +26,7 @@ export class Stop extends BaseCommand<typeof Stop> {
     }
 
     ux.action.start('Logging out')
-    await bffClient.logout()
+    await bffService.logout()
     ux.action.stop('Logged out successfully!')
   }
 }

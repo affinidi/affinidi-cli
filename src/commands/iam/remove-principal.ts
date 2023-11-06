@@ -7,7 +7,6 @@ import { BaseCommand, PrincipalTypes } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 
 export class RemovePrincipal extends BaseCommand<typeof RemovePrincipal> {
@@ -55,11 +54,7 @@ export class RemovePrincipal extends BaseCommand<typeof RemovePrincipal> {
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Removing principal from project')
-    await iamService.deletePrincipalFromProject(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags['principal-id'],
-      validatedFlags['principal-type'],
-    )
+    await iamService.deletePrincipalFromProject(validatedFlags['principal-id'], validatedFlags['principal-type'])
     ux.action.stop('Removed successfully!')
 
     if (!this.jsonEnabled()) this.logJson(validatedFlags)

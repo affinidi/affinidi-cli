@@ -9,7 +9,6 @@ import { getAppName } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
@@ -92,9 +91,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       })
       if (configure) {
         ux.action.start('Fetching available login configurations')
-        const configs = await vpAdapterService.listLoginConfigurations(
-          clientSDK.config.getProjectToken()?.projectAccessToken,
-        )
+        const configs = await vpAdapterService.listLoginConfigurations()
         ux.action.stop('Fetched successfully!')
         const choices = configs.configurations.map((config) => ({
           value: {

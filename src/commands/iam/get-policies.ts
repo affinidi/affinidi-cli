@@ -7,7 +7,6 @@ import { BaseCommand, PrincipalTypes } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { PolicyDto } from '../../services/affinidi/iam/iam.api'
 
@@ -54,11 +53,7 @@ export class GetPolicies extends BaseCommand<typeof GetPolicies> {
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Fetching principal policies')
-    const out = await iamService.getPolicies(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags['principal-id'],
-      validatedFlags['principal-type'],
-    )
+    const out = await iamService.getPolicies(validatedFlags['principal-id'], validatedFlags['principal-type'])
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(out)

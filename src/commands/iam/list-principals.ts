@@ -1,7 +1,6 @@
 import { ux } from '@oclif/core'
 import chalk from 'chalk'
 import { BaseCommand } from '../../common'
-import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { UserList } from '../../services/affinidi/iam/iam.api'
 
@@ -12,7 +11,7 @@ export class ListPrincipals extends BaseCommand<typeof ListPrincipals> {
 
   public async run(): Promise<UserList> {
     ux.action.start('Fetching project principals')
-    const out = await iamService.listPrincipalsOfProject(clientSDK.config.getProjectToken()?.projectAccessToken)
+    const out = await iamService.listPrincipalsOfProject()
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(out)

@@ -6,7 +6,6 @@ import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
   CreateLoginConfigurationInput,
@@ -139,10 +138,7 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
     const createLoginConfigInput = createConfigSchema.parse(data)
 
     ux.action.start('Creating login configuration')
-    const createConfigOutput = await vpAdapterService.createLoginConfig(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      createLoginConfigInput,
-    )
+    const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
     ux.action.stop('Created successfully!')
 
     this.warn(

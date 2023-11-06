@@ -5,6 +5,7 @@ import { AuthProvider } from './auth/types'
 import { BFFAuthProvider } from './auth/bff-auth-provider'
 import { handleServiceError } from './errors'
 import axios, { RawAxiosRequestHeaders } from 'axios'
+import { CreateProjectInput, ProjectDto } from './iam/iam.api'
 
 export const instance = axios.create({
   baseURL: config.bffHost,
@@ -19,7 +20,7 @@ export function getBFFHeaders(): RawAxiosRequestHeaders {
   }
 }
 
-export class BFFClient {
+export class BFFService {
   private readonly logger: LoggerAdapter
   public readonly authProvider: AuthProvider
 
@@ -64,12 +65,31 @@ export class BFFClient {
   public async getSessionId(state: string): Promise<string> {
     try {
       const res = await instance.get('/api/session-id', { params: { state: state } })
-      console.log(res.data)
       return res.data.sessionId
     } catch (error) {
       handleServiceError(error)
     }
   }
+
+  public async getProjects(): Promise<ProjectDto[]> {
+    const res = await instance.get('/api/projects', { headers: getBFFHeaders() })
+    return res.data as ProjectDto[]
+  }
+
+  public async createProject(projectInput: CreateProjectInput): Promise<ProjectDto> {
+    const res = await instance.post('/api/project', projectInput, { headers: getBFFHeaders() })
+    return res.data as ProjectDto
+  }
+
+  public async getActiveProject(): Promise<ProjectDto> {
+    const res = await instance.get('/api/project', { headers: getBFFHeaders() })
+    return res.data as ProjectDto
+  }
+
+  public async setSessionActiveProject(projectId: string): Promise<string> {
+    const res = await instance.get(`/api/projects/${projectId}`, { headers: getBFFHeaders() })
+    return res.data.projectId as string
+  }
 }
 
-export const bffClient = new BFFClient()
+export const bffService = new BFFService()

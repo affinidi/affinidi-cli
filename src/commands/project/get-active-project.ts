@@ -1,7 +1,7 @@
 import { ux } from '@oclif/core'
 import { BaseCommand } from '../../common'
-import { tokenService, ProjectToken } from '../../services/affinidi/auth/token'
 import { ProjectDto } from '../../services/affinidi/iam/iam.api'
+import { bffService } from '../../services/affinidi/bff-service'
 
 export class GetActiveProject extends BaseCommand<typeof GetActiveProject> {
   static summary = 'Gets the current active project'
@@ -9,11 +9,9 @@ export class GetActiveProject extends BaseCommand<typeof GetActiveProject> {
 
   public async run(): Promise<ProjectDto> {
     ux.action.start('Getting current active project')
-    const projectToken: ProjectToken = tokenService.getProjectToken()
-    ux.action.stop('Active project listed successfully!')
-
-    const response: ProjectDto = { id: projectToken?.projectId, name: projectToken?.projectName }
-    if (!this.jsonEnabled()) this.logJson(response)
-    return response
+    const activeProject = await bffService.getActiveProject()
+    ux.action.stop('Active project fetched successfully!')
+    if (!this.jsonEnabled()) this.logJson(activeProject)
+    return activeProject
   }
 }

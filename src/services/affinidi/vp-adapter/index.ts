@@ -12,7 +12,7 @@ import {
 } from './vp-adapter.api'
 import { handleServiceError } from '../errors'
 import { config } from '../../env-config'
-import { getBFFHeaders } from '../bff-client'
+import { getBFFHeaders } from '../bff-service'
 
 export const VPA_SERVICE = 'vp-adapter'
 

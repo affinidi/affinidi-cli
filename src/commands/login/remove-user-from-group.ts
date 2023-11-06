@@ -3,7 +3,6 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 
 export class RemoveUserFromGroup extends BaseCommand<typeof RemoveUserFromGroup> {
@@ -28,11 +27,7 @@ export class RemoveUserFromGroup extends BaseCommand<typeof RemoveUserFromGroup>
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Removing user from group')
-    await vpAdapterService.removeUserFromGroup(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags['group-name'],
-      validatedFlags['user-mapping-id'],
-    )
+    await vpAdapterService.removeUserFromGroup(validatedFlags['group-name'], validatedFlags['user-mapping-id'])
     ux.action.stop('Removed successfully!')
 
     const response = { groupName: validatedFlags['group-name'], userMappingId: validatedFlags['user-mapping-id'] }

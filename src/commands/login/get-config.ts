@@ -3,7 +3,6 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { LoginConfigurationObject } from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
@@ -29,10 +28,7 @@ export class GetLoginConfiguration extends BaseCommand<typeof GetLoginConfigurat
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Fetching login configuration')
-    const getLoginConfigOutput = await vpAdapterService.getLoginConfigurationById(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags.id,
-    )
+    const getLoginConfigOutput = await vpAdapterService.getLoginConfigurationById(validatedFlags.id)
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(getLoginConfigOutput)

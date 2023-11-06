@@ -14,7 +14,7 @@ import {
 } from './iam.api'
 import { handleServiceError } from '../errors'
 import { config } from '../../env-config'
-import { getBFFHeaders } from '../bff-client'
+import { getBFFHeaders } from '../bff-service'
 
 class IAMService {
   constructor(
@@ -36,12 +36,11 @@ class IAMService {
     }
   }
 
-  public listProjects = async (): Promise<Array<ProjectDto>> => {
+  public listProjects = async (): Promise<Array<any>> => {
     try {
-      const {
-        data: { projects },
-      } = await this.client.v1.listProject({ headers: getBFFHeaders() })
-      return projects
+      const res = await this.client.v1.listProject({ headers: getBFFHeaders() })
+      console.log(JSON.stringify(res.data))
+      return res.data.projects
     } catch (error) {
       handleServiceError(error)
     }

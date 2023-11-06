@@ -1,6 +1,6 @@
 import { ux } from '@oclif/core'
 import { BaseCommand } from '../common'
-import { bffClient } from '../services/affinidi/bff-client'
+import { bffService } from '../services/affinidi/bff-service'
 
 export class WhoAmI extends BaseCommand<typeof WhoAmI> {
   static summary = "Returns user's subject and principalId from his active session"
@@ -8,7 +8,7 @@ export class WhoAmI extends BaseCommand<typeof WhoAmI> {
 
   public async run() {
     ux.action.start('Retrieving user data')
-    const data = await bffClient.whoami()
+    const data = await bffService.whoami()
     ux.action.stop('Retrieved successfully!')
     if (!this.jsonEnabled()) this.logJson(data)
     return data

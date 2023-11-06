@@ -3,7 +3,6 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupUserMappingsList } from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
@@ -25,10 +24,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Fetching users in the user group')
-    const listGroupUsersOutput = await vpAdapterService.listGroupUsers(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags['group-name'],
-    )
+    const listGroupUsersOutput = await vpAdapterService.listGroupUsers(validatedFlags['group-name'])
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(listGroupUsersOutput)

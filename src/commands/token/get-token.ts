@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { iamService } from '../../services/affinidi/iam'
 import { MachineUserDto } from '../../services/affinidi/iam/iam.api'
 
@@ -28,7 +27,7 @@ export class GetToken extends BaseCommand<typeof GetToken> {
     const tokenId = schema.parse(promptFlags['token-id'])
 
     ux.action.start('Fetching Personal Access Token details')
-    const out = await iamService.getMachineUser(clientSDK.config.getUserToken()?.access_token, tokenId)
+    const out = await iamService.getMachineUser(tokenId)
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(out)

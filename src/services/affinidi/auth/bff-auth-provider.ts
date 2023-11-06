@@ -1,5 +1,4 @@
 import http from 'http'
-import axios from 'axios'
 import express from 'express'
 import open from 'open'
 import { AuthProvider, AuthProviderConfig } from './types'
@@ -9,8 +8,8 @@ import cookieParser from 'cookie-parser'
 import { authResultPage } from './auth-result-page'
 import chalk from 'chalk'
 import { config } from '../../env-config'
-import { credentialsVault, sessionIdSchema } from '../../credentials-vault'
-import { bffClient } from '../bff-client'
+import { credentialsVault } from '../../credentials-vault'
+import { bffService } from '../bff-service'
 
 export class BFFAuthProvider implements AuthProvider {
   private readonly logger: LoggerAdapter
@@ -29,7 +28,7 @@ export class BFFAuthProvider implements AuthProvider {
       )
     }
 
-    const authUrl = await bffClient.getAuthUrl()
+    const authUrl = await bffService.getAuthUrl()
     const state = authUrl.searchParams.get('state')
     if (!state) {
       throw new Error('Unexpected error occurred. state parameter missing')
@@ -89,7 +88,7 @@ export class BFFAuthProvider implements AuthProvider {
     clearTimeout(timeout)
     try {
       this.logger.debug(`Getting sessionId for state: ${JSON.stringify(state)}`)
-      const sessionId = await bffClient.getSessionId(state)
+      const sessionId = await bffService.getSessionId(state)
       this.logger.debug(`Received session: ${JSON.stringify(sessionId)}`)
       credentialsVault.setSessionId(sessionId)
       this.logger.debug(`Session stored in vault`)

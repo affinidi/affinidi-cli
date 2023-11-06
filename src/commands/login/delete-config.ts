@@ -3,7 +3,6 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 
 export class DeleteLoginConfiguration extends BaseCommand<typeof DeleteLoginConfiguration> {
@@ -28,10 +27,7 @@ export class DeleteLoginConfiguration extends BaseCommand<typeof DeleteLoginConf
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Deleting login configuration')
-    await vpAdapterService.deleteLoginConfigurationById(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags.id,
-    )
+    await vpAdapterService.deleteLoginConfigurationById(validatedFlags.id)
     ux.action.stop('Deleted successfully!')
 
     if (!this.jsonEnabled()) this.logJson({ id: validatedFlags.id })

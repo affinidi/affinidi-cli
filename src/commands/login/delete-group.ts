@@ -3,7 +3,6 @@ import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 
 export class DeleteGroup extends BaseCommand<typeof DeleteGroup> {
@@ -28,7 +27,7 @@ export class DeleteGroup extends BaseCommand<typeof DeleteGroup> {
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Deleting user group')
-    await vpAdapterService.deleteGroup(clientSDK.config.getProjectToken()?.projectAccessToken, validatedFlags.name)
+    await vpAdapterService.deleteGroup(validatedFlags.name)
     ux.action.stop('Deleted successfully!')
 
     if (!this.jsonEnabled()) this.logJson({ name: validatedFlags.name })
