@@ -14,7 +14,7 @@ import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
 
-const APPS_INFORMATION_GITHUB_LOCATION = 'samples/auth0-nextjs-nextauthjs/tsconfig.json' // TODO: Change
+const APPS_INFORMATION_GITHUB_LOCATION = 'samples/apps.json'
 const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
