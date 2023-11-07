@@ -47,7 +47,7 @@ export class BFFService {
   public async whoami(): Promise<any> {
     try {
       const res = await instance.get('/api/whoami', { headers: getBFFHeaders() })
-      return res.data.data
+      return res.data
     } catch (error) {
       handleServiceError(error)
     }
