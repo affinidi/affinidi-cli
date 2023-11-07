@@ -1,4 +1,3 @@
-import * as fs from 'fs'
 import { CLIError } from '@oclif/core/lib/errors'
 import axios from 'axios'
 
