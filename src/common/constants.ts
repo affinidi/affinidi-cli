@@ -25,19 +25,6 @@ export enum RefAppProvider {
   AUTH0 = 'auth0',
 }
 
-export enum RefAppFramework {
-  DJANGO = 'django',
-  NEXTJS = 'nextjs',
-}
-
-export enum RefAppDjangoLibrary {
-  AUTHLIB = 'authlib',
-}
-
-export enum RefAppNextJsLibrary {
-  NEXTAUTHJS = 'nextauthjs',
-}
-
 export interface Auth0Config {
   callbackUrl: string
   webOriginUrl: string
