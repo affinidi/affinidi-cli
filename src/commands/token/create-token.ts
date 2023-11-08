@@ -2,10 +2,9 @@ import { readFile } from 'fs/promises'
 import { Flags, ux } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand, SupportedAlgorithms } from '../../common'
-import { getKeyType, promptRequiredParameters } from '../../helpers'
-import { INPUT_LIMIT } from '../../helpers/input-length-validation'
-import { pemToJWK } from '../../helpers/jwk'
-import { clientSDK } from '../../services/affinidi'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT } from '../../common/validators'
+import { getKeyType, pemToJWK } from '../../helpers/jwk'
 import { iamService } from '../../services/affinidi/iam'
 import { MachineUserDto } from '../../services/affinidi/iam/iam.api'
 
@@ -51,7 +50,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     const publicKeyPEM = await readFile(validatedFlags['public-key-file'], 'utf8')
     const jwk = await pemToJWK(publicKeyPEM, validatedFlags.algorithm)
-    const out = await iamService.createMachineUser(clientSDK.config.getUserToken()?.access_token, {
+    const out = await iamService.createMachineUser({
       name: validatedFlags.name,
       authenticationMethod: {
         type: 'PRIVATE_KEY',

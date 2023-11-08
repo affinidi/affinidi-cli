@@ -5,10 +5,10 @@ import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
 import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
-import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
-import { clientSDK } from '../../services/affinidi'
+import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
+import { bffService } from '../../services/affinidi/bff-service'
 import { iamService } from '../../services/affinidi/iam'
 import { PolicyDto } from '../../services/affinidi/iam/iam.api'
 
@@ -98,14 +98,14 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
         INPUT_LIMIT,
       )
 
+      const activeProject = await bffService.getActiveProject()
+
       policiesData = {
         version: '2022-12-15',
         statement: [
           {
             principal: [
-              `ari:iam::${clientSDK.config.getProjectToken()?.projectId}:${validatedFlags['principal-type']}/${
-                validatedFlags['principal-id']
-              }`,
+              `ari:iam::${activeProject.id}:${validatedFlags['principal-type']}/${validatedFlags['principal-id']}`,
             ],
             action: actions.split(' '),
             resource: resourceFilters.split(' '),
@@ -130,7 +130,6 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
     }
     ux.action.start('Updating principal policies')
     const out = await iamService.updatePolicies(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
       validatedFlags['principal-id'],
       validatedFlags['principal-type'],
       validatedPolicies,

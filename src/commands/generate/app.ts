@@ -4,12 +4,11 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, RefAppProvider } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
+import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
 import { getAppName, getApps, getSupportedAppsInformation } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
-import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
@@ -116,9 +115,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       })
       if (configure) {
         ux.action.start('Fetching available login configurations')
-        const configs = await vpAdapterService.listLoginConfigurations(
-          clientSDK.config.getProjectToken()?.projectAccessToken,
-        )
+        const configs = await vpAdapterService.listLoginConfigurations()
         ux.action.stop('Fetched successfully!')
         const choices = configs.configurations.map((config) => ({
           value: {

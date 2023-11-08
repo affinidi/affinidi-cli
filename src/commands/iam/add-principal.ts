@@ -4,10 +4,9 @@ import { CLIError } from '@oclif/core/lib/errors'
 import chalk from 'chalk'
 import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
-import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT } from '../../helpers/input-length-validation'
-import { clientSDK } from '../../services/affinidi'
+import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT } from '../../common/validators'
 import { iamService } from '../../services/affinidi/iam'
 
 export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
@@ -53,7 +52,7 @@ export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Adding principal to project')
-    await iamService.addPrincipalToProject(clientSDK.config.getProjectToken()?.projectAccessToken, {
+    await iamService.addPrincipalToProject({
       principalId: validatedFlags['principal-id'],
       principalType: validatedFlags['principal-type'],
     })

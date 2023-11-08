@@ -2,8 +2,7 @@ import { Flags, ux } from '@oclif/core'
 import chalk from 'chalk'
 import z from 'zod'
 import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
-import { clientSDK } from '../../services/affinidi'
+import { promptRequiredParameters } from '../../common/prompts'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupDto } from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
@@ -30,10 +29,7 @@ export class CreateGroup extends BaseCommand<typeof CreateGroup> {
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Creating user group')
-    const createGroupOutput = await vpAdapterService.createGroup(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-      validatedFlags.name,
-    )
+    const createGroupOutput = await vpAdapterService.createGroup(validatedFlags.name)
     ux.action.stop('Created successfully!')
 
     if (!this.jsonEnabled()) this.logJson(createGroupOutput)

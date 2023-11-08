@@ -1,14 +1,13 @@
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
-import { INPUT_LIMIT } from '../../helpers/input-length-validation'
-import { clientSDK } from '../../services/affinidi'
-import { iamService } from '../../services/affinidi/iam'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT } from '../../common/validators'
+import { bffService } from '../../services/affinidi/bff-service'
 import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 
 export class CreateProject extends BaseCommand<typeof CreateProject> {
-  static summary = 'Creates a project'
+  static summary = 'Creates a project and sets it as the active project'
   static examples = [
     '<%= config.bin %> <%= command.id %> -n MyProjectName',
     '<%= config.bin %> <%= command.id %> --name "My project name"',
@@ -35,7 +34,7 @@ export class CreateProject extends BaseCommand<typeof CreateProject> {
 
     ux.action.start('Creating the project')
 
-    const createProjectOutput = await iamService.createProject(clientSDK.config.getUserToken()?.access_token, {
+    const createProjectOutput = await bffService.createProject({
       name: validatedFlags.name,
       description: validatedFlags.description,
     })

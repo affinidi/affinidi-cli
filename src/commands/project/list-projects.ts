@@ -1,7 +1,6 @@
 import { ux } from '@oclif/core'
 import { BaseCommand } from '../../common'
-import { clientSDK } from '../../services/affinidi'
-import { iamService } from '../../services/affinidi/iam'
+import { bffService } from '../../services/affinidi/bff-service'
 import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 
 export class ListProjects extends BaseCommand<typeof ListProjects> {
@@ -10,7 +9,7 @@ export class ListProjects extends BaseCommand<typeof ListProjects> {
 
   public async run(): Promise<ProjectDto[]> {
     ux.action.start('Fetching projects')
-    const listProjectsOutput = await iamService.listProjects(clientSDK.config.getUserToken()?.access_token)
+    const listProjectsOutput = await bffService.getProjects()
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(listProjectsOutput)

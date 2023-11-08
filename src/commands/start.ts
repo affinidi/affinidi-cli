@@ -1,33 +1,31 @@
-import { Flags } from '@oclif/core'
-import z from 'zod'
+import { ux } from '@oclif/core'
+import chalk from 'chalk'
 import { BaseCommand } from '../common'
-import { INPUT_LIMIT } from '../helpers/input-length-validation'
-import { configService } from '../services'
-import { clientSDK } from '../services/affinidi'
+import { bffService } from '../services/affinidi/bff-service'
 
 export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -i <project-id>',
-    '<%= config.bin %> <%= command.id %> --project-id <project-id>',
-  ]
-  static flags = {
-    'project-id': Flags.string({
-      char: 'i',
-      summary: 'ID of the project to set as active',
-    }),
-  }
+  static examples = ['<%= config.bin %> <%= command.id %>']
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(Start)
-    const schema = z.string().uuid().max(INPUT_LIMIT).optional()
-    const projectId = schema.parse(flags['project-id'])
-
-    const { principal } = await clientSDK.login({
-      projectId,
-    })
-
-    configService.createOrUpdate(`${principal.principalType}/${principal.principalId}`)
+    ux.action.start('Authenticating in browser')
+    try {
+      await bffService.login()
+      const activeProject = await bffService.getActiveProject()
+      ux.action.stop('Authenticated successfully!')
+      this.log(
+        `\nYour active project has been set to the project ${chalk.underline(
+          activeProject.name,
+        )} with ID ${chalk.underline(activeProject.id)}` +
+          '\n\nIf you want to change the active project, please follow these steps:' +
+          `\n\n💡 To list all your projects run: ${chalk.inverse('affinidi project list-projects')}` +
+          `\n\n💡 To change the active project run: ${chalk.inverse(
+            'affinidi project select-project -i <project-id>',
+          )}\n`,
+      )
+    } catch (error) {
+      ux.action.stop('Authentication failed!')
+      this.error(error as string)
+    }
   }
 }

@@ -3,9 +3,8 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../helpers'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../helpers/input-length-validation'
-import { clientSDK } from '../../services/affinidi'
+import { promptRequiredParameters } from '../../common/prompts'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../common/validators'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
   LoginConfigurationObject,
@@ -118,7 +117,6 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
 
     ux.action.start('Updating login configuration')
     const updateLoginConfigOutput = await vpAdapterService.updateLoginConfigurationById(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
       promptFlags.id,
       updateLoginConfigInput,
     )

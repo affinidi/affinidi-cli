@@ -1,6 +1,5 @@
 import { ux } from '@oclif/core'
 import { BaseCommand } from '../../common'
-import { clientSDK } from '../../services/affinidi'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { ListLoginConfigurationOutput } from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
@@ -10,9 +9,7 @@ export class ListLoginConfigurations extends BaseCommand<typeof ListLoginConfigu
 
   public async run(): Promise<ListLoginConfigurationOutput> {
     ux.action.start('Fetching login configurations')
-    const listLoginConfigOutput = await vpAdapterService.listLoginConfigurations(
-      clientSDK.config.getProjectToken()?.projectAccessToken,
-    )
+    const listLoginConfigOutput = await vpAdapterService.listLoginConfigurations()
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(listLoginConfigOutput)

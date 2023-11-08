@@ -10,7 +10,8 @@ import {
   GroupsList,
   GroupUserMappingsList,
 } from './vp-adapter.api'
-import { VP_ADAPTER_URL } from '../../../services/urls'
+import { config } from '../../env-config'
+import { getBFFHeaders } from '../bff-service'
 import { handleServiceError } from '../errors'
 
 export const VPA_SERVICE = 'vp-adapter'
@@ -35,7 +36,7 @@ const vpaErrorMessageHandler = (response: any): string | null => {
 class VPAdapterService {
   constructor(
     private readonly client = new VPAdapterApi({
-      baseURL: VP_ADAPTER_URL,
+      baseURL: `${config.bffHost}/vpa`,
       withCredentials: true,
       headers: {
         'Accept-Encoding': 'application/json',
@@ -44,14 +45,11 @@ class VPAdapterService {
   ) {}
 
   public createLoginConfig = async (
-    projectScopedToken: string,
     createLoginConfigInput: CreateLoginConfigurationInput,
   ): Promise<CreateLoginConfigurationOutput> => {
     try {
       const response = await this.client.v1.createLoginConfigurations(createLoginConfigInput, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
+        headers: getBFFHeaders(),
       })
       return response.data
     } catch (error) {
@@ -59,57 +57,39 @@ class VPAdapterService {
     }
   }
 
-  public listLoginConfigurations = async (projectScopedToken: string): Promise<ListLoginConfigurationOutput> => {
+  public listLoginConfigurations = async (): Promise<ListLoginConfigurationOutput> => {
     try {
-      const response = await this.client.v1.listLoginConfigurations({
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      const response = await this.client.v1.listLoginConfigurations({ headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public getLoginConfigurationById = async (
-    projectScopedToken: string,
-    id: string,
-  ): Promise<GetLoginConfigurationOutput> => {
+  public getLoginConfigurationById = async (id: string): Promise<GetLoginConfigurationOutput> => {
     try {
-      const response = await this.client.v1.getLoginConfigurationsById(id, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      const response = await this.client.v1.getLoginConfigurationsById(id, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public deleteLoginConfigurationById = async (projectScopedToken: string, id: string): Promise<void> => {
+  public deleteLoginConfigurationById = async (id: string): Promise<void> => {
     try {
-      await this.client.v1.deleteLoginConfigurationsById(id, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      await this.client.v1.deleteLoginConfigurationsById(id, { headers: getBFFHeaders() })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
   public updateLoginConfigurationById = async (
-    projectScopedToken: string,
     id: string,
     updateLoginConfigurationInput: UpdateLoginConfigurationInput,
   ): Promise<UpdateLoginConfigurationOutput> => {
     try {
       const response = await this.client.v1.updateLoginConfigurationsById(id, updateLoginConfigurationInput, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
+        headers: getBFFHeaders(),
       })
       return response.data
     } catch (error) {
@@ -117,100 +97,61 @@ class VPAdapterService {
     }
   }
 
-  public createGroup = async (projectScopedToken: string, groupName: string): Promise<GroupDto> => {
+  public createGroup = async (groupName: string): Promise<GroupDto> => {
     try {
-      const response = await this.client.v1.createGroup(
-        { groupName: groupName },
-        {
-          headers: {
-            Authorization: `Bearer ${projectScopedToken}`,
-          },
-        },
-      )
+      const response = await this.client.v1.createGroup({ groupName: groupName }, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public getGroup = async (projectScopedToken: string, groupName: string): Promise<GroupDto> => {
+  public getGroup = async (groupName: string): Promise<GroupDto> => {
     try {
-      const response = await this.client.v1.getGroupById(groupName, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      const response = await this.client.v1.getGroupById(groupName, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public deleteGroup = async (projectScopedToken: string, name: string): Promise<void> => {
+  public deleteGroup = async (name: string): Promise<void> => {
     try {
-      await this.client.v1.deleteGroup(name, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      await this.client.v1.deleteGroup(name, { headers: getBFFHeaders() })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public listGroups = async (projectScopedToken: string): Promise<GroupsList> => {
+  public listGroups = async (): Promise<GroupsList> => {
     try {
-      const response = await this.client.v1.listGroups({
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      const response = await this.client.v1.listGroups({ headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public addUserToGroup = async (projectScopedToken: string, groupName: string, sub: string) => {
+  public addUserToGroup = async (groupName: string, sub: string) => {
     try {
-      const response = await this.client.v1.addUserToGroup(
-        groupName,
-        { sub },
-        {
-          headers: {
-            Authorization: `Bearer ${projectScopedToken}`,
-          },
-        },
-      )
+      const response = await this.client.v1.addUserToGroup(groupName, { sub }, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public removeUserFromGroup = async (
-    projectScopedToken: string,
-    groupName: string,
-    userMappingId: string,
-  ): Promise<void> => {
+  public removeUserFromGroup = async (groupName: string, userMappingId: string): Promise<void> => {
     try {
-      await this.client.v1.removeUserFromGroup(groupName, userMappingId, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      await this.client.v1.removeUserFromGroup(groupName, userMappingId, { headers: getBFFHeaders() })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public listGroupUsers = async (projectScopedToken: string, groupName: string): Promise<GroupUserMappingsList> => {
+  public listGroupUsers = async (groupName: string): Promise<GroupUserMappingsList> => {
     try {
-      const response = await this.client.v1.listGroupUserMappings(groupName, {
-        headers: {
-          Authorization: `Bearer ${projectScopedToken}`,
-        },
-      })
+      const response = await this.client.v1.listGroupUserMappings(groupName, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)

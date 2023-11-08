@@ -52,4 +52,4 @@ out
 .npmrc
 
 *.pem
-!test/unit/helpers/public_key.pem
+!test/helpers/public_key.pem

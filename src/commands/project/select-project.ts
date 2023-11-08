@@ -3,11 +3,9 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
-import { giveFlagInputErrorMessage } from '../../helpers/generate-error-message'
-import { INPUT_LIMIT } from '../../helpers/input-length-validation'
-import { configService } from '../../services'
-import { clientSDK } from '../../services/affinidi'
-import { iamService } from '../../services/affinidi/iam'
+import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { INPUT_LIMIT } from '../../common/validators'
+import { bffService } from '../../services/affinidi/bff-service'
 import { ProjectDto } from '../../services/affinidi/iam/iam.api'
 
 export class SelectProject extends BaseCommand<typeof SelectProject> {
@@ -30,7 +28,7 @@ export class SelectProject extends BaseCommand<typeof SelectProject> {
     let projectId = schema.parse(flags['project-id'])
 
     ux.action.start('Fetching available projects')
-    const userProjects: ProjectDto[] = await iamService.listProjects(clientSDK.config.getUserToken()?.access_token)
+    const userProjects = await bffService.getProjects()
     ux.action.stop('Fetched successfully!')
 
     if (userProjects.length === 1) {
@@ -58,21 +56,16 @@ export class SelectProject extends BaseCommand<typeof SelectProject> {
       })
     }
 
+    const selectedProject = userProjects.find((project) => project.id === projectId)
+    if (!selectedProject) {
+      throw new CLIError('Project not found')
+    }
+
     ux.action.start('Setting your active project')
-    const signInResult = await clientSDK.login({
-      projectId,
-      userAccessToken: clientSDK.config.getUserToken()?.access_token || undefined,
-      hideProjectHints: true,
-    })
+    await bffService.setSessionActiveProject(selectedProject.id)
     ux.action.stop('Set successfully!')
 
-    configService.createOrUpdate(`${signInResult.principal.principalType}/${signInResult.principal.principalId}`)
-
-    const response = {
-      id: signInResult.activeProject.id,
-      name: signInResult.activeProject.name,
-    }
-    if (!this.jsonEnabled()) this.logJson(response)
-    return response
+    if (!this.jsonEnabled()) this.logJson(selectedProject)
+    return selectedProject
   }
 }
