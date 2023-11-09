@@ -248,13 +248,12 @@ When you authenticate to Affinidi, the first project is set as your active one b
 
 ### Session and configuration files
 
-When you authenticate to Affinidi with `affinidi start` the CLI will create a folder with two files in your home directory.
+When you authenticate to Affinidi with affinidi start the CLI will create a folder with a credentials file in your home directory.
 
-`~/.affinidi/oAuthCred.json` - Stores your current session credentials. Keep it secret as this allows you to call Affinidi services.
+`~/.affinidi/credentials-v2.json` - Stores your current session credentials. Keep it secret as this allows you to call Affinidi services.
 
-`~/.affinidi/config-v2.json` - Stores user's CLI configurations (currently none)
+When you run affinidi stop your session information is deleted.
 
-When you run `affinidi stop` your session information is deleted.
 
 ## Support & Feedback
 
@@ -412,18 +411,17 @@ _See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blo
 
 ## `affinidi generate app`
 
-Generates a NextJS reference application that integrates Affinidi Login. Requires git
+Generates a reference application that integrates Affinidi Login. Requires git
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-f django|nextjs] [-a affinidi|auth0] [-p <value>]
-    [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-f ] [-a ] [-p <value>] [--force]
 
 FLAGS
   -a, --provider=<option>   Authentication provider for the reference app
-                            <options: affinidi|auth0>
+                            <options: >
   -f, --framework=<option>  Framework for the reference app
-                            <options: django|nextjs>
+                            <options: >
   -p, --path=<value>        Relative or absolute path where reference application should be cloned into
   --force                   Override destination directory if exists
 
@@ -1037,7 +1035,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1056,7 +1054,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1176,7 +1174,7 @@ EXAMPLES
 
 ## `affinidi whoami`
 
-Returns user's subject and principalId from his active session
+Returns user's subject, projects, and token details from the current session.
 
 ```
 USAGE
@@ -1191,5 +1189,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/whoami.ts)_
 <!-- commandsstop -->
