@@ -47,7 +47,7 @@ describe('login: group users commands', function () {
     test
       .nock(VP_ADAPTER_URL, (api) =>
         api.get(`/v1/groups/${data.existingGroupName}/users`).reply(200, {
-          mappings: [
+          users: [
             {
               ari: 'ari:identity:ap-southeast-1:1afac523-9ed4-4b72-af29-16c376b5a32a:group/existing-group-name/user/85556da4ac2238ceb4ab0355aaa36fb7a5eb7459fade25f7d96b8f3a6e1c1023',
               projectId: '1afac523-9ed4-4b72-af29-16c376b5a32a',
@@ -63,13 +63,13 @@ describe('login: group users commands', function () {
       .command(validArgs)
       .it('outputs the user and group info', async (ctx) => {
         const response = JSON.parse(ctx.stdout)
-        expect(response).to.have.a.property('mappings')
-        expect(response.mappings[0]).to.have.a.property('ari')
-        expect(response.mappings[0]).to.have.a.property('groupName')
-        expect(response.mappings[0]).to.have.a.property('sub')
-        expect(response.mappings[0]).to.have.a.property('id')
-        expect(response.mappings[0]).to.have.a.property('projectId')
-        expect(response.mappings[0]).to.have.a.property('creationDate')
+        expect(response).to.have.a.property('users')
+        expect(response.users[0]).to.have.a.property('ari')
+        expect(response.users[0]).to.have.a.property('groupName')
+        expect(response.users[0]).to.have.a.property('sub')
+        expect(response.users[0]).to.have.a.property('id')
+        expect(response.users[0]).to.have.a.property('projectId')
+        expect(response.users[0]).to.have.a.property('creationDate')
       })
   })
 
