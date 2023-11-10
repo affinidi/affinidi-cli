@@ -1,14 +1,14 @@
 import {
   AddUserToProjectInput,
-  CreateMachineUserInput,
+  CreateTokenInput,
   CreateProjectInput,
   CreateProjectScopedTokenOutput,
   Api as IamApi,
-  MachineUserDto,
-  MachineUserList,
+  TokenDto,
+  TokenList,
   PolicyDto,
   ProjectDto,
-  UpdateMachineUserInput,
+  UpdateTokenInput,
   UserList,
   WhoamiDto,
 } from './iam.api'
@@ -64,47 +64,47 @@ class IAMService {
     }
   }
 
-  public listM2MKeys = async (): Promise<MachineUserList> => {
+  public listM2MKeys = async (): Promise<TokenList> => {
     try {
-      const { data } = await this.client.v1.listMachineUser({ headers: getBFFHeaders() })
+      const { data } = await this.client.v1.listToken({ headers: getBFFHeaders() })
       return data
     } catch (error) {
       handleServiceError(error)
     }
   }
 
-  public deleteMachineUser = async (machineUserId: string): Promise<void> => {
+  public deleteToken = async (tokenId: string): Promise<void> => {
     try {
-      await this.client.v1.deleteMachineUser(machineUserId, { headers: getBFFHeaders() })
+      await this.client.v1.deleteToken(tokenId, { headers: getBFFHeaders() })
     } catch (error) {
       handleServiceError(error)
     }
   }
 
-  public getMachineUser = async (machineUserId: string): Promise<MachineUserDto> => {
+  public getToken = async (tokenId: string): Promise<TokenDto> => {
     try {
-      const { data } = await this.client.v1.getMachineUser(machineUserId, { headers: getBFFHeaders() })
+      const { data } = await this.client.v1.getToken(tokenId, { headers: getBFFHeaders() })
       return data
     } catch (error) {
       handleServiceError(error)
     }
   }
 
-  public createMachineUser = async (createMachineUserInput: CreateMachineUserInput): Promise<MachineUserDto> => {
+  public createToken = async (createTokenInput: CreateTokenInput): Promise<TokenDto> => {
     try {
-      const { data } = await this.client.v1.createMachineUser(createMachineUserInput, { headers: getBFFHeaders() })
+      const { data } = await this.client.v1.createToken(createTokenInput, { headers: getBFFHeaders() })
       return data
     } catch (error) {
       handleServiceError(error)
     }
   }
 
-  public updateMachineUser = async (
-    machineUserId: string,
-    updateMachineUserInput: UpdateMachineUserInput,
-  ): Promise<MachineUserDto> => {
+  public updateToken = async (
+    tokenId: string,
+    updateTokenInput: UpdateTokenInput,
+  ): Promise<TokenDto> => {
     try {
-      const { data } = await this.client.v1.updateMachineUser(machineUserId, updateMachineUserInput, {
+      const { data } = await this.client.v1.updateToken(tokenId, updateTokenInput, {
         headers: getBFFHeaders(),
       })
       return data
@@ -132,7 +132,7 @@ class IAMService {
 
   public deletePrincipalFromProject = async (
     principalId: string,
-    principalType: 'user' | 'machine_user',
+    principalType: 'user' | 'token',
   ): Promise<void> => {
     try {
       await this.client.v1.deletePrincipalFromProject(principalId, { principalType }, { headers: getBFFHeaders() })
@@ -141,7 +141,7 @@ class IAMService {
     }
   }
 
-  public getPolicies = async (principalId: string, principalType: 'user' | 'machine_user'): Promise<PolicyDto> => {
+  public getPolicies = async (principalId: string, principalType: 'user' | 'token'): Promise<PolicyDto> => {
     try {
       const result = await this.client.v1.getPolicies(principalId, { principalType }, { headers: getBFFHeaders() })
       return result.data
@@ -152,7 +152,7 @@ class IAMService {
 
   public updatePolicies = async (
     principalId: string,
-    principalType: 'user' | 'machine_user',
+    principalType: 'user' | 'token',
     data: PolicyDto,
   ): Promise<PolicyDto> => {
     try {

@@ -5,18 +5,18 @@ import { config } from '../../../src/services/env-config'
 
 const IAM_URL = `${config.bffHost}/iam`
 const principalId = 'b2ce7675-5418-4058-b973-d254270de2d4'
-const principalType = 'machine_user'
+const principalType = 'token'
 const listPrincipalsApiResponse = {
   records: [
     {
       projectId: 'd99d6d39-c9ba-4970-99ca-f8758eb8a9d3',
       projectName: 'Default Project',
-      principalId: 'machine_user/b2ce7675-5418-4058-b973-d254270de2d4',
+      principalId: 'token/b2ce7675-5418-4058-b973-d254270de2d4',
       version: '2022-12-15',
       statement: [
         {
           principal: [
-            'ari:iam::d99d6d39-c9ba-4970-99ca-f8758eb8a9d3:machine_user/b2ce7675-5418-4058-b973-d254270de2d4',
+            'ari:iam::d99d6d39-c9ba-4970-99ca-f8758eb8a9d3:token/b2ce7675-5418-4058-b973-d254270de2d4',
           ],
           action: [''],
           resource: [''],
@@ -69,7 +69,7 @@ describe('iam: commands', function () {
         expect(response).to.have.a.property('principal-id')
         expect(response).to.have.a.property('principal-type')
         expect(response['principal-id']).to.be.equal(principalId)
-        expect(response['principal-type']).to.be.equal('machine_user')
+        expect(response['principal-type']).to.be.equal('token')
       })
   })
 })

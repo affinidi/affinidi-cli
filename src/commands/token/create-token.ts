@@ -6,7 +6,7 @@ import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT } from '../../common/validators'
 import { getKeyType, pemToJWK } from '../../helpers/jwk'
 import { iamService } from '../../services/affinidi/iam'
-import { MachineUserDto } from '../../services/affinidi/iam/iam.api'
+import { TokenDto } from '../../services/affinidi/iam/iam.api'
 
 export class CreateToken extends BaseCommand<typeof CreateToken> {
   static summary = 'Creates a Personal Access Token (PAT)'
@@ -34,7 +34,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     })(),
   }
 
-  public async run(): Promise<MachineUserDto> {
+  public async run(): Promise<TokenDto> {
     const { flags } = await this.parse(CreateToken)
     const promptFlags = await promptRequiredParameters(['name', 'key-id', 'public-key-file'], flags)
 
@@ -50,7 +50,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     const publicKeyPEM = await readFile(validatedFlags['public-key-file'], 'utf8')
     const jwk = await pemToJWK(publicKeyPEM, validatedFlags.algorithm)
-    const out = await iamService.createMachineUser({
+    const out = await iamService.createToken({
       name: validatedFlags.name,
       authenticationMethod: {
         type: 'PRIVATE_KEY',

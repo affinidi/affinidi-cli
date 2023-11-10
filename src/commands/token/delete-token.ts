@@ -26,7 +26,7 @@ export class DeleteToken extends BaseCommand<typeof DeleteToken> {
     const tokenId = schema.parse(promptFlags['token-id'])
 
     ux.action.start('Deleting Personal Access Token')
-    await iamService.deleteMachineUser(tokenId)
+    await iamService.deleteToken(tokenId)
     ux.action.stop('Deleted successfully!')
 
     if (!this.jsonEnabled()) this.logJson({ id: tokenId })
