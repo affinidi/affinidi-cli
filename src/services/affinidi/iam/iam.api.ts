@@ -95,6 +95,9 @@ export interface JsonWebKeyDto {
   kty: string
   n?: string
   e?: string
+  x?: string
+  y?: string
+  crv?: string
   alg: string
   use: string
 }
@@ -108,7 +111,7 @@ export interface JsonWebKeySetDto {
  * Private Key JWT Authentication of Client with `private_key_jwt` oAuth Method
  * @example "{"type": "PRIVATE_KEY", "signingAlgorithm": "RS256", "publicKeyInfo": { "jwks": {"keys":[{"use":"sig","kty":"RSA","kid":"some-kid","alg":"RS256","n":"some-n-value","e":"some-e-value"}]} }}"
  */
-export interface MachineUserPrivateKeyAuthenticationMethodDto {
+export interface TokenPrivateKeyAuthenticationMethodDto {
   type: 'PRIVATE_KEY'
   signingAlgorithm: 'RS256' | 'RS512' | 'ES256' | 'ES512'
   /** Corresponding Public Key Info provided either as a URL or a Hardcoded Object */
@@ -122,53 +125,59 @@ export interface MachineUserPrivateKeyAuthenticationMethodDto {
       }
 }
 
-/** How the Machine User will be authenticate against our Authorization Server */
-export type MachineUserAuthenticationMethodDto = MachineUserPrivateKeyAuthenticationMethodDto
+/** How the Token will be authenticate against our Authorization Server */
+export type TokenAuthenticationMethodDto = TokenPrivateKeyAuthenticationMethodDto
 
-export interface MachineUserDto {
+export interface TokenDto {
   /**
-   * MachineUser Id
+   * Token Id
    * @format uuid
    * @example "c5817ea6-8367-4458-9131-54cd2c5b9b48"
    */
   id: string
   /**
-   * MachineUser ARI
-   * @example "machine/c5817ea6-8367-4458-9131-54cd2c5b9b48"
+   * Token ARI
+   * @example "token/c5817ea6-8367-4458-9131-54cd2c5b9b48"
    */
   ari: string
   /**
-   * The MachineUser owner's ARI
+   * The Token owner's ARI
    * @example "ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc"
    */
   ownerAri: string
   /**
-   * Owner defined MachineUser display name
+   * Owner defined Token display name
    * @example "AIV/Concierge API - affinidi-elements-iam-dev"
    */
   name: string
-  /** How the Machine User will be authenticate against our Authorization Server */
-  authenticationMethod: MachineUserAuthenticationMethodDto
-  /** Scopes that will be assigned to the MachineUser on authentication */
+  /** How the Token will be authenticate against our Authorization Server */
+  authenticationMethod: TokenAuthenticationMethodDto
+  /** Scopes that will be assigned to the Token on authentication */
   scopes: string[]
 }
 
-export interface MachineUserList {
-  machineUsers: MachineUserDto[]
+export interface TokenList {
+  tokens: TokenDto[]
 }
 
-export interface CreateMachineUserInput {
-  /** @example "AIV/Concierge API - affinidi-elements-iam-dev" */
+export interface CreateTokenInput {
+  /**
+   * @pattern .{3,}
+   * @example "AIV/Concierge API - affinidi-elements-iam-dev"
+   */
   name: string
-  /** How the Machine User will be authenticate against our Authorization Server */
-  authenticationMethod: MachineUserAuthenticationMethodDto
+  /** How the Token will be authenticate against our Authorization Server */
+  authenticationMethod: TokenAuthenticationMethodDto
 }
 
-export interface UpdateMachineUserInput {
-  /** @example "AIV/Concierge API - affinidi-elements-iam-dev" */
+export interface UpdateTokenInput {
+  /**
+   * @pattern .{3,}
+   * @example "AIV/Concierge API - affinidi-elements-iam-dev"
+   */
   name: string
-  /** How the Machine User will be authenticate against our Authorization Server */
-  authenticationMethod: MachineUserAuthenticationMethodDto
+  /** How the Token will be authenticate against our Authorization Server */
+  authenticationMethod: TokenAuthenticationMethodDto
 }
 
 export interface UnexpectedError {
@@ -575,7 +584,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       principalId: string,
       query: {
         /** type of principal */
-        principalType: 'user' | 'machine_user'
+        principalType: 'user' | 'token'
       },
       params: RequestParams = {},
     ) =>
@@ -633,7 +642,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     getPolicies: (
       principalId: string,
       query: {
-        principalType: 'user' | 'machine_user'
+        principalType: 'user' | 'token'
       },
       params: RequestParams = {},
     ) =>
@@ -656,7 +665,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     updatePolicies: (
       principalId: string,
       query: {
-        principalType: 'user' | 'machine_user'
+        principalType: 'user' | 'token'
       },
       data: PolicyDto,
       params: RequestParams = {},
@@ -673,14 +682,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name CreateMachineUser
-     * @request POST:/v1/machine-users
+     * @tags tokens
+     * @name CreateToken
+     * @request POST:/v1/tokens
      * @secure
      */
-    createMachineUser: (data: CreateMachineUserInput, params: RequestParams = {}) =>
-      this.request<MachineUserDto, InvalidParameterError | UnexpectedError>({
-        path: `/v1/machine-users`,
+    createToken: (data: CreateTokenInput, params: RequestParams = {}) =>
+      this.request<TokenDto, InvalidParameterError | UnexpectedError>({
+        path: `/v1/tokens`,
         method: 'POST',
         body: data,
         secure: true,
@@ -690,14 +699,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name ListMachineUser
-     * @request GET:/v1/machine-users
+     * @tags tokens
+     * @name ListToken
+     * @request GET:/v1/tokens
      * @secure
      */
-    listMachineUser: (params: RequestParams = {}) =>
-      this.request<MachineUserList, InvalidParameterError | UnexpectedError>({
-        path: `/v1/machine-users`,
+    listToken: (params: RequestParams = {}) =>
+      this.request<TokenList, InvalidParameterError | UnexpectedError>({
+        path: `/v1/tokens`,
         method: 'GET',
         secure: true,
         ...params,
@@ -706,14 +715,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name GetMachineUser
-     * @request GET:/v1/machine-users/{machineUserId}
+     * @tags tokens
+     * @name GetToken
+     * @request GET:/v1/tokens/{tokenId}
      * @secure
      */
-    getMachineUser: (machineUserId: string, params: RequestParams = {}) =>
-      this.request<MachineUserDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
-        path: `/v1/machine-users/${machineUserId}`,
+    getToken: (tokenId: string, params: RequestParams = {}) =>
+      this.request<TokenDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
+        path: `/v1/tokens/${tokenId}`,
         method: 'GET',
         secure: true,
         ...params,
@@ -722,14 +731,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name UpdateMachineUser
-     * @request PATCH:/v1/machine-users/{machineUserId}
+     * @tags tokens
+     * @name UpdateToken
+     * @request PATCH:/v1/tokens/{tokenId}
      * @secure
      */
-    updateMachineUser: (machineUserId: string, data: UpdateMachineUserInput, params: RequestParams = {}) =>
-      this.request<MachineUserDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
-        path: `/v1/machine-users/${machineUserId}`,
+    updateToken: (tokenId: string, data: UpdateTokenInput, params: RequestParams = {}) =>
+      this.request<TokenDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
+        path: `/v1/tokens/${tokenId}`,
         method: 'PATCH',
         body: data,
         secure: true,
@@ -739,14 +748,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name DeleteMachineUser
-     * @request DELETE:/v1/machine-users/{machineUserId}
+     * @tags tokens
+     * @name DeleteToken
+     * @request DELETE:/v1/tokens/{tokenId}
      * @secure
      */
-    deleteMachineUser: (machineUserId: string, params: RequestParams = {}) =>
+    deleteToken: (tokenId: string, params: RequestParams = {}) =>
       this.request<void, ActionForbiddenError | NotFoundError | UnexpectedError>({
-        path: `/v1/machine-users/${machineUserId}`,
+        path: `/v1/tokens/${tokenId}`,
         method: 'DELETE',
         secure: true,
         ...params,

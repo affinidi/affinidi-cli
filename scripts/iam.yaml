@@ -24,8 +24,8 @@ tags:
     description: CRUD for projects
   - name: policies
     description: CRUD for authorization policies
-  - name: machine-users
-    description: CRUD for Machine Users
+  - name: tokens
+    description: CRUD for Tokens
 security: []
 x-amazon-apigateway-request-validators:
   basic:
@@ -107,20 +107,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PolicyDto'
-    CreateMachineUser:
-      description: CreateMachineUser
+    CreateToken:
+      description: CreateToken
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CreateMachineUserInput'
-    UpdateMachineUser:
-      description: UpdateMachineUser
+            $ref: '#/components/schemas/CreateTokenInput'
+    UpdateToken:
+      description: UpdateToken
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UpdateMachineUserInput'
+            $ref: '#/components/schemas/UpdateTokenInput'
   responses:
     GetWellKnownJwksOK:
       description: List of JWK used by the services as JWKS
@@ -194,30 +194,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PolicyDto'
-    CreateMachineUserOK:
-      description: Created Machine User
+    CreateTokenOK:
+      description: Created Token
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MachineUserDto'
-    ListMachineUserOK:
-      description: List of Machine Users
+            $ref: '#/components/schemas/TokenDto'
+    ListTokenOK:
+      description: List of Tokens
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MachineUserList'
-    GetMachineUserOK:
-      description: Machine User
+            $ref: '#/components/schemas/TokenList'
+    GetTokenOK:
+      description: Token
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MachineUserDto'
-    UpdateMachineUserOK:
-      description: Updated Machine User
+            $ref: '#/components/schemas/TokenDto'
+    UpdateTokenOK:
+      description: Updated Token
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MachineUserDto'
+            $ref: '#/components/schemas/TokenDto'
     GetWellKnownJwksUnexpectedError:
       description: UnexpectedError
       content:
@@ -458,79 +458,79 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UnexpectedError'
-    CreateMachineUserBadRequestError:
+    CreateTokenBadRequestError:
       description: BadRequestError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/InvalidParameterError'
-    CreateMachineUserUnexpectedError:
+    CreateTokenUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnexpectedError'
-    ListMachineUserBadRequestError:
+    ListTokenBadRequestError:
       description: BadRequestError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/InvalidParameterError'
-    ListMachineUserUnexpectedError:
+    ListTokenUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnexpectedError'
-    GetMachineUserForbiddenError:
+    GetTokenForbiddenError:
       description: ForbiddenError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ActionForbiddenError'
-    GetMachineUserNotFoundError:
+    GetTokenNotFoundError:
       description: NotFoundError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/NotFoundError'
-    GetMachineUserUnexpectedError:
+    GetTokenUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnexpectedError'
-    UpdateMachineUserForbiddenError:
+    UpdateTokenForbiddenError:
       description: ForbiddenError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ActionForbiddenError'
-    UpdateMachineUserNotFoundError:
+    UpdateTokenNotFoundError:
       description: NotFoundError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/NotFoundError'
-    UpdateMachineUserUnexpectedError:
+    UpdateTokenUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnexpectedError'
-    DeleteMachineUserForbiddenError:
+    DeleteTokenForbiddenError:
       description: ForbiddenError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ActionForbiddenError'
-    DeleteMachineUserNotFoundError:
+    DeleteTokenNotFoundError:
       description: NotFoundError
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/NotFoundError'
-    DeleteMachineUserUnexpectedError:
+    DeleteTokenUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
@@ -729,6 +729,12 @@ components:
           type: string
         e:
           type: string
+        x:
+          type: string
+        'y':
+          type: string
+        crv:
+          type: string
         alg:
           type: string
         use:
@@ -749,7 +755,7 @@ components:
             $ref: '#/components/schemas/JsonWebKeyDto'
       required:
         - keys
-    MachineUserPrivateKeyAuthenticationMethodDto:
+    TokenPrivateKeyAuthenticationMethodDto:
       example: >-
         {"type": "PRIVATE_KEY", "signingAlgorithm": "RS256", "publicKeyInfo": {
         "jwks":
@@ -796,37 +802,35 @@ components:
         - type
         - signingAlgorithm
         - publicKeyInfo
-    MachineUserAuthenticationMethodDto:
+    TokenAuthenticationMethodDto:
       oneOf:
-        - $ref: '#/components/schemas/MachineUserPrivateKeyAuthenticationMethodDto'
-      description: >-
-        How the Machine User will be authenticate against our Authorization
-        Server
-    MachineUserDto:
+        - $ref: '#/components/schemas/TokenPrivateKeyAuthenticationMethodDto'
+      description: How the Token will be authenticate against our Authorization Server
+    TokenDto:
       type: object
       additionalProperties: false
       properties:
         id:
-          description: MachineUser Id
+          description: Token Id
           type: string
           format: uuid
           example: c5817ea6-8367-4458-9131-54cd2c5b9b48
         ari:
-          description: MachineUser ARI
+          description: Token ARI
           type: string
-          example: machine/c5817ea6-8367-4458-9131-54cd2c5b9b48
+          example: token/c5817ea6-8367-4458-9131-54cd2c5b9b48
         ownerAri:
-          description: The MachineUser owner's ARI
+          description: The Token owner's ARI
           type: string
           example: ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc
         name:
-          description: Owner defined MachineUser display name
+          description: Owner defined Token display name
           type: string
           example: AIV/Concierge API - affinidi-elements-iam-dev
         authenticationMethod:
-          $ref: '#/components/schemas/MachineUserAuthenticationMethodDto'
+          $ref: '#/components/schemas/TokenAuthenticationMethodDto'
         scopes:
-          description: Scopes that will be assigned to the MachineUser on authentication
+          description: Scopes that will be assigned to the Token on authentication
           type: array
           items:
             type: string
@@ -837,37 +841,39 @@ components:
         - name
         - authenticationMethod
         - scopes
-    MachineUserList:
+    TokenList:
       type: object
       additionalProperties: false
       properties:
-        machineUsers:
+        tokens:
           items:
-            $ref: '#/components/schemas/MachineUserDto'
+            $ref: '#/components/schemas/TokenDto'
           type: array
       required:
-        - machineUsers
-    CreateMachineUserInput:
+        - tokens
+    CreateTokenInput:
       type: object
       additionalProperties: false
       properties:
         name:
           type: string
           example: AIV/Concierge API - affinidi-elements-iam-dev
+          pattern: .{3,}
         authenticationMethod:
-          $ref: '#/components/schemas/MachineUserAuthenticationMethodDto'
+          $ref: '#/components/schemas/TokenAuthenticationMethodDto'
       required:
         - name
         - authenticationMethod
-    UpdateMachineUserInput:
+    UpdateTokenInput:
       type: object
       additionalProperties: false
       properties:
         name:
           type: string
           example: AIV/Concierge API - affinidi-elements-iam-dev
+          pattern: .{3,}
         authenticationMethod:
-          $ref: '#/components/schemas/MachineUserAuthenticationMethodDto'
+          $ref: '#/components/schemas/TokenAuthenticationMethodDto'
       required:
         - name
         - authenticationMethod
@@ -1282,7 +1288,7 @@ paths:
             type: string
             enum:
               - user
-              - machine_user
+              - token
       responses:
         '204':
           description: Ok
@@ -1357,7 +1363,7 @@ paths:
             type: string
             enum:
               - user
-              - machine_user
+              - token
       responses:
         '200':
           $ref: '#/components/responses/GetPoliciesOK'
@@ -1386,7 +1392,7 @@ paths:
             type: string
             enum:
               - user
-              - machine_user
+              - token
       requestBody:
         $ref: '#/components/requestBodies/UpdatePolicies'
       responses:
@@ -1398,103 +1404,103 @@ paths:
           $ref: '#/components/responses/UpdatePoliciesUnexpectedError'
       tags:
         - policies
-  /v1/machine-users:
+  /v1/tokens:
     post:
-      operationId: createMachineUser
+      operationId: createToken
       security:
         - UserTokenAuth: []
       parameters: []
       requestBody:
-        $ref: '#/components/requestBodies/CreateMachineUser'
+        $ref: '#/components/requestBodies/CreateToken'
       responses:
         '200':
-          $ref: '#/components/responses/CreateMachineUserOK'
+          $ref: '#/components/responses/CreateTokenOK'
         '400':
-          $ref: '#/components/responses/CreateMachineUserBadRequestError'
+          $ref: '#/components/responses/CreateTokenBadRequestError'
         '500':
-          $ref: '#/components/responses/CreateMachineUserUnexpectedError'
+          $ref: '#/components/responses/CreateTokenUnexpectedError'
       tags:
-        - machine-users
+        - tokens
     get:
-      operationId: listMachineUser
+      operationId: listToken
       security:
         - UserTokenAuth: []
       parameters: []
       responses:
         '200':
-          $ref: '#/components/responses/ListMachineUserOK'
+          $ref: '#/components/responses/ListTokenOK'
         '400':
-          $ref: '#/components/responses/ListMachineUserBadRequestError'
+          $ref: '#/components/responses/ListTokenBadRequestError'
         '500':
-          $ref: '#/components/responses/ListMachineUserUnexpectedError'
+          $ref: '#/components/responses/ListTokenUnexpectedError'
       tags:
-        - machine-users
-  /v1/machine-users/{machineUserId}:
+        - tokens
+  /v1/tokens/{tokenId}:
     get:
-      operationId: getMachineUser
+      operationId: getToken
       security:
         - UserTokenAuth: []
       parameters:
         - in: path
-          name: machineUserId
+          name: tokenId
           required: true
           schema:
             type: string
             format: uuid
       responses:
         '200':
-          $ref: '#/components/responses/GetMachineUserOK'
+          $ref: '#/components/responses/GetTokenOK'
         '403':
-          $ref: '#/components/responses/GetMachineUserForbiddenError'
+          $ref: '#/components/responses/GetTokenForbiddenError'
         '404':
-          $ref: '#/components/responses/GetMachineUserNotFoundError'
+          $ref: '#/components/responses/GetTokenNotFoundError'
         '500':
-          $ref: '#/components/responses/GetMachineUserUnexpectedError'
+          $ref: '#/components/responses/GetTokenUnexpectedError'
       tags:
-        - machine-users
+        - tokens
     patch:
-      operationId: updateMachineUser
+      operationId: updateToken
       security:
         - UserTokenAuth: []
       parameters:
         - in: path
-          name: machineUserId
+          name: tokenId
           required: true
           schema:
             type: string
             format: uuid
       requestBody:
-        $ref: '#/components/requestBodies/UpdateMachineUser'
+        $ref: '#/components/requestBodies/UpdateToken'
       responses:
         '200':
-          $ref: '#/components/responses/UpdateMachineUserOK'
+          $ref: '#/components/responses/UpdateTokenOK'
         '403':
-          $ref: '#/components/responses/UpdateMachineUserForbiddenError'
+          $ref: '#/components/responses/UpdateTokenForbiddenError'
         '404':
-          $ref: '#/components/responses/UpdateMachineUserNotFoundError'
+          $ref: '#/components/responses/UpdateTokenNotFoundError'
         '500':
-          $ref: '#/components/responses/UpdateMachineUserUnexpectedError'
+          $ref: '#/components/responses/UpdateTokenUnexpectedError'
       tags:
-        - machine-users
+        - tokens
     delete:
-      operationId: deleteMachineUser
+      operationId: deleteToken
       security:
         - UserTokenAuth: []
       parameters:
         - in: path
-          name: machineUserId
+          name: tokenId
           required: true
           schema:
             type: string
             format: uuid
       responses:
         '204':
-          description: Machine User Deleted
+          description: Token Deleted
         '403':
-          $ref: '#/components/responses/DeleteMachineUserForbiddenError'
+          $ref: '#/components/responses/DeleteTokenForbiddenError'
         '404':
-          $ref: '#/components/responses/DeleteMachineUserNotFoundError'
+          $ref: '#/components/responses/DeleteTokenNotFoundError'
         '500':
-          $ref: '#/components/responses/DeleteMachineUserUnexpectedError'
+          $ref: '#/components/responses/DeleteTokenUnexpectedError'
       tags:
-        - machine-users
+        - tokens
