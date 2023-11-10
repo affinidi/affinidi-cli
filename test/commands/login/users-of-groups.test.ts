@@ -84,7 +84,7 @@ describe('login: group users commands', function () {
       .nock(VP_ADAPTER_URL, (api) =>
         api.delete(`/v1/groups/${data.existingGroupName}/users`).reply(200, {
           userId: data.userGroupMappingId,
-        })
+        }),
       )
       .stdout()
       .command(validArgs)
