@@ -77,12 +77,14 @@ describe('login: group users commands', function () {
     const validArgs = [
       'login:remove-user-from-group',
       `--group-name=${data.existingGroupName}`,
-      `--user-mapping-id=${data.userGroupMappingId}`,
+      `--user-id=${data.userGroupMappingId}`,
     ]
 
     test
       .nock(VP_ADAPTER_URL, (api) =>
-        api.delete(`/v1/groups/${data.existingGroupName}/users/${data.userGroupMappingId}`).reply(200),
+        api.delete(`/v1/groups/${data.existingGroupName}/users`).reply(200, {
+          userId: data.userGroupMappingId,
+        })
       )
       .stdout()
       .command(validArgs)
