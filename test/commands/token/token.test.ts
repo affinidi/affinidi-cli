@@ -21,7 +21,7 @@ describe('login: token management commands', function () {
 
     test
       .nock(IAM_URL, (api) =>
-        api.post('/v1/machine-users').reply(200, {
+        api.post('/v1/tokens').reply(200, {
           id: '1234',
           ari: 'ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc',
           ownerAri: 'AIV/Concierge API - affinidi-elements-iam-dev',
@@ -65,7 +65,7 @@ describe('login: token management commands', function () {
 
     test
       .nock(IAM_URL, (api) =>
-        api.get(`/v1/machine-users/${data.tokenId}`).reply(200, {
+        api.get(`/v1/tokens/${data.tokenId}`).reply(200, {
           id: '1234',
           ari: 'ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc',
           ownerAri: 'AIV/Concierge API - affinidi-elements-iam-dev',
@@ -109,8 +109,8 @@ describe('login: token management commands', function () {
 
     test
       .nock(IAM_URL, (api) =>
-        api.get('/v1/machine-users').reply(200, {
-          machineUsers: [
+        api.get('/v1/tokens').reply(200, {
+          tokens: [
             {
               id: '1234',
               ari: 'ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc',
@@ -163,7 +163,7 @@ describe('login: token management commands', function () {
 
     test
       .nock(IAM_URL, (api) =>
-        api.patch(`/v1/machine-users/${data.tokenId}`).reply(200, {
+        api.patch(`/v1/tokens/${data.tokenId}`).reply(200, {
           id: '1234',
           ari: 'ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc',
           ownerAri: 'AIV/Concierge API - affinidi-elements-iam-dev',
@@ -206,7 +206,7 @@ describe('login: token management commands', function () {
     const validArgs = ['token:delete-token', `--token-id=${data.tokenId}`]
 
     test
-      .nock(IAM_URL, (api) => api.delete(`/v1/machine-users/${data.tokenId}`).reply(200))
+      .nock(IAM_URL, (api) => api.delete(`/v1/tokens/${data.tokenId}`).reply(200))
       .stdout()
       .command(validArgs)
       .it('update the token info based on id', async (ctx) => {
