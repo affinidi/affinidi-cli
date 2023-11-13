@@ -245,6 +245,67 @@ export interface ActionForbiddenError {
   }[]
 }
 
+export interface ConsumerAuthTokenEndpointInput {
+  grant_type: string
+  code?: string
+  refresh_token?: string
+  redirect_uri?: string
+  client_id?: string
+  [key: string]: any
+}
+
+export interface ConsumerAuthTokenEndpointOutput {
+  /** The access token issued by the authorization server. */
+  access_token?: string
+  /**
+   * The lifetime in seconds of the access token. For
+   * example, the value "3600" denotes that the access token will
+   * expire in one hour from the time the response was generated.
+   * @format int64
+   */
+  expires_in?: number
+  /**
+   * To retrieve a refresh token request the id_token scope.
+   * @format int64
+   */
+  id_token?: number
+  /**
+   * The refresh token, which can be used to obtain new
+   * access tokens. To retrieve it add the scope "offline" to your access token request.
+   */
+  refresh_token?: string
+  /** The scope of the access token */
+  scope?: string
+  /** The type of the token issued */
+  token_type?: string
+}
+
+export interface InvalidJwtTokenError {
+  name: 'InvalidJwtTokenError'
+  message: 'JWT token is invalid'
+  httpStatusCode: 401
+  traceId: string
+  details?: {
+    issue: string
+    field?: string
+    value?: string
+    location?: string
+  }[]
+}
+
+export interface UnauthorizedError {
+  name: 'UnauthorizedError'
+  message: 'Unauthorized'
+  httpStatusCode: 403
+  traceId: string
+  details?: {
+    issue: string
+    field?: string
+    value?: string
+    location?: string
+  }[]
+}
+
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 
 export type QueryParamsType = Record<string | number, any>
@@ -401,24 +462,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   v1 = {
     /**
-     * @description This is deprecated endpoint, please use /v1/sts/create-project-scoped-token
-     *
-     * @tags sts
-     * @name DeprecatedCreateProjectScopedToken
-     * @request POST:/v1/create-project-scoped-token
-     * @deprecated
-     * @secure
-     */
-    deprecatedCreateProjectScopedToken: (data: CreateProjectScopedTokenInput, params: RequestParams = {}) =>
-      this.request<CreateProjectScopedTokenOutput, InvalidParameterError | UnexpectedError>({
-        path: `/v1/create-project-scoped-token`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        ...params,
-      }),
-
-    /**
      * No description
      *
      * @tags sts
@@ -491,58 +534,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags projects
-     * @name AddUserToProject
-     * @request POST:/v1/projects/users
-     * @deprecated
-     * @secure
-     */
-    addUserToProject: (data: AddUserToProjectInput, params: RequestParams = {}) =>
-      this.request<void, InvalidParameterError | ActionForbiddenError | UnexpectedError>({
-        path: `/v1/projects/users`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags projects
-     * @name ListUsersOfProject
-     * @request GET:/v1/projects/users
-     * @deprecated
-     * @secure
-     */
-    listUsersOfProject: (params: RequestParams = {}) =>
-      this.request<UserList, InvalidParameterError | ActionForbiddenError | UnexpectedError>({
-        path: `/v1/projects/users`,
-        method: 'GET',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags projects
-     * @name DeleteUserFromProject
-     * @request DELETE:/v1/projects/users/{userId}
-     * @deprecated
-     * @secure
-     */
-    deleteUserFromProject: (userId: string, params: RequestParams = {}) =>
-      this.request<void, InvalidParameterError | ActionForbiddenError | UnexpectedError>({
-        path: `/v1/projects/users/${userId}`,
-        method: 'DELETE',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags projects
      * @name ListPrincipalsOfProject
      * @request GET:/v1/projects/principals
      * @secure
@@ -592,41 +583,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/v1/projects/principals/${principalId}`,
         method: 'DELETE',
         query: query,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags policies
-     * @name DeprecatedGetPolicies
-     * @request GET:/v1/policies/users/{userId}
-     * @deprecated
-     * @secure
-     */
-    deprecatedGetPolicies: (userId: string, params: RequestParams = {}) =>
-      this.request<PolicyDto, InvalidParameterError | NotFoundError | UnexpectedError>({
-        path: `/v1/policies/users/${userId}`,
-        method: 'GET',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags policies
-     * @name DeprecatedUpdatePolicies
-     * @request PUT:/v1/policies/users/{userId}
-     * @deprecated
-     * @secure
-     */
-    deprecatedUpdatePolicies: (userId: string, data: PolicyDto, params: RequestParams = {}) =>
-      this.request<PolicyDto, InvalidParameterError | UnexpectedError>({
-        path: `/v1/policies/users/${userId}`,
-        method: 'PUT',
-        body: data,
         secure: true,
         ...params,
       }),
@@ -758,6 +714,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/v1/tokens/${tokenId}`,
         method: 'DELETE',
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Use open source libraries to perform OAuth 2.0 and OpenID Connect available for any programming language. You can find a list of libraries here https://oauth.net/code/ The Ory SDK is not yet able to this endpoint properly.
+     *
+     * @tags consumerAuth
+     * @name ConsumerAuthTokenEndpoint
+     * @summary The Consumer OAuth 2.0 Token Endpoint
+     * @request POST:/v1/consumer/oauth2/token
+     */
+    consumerAuthTokenEndpoint: (data: ConsumerAuthTokenEndpointInput, params: RequestParams = {}) =>
+      this.request<ConsumerAuthTokenEndpointOutput, UnauthorizedError | UnexpectedError>({
+        path: `/v1/consumer/oauth2/token`,
+        method: 'POST',
+        body: data,
         ...params,
       }),
   }

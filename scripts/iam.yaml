@@ -58,13 +58,6 @@ components:
       in: header
   headers: {}
   requestBodies:
-    DeprecatedCreateProjectScopedToken:
-      description: DeprecatedCreateProjectScopedToken
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CreateProjectScopedTokenInput'
     CreateProjectScopedToken:
       description: CreateProjectScopedToken
       required: true
@@ -93,13 +86,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AddUserToProjectInput'
-    DeprecatedUpdatePolicies:
-      description: DeprecatedUpdatePolicies
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PolicyDto'
     UpdatePolicies:
       description: UpdatePolicies
       required: true
@@ -121,6 +107,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateTokenInput'
+    ConsumerAuthTokenEndpoint:
+      description: ConsumerAuthTokenEndpoint
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAuthTokenEndpointInput'
   responses:
     GetWellKnownJwksOK:
       description: List of JWK used by the services as JWKS
@@ -128,12 +121,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/JsonWebKeySetDto'
-    DeprecatedCreateProjectScopedTokenOK:
-      description: Created Project Scoped Tokens
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CreateProjectScopedTokenOutput'
     CreateProjectScopedTokenOK:
       description: Created Project Scoped Tokens
       content:
@@ -158,30 +145,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ProjectList'
-    ListUsersOfProjectOK:
-      description: Ok
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UserList'
     ListPrincipalsOfProjectOK:
       description: Ok
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UserList'
-    DeprecatedGetPoliciesOK:
-      description: Ok
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PolicyDto'
-    DeprecatedUpdatePoliciesOK:
-      description: OK
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PolicyDto'
     GetPoliciesOK:
       description: Ok
       content:
@@ -218,19 +187,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/TokenDto'
+    ConsumerAuthTokenEndpointOK:
+      description: Consumer Token OK Response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAuthTokenEndpointOutput'
     GetWellKnownJwksUnexpectedError:
-      description: UnexpectedError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnexpectedError'
-    DeprecatedCreateProjectScopedTokenBadRequestError:
-      description: BadRequestError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InvalidParameterError'
-    DeprecatedCreateProjectScopedTokenUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
@@ -290,60 +253,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UnexpectedError'
-    AddUserToProjectBadRequestError:
-      description: BadRequestError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InvalidParameterError'
-    AddUserToProjectForbiddenError:
-      description: ForbiddenError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ActionForbiddenError'
-    AddUserToProjectUnexpectedError:
-      description: UnexpectedError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnexpectedError'
-    ListUsersOfProjectBadRequestError:
-      description: BadRequestError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InvalidParameterError'
-    ListUsersOfProjectForbiddenError:
-      description: ForbiddenError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ActionForbiddenError'
-    ListUsersOfProjectUnexpectedError:
-      description: UnexpectedError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnexpectedError'
-    DeleteUserFromProjectBadRequestError:
-      description: BadRequestError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InvalidParameterError'
-    DeleteUserFromProjectForbiddenError:
-      description: ForbiddenError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ActionForbiddenError'
-    DeleteUserFromProjectUnexpectedError:
-      description: UnexpectedError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnexpectedError'
     ListPrincipalsOfProjectBadRequestError:
       description: BadRequestError
       content:
@@ -393,36 +302,6 @@ components:
           schema:
             $ref: '#/components/schemas/ActionForbiddenError'
     DeletePrincipalFromProjectUnexpectedError:
-      description: UnexpectedError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnexpectedError'
-    DeprecatedGetPoliciesBadRequestError:
-      description: BadRequestError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InvalidParameterError'
-    DeprecatedGetPoliciesNotFoundError:
-      description: NotFoundError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotFoundError'
-    DeprecatedGetPoliciesUnexpectedError:
-      description: UnexpectedError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnexpectedError'
-    DeprecatedUpdatePoliciesBadRequestError:
-      description: BadRequestError
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/InvalidParameterError'
-    DeprecatedUpdatePoliciesUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
@@ -531,6 +410,18 @@ components:
           schema:
             $ref: '#/components/schemas/NotFoundError'
     DeleteTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    ConsumerAuthTokenEndpointForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    ConsumerAuthTokenEndpointUnexpectedError:
       description: UnexpectedError
       content:
         application/json:
@@ -1072,6 +963,131 @@ components:
         - message
         - httpStatusCode
         - traceId
+    ConsumerAuthTokenEndpointInput:
+      type: object
+      additionalProperties: true
+      properties:
+        grant_type:
+          type: string
+        code:
+          type: string
+        refresh_token:
+          type: string
+        redirect_uri:
+          type: string
+        client_id:
+          type: string
+      required:
+        - grant_type
+    ConsumerAuthTokenEndpointOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        access_token:
+          description: The access token issued by the authorization server.
+          type: string
+        expires_in:
+          description: |-
+            The lifetime in seconds of the access token. For
+            example, the value "3600" denotes that the access token will
+            expire in one hour from the time the response was generated.
+          type: integer
+          format: int64
+        id_token:
+          description: To retrieve a refresh token request the id_token scope.
+          type: integer
+          format: int64
+        refresh_token:
+          description: >-
+            The refresh token, which can be used to obtain new
+
+            access tokens. To retrieve it add the scope "offline" to your access
+            token request.
+          type: string
+        scope:
+          description: The scope of the access token
+          type: string
+        token_type:
+          description: The type of the token issued
+          type: string
+    InvalidJwtTokenError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - InvalidJwtTokenError
+        message:
+          type: string
+          enum:
+            - JWT token is invalid
+        httpStatusCode:
+          type: number
+          enum:
+            - 401
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    UnauthorizedError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - UnauthorizedError
+        message:
+          type: string
+          enum:
+            - Unauthorized
+        httpStatusCode:
+          type: number
+          enum:
+            - 403
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
   examples: {}
 paths:
   /.well-known/jwks.json:
@@ -1085,29 +1101,6 @@ paths:
           $ref: '#/components/responses/GetWellKnownJwksUnexpectedError'
       tags:
         - well-known
-  /v1/create-project-scoped-token:
-    post:
-      deprecated: true
-      operationId: deprecatedCreateProjectScopedToken
-      description: >-
-        This is deprecated endpoint, please use
-        /v1/sts/create-project-scoped-token
-      security:
-        - UserTokenAuth: []
-      parameters: []
-      requestBody:
-        $ref: '#/components/requestBodies/DeprecatedCreateProjectScopedToken'
-      responses:
-        '200':
-          $ref: '#/components/responses/DeprecatedCreateProjectScopedTokenOK'
-        '400':
-          $ref: >-
-            #/components/responses/DeprecatedCreateProjectScopedTokenBadRequestError
-        '500':
-          $ref: >-
-            #/components/responses/DeprecatedCreateProjectScopedTokenUnexpectedError
-      tags:
-        - sts
   /v1/sts/create-project-scoped-token:
     post:
       operationId: createProjectScopedToken
@@ -1170,67 +1163,6 @@ paths:
           $ref: '#/components/responses/ListProjectOK'
         '500':
           $ref: '#/components/responses/ListProjectUnexpectedError'
-      tags:
-        - projects
-  /v1/projects/users:
-    post:
-      deprecated: true
-      operationId: addUserToProject
-      security:
-        - ProjectTokenAuth: []
-      parameters: []
-      requestBody:
-        $ref: '#/components/requestBodies/AddUserToProject'
-      responses:
-        '204':
-          description: NoContent
-        '400':
-          $ref: '#/components/responses/AddUserToProjectBadRequestError'
-        '403':
-          $ref: '#/components/responses/AddUserToProjectForbiddenError'
-        '500':
-          $ref: '#/components/responses/AddUserToProjectUnexpectedError'
-      tags:
-        - projects
-    get:
-      deprecated: true
-      operationId: listUsersOfProject
-      security:
-        - ProjectTokenAuth: []
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/ListUsersOfProjectOK'
-        '400':
-          $ref: '#/components/responses/ListUsersOfProjectBadRequestError'
-        '403':
-          $ref: '#/components/responses/ListUsersOfProjectForbiddenError'
-        '500':
-          $ref: '#/components/responses/ListUsersOfProjectUnexpectedError'
-      tags:
-        - projects
-  /v1/projects/users/{userId}:
-    delete:
-      deprecated: true
-      operationId: deleteUserFromProject
-      security:
-        - ProjectTokenAuth: []
-      parameters:
-        - in: path
-          name: userId
-          description: id of user
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Ok
-        '400':
-          $ref: '#/components/responses/DeleteUserFromProjectBadRequestError'
-        '403':
-          $ref: '#/components/responses/DeleteUserFromProjectForbiddenError'
-        '500':
-          $ref: '#/components/responses/DeleteUserFromProjectUnexpectedError'
       tags:
         - projects
   /v1/projects/principals:
@@ -1300,51 +1232,6 @@ paths:
           $ref: '#/components/responses/DeletePrincipalFromProjectUnexpectedError'
       tags:
         - projects
-  /v1/policies/users/{userId}:
-    get:
-      deprecated: true
-      operationId: deprecatedGetPolicies
-      security:
-        - ProjectTokenAuth: []
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/DeprecatedGetPoliciesOK'
-        '400':
-          $ref: '#/components/responses/DeprecatedGetPoliciesBadRequestError'
-        '404':
-          $ref: '#/components/responses/DeprecatedGetPoliciesNotFoundError'
-        '500':
-          $ref: '#/components/responses/DeprecatedGetPoliciesUnexpectedError'
-      tags:
-        - policies
-    put:
-      deprecated: true
-      operationId: deprecatedUpdatePolicies
-      security:
-        - ProjectTokenAuth: []
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: '#/components/requestBodies/DeprecatedUpdatePolicies'
-      responses:
-        '200':
-          $ref: '#/components/responses/DeprecatedUpdatePoliciesOK'
-        '400':
-          $ref: '#/components/responses/DeprecatedUpdatePoliciesBadRequestError'
-        '500':
-          $ref: '#/components/responses/DeprecatedUpdatePoliciesUnexpectedError'
-      tags:
-        - policies
   /v1/policies/principals/{principalId}:
     get:
       operationId: getPolicies
@@ -1504,3 +1391,27 @@ paths:
           $ref: '#/components/responses/DeleteTokenUnexpectedError'
       tags:
         - tokens
+  /v1/consumer/oauth2/token:
+    post:
+      operationId: consumerAuthTokenEndpoint
+      summary: The Consumer OAuth 2.0 Token Endpoint
+      description: >-
+        Use open source libraries to perform OAuth 2.0 and OpenID Connect
+
+        available for any programming language. You can find a list of libraries
+        here https://oauth.net/code/
+
+
+        The Ory SDK is not yet able to this endpoint properly.
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/ConsumerAuthTokenEndpoint'
+      responses:
+        '200':
+          $ref: '#/components/responses/ConsumerAuthTokenEndpointOK'
+        '403':
+          $ref: '#/components/responses/ConsumerAuthTokenEndpointForbiddenError'
+        '500':
+          $ref: '#/components/responses/ConsumerAuthTokenEndpointUnexpectedError'
+      tags:
+        - consumerAuth
