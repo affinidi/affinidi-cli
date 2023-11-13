@@ -11,7 +11,7 @@ export enum SupportedKeyTypes {
 }
 
 export enum PrincipalTypes {
-  TOKEN = 'machine_user',
+  TOKEN = 'token',
   USER = 'user',
 }
 

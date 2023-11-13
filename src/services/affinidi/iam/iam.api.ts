@@ -95,6 +95,9 @@ export interface JsonWebKeyDto {
   kty: string
   n?: string
   e?: string
+  x?: string
+  y?: string
+  crv?: string
   alg: string
   use: string
 }
@@ -108,7 +111,7 @@ export interface JsonWebKeySetDto {
  * Private Key JWT Authentication of Client with `private_key_jwt` oAuth Method
  * @example "{"type": "PRIVATE_KEY", "signingAlgorithm": "RS256", "publicKeyInfo": { "jwks": {"keys":[{"use":"sig","kty":"RSA","kid":"some-kid","alg":"RS256","n":"some-n-value","e":"some-e-value"}]} }}"
  */
-export interface MachineUserPrivateKeyAuthenticationMethodDto {
+export interface TokenPrivateKeyAuthenticationMethodDto {
   type: 'PRIVATE_KEY'
   signingAlgorithm: 'RS256' | 'RS512' | 'ES256' | 'ES512'
   /** Corresponding Public Key Info provided either as a URL or a Hardcoded Object */
@@ -122,53 +125,59 @@ export interface MachineUserPrivateKeyAuthenticationMethodDto {
       }
 }
 
-/** How the Machine User will be authenticate against our Authorization Server */
-export type MachineUserAuthenticationMethodDto = MachineUserPrivateKeyAuthenticationMethodDto
+/** How the Token will be authenticate against our Authorization Server */
+export type TokenAuthenticationMethodDto = TokenPrivateKeyAuthenticationMethodDto
 
-export interface MachineUserDto {
+export interface TokenDto {
   /**
-   * MachineUser Id
+   * Token Id
    * @format uuid
    * @example "c5817ea6-8367-4458-9131-54cd2c5b9b48"
    */
   id: string
   /**
-   * MachineUser ARI
-   * @example "machine/c5817ea6-8367-4458-9131-54cd2c5b9b48"
+   * Token ARI
+   * @example "token/c5817ea6-8367-4458-9131-54cd2c5b9b48"
    */
   ari: string
   /**
-   * The MachineUser owner's ARI
+   * The Token owner's ARI
    * @example "ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc"
    */
   ownerAri: string
   /**
-   * Owner defined MachineUser display name
+   * Owner defined Token display name
    * @example "AIV/Concierge API - affinidi-elements-iam-dev"
    */
   name: string
-  /** How the Machine User will be authenticate against our Authorization Server */
-  authenticationMethod: MachineUserAuthenticationMethodDto
-  /** Scopes that will be assigned to the MachineUser on authentication */
+  /** How the Token will be authenticate against our Authorization Server */
+  authenticationMethod: TokenAuthenticationMethodDto
+  /** Scopes that will be assigned to the Token on authentication */
   scopes: string[]
 }
 
-export interface MachineUserList {
-  machineUsers: MachineUserDto[]
+export interface TokenList {
+  tokens: TokenDto[]
 }
 
-export interface CreateMachineUserInput {
-  /** @example "AIV/Concierge API - affinidi-elements-iam-dev" */
+export interface CreateTokenInput {
+  /**
+   * @pattern .{3,}
+   * @example "AIV/Concierge API - affinidi-elements-iam-dev"
+   */
   name: string
-  /** How the Machine User will be authenticate against our Authorization Server */
-  authenticationMethod: MachineUserAuthenticationMethodDto
+  /** How the Token will be authenticate against our Authorization Server */
+  authenticationMethod: TokenAuthenticationMethodDto
 }
 
-export interface UpdateMachineUserInput {
-  /** @example "AIV/Concierge API - affinidi-elements-iam-dev" */
+export interface UpdateTokenInput {
+  /**
+   * @pattern .{3,}
+   * @example "AIV/Concierge API - affinidi-elements-iam-dev"
+   */
   name: string
-  /** How the Machine User will be authenticate against our Authorization Server */
-  authenticationMethod: MachineUserAuthenticationMethodDto
+  /** How the Token will be authenticate against our Authorization Server */
+  authenticationMethod: TokenAuthenticationMethodDto
 }
 
 export interface UnexpectedError {
@@ -226,6 +235,67 @@ export interface PrincipalDoesNotBelongToProjectError {
 export interface ActionForbiddenError {
   name: 'ActionForbiddenError'
   message: 'Principal can not execute action on given resource'
+  httpStatusCode: 403
+  traceId: string
+  details?: {
+    issue: string
+    field?: string
+    value?: string
+    location?: string
+  }[]
+}
+
+export interface ConsumerAuthTokenEndpointInput {
+  grant_type: string
+  code?: string
+  refresh_token?: string
+  redirect_uri?: string
+  client_id?: string
+  [key: string]: any
+}
+
+export interface ConsumerAuthTokenEndpointOutput {
+  /** The access token issued by the authorization server. */
+  access_token?: string
+  /**
+   * The lifetime in seconds of the access token. For
+   * example, the value "3600" denotes that the access token will
+   * expire in one hour from the time the response was generated.
+   * @format int64
+   */
+  expires_in?: number
+  /**
+   * To retrieve a refresh token request the id_token scope.
+   * @format int64
+   */
+  id_token?: number
+  /**
+   * The refresh token, which can be used to obtain new
+   * access tokens. To retrieve it add the scope "offline" to your access token request.
+   */
+  refresh_token?: string
+  /** The scope of the access token */
+  scope?: string
+  /** The type of the token issued */
+  token_type?: string
+}
+
+export interface InvalidJwtTokenError {
+  name: 'InvalidJwtTokenError'
+  message: 'JWT token is invalid'
+  httpStatusCode: 401
+  traceId: string
+  details?: {
+    issue: string
+    field?: string
+    value?: string
+    location?: string
+  }[]
+}
+
+export interface UnauthorizedError {
+  name: 'UnauthorizedError'
+  message: 'Unauthorized'
   httpStatusCode: 403
   traceId: string
   details?: {
@@ -392,24 +462,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   v1 = {
     /**
-     * @description This is deprecated endpoint, please use /v1/sts/create-project-scoped-token
-     *
-     * @tags sts
-     * @name DeprecatedCreateProjectScopedToken
-     * @request POST:/v1/create-project-scoped-token
-     * @deprecated
-     * @secure
-     */
-    deprecatedCreateProjectScopedToken: (data: CreateProjectScopedTokenInput, params: RequestParams = {}) =>
-      this.request<CreateProjectScopedTokenOutput, InvalidParameterError | UnexpectedError>({
-        path: `/v1/create-project-scoped-token`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        ...params,
-      }),
-
-    /**
      * No description
      *
      * @tags sts
@@ -482,58 +534,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags projects
-     * @name AddUserToProject
-     * @request POST:/v1/projects/users
-     * @deprecated
-     * @secure
-     */
-    addUserToProject: (data: AddUserToProjectInput, params: RequestParams = {}) =>
-      this.request<void, InvalidParameterError | ActionForbiddenError | UnexpectedError>({
-        path: `/v1/projects/users`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags projects
-     * @name ListUsersOfProject
-     * @request GET:/v1/projects/users
-     * @deprecated
-     * @secure
-     */
-    listUsersOfProject: (params: RequestParams = {}) =>
-      this.request<UserList, InvalidParameterError | ActionForbiddenError | UnexpectedError>({
-        path: `/v1/projects/users`,
-        method: 'GET',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags projects
-     * @name DeleteUserFromProject
-     * @request DELETE:/v1/projects/users/{userId}
-     * @deprecated
-     * @secure
-     */
-    deleteUserFromProject: (userId: string, params: RequestParams = {}) =>
-      this.request<void, InvalidParameterError | ActionForbiddenError | UnexpectedError>({
-        path: `/v1/projects/users/${userId}`,
-        method: 'DELETE',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags projects
      * @name ListPrincipalsOfProject
      * @request GET:/v1/projects/principals
      * @secure
@@ -575,7 +575,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       principalId: string,
       query: {
         /** type of principal */
-        principalType: 'user' | 'machine_user'
+        principalType: 'user' | 'token'
       },
       params: RequestParams = {},
     ) =>
@@ -591,41 +591,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags policies
-     * @name DeprecatedGetPolicies
-     * @request GET:/v1/policies/users/{userId}
-     * @deprecated
-     * @secure
-     */
-    deprecatedGetPolicies: (userId: string, params: RequestParams = {}) =>
-      this.request<PolicyDto, InvalidParameterError | NotFoundError | UnexpectedError>({
-        path: `/v1/policies/users/${userId}`,
-        method: 'GET',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags policies
-     * @name DeprecatedUpdatePolicies
-     * @request PUT:/v1/policies/users/{userId}
-     * @deprecated
-     * @secure
-     */
-    deprecatedUpdatePolicies: (userId: string, data: PolicyDto, params: RequestParams = {}) =>
-      this.request<PolicyDto, InvalidParameterError | UnexpectedError>({
-        path: `/v1/policies/users/${userId}`,
-        method: 'PUT',
-        body: data,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags policies
      * @name GetPolicies
      * @request GET:/v1/policies/principals/{principalId}
      * @secure
@@ -633,7 +598,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     getPolicies: (
       principalId: string,
       query: {
-        principalType: 'user' | 'machine_user'
+        principalType: 'user' | 'token'
       },
       params: RequestParams = {},
     ) =>
@@ -656,7 +621,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     updatePolicies: (
       principalId: string,
       query: {
-        principalType: 'user' | 'machine_user'
+        principalType: 'user' | 'token'
       },
       data: PolicyDto,
       params: RequestParams = {},
@@ -673,14 +638,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name CreateMachineUser
-     * @request POST:/v1/machine-users
+     * @tags tokens
+     * @name CreateToken
+     * @request POST:/v1/tokens
      * @secure
      */
-    createMachineUser: (data: CreateMachineUserInput, params: RequestParams = {}) =>
-      this.request<MachineUserDto, InvalidParameterError | UnexpectedError>({
-        path: `/v1/machine-users`,
+    createToken: (data: CreateTokenInput, params: RequestParams = {}) =>
+      this.request<TokenDto, InvalidParameterError | UnexpectedError>({
+        path: `/v1/tokens`,
         method: 'POST',
         body: data,
         secure: true,
@@ -690,14 +655,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name ListMachineUser
-     * @request GET:/v1/machine-users
+     * @tags tokens
+     * @name ListToken
+     * @request GET:/v1/tokens
      * @secure
      */
-    listMachineUser: (params: RequestParams = {}) =>
-      this.request<MachineUserList, InvalidParameterError | UnexpectedError>({
-        path: `/v1/machine-users`,
+    listToken: (params: RequestParams = {}) =>
+      this.request<TokenList, InvalidParameterError | UnexpectedError>({
+        path: `/v1/tokens`,
         method: 'GET',
         secure: true,
         ...params,
@@ -706,14 +671,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name GetMachineUser
-     * @request GET:/v1/machine-users/{machineUserId}
+     * @tags tokens
+     * @name GetToken
+     * @request GET:/v1/tokens/{tokenId}
      * @secure
      */
-    getMachineUser: (machineUserId: string, params: RequestParams = {}) =>
-      this.request<MachineUserDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
-        path: `/v1/machine-users/${machineUserId}`,
+    getToken: (tokenId: string, params: RequestParams = {}) =>
+      this.request<TokenDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
+        path: `/v1/tokens/${tokenId}`,
         method: 'GET',
         secure: true,
         ...params,
@@ -722,14 +687,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name UpdateMachineUser
-     * @request PATCH:/v1/machine-users/{machineUserId}
+     * @tags tokens
+     * @name UpdateToken
+     * @request PATCH:/v1/tokens/{tokenId}
      * @secure
      */
-    updateMachineUser: (machineUserId: string, data: UpdateMachineUserInput, params: RequestParams = {}) =>
-      this.request<MachineUserDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
-        path: `/v1/machine-users/${machineUserId}`,
+    updateToken: (tokenId: string, data: UpdateTokenInput, params: RequestParams = {}) =>
+      this.request<TokenDto, ActionForbiddenError | NotFoundError | UnexpectedError>({
+        path: `/v1/tokens/${tokenId}`,
         method: 'PATCH',
         body: data,
         secure: true,
@@ -739,16 +704,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags machine-users
-     * @name DeleteMachineUser
-     * @request DELETE:/v1/machine-users/{machineUserId}
+     * @tags tokens
+     * @name DeleteToken
+     * @request DELETE:/v1/tokens/{tokenId}
      * @secure
      */
-    deleteMachineUser: (machineUserId: string, params: RequestParams = {}) =>
+    deleteToken: (tokenId: string, params: RequestParams = {}) =>
       this.request<void, ActionForbiddenError | NotFoundError | UnexpectedError>({
-        path: `/v1/machine-users/${machineUserId}`,
+        path: `/v1/tokens/${tokenId}`,
         method: 'DELETE',
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Use open source libraries to perform OAuth 2.0 and OpenID Connect available for any programming language. You can find a list of libraries here https://oauth.net/code/ The Ory SDK is not yet able to this endpoint properly.
+     *
+     * @tags consumerAuth
+     * @name ConsumerAuthTokenEndpoint
+     * @summary The Consumer OAuth 2.0 Token Endpoint
+     * @request POST:/v1/consumer/oauth2/token
+     */
+    consumerAuthTokenEndpoint: (data: ConsumerAuthTokenEndpointInput, params: RequestParams = {}) =>
+      this.request<ConsumerAuthTokenEndpointOutput, UnauthorizedError | UnexpectedError>({
+        path: `/v1/consumer/oauth2/token`,
+        method: 'POST',
+        body: data,
         ...params,
       }),
   }
