@@ -132,18 +132,18 @@ class VPAdapterService {
     }
   }
 
-  public addUserToGroup = async (groupName: string, sub: string) => {
+  public addUserToGroup = async (groupName: string, userId: string) => {
     try {
-      const response = await this.client.v1.addUserToGroup(groupName, { sub }, { headers: getBFFHeaders() })
+      const response = await this.client.v1.addUserToGroup(groupName, { userId }, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public removeUserFromGroup = async (groupName: string, userMappingId: string): Promise<void> => {
+  public removeUserFromGroup = async (groupName: string, userId: string): Promise<void> => {
     try {
-      await this.client.v1.removeUserFromGroup(groupName, userMappingId, { headers: getBFFHeaders() })
+      await this.client.v1.removeUserFromGroup(groupName, { userId }, { headers: getBFFHeaders() })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
