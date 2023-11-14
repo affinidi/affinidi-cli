@@ -75,7 +75,7 @@ export interface CreateLoginConfigurationOutput {
   /** Project id */
   projectId: string
   /** Configuration id */
-  id: string
+  configurationId?: string
   /** User defined login configuration name */
   name: string
   /** OIDC Auth Credentials */
@@ -169,7 +169,7 @@ export interface LoginConfigurationObject {
   /** Configuration ari */
   ari: string
   /** Configuration id */
-  id: string
+  configurationId?: string
   /** Project id */
   projectId: string
   /** User defined login configuration name */
@@ -190,6 +190,8 @@ export interface LoginConfigurationObject {
   idTokenMapping: IdTokenMapping
   /** login configuration client metadata */
   clientMetadata: LoginConfigurationClientMetadata
+  /** Requested Client Authentication method for the Token Endpoint. The options are: `client_secret_post`: (default) Send client_id and client_secret as application/x-www-form-urlencoded in the HTTP body. `client_secret_basic`: Send client_id and client_secret as application/x-www-form-urlencoded encoded in the HTTP Authorization header. `none`: For public clients (native/mobile apps) which can not have secret. */
+  tokenEndpointAuthMethod: TokenEndpointAuthMethod
   [key: string]: any
 }
 
@@ -231,13 +233,13 @@ export interface GroupUserMappingDto {
   addedAt: string
 }
 
-/** input used to create a user group mapping or in other words add user to group */
+/** input used to add a user to a group */
 export interface AddUserToGroupInput {
   /** Unique identifier of the user */
   userId: string
 }
 
-/** input used to create a user group mapping or in other words add user to group */
+/** input used to remove a user from a group */
 export interface RemoveUserFromGroupInput {
   /** Unique identifier of the user */
   userId: string
@@ -317,7 +319,7 @@ export interface JsonWebKey {
     /** Use ("public key use") identifies the intended use of the public key. The  "use" parameter is employed to indicate whether a public key is used for  encrypting data or verifying the signature on data. Values are commonly  "sig" (signature) or "enc" (encryption). */
     use: string
     x?: string
-    /** The "x5c" (X.509 certificate chain) parameter contains a chain of one  or more PKIX certificates [RFC5280]. The certificate chain is represented  as a JSON array of certificate value strings. Each string in the array is  a base64-encoded (Section 4 of [RFC4648] -- not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value. The PKIX certificate containing the  key value MUST be the first certificate. */
+    /** The "x5c" (X.509 certificate chain) parameter contains a chain of one  or more PKIX certificates [RFC5280]. The certificate chain is represented  as a JSON array of certificate value strings. Each string in the array is  a base64-encoded (Section 4 of [RFC4648] -- not base64url-encoded) DER  [ITU.X690.1994] PKIX certificate value. The PKIX certificate containing the  key value MUST be the first certificate. */
     x5c: string[]
     y?: string
   }[]
@@ -365,7 +367,7 @@ export interface OIDCConfig {
   id_token_signing_alg_values_supported: string[]
   /**
    * OpenID Connect Issuer URL
-   * An URL using the https scheme with no query or fragment component that the OP asserts as its IssuerURL Identifier. If IssuerURL discovery  is supported , this value MUST be identical to the issuer value returned by WebFinger.  This also MUST be identical to the iss Claim value in ID Tokens issued from this IssuerURL.
+   * An URL using the https scheme with no query or fragment component  that the OP asserts as its IssuerURL Identifier. If IssuerURL discovery  is supported , this value MUST be identical to the issuer value returned by WebFinger.  This also MUST be identical to the iss Claim value in ID Tokens issued from this IssuerURL.
    */
   issuer: string
   /**
@@ -451,7 +453,7 @@ export interface OAuth2Token {
   expires_in?: number
   /** To retrieve a refresh token request the id_token scope. */
   id_token?: number
-  /** The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request. */
+  /** The refresh token, which can be used to obtain new access tokens.  To retrieve it add the scope "offline" to your access token request. */
   refresh_token?: string
   /** The scope of the access token */
   scope?: string
@@ -484,7 +486,7 @@ export interface GetUserInfo {
   phone_number?: string
   /** True if the End-User's phone number has been verified; otherwise false. When this Claim  Value is true, this means that the OP took affirmative steps to ensure that this phone  number was controlled by the End-User at the time the verification was performed. The means  by which a phone number is verified is context-specific, and dependent upon the trust framework  or contractual agreements within which the parties are operating. When true, the phone_number  Claim MUST be in E.164 format and any extensions MUST be represented in RFC 3966 format. */
   phone_number_verified?: boolean
-  /** URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG,  JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD specifically reference a profile photo of the End-User suitable for displaying when describing the  End-User, rather than an arbitrary photo taken by the End-User. */
+  /** URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG,  JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD  specifically reference a profile photo of the End-User suitable for displaying when describing the  End-User, rather than an arbitrary photo taken by the End-User. */
   picture?: string
   /** Non-unique shorthand name by which the End-User wishes to be referred to at the RP, such as  janedoe or j.doe. This value MAY be any valid JSON string including special characters  such as @, /, or whitespace. */
   preferred_username?: string
@@ -703,7 +705,7 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * Affinidi OIDC VP Adapter Backend
  *
- * An authorization token is necessary to create or obtain a project Access Token and access Admin APIs. Follow these step-by-step [instructions](https://lemmatree.atlassian.net/wiki/spaces/NETCORE/pages/2735317648020/ASA+Developer+Flow#Instructions-on-how-to-create-the-Project.) to set up an authorization token
+ * An authorization token is necessary to create or obtain a project Access Token and access Admin APIs. Follow these step-by-step [instructions](https://lemmatree.atlassian.net/wiki/spaces/NETCORE/pages/2735317648020/ASA+Developer+Flow#Instructions-on-how-to-create-the-Project.)  to set up an authorization token
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   v1 = {

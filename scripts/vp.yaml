@@ -15,7 +15,7 @@ info:
 
     An authorization token is necessary to create or obtain a project Access
     Token and access Admin APIs. Follow these step-by-step
-    [instructions](https://lemmatree.atlassian.net/wiki/spaces/NETCORE/pages/2735317648020/ASA+Developer+Flow#Instructions-on-how-to-create-the-Project.)
+    [instructions](https://lemmatree.atlassian.net/wiki/spaces/NETCORE/pages/2735317648020/ASA+Developer+Flow#Instructions-on-how-to-create-the-Project.) 
     to set up an authorization token
   contact:
     name: nucleus
@@ -619,7 +619,7 @@ components:
         projectId:
           type: string
           description: Project id
-        id:
+        configurationId:
           type: string
           description: Configuration id
         name:
@@ -781,7 +781,7 @@ components:
         ari:
           type: string
           description: Configuration ari
-        id:
+        configurationId:
           type: string
           description: Configuration id
         projectId:
@@ -814,6 +814,8 @@ components:
           $ref: '#/components/schemas/IdTokenMapping'
         clientMetadata:
           $ref: '#/components/schemas/LoginConfigurationClientMetadata'
+        tokenEndpointAuthMethod:
+          $ref: '#/components/schemas/TokenEndpointAuthMethod'
       required:
         - ari
         - id
@@ -824,6 +826,7 @@ components:
         - creationDate
         - idTokenMapping
         - clientMetadata
+        - tokenEndpointAuthMethod
     IdTokenMapping:
       minItems: 1
       items:
@@ -888,9 +891,7 @@ components:
         - addedAt
     AddUserToGroupInput:
       type: object
-      description: >-
-        input used to create a user group mapping or in other words add user to
-        group
+      description: input used to add a user to a group
       properties:
         userId:
           type: string
@@ -899,9 +900,7 @@ components:
         - userId
     RemoveUserFromGroupInput:
       type: object
-      description: >-
-        input used to create a user group mapping or in other words add user to
-        group
+      description: input used to remove a user from a group
       properties:
         userId:
           type: string
@@ -1112,7 +1111,7 @@ components:
                   of one  or more PKIX certificates [RFC5280]. The certificate
                   chain is represented  as a JSON array of certificate value
                   strings. Each string in the array is  a base64-encoded
-                  (Section 4 of [RFC4648] -- not base64url-encoded) DER
+                  (Section 4 of [RFC4648] -- not base64url-encoded) DER 
                   [ITU.X690.1994] PKIX certificate value. The PKIX certificate
                   containing the  key value MUST be the first certificate.
                 type: array
@@ -1244,7 +1243,7 @@ components:
           description: >
             OpenID Connect Issuer URL
 
-            An URL using the https scheme with no query or fragment component
+            An URL using the https scheme with no query or fragment component 
             that the OP asserts as its IssuerURL Identifier. If IssuerURL
             discovery  is supported , this value MUST be identical to the issuer
             value returned by WebFinger.  This also MUST be identical to the iss
@@ -1416,7 +1415,7 @@ components:
           type: integer
         refresh_token:
           description: >
-            The refresh token, which can be used to obtain new access tokens.
+            The refresh token, which can be used to obtain new access tokens. 
             To retrieve it add the scope "offline" to your access token request.
           type: string
         scope:
@@ -1529,7 +1528,7 @@ components:
           description: >
             URL of the End-User's profile picture. This URL MUST refer to an
             image file (for example, a PNG,  JPEG, or GIF image file), rather
-            than to a Web page containing an image. Note that this URL SHOULD
+            than to a Web page containing an image. Note that this URL SHOULD 
             specifically reference a profile photo of the End-User suitable for
             displaying when describing the  End-User, rather than an arbitrary
             photo taken by the End-User.
@@ -1765,38 +1764,39 @@ components:
             idTokenClaim: vp_likes
         vpDefinition: >-
           {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
-          VC type\",\"purpose\":\"Check if VC type is
-          correct\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}}]}},{\"id\":\"email_vc_data\",\"name\":\"Email
-          VC data\",\"purpose\":\"Check if data contains necessary
-          fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Email
-          address\",\"filter\":{\"type\":\"string\"}}]}}]}
+          VC\",\"purpose\":\"Check if VC data contains necessary
+          fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"purpose\":\"Check
+          if VC type is
+          correct\",\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
+          if VC contains email field\",\"filter\":{\"type\":\"string\"}}]}}]}
         presentationDefinition: |-
           {
             "id": "vp_token_with_email_vc",
             "input_descriptors": [
               {
                 "id": "email_vc",
-                "name": "EmailVC type",
-                "purpose": "Check if VC type iscorrect",
+                "name": "Email VC",
+                "purpose": "Check if VC data contains necessary fields",
                 "constraints": {
                   "fields": [
                     {
-                      "path": ["$.type"],
-                      "filter": { "type": "array", "pattern": "Email" }
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "email_vc_data",
-                "name": "EmailVC data",
-                "purpose": "Check if data contains necessary fields",
-                "constraints": {
-                  "fields": [
+                      "path": [
+                        "$.type"
+                      ],
+                      "purpose": "Check if VC type is correct",
+                      "filter": {
+                        "type": "array",
+                        "pattern": "Email"
+                      }
+                    },
                     {
-                      "path": ["$.credentialSubject.email"],
-                      "purpose": "Email address",
-                      "filter": { "type": "string" }
+                      "path": [
+                        "$.credentialSubject.email"
+                      ],
+                      "purpose": "Check if VC contains email field",
+                      "filter": {
+                        "type": "string"
+                      }
                     }
                   ]
                 }
@@ -1846,38 +1846,39 @@ components:
             idTokenClaim: vp_likes
         vpDefinition: >-
           {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
-          VC type\",\"purpose\":\"Check if VC type is
-          correct\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}}]}},{\"id\":\"email_vc_data\",\"name\":\"Email
-          VC data\",\"purpose\":\"Check if data contains necessary
-          fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Email
-          address\",\"filter\":{\"type\":\"string\"}}]}}]}
+          VC\",\"purpose\":\"Check if VC data contains necessary
+          fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"purpose\":\"Check
+          if VC type is
+          correct\",\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
+          if VC contains email field\",\"filter\":{\"type\":\"string\"}}]}}]}
         presentationDefinition: |-
           {
             "id": "vp_token_with_email_vc",
             "input_descriptors": [
               {
                 "id": "email_vc",
-                "name": "EmailVC type",
-                "purpose": "Check if VC type iscorrect",
+                "name": "Email VC",
+                "purpose": "Check if VC data contains necessary fields",
                 "constraints": {
                   "fields": [
                     {
-                      "path": ["$.type"],
-                      "filter": { "type": "array", "pattern": "Email" }
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "email_vc_data",
-                "name": "EmailVC data",
-                "purpose": "Check if data contains necessary fields",
-                "constraints": {
-                  "fields": [
+                      "path": [
+                        "$.type"
+                      ],
+                      "purpose": "Check if VC type is correct",
+                      "filter": {
+                        "type": "array",
+                        "pattern": "Email"
+                      }
+                    },
                     {
-                      "path": ["$.credentialSubject.email"],
-                      "purpose": "Email address",
-                      "filter": { "type": "string" }
+                      "path": [
+                        "$.credentialSubject.email"
+                      ],
+                      "purpose": "Check if VC contains email field",
+                      "filter": {
+                        "type": "string"
+                      }
                     }
                   ]
                 }
@@ -1921,41 +1922,46 @@ components:
                 idTokenClaim: vp_likes
             vpDefinition: >-
               {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
-              VC type\",\"purpose\":\"Check if VC type is
-              correct\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}}]}},{\"id\":\"email_vc_data\",\"name\":\"Email
-              VC data\",\"purpose\":\"Check if data contains necessary
-              fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Email
-              address\",\"filter\":{\"type\":\"string\"}}]}}]}
+              VC\",\"purpose\":\"Check if VC data contains necessary
+              fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"purpose\":\"Check
+              if VC type is
+              correct\",\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
+              if VC contains email
+              field\",\"filter\":{\"type\":\"string\"}}]}}]}
             presentationDefinition: |-
-              { "id": "vp_token_with_email_vc", "input_descriptors": [
-                {
-                  "id": "email_vc",
-                  "name": "EmailVC type",
-                  "purpose": "Check if VC type iscorrect",
-                  "constraints": {
-                    "fields": [
-                      {
-                        "path": ["$.type"],
-                        "filter": { "type": "array", "pattern": "Email" }
-                      }
-                    ]
+              {
+                "id": "vp_token_with_email_vc",
+                "input_descriptors": [
+                  {
+                    "id": "email_vc",
+                    "name": "Email VC",
+                    "purpose": "Check if VC data contains necessary fields",
+                    "constraints": {
+                      "fields": [
+                        {
+                          "path": [
+                            "$.type"
+                          ],
+                          "purpose": "Check if VC type is correct",
+                          "filter": {
+                            "type": "array",
+                            "pattern": "Email"
+                          }
+                        },
+                        {
+                          "path": [
+                            "$.credentialSubject.email"
+                          ],
+                          "purpose": "Check if VC contains email field",
+                          "filter": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
                   }
-                },
-                {
-                  "id": "email_vc_data",
-                  "name": "EmailVC data",
-                  "purpose": "Check if data contains necessary fields",
-                  "constraints": {
-                    "fields": [
-                      {
-                        "path": ["$.credentialSubject.email"],
-                        "purpose": "Email address",
-                        "filter": { "type": "string" }
-                      }
-                    ]
-                  }
-                }
-              ] }
+                ]
+              }
             id: c13de9cd6f19f28ed0f663884ff70bf3
             clientMetadata:
               name: insurance
@@ -2142,7 +2148,7 @@ paths:
 
 
         An essential default definition is in place when it comes to the login
-        process for end users using the Chrome extension.
+        process for end users using the Chrome extension. 
 
 
         This definition requires users to input their email address as OIDCVP
