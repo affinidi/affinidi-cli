@@ -412,20 +412,17 @@ _See code: [@oclif/plugin-commands](https://github.com/oclif/plugin-commands/blo
 
 ## `affinidi generate app`
 
-Generates a NextJS reference application that integrates Affinidi Login. Requires git
+Generates a reference application that integrates Affinidi Login. Requires git
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-f django|nextjs] [-a affinidi|auth0] [-p <value>]
-    [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-f <value>] [-a <value>] [-p <value>] [--force]
 
 FLAGS
-  -a, --provider=<option>   Authentication provider for the reference app
-                            <options: affinidi|auth0>
-  -f, --framework=<option>  Framework for the reference app
-                            <options: django|nextjs>
-  -p, --path=<value>        Relative or absolute path where reference application should be cloned into
-  --force                   Override destination directory if exists
+  -a, --provider=<value>   Authentication provider for the reference app
+  -f, --framework=<value>  Framework for the reference app
+  -p, --path=<value>       Relative or absolute path where reference application should be cloned into
+  --force                  Override destination directory if exists
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -466,12 +463,12 @@ Adds a principal (user or token) to the active project
 
 ```
 USAGE
-  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
+  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -486,7 +483,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam add-principal -i <uuid>
 
-  $ affinidi iam add-principal --principal-id <uuid> --principal-type machine_user
+  $ affinidi iam add-principal --principal-id <uuid> --principal-type token
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -500,12 +497,12 @@ Gets the policies of a principal (user or token)
 
 ```
 USAGE
-  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
+  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -521,7 +518,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam get-policies -i <uuid>
 
-  $ affinidi iam get-policies --principal-id <uuid> --principal-type machine_user
+  $ affinidi iam get-policies --principal-id <uuid> --principal-type token
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -557,12 +554,12 @@ Removes a principal (user or token) from the active project
 
 ```
 USAGE
-  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
+  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -577,7 +574,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam remove-principal -i <uuid>
 
-  $ affinidi iam remove-principal --principal-id <uuid> --principal-type machine_user
+  $ affinidi iam remove-principal --principal-id <uuid> --principal-type token
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -591,13 +588,13 @@ Updates the policies of a principal (user or token) in the active project
 
 ```
 USAGE
-  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user] [-f <value>]
+  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t token|user] [-f <value>]
 
 FLAGS
   -f, --file=<value>             Location of a json file containing principal policies
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -613,7 +610,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam update-policies -i <uuid>
 
-  $ affinidi iam update-policies --principal-id <uuid> --principal-type machine_user --file policies.json
+  $ affinidi iam update-policies --principal-id <uuid> --principal-type token --file policies.json
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -627,11 +624,11 @@ Adds a user to a user group
 
 ```
 USAGE
-  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-sub <value>]
+  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-id <value>]
 
 FLAGS
   --group-name=<value>  Name of the user group
-  --user-sub=<value>    Subject of the user. Currently the user's DID is supported.
+  --user-id=<value>     Id of the user. Currently the user's DID is supported.
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -639,7 +636,7 @@ GLOBAL FLAGS
   --no-input  Disables all the interactive prompts
 
 EXAMPLES
-  $ affinidi login add-user-to-group --group-name my_group --user-sub did:key:12345
+  $ affinidi login add-user-to-group --group-name my_group --user-id did:key:12345
 ```
 
 ## `affinidi login create-config`
@@ -861,12 +858,11 @@ Removes a user from a user group
 
 ```
 USAGE
-  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-mapping-id
-  <value>]
+  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-id <value>]
 
 FLAGS
-  --group-name=<value>       Name of the user group
-  --user-mapping-id=<value>  ID of the user mapping record
+  --group-name=<value>  Name of the user group
+  --user-id=<value>     ID of the user
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -874,7 +870,7 @@ GLOBAL FLAGS
   --no-input  Disables all the interactive prompts
 
 EXAMPLES
-  $ affinidi login remove-user-from-group --group-name my_group --user-mapping-id <value>
+  $ affinidi login remove-user-from-group --group-name my_group --user-id did:key:12345
 ```
 
 ## `affinidi login update-config`
@@ -1037,7 +1033,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1056,7 +1052,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1191,5 +1187,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.8/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/whoami.ts)_
 <!-- commandsstop -->

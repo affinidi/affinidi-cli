@@ -32,12 +32,10 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     framework: Flags.string({
       char: 'f',
       summary: 'Framework for the reference app',
-      options: [],
     }),
     provider: Flags.string({
       char: 'a',
       summary: 'Authentication provider for the reference app',
-      options: [],
     }),
     path: Flags.string({
       char: 'p',
