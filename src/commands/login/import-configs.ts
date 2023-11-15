@@ -75,6 +75,10 @@ export class ImportLoginConfigs extends BaseCommand<typeof ImportLoginConfigs> {
     const importLoginConfigOutput = await bffService.importLoginConfigs(rawDataJson.data)
     ux.action.stop('Imported successfully!')
 
+    this.warn(
+      this.chalk.red.bold('Please save the clientSecret somewhere safe. You will not be able to view it again.'),
+    )
+
     if (!this.jsonEnabled()) this.logJson(importLoginConfigOutput)
     return importLoginConfigOutput
   }
