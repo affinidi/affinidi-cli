@@ -40,7 +40,7 @@ export class ExportGroups extends BaseCommand<typeof ExportGroups> {
 
     let groupNames = flags.names?.split(' ') || []
 
-    if (groupNames.length === 0) {
+    if (!groupNames || groupNames.length === 0) {
       const listUserGroups = await vpAdapterService.listGroups()
       const selectGroupMap = listUserGroups?.groups?.map(({ groupName }) => ({ groupName })) || []
 
