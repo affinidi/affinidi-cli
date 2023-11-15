@@ -1,11 +1,11 @@
 import { writeFile } from 'fs/promises'
+import checkbox from '@inquirer/checkbox'
+import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import { input } from '@inquirer/prompts'
-import checkbox from '@inquirer/checkbox'
 import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
@@ -36,23 +36,30 @@ export class ExportLoginConfigs extends BaseCommand<typeof ExportLoginConfigs> {
       if (!flags.path) throw new CLIError(giveFlagInputErrorMessage('path'))
     }
 
-    const path = flags['path'] ??
-      validateInputLength(await input({ message: 'Enter relative or absolute path where configurations should be exported' }), INPUT_LIMIT)
+    const path =
+      flags.path ??
+      validateInputLength(
+        await input({ message: 'Enter relative or absolute path where configurations should be exported' }),
+        INPUT_LIMIT,
+      )
 
     let configIds = flags.ids?.split(' ')
 
     if (!configIds || configIds.length === 0) {
       const listLoginConfigs = await vpAdapterService.listLoginConfigurations()
-      const selectConfigMap = listLoginConfigs.configurations.map(({ configurationId, name }) => ({ configurationId, name }))
+      const selectConfigMap = listLoginConfigs.configurations.map(({ configurationId, name }) => ({
+        configurationId,
+        name,
+      }))
 
-      configIds = await checkbox({
+      configIds = (await checkbox({
         message: 'Select configurations to export',
         choices: selectConfigMap.map((config) => ({
           name: `${config.name} [${config.configurationId}]`,
           value: config.configurationId,
         })),
         required: true,
-      }) as string[]
+      })) as string[]
     }
 
     ux.action.start('Exporting login configurations')

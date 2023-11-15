@@ -1,12 +1,12 @@
-import z from 'zod'
 import { readFile } from 'fs/promises'
+import checkbox from '@inquirer/checkbox'
+import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import { input } from '@inquirer/prompts'
-import checkbox from '@inquirer/checkbox'
+import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
@@ -33,7 +33,8 @@ export class ImportGroups extends BaseCommand<typeof ImportGroups> {
       if (!flags.path) throw new CLIError(giveFlagInputErrorMessage('path'))
     }
 
-    const path = flags['path'] ??
+    const path =
+      flags.path ??
       validateInputLength(await input({ message: 'Enter path to file with groups to import' }), INPUT_LIMIT)
 
     const rawData = await readFile(path, 'utf8')

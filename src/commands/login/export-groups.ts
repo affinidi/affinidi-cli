@@ -1,8 +1,8 @@
 import { writeFile } from 'fs/promises'
+import checkbox from '@inquirer/checkbox'
+import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import { input } from '@inquirer/prompts'
-import checkbox from '@inquirer/checkbox'
 import { BaseCommand } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
@@ -35,8 +35,12 @@ export class ExportGroups extends BaseCommand<typeof ExportGroups> {
       if (!flags.path) throw new CLIError(giveFlagInputErrorMessage('path'))
     }
 
-    const path = flags['path'] ??
-      validateInputLength(await input({ message: 'Enter relative or absolute path where user groups should be exported' }), INPUT_LIMIT)
+    const path =
+      flags.path ??
+      validateInputLength(
+        await input({ message: 'Enter relative or absolute path where user groups should be exported' }),
+        INPUT_LIMIT,
+      )
 
     let groupNames = flags.names?.split(' ') || []
 
@@ -44,14 +48,14 @@ export class ExportGroups extends BaseCommand<typeof ExportGroups> {
       const listUserGroups = await vpAdapterService.listGroups()
       const selectGroupMap = listUserGroups?.groups?.map(({ groupName }) => ({ groupName })) || []
 
-      groupNames = await checkbox({
+      groupNames = (await checkbox({
         message: 'Select groups to export',
         choices: selectGroupMap.map((group) => ({
           name: group.groupName,
           value: group.groupName,
         })),
         required: true,
-      }) as string[]
+      })) as string[]
     }
 
     ux.action.start('Exporting groups')

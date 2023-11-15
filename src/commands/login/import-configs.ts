@@ -1,16 +1,19 @@
-import z from 'zod'
 import { readFile } from 'fs/promises'
+import checkbox from '@inquirer/checkbox'
+import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
-import { input } from '@inquirer/prompts'
-import checkbox from '@inquirer/checkbox'
+import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
+import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
-import { TokenEndpointAuthMethod, CreateLoginConfigurationOutput } from '../../services/affinidi/vp-adapter/vp-adapter.api'
+import {
+  TokenEndpointAuthMethod,
+  CreateLoginConfigurationOutput,
+} from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
 export class ImportLoginConfigs extends BaseCommand<typeof ImportLoginConfigs> {
   static summary = 'Import login configurations in your active project'
@@ -33,8 +36,12 @@ export class ImportLoginConfigs extends BaseCommand<typeof ImportLoginConfigs> {
       if (!flags.path) throw new CLIError(giveFlagInputErrorMessage('path'))
     }
 
-    const path = flags['path'] ??
-      validateInputLength(await input({ message: 'Enter path to file with login configurations to import' }), INPUT_LIMIT)
+    const path =
+      flags.path ??
+      validateInputLength(
+        await input({ message: 'Enter path to file with login configurations to import' }),
+        INPUT_LIMIT,
+      )
 
     const rawData = await readFile(path, 'utf8')
     const rawDataJson = JSON.parse(rawData)
