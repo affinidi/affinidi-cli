@@ -7,6 +7,9 @@ import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
 import { credentialsVault } from '../credentials-vault'
 import { config } from '../env-config'
 
+/* eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
+require('pkginfo')(module, 'version')
+
 export const instance = axios.create({
   baseURL: config.bffHost,
 })
@@ -17,6 +20,7 @@ export function getBFFHeaders(): RawAxiosRequestHeaders {
     Accept: 'application/json',
     'Accept-Encoding': 'gzip, deflate, br',
     Cookie: `${config.bffCookieName}=${credentialsVault.getSessionId()}`,
+    'affinidi-cli-version': module.exports.version,
   }
 }
 
