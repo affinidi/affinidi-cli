@@ -1,5 +1,4 @@
 import { readFile } from 'fs/promises'
-import checkbox from '@inquirer/checkbox'
 import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
@@ -10,7 +9,7 @@ import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
-import { TokenEndpointAuthMethod } from '../../services/affinidi/vp-adapter/vp-adapter.api'
+import { TokenEndpointAuthMethod, GroupDto } from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
 export class ImportGroups extends BaseCommand<typeof ImportGroups> {
   static summary = 'Import groups with its users'
@@ -26,7 +25,7 @@ export class ImportGroups extends BaseCommand<typeof ImportGroups> {
     }),
   }
 
-  public async run(): Promise<any> {
+  public async run(): Promise<{ groups: GroupDto[] }> {
     const { flags } = await this.parse(ImportGroups)
 
     if (flags['no-input']) {

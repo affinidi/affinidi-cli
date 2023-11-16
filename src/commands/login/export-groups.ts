@@ -27,7 +27,7 @@ export class ExportGroups extends BaseCommand<typeof ExportGroups> {
     }),
   }
 
-  public async run(): Promise<any> {
+  public async run(): Promise<string[]> {
     const { flags } = await this.parse(ExportGroups)
 
     if (flags['no-input']) {

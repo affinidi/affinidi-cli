@@ -5,7 +5,6 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import { BaseCommand } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
-import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
@@ -28,7 +27,7 @@ export class ExportLoginConfigs extends BaseCommand<typeof ExportLoginConfigs> {
     }),
   }
 
-  public async run(): Promise<any> {
+  public async run(): Promise<string[]> {
     const { flags } = await this.parse(ExportLoginConfigs)
 
     if (flags['no-input']) {

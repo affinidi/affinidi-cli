@@ -1,15 +1,12 @@
 import { readFile } from 'fs/promises'
-import checkbox from '@inquirer/checkbox'
 import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
-import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
-import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
   TokenEndpointAuthMethod,
   CreateLoginConfigurationOutput,
@@ -29,7 +26,7 @@ export class ImportLoginConfigs extends BaseCommand<typeof ImportLoginConfigs> {
     }),
   }
 
-  public async run(): Promise<any> {
+  public async run(): Promise<{ configurations: CreateLoginConfigurationOutput[] }> {
     const { flags } = await this.parse(ImportLoginConfigs)
 
     if (flags['no-input']) {
