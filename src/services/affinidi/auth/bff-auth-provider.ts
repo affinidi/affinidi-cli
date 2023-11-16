@@ -1,6 +1,7 @@
 import http from 'http'
 import chalk from 'chalk'
 import express from 'express'
+import helmet from 'helmet'
 import open from 'open'
 import { check } from 'tcp-port-used'
 import { authResultPage } from './auth-result-page'
@@ -37,6 +38,15 @@ export class BFFAuthProvider implements AuthProvider {
       this.logger.debug('Start express server')
 
       const app = express()
+      app.use(
+        helmet({
+          contentSecurityPolicy: {
+            directives: {
+              scriptSrc: ["'none'"],
+            },
+          },
+        }),
+      )
       const server = app.listen(port, () => {
         this.logger.debug(`Express server started listening on port ${port}`)
       })
@@ -47,6 +57,7 @@ export class BFFAuthProvider implements AuthProvider {
       }, config.redirectTimeoutMs)
 
       app.get('/callback', async (req, res) => {
+        res.type('html')
         if (req.query.state === 'error') {
           this.handleError({ reject, req, res, timeout })
           this.shutDownServer(server)
