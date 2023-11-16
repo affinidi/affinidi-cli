@@ -65,7 +65,7 @@ export function handleServiceError(
   serviceErrorMessageHandler?: (response: any) => string | null,
 ): never {
   if (error instanceof AxiosError && error.response) {
-    const { name, details, message, data } = error.response.data
+    const { name, details, message, errorCodeStr } = error.response.data
 
     const isJwtExpired =
       name && name === 'InvalidJwtTokenError' && details?.some((err: any) => err.issue === 'jwt-expired')
@@ -74,7 +74,7 @@ export function handleServiceError(
       throw new Error(AuthTokenExpired)
     }
 
-    if (data === 'UnsupportedCliVersion' && message) {
+    if (errorCodeStr === 'CLIVersionInvalid' && message) {
       throw new CLIError(message)
     }
 
