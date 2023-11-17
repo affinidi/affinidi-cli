@@ -94,6 +94,26 @@ export class BFFService {
     const res = await instance.get(`/api/projects/${projectId}`, { headers: getBFFHeaders() })
     return res.data.projectId as string
   }
+
+  public async exportLoginConfigs(ids: string[]): Promise<any> {
+    const res = await instance.post('/api/login/export-login-configs', { ids }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
+
+  public async importLoginConfigs(data: any): Promise<any> {
+    const res = await instance.post('/api/login/import-login-configs', { data }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
+
+  public async exportGroups(groupNames: string[]): Promise<any> {
+    const res = await instance.post('/api/login/export-user-groups', { groupNames }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
+
+  public async importGroups(data: any): Promise<any> {
+    const res = await instance.post('/api/login/import-user-groups', { data }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
 }
 
 export const bffService = new BFFService()
