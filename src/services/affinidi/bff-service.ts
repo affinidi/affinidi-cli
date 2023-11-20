@@ -7,6 +7,9 @@ import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
 import { credentialsVault } from '../credentials-vault'
 import { config } from '../env-config'
 
+/* eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
+require('pkginfo')(module, 'version')
+
 export const instance = axios.create({
   baseURL: config.bffHost,
 })
@@ -17,6 +20,7 @@ export function getBFFHeaders(): RawAxiosRequestHeaders {
     Accept: 'application/json',
     'Accept-Encoding': 'gzip, deflate, br',
     Cookie: `${config.bffCookieName}=${credentialsVault.getSessionId()}`,
+    'affinidi-cli-version': module.exports.version,
   }
 }
 
@@ -89,6 +93,26 @@ export class BFFService {
   public async setSessionActiveProject(projectId: string): Promise<string> {
     const res = await instance.get(`/api/projects/${projectId}`, { headers: getBFFHeaders() })
     return res.data.projectId as string
+  }
+
+  public async exportLoginConfigs(ids: string[]): Promise<any> {
+    const res = await instance.post('/api/login/export-login-configs', { ids }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
+
+  public async importLoginConfigs(data: any): Promise<any> {
+    const res = await instance.post('/api/login/import-login-configs', { data }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
+
+  public async exportGroups(groupNames: string[]): Promise<any> {
+    const res = await instance.post('/api/login/export-user-groups', { groupNames }, { headers: getBFFHeaders() })
+    return res.data as any
+  }
+
+  public async importGroups(data: any): Promise<any> {
+    const res = await instance.post('/api/login/import-user-groups', { data }, { headers: getBFFHeaders() })
+    return res.data as any
   }
 }
 
