@@ -41,7 +41,7 @@ export class BFFService {
 
   public async logout(): Promise<void> {
     try {
-      await instance.get('/api/logout', { headers: getBFFHeaders() })
+      await instance.post('/api/auth/logout', {}, { headers: getBFFHeaders() })
       credentialsVault.clear()
     } catch (error) {
       handleServiceError(error)
