@@ -326,8 +326,12 @@ Please note that this FAQ is provided for informational purposes only and is not
 * [`affinidi login create-group`](#affinidi-login-create-group)
 * [`affinidi login delete-config`](#affinidi-login-delete-config)
 * [`affinidi login delete-group`](#affinidi-login-delete-group)
+* [`affinidi login export-configs`](#affinidi-login-export-configs)
+* [`affinidi login export-groups`](#affinidi-login-export-groups)
 * [`affinidi login get-config`](#affinidi-login-get-config)
 * [`affinidi login get-group`](#affinidi-login-get-group)
+* [`affinidi login import-configs`](#affinidi-login-import-configs)
+* [`affinidi login import-groups`](#affinidi-login-import-groups)
 * [`affinidi login list-configs`](#affinidi-login-list-configs)
 * [`affinidi login list-groups`](#affinidi-login-list-groups)
 * [`affinidi login list-users-in-group`](#affinidi-login-list-users-in-group)
@@ -754,6 +758,52 @@ EXAMPLES
   $ affinidi login delete-group --name my_group
 ```
 
+## `affinidi login export-configs`
+
+Export selected login configurations of your active project
+
+```
+USAGE
+  $ affinidi login export-configs [--json] [--no-color] [--no-input] [-i <value>] [-p <value>]
+
+FLAGS
+  -i, --ids=<value>   IDs of the login configurations to export, separated by space
+  -p, --path=<value>  Relative or absolute path where configurations should be exported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login export-configs
+
+  $ affinidi login export-configs --ids "configurationId1 configurationId2" --path "../my-configs.json"
+```
+
+## `affinidi login export-groups`
+
+Export selected user groups with its users
+
+```
+USAGE
+  $ affinidi login export-groups [--json] [--no-color] [--no-input] [-n <value>] [-p <value>]
+
+FLAGS
+  -n, --names=<value>  Group names to export, separated by space
+  -p, --path=<value>   Relative or absolute path where user groups should be exported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login export-groups
+
+  $ affinidi login export-groups --names "groupName1 groupName2" --path "../my-user-groups.json"
+```
+
 ## `affinidi login get-config`
 
 Gets the details of a login configuration in your active project
@@ -796,6 +846,50 @@ EXAMPLES
   $ affinidi login get-group -n my_group
 
   $ affinidi login get-group --name my_group
+```
+
+## `affinidi login import-configs`
+
+Import login configurations in your active project
+
+```
+USAGE
+  $ affinidi login import-configs [--json] [--no-color] [--no-input] [-p <value>]
+
+FLAGS
+  -p, --path=<value>  Path to file with configurations that should be imported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login import-configs
+
+  $ affinidi login import-configs --path "../my-configs.json"
+```
+
+## `affinidi login import-groups`
+
+Import groups with its users
+
+```
+USAGE
+  $ affinidi login import-groups [--json] [--no-color] [--no-input] [-p <value>]
+
+FLAGS
+  -p, --path=<value>  Path to file with groups that should be imported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login import-groups
+
+  $ affinidi login import-groups --path "../my-groups.json"
 ```
 
 ## `affinidi login list-configs`
@@ -1033,7 +1127,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.11/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1052,7 +1146,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.11/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1187,5 +1281,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.11/dist/commands/whoami.ts)_
 <!-- commandsstop -->
