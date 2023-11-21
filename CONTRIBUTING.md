@@ -7,8 +7,7 @@ Before you start contributing please read the CLI's [#philosophy](#philosophy) a
 ## Getting Started
 
 - Run `npm install` to install dependencies
-- Run `npm test` to execute unit tests
-- Run `npm test:integration` to execute integration tests
+- Run `npm test` to execute tests
 - Run `npm run lint` to check for linting errors
 
 To run commands in development mode use `./bin/dev [command]`
@@ -31,20 +30,17 @@ As an example, let's say you want to add an `auth` command with two subcommands:
 ```src/
 └── commands/
     └── auth/
-        ├── index.ts
         ├── set.ts
         └── get.ts
 ```
 
-For simple commands, you can also take advantage of oclif's [command generation tool](https://oclif.io/docs/generator_commands#oclif-generate-command-name) directly in the terminal, which will scaffold a single command file in the `src/commands/` directory and a test file in `test/commands/` directory. Please move the created test file to `test/unit/commands/` or `test/integration/commands/` depending on which type of test you want to create.
+For simple commands, you can also take advantage of oclif's [command generation tool](https://oclif.io/docs/generator_commands#oclif-generate-command-name) directly in the terminal, which will scaffold a single command file in the `src/commands/` directory and a test file in `test/commands/` directory.
 
 ### Testing
 
 Tests in the CLI use Oclif's default testing framework of [mocha](https://mochajs.org) and [fancy-test](https://github.com/oclif/fancy-test).
 
-#### Unit tests
-
-Add your unit tests to `./test/unit`. External integrations like API calls should be mocked.
+Add your tests to `./test`. External integrations like API calls should be mocked.
 
 Run unit tests with:
 
@@ -53,34 +49,6 @@ npm run test
 ```
 
 Read more here: https://oclif.io/docs/testing
-
-#### Integration tests
-
-Add your integration tests to `./test/integration`. These tests evaluate the CLI command's integration to other systems, such as making API calls.
-
-To run integration tests locally, please complete the steps below
-
-1.  Create a Personal Access Token:
-
-[Create Personal Access Token](./README.md#create-personal-access-tokens-pat-to-call-affinidi-apis)
-
-2. Setup environment variables:
-
-```bash
-cp .env.example .env
-```
-
-Update values in `.env` with your Personal Access Token and project details.
-
-Run tests with
-
-```bash
-npm run test:integration
-```
-
-#### Delegate token
-
-Once a Personal Access Token is created and variables are set in `.env` you can call the helper [getProjectScopedToken](./test/integration/get-project-scoped-token.ts#L42) to get a delegate token that can be user for your API calls.
 
 ### Messages
 
