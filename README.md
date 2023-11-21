@@ -11,16 +11,22 @@ Affinidi CLI is a developer tool to easily manage your projects and integration 
 
 ## Installation
 
-Install the latest beta version of Affinidi CLI
+Install the latest version of Affinidi CLI
 
 ```bash
-npm install -g @affinidi/cli@beta
+npm install -g @affinidi/cli
 ```
 
 Uninstall the Affinidi CLI
 
 ```bash
 npm uninstall -g @affinidi/cli
+```
+
+Update the Affinidi CLI
+
+```bash
+npm update -g @affinidi/cli
 ```
 
 ## What can I do with Affinidi CLI?
@@ -263,10 +269,6 @@ If you have a technical issue with the CLI's codebase, you can also [create an i
 
 ## FAQ
 
-### A note from Affinidi
-
-Affinidi CLI is currently in the open beta phase and we are refining our product every day. The Affinidi CLI may be incomplete and may contain errors – they may be unstable and may cause a loss of functionality and data. Use of the Affinidi CLI will be at your own risk. As our engineers seek to improve our platform, we would not have the resources to provide any maintenance or tech support at this time. Please bear with us as we continue to improve the platform.
-
 ### What can I develop?
 
 You are only limited by your imagination! Affinidi CLI is a toolbox with which you can build software applications for personal or commercial use.
@@ -287,7 +289,7 @@ Some of our components would also require you to incorporate our end-user notice
 
 ### Is Affinidi CLI free for use?
 
-Affinidi CLI is free during the open beta phase, so come onboard and experiment with our tools and see what you can build! We may bill for certain components in the future, but we will inform you beforehand.
+Affinidi CLI itself is free, so come onboard and experiment with our tools and see what you can build! We may bill for certain components in the future, but we will inform you beforehand.
 
 ### Is there any limit or cap to my usage of the Affinidi CLI?
 
@@ -325,8 +327,12 @@ Please note that this FAQ is provided for informational purposes only and is not
 * [`affinidi login create-group`](#affinidi-login-create-group)
 * [`affinidi login delete-config`](#affinidi-login-delete-config)
 * [`affinidi login delete-group`](#affinidi-login-delete-group)
+* [`affinidi login export-configs`](#affinidi-login-export-configs)
+* [`affinidi login export-groups`](#affinidi-login-export-groups)
 * [`affinidi login get-config`](#affinidi-login-get-config)
 * [`affinidi login get-group`](#affinidi-login-get-group)
+* [`affinidi login import-configs`](#affinidi-login-import-configs)
+* [`affinidi login import-groups`](#affinidi-login-import-groups)
 * [`affinidi login list-configs`](#affinidi-login-list-configs)
 * [`affinidi login list-groups`](#affinidi-login-list-groups)
 * [`affinidi login list-users-in-group`](#affinidi-login-list-users-in-group)
@@ -415,15 +421,13 @@ Generates a reference application that integrates Affinidi Login. Requires git
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-f ] [-a ] [-p <value>] [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-f <value>] [-a <value>] [-p <value>] [--force]
 
 FLAGS
-  -a, --provider=<option>   Authentication provider for the reference app
-                            <options: >
-  -f, --framework=<option>  Framework for the reference app
-                            <options: >
-  -p, --path=<value>        Relative or absolute path where reference application should be cloned into
-  --force                   Override destination directory if exists
+  -a, --provider=<value>   Authentication provider for the reference app
+  -f, --framework=<value>  Framework for the reference app
+  -p, --path=<value>       Relative or absolute path where reference application should be cloned into
+  --force                  Override destination directory if exists
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -464,12 +468,12 @@ Adds a principal (user or token) to the active project
 
 ```
 USAGE
-  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
+  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -484,7 +488,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam add-principal -i <uuid>
 
-  $ affinidi iam add-principal --principal-id <uuid> --principal-type machine_user
+  $ affinidi iam add-principal --principal-id <uuid> --principal-type token
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -498,12 +502,12 @@ Gets the policies of a principal (user or token)
 
 ```
 USAGE
-  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
+  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -519,7 +523,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam get-policies -i <uuid>
 
-  $ affinidi iam get-policies --principal-id <uuid> --principal-type machine_user
+  $ affinidi iam get-policies --principal-id <uuid> --principal-type token
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -555,12 +559,12 @@ Removes a principal (user or token) from the active project
 
 ```
 USAGE
-  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user]
+  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -575,7 +579,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam remove-principal -i <uuid>
 
-  $ affinidi iam remove-principal --principal-id <uuid> --principal-type machine_user
+  $ affinidi iam remove-principal --principal-id <uuid> --principal-type token
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -589,13 +593,13 @@ Updates the policies of a principal (user or token) in the active project
 
 ```
 USAGE
-  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t machine_user|user] [-f <value>]
+  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t token|user] [-f <value>]
 
 FLAGS
   -f, --file=<value>             Location of a json file containing principal policies
   -i, --principal-id=<value>     ID of the principal
   -t, --principal-type=<option>  Type of the principal
-                                 <options: machine_user|user>
+                                 <options: token|user>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -611,7 +615,7 @@ DESCRIPTION
 EXAMPLES
   $ affinidi iam update-policies -i <uuid>
 
-  $ affinidi iam update-policies --principal-id <uuid> --principal-type machine_user --file policies.json
+  $ affinidi iam update-policies --principal-id <uuid> --principal-type token --file policies.json
 
 FLAG DESCRIPTIONS
   -i, --principal-id=<value>  ID of the principal
@@ -625,11 +629,11 @@ Adds a user to a user group
 
 ```
 USAGE
-  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-sub <value>]
+  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-id <value>]
 
 FLAGS
   --group-name=<value>  Name of the user group
-  --user-sub=<value>    Subject of the user. Currently the user's DID is supported.
+  --user-id=<value>     Id of the user. Currently the user's DID is supported.
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -637,7 +641,7 @@ GLOBAL FLAGS
   --no-input  Disables all the interactive prompts
 
 EXAMPLES
-  $ affinidi login add-user-to-group --group-name my_group --user-sub did:key:12345
+  $ affinidi login add-user-to-group --group-name my_group --user-id did:key:12345
 ```
 
 ## `affinidi login create-config`
@@ -755,6 +759,52 @@ EXAMPLES
   $ affinidi login delete-group --name my_group
 ```
 
+## `affinidi login export-configs`
+
+Export selected login configurations of your active project
+
+```
+USAGE
+  $ affinidi login export-configs [--json] [--no-color] [--no-input] [-i <value>] [-p <value>]
+
+FLAGS
+  -i, --ids=<value>   IDs of the login configurations to export, separated by space
+  -p, --path=<value>  Relative or absolute path where configurations should be exported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login export-configs
+
+  $ affinidi login export-configs --ids "configurationId1 configurationId2" --path "../my-configs.json"
+```
+
+## `affinidi login export-groups`
+
+Export selected user groups with its users
+
+```
+USAGE
+  $ affinidi login export-groups [--json] [--no-color] [--no-input] [-n <value>] [-p <value>]
+
+FLAGS
+  -n, --names=<value>  Group names to export, separated by space
+  -p, --path=<value>   Relative or absolute path where user groups should be exported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login export-groups
+
+  $ affinidi login export-groups --names "groupName1 groupName2" --path "../my-user-groups.json"
+```
+
 ## `affinidi login get-config`
 
 Gets the details of a login configuration in your active project
@@ -797,6 +847,50 @@ EXAMPLES
   $ affinidi login get-group -n my_group
 
   $ affinidi login get-group --name my_group
+```
+
+## `affinidi login import-configs`
+
+Import login configurations in your active project
+
+```
+USAGE
+  $ affinidi login import-configs [--json] [--no-color] [--no-input] [-p <value>]
+
+FLAGS
+  -p, --path=<value>  Path to file with configurations that should be imported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login import-configs
+
+  $ affinidi login import-configs --path "../my-configs.json"
+```
+
+## `affinidi login import-groups`
+
+Import groups with its users
+
+```
+USAGE
+  $ affinidi login import-groups [--json] [--no-color] [--no-input] [-p <value>]
+
+FLAGS
+  -p, --path=<value>  Path to file with groups that should be imported
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi login import-groups
+
+  $ affinidi login import-groups --path "../my-groups.json"
 ```
 
 ## `affinidi login list-configs`
@@ -859,12 +953,11 @@ Removes a user from a user group
 
 ```
 USAGE
-  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-mapping-id
-  <value>]
+  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-id <value>]
 
 FLAGS
-  --group-name=<value>       Name of the user group
-  --user-mapping-id=<value>  ID of the user mapping record
+  --group-name=<value>  Name of the user group
+  --user-id=<value>     ID of the user
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -872,7 +965,7 @@ GLOBAL FLAGS
   --no-input  Disables all the interactive prompts
 
 EXAMPLES
-  $ affinidi login remove-user-from-group --group-name my_group --user-mapping-id <value>
+  $ affinidi login remove-user-from-group --group-name my_group --user-id did:key:12345
 ```
 
 ## `affinidi login update-config`
@@ -1035,7 +1128,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.12/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1054,7 +1147,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.12/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1189,5 +1282,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.10/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.12/dist/commands/whoami.ts)_
 <!-- commandsstop -->

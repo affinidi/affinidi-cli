@@ -18,7 +18,7 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
     Use command ${chalk.inverse('affinidi project select-project')} to change your active project`
   static examples = [
     '<%= config.bin %> <%= command.id %> -i <uuid>',
-    '<%= config.bin %> <%= command.id %> --principal-id <uuid> --principal-type machine_user --file policies.json',
+    '<%= config.bin %> <%= command.id %> --principal-id <uuid> --principal-type token --file policies.json',
   ]
   static flags = {
     'principal-id': Flags.string({

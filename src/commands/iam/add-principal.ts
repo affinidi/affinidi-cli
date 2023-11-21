@@ -14,7 +14,7 @@ export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
   static description = `To change your active project, use command ${chalk.inverse('affinidi project select-project')}`
   static examples = [
     '<%= config.bin %> <%= command.id %> -i <uuid>',
-    '<%= config.bin %> <%= command.id %> --principal-id <uuid> --principal-type machine_user',
+    '<%= config.bin %> <%= command.id %> --principal-id <uuid> --principal-type token',
   ]
   static flags = {
     'principal-id': Flags.string({

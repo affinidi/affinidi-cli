@@ -32,12 +32,10 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     framework: Flags.string({
       char: 'f',
       summary: 'Framework for the reference app',
-      options: [],
     }),
     provider: Flags.string({
       char: 'a',
       summary: 'Authentication provider for the reference app',
-      options: [],
     }),
     path: Flags.string({
       char: 'p',
@@ -119,10 +117,10 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         ux.action.stop('Fetched successfully!')
         const choices = configs.configurations.map((config) => ({
           value: {
-            id: config.id,
+            id: config.configurationId,
             auth: config.auth,
           },
-          name: `${config.name} [id: ${config.id}]`,
+          name: `${config.name} [id: ${config.configurationId}]`,
         }))
         const selectedConfig = await select({
           message: 'Select a login configuration to use in your reference application',

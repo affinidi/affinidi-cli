@@ -3,12 +3,12 @@ import { config } from '../../../src/services/env-config'
 
 const IAM_URL = `${config.bffHost}/iam`
 const principalId = 'b2ce7675-5418-4058-b973-d254270de2d4'
-const principalType = 'machine_user'
+const principalType = 'token'
 const getPoliciesApiResponse = {
   version: '2022-12-15',
   statement: [
     {
-      principal: ['ari:iam::bd8d93df-4a2e-4c54-9400-3b94cc2664e4:machine_user/b2ce7675-5418-4058-b973-d254270de2d7'],
+      principal: ['ari:iam::bd8d93df-4a2e-4c54-9400-3b94cc2664e4:token/b2ce7675-5418-4058-b973-d254270de2d7'],
       action: [''],
       resource: [''],
       effect: 'Allow',

@@ -11,7 +11,7 @@ export enum SupportedKeyTypes {
 }
 
 export enum PrincipalTypes {
-  TOKEN = 'machine_user',
+  TOKEN = 'token',
   USER = 'user',
 }
 
@@ -29,4 +29,9 @@ export interface Auth0Config {
   callbackUrl: string
   webOriginUrl: string
   logOutUrl: string
+}
+
+export enum ServiceResourceIds {
+  IAM_PROJECTS = 'iam.resource.Projects',
+  VPA_CONFIGURATIONS = 'vpa.resource.Configurations',
 }

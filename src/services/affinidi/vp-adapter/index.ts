@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import {
   Api as VPAdapterApi,
   CreateLoginConfigurationInput,
@@ -10,8 +11,9 @@ import {
   GroupsList,
   GroupUserMappingsList,
 } from './vp-adapter.api'
+import { ServiceResourceIds } from '../../../common/constants'
 import { config } from '../../env-config'
-import { getBFFHeaders } from '../bff-service'
+import { getBFFHeaders, bffService } from '../bff-service'
 import { handleServiceError } from '../errors'
 
 export const VPA_SERVICE = 'vp-adapter'
@@ -28,6 +30,9 @@ const vpaErrorMessageHandler = (response: any): string | null => {
       return `${response.data.message} Details: ${JSON.stringify(
         response.data.details,
       )}\nIf you need to create an additional group, please, delete an existing group using command 'login delete-group'`
+    case 'ResourceLimitExceededError': {
+      return `You can create a maximum of ${response.data.limit} Login configurations for every project. For any further queries reach out to our Customer support.`
+    }
     default:
       return null
   }
@@ -53,6 +58,13 @@ class VPAdapterService {
       })
       return response.data
     } catch (error) {
+      if (error instanceof AxiosError && error.response?.data?.name === 'ResourceLimitExceededError') {
+        const configurationsLimit = await bffService.getActiveProjectLimits(ServiceResourceIds.VPA_CONFIGURATIONS)
+
+        error.response.data.limit = configurationsLimit
+        handleServiceError(error, vpaErrorMessageHandler)
+      }
+
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
@@ -132,18 +144,18 @@ class VPAdapterService {
     }
   }
 
-  public addUserToGroup = async (groupName: string, sub: string) => {
+  public addUserToGroup = async (groupName: string, userId: string) => {
     try {
-      const response = await this.client.v1.addUserToGroup(groupName, { sub }, { headers: getBFFHeaders() })
+      const response = await this.client.v1.addUserToGroup(groupName, { userId }, { headers: getBFFHeaders() })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public removeUserFromGroup = async (groupName: string, userMappingId: string): Promise<void> => {
+  public removeUserFromGroup = async (groupName: string, userId: string): Promise<void> => {
     try {
-      await this.client.v1.removeUserFromGroup(groupName, userMappingId, { headers: getBFFHeaders() })
+      await this.client.v1.removeUserFromGroup(groupName, { userId }, { headers: getBFFHeaders() })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
