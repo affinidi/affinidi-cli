@@ -1,9 +1,12 @@
-import axios, { RawAxiosRequestHeaders } from 'axios'
+import { CLIError } from '@oclif/core/lib/errors'
+import axios, { RawAxiosRequestHeaders, AxiosError } from 'axios'
 import { BFFAuthProvider } from './auth/bff-auth-provider'
 import { AuthProvider } from './auth/types'
+import { StatsResponseOutput, StatsProjectResourceLimit } from './bff-service.types'
 import { handleServiceError } from './errors'
 import { CreateProjectInput, ProjectDto } from './iam/iam.api'
 import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
+import { ServiceResourceIds } from '../../common/constants'
 import { credentialsVault } from '../credentials-vault'
 import { config } from '../env-config'
 
@@ -81,8 +84,46 @@ export class BFFService {
   }
 
   public async createProject(projectInput: CreateProjectInput): Promise<ProjectDto> {
-    const res = await instance.post('/api/project', projectInput, { headers: getBFFHeaders() })
-    return res.data as ProjectDto
+    try {
+      const res = await instance.post('/api/project', projectInput, { headers: getBFFHeaders() })
+      return res.data as ProjectDto
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.data?.errorCodeStr === 'ProjectCreation') {
+        const projectsLimit = await this.getActiveProjectLimits(ServiceResourceIds.IAM_PROJECTS)
+
+        throw new CLIError(
+          `You can create a maximum of ${projectsLimit} projects. For any further queries reach out to our Customer support.`,
+        )
+      }
+
+      handleServiceError(error)
+    }
+  }
+
+  public async getActiveProjectLimits(resourceId?: string): Promise<number | StatsProjectResourceLimit[] | undefined> {
+    try {
+      const stats = await this.stats()
+      const limits = stats.projects[0].limits
+
+      if (resourceId) {
+        return limits.find((limit: StatsProjectResourceLimit) => limit.resourceId === resourceId)?.initialValue
+      }
+
+      return limits
+    } catch (error) {
+      handleServiceError(error)
+    }
+  }
+
+  public async stats(): Promise<StatsResponseOutput> {
+    try {
+      const project = await this.getActiveProject()
+
+      const res = await instance.get(`/api/stats/${project.id}`, { headers: getBFFHeaders() })
+      return res.data
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async getActiveProject(): Promise<ProjectDto> {

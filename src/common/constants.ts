@@ -30,3 +30,8 @@ export interface Auth0Config {
   webOriginUrl: string
   logOutUrl: string
 }
+
+export enum ServiceResourceIds {
+  IAM_PROJECTS = 'iam.resource.Projects',
+  VPA_CONFIGURATIONS = 'vpa.resource.Configurations',
+}
