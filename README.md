@@ -11,16 +11,22 @@ Affinidi CLI is a developer tool to easily manage your projects and integration 
 
 ## Installation
 
-Install the latest beta version of Affinidi CLI
+Install the latest version of Affinidi CLI
 
 ```bash
-npm install -g @affinidi/cli@beta
+npm install -g @affinidi/cli
 ```
 
 Uninstall the Affinidi CLI
 
 ```bash
 npm uninstall -g @affinidi/cli
+```
+
+Update the Affinidi CLI
+
+```bash
+npm update -g @affinidi/cli
 ```
 
 ## What can I do with Affinidi CLI?
@@ -264,10 +270,6 @@ If you have a technical issue with the CLI's codebase, you can also [create an i
 
 ## FAQ
 
-### A note from Affinidi
-
-Affinidi CLI is currently in the open beta phase and we are refining our product every day. The Affinidi CLI may be incomplete and may contain errors – they may be unstable and may cause a loss of functionality and data. Use of the Affinidi CLI will be at your own risk. As our engineers seek to improve our platform, we would not have the resources to provide any maintenance or tech support at this time. Please bear with us as we continue to improve the platform.
-
 ### What can I develop?
 
 You are only limited by your imagination! Affinidi CLI is a toolbox with which you can build software applications for personal or commercial use.
@@ -288,7 +290,7 @@ Some of our components would also require you to incorporate our end-user notice
 
 ### Is Affinidi CLI free for use?
 
-Affinidi CLI is free during the open beta phase, so come onboard and experiment with our tools and see what you can build! We may bill for certain components in the future, but we will inform you beforehand.
+Affinidi CLI itself is free, so come onboard and experiment with our tools and see what you can build! We may bill for certain components in the future, but we will inform you beforehand.
 
 ### Is there any limit or cap to my usage of the Affinidi CLI?
 

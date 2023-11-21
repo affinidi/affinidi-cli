@@ -59,7 +59,7 @@ export class BFFService {
 
   public async getAuthUrl(): Promise<URL> {
     try {
-      const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`)
+      const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`, { headers: getBFFHeaders() })
       return new URL(response.data.authUrl)
     } catch (error) {
       handleServiceError(error)
@@ -68,7 +68,7 @@ export class BFFService {
 
   public async getSessionId(state: string): Promise<string> {
     try {
-      const res = await instance.get('/api/session-id', { params: { state: state } })
+      const res = await instance.get('/api/session-id', { params: { state: state }, headers: getBFFHeaders() })
       return res.data.sessionId
     } catch (error) {
       handleServiceError(error)
