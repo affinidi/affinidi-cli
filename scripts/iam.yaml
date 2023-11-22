@@ -1,0 +1,1417 @@
+# ~~ Linted by affinidi-service-ts. Each change is linted and the file content is updated accordingly.
+# ~~
+# ~~ Notes:
+# ~~ 1. This file is linted and fixed/normalized on projen run.
+# ~~ 2. Errors (responses with HTTP status codes equal or grater than 400) shall be configured in error-catalog.yml.
+# ~~ 3. More info: https://gitlab.com/affinidi/foundational/genesis/projen/affinidi-service-ts/-/blob/main/ARCHITECTURE.md#openapi
+# ~~
+openapi: 3.0.3
+info:
+  title: Iam
+  version: 1.0.0
+  description: Affinidi IAM
+  contact:
+    name: nucleus
+    email: nucleus.team@affinidi.com
+servers:
+  - url: /
+tags:
+  - name: well-known
+    description: Well known endpoints
+  - name: sts
+    description: Secure token exchange
+  - name: projects
+    description: CRUD for projects
+  - name: policies
+    description: CRUD for authorization policies
+  - name: tokens
+    description: CRUD for Tokens
+security: []
+x-amazon-apigateway-request-validators:
+  basic:
+    validateRequestBody: true
+    validateRequestParameters: true
+x-amazon-apigateway-request-validator: basic
+x-amazon-apigateway-gateway-responses:
+  ACCESS_DENIED:
+    responseTemplates:
+      application/json: $context.authorizer.errorResponse
+components:
+  securitySchemes:
+    UserTokenAuth:
+      type: apiKey
+      name: authorization
+      in: header
+    ProjectTokenAuth:
+      type: apiKey
+      name: authorization
+      in: header
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: request
+        authorizerUri: >-
+          arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:792104784284:function:iam-dev-ProjectTokenAuthorizerC83BEF45-elvJgVdbp078:live-alias/invocations
+        authorizerResultTtlInSeconds: 0
+    ConsumerTokenAuth:
+      type: apiKey
+      name: authorization
+      in: header
+  headers: {}
+  requestBodies:
+    CreateProjectScopedToken:
+      description: CreateProjectScopedToken
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateProjectScopedTokenInput'
+    CreateProject:
+      description: CreateProject
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateProjectInput'
+    AddUserToProject:
+      description: AddUserToProject
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddUserToProjectInput'
+    AddPrincipalToProject:
+      description: AddPrincipalToProject
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddUserToProjectInput'
+    UpdatePolicies:
+      description: UpdatePolicies
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyDto'
+    CreateToken:
+      description: CreateToken
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTokenInput'
+    UpdateToken:
+      description: UpdateToken
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTokenInput'
+    ConsumerAuthTokenEndpoint:
+      description: ConsumerAuthTokenEndpoint
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAuthTokenEndpointInput'
+  responses:
+    GetWellKnownJwksOK:
+      description: List of JWK used by the services as JWKS
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonWebKeySetDto'
+    CreateProjectScopedTokenOK:
+      description: Created Project Scoped Tokens
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateProjectScopedTokenOutput'
+    WhoamiOK:
+      description: User info
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WhoamiDto'
+    CreateProjectOK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectDto'
+    ListProjectOK:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectList'
+    ListPrincipalsOfProjectOK:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserList'
+    GetPoliciesOK:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyDto'
+    UpdatePoliciesOK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyDto'
+    CreateTokenOK:
+      description: Created Token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenDto'
+    ListTokenOK:
+      description: List of Tokens
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenList'
+    GetTokenOK:
+      description: Token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenDto'
+    UpdateTokenOK:
+      description: Updated Token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenDto'
+    ConsumerAuthTokenEndpointOK:
+      description: Consumer Token OK Response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsumerAuthTokenEndpointOutput'
+    GetWellKnownJwksUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    CreateProjectScopedTokenBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    CreateProjectScopedTokenForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PrincipalDoesNotBelongToProjectError'
+    CreateProjectScopedTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    WhoamiForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    WhoamiNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    WhoamiUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    CreateProjectBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    CreateProjectUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    ListProjectUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    ListPrincipalsOfProjectBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    ListPrincipalsOfProjectForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    ListPrincipalsOfProjectUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    AddPrincipalToProjectBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    AddPrincipalToProjectForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    AddPrincipalToProjectUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    DeletePrincipalFromProjectBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    DeletePrincipalFromProjectForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    DeletePrincipalFromProjectUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    GetPoliciesBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    GetPoliciesNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    GetPoliciesUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    UpdatePoliciesBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    UpdatePoliciesUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    CreateTokenBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    CreateTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    ListTokenBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidParameterError'
+    ListTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    GetTokenForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    GetTokenNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    GetTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    UpdateTokenForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    UpdateTokenNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    UpdateTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    DeleteTokenForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ActionForbiddenError'
+    DeleteTokenNotFoundError:
+      description: NotFoundError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+    DeleteTokenUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    ConsumerAuthTokenEndpointForbiddenError:
+      description: ForbiddenError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    ConsumerAuthTokenEndpointUnexpectedError:
+      description: UnexpectedError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+  schemas:
+    ServiceErrorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        debugId:
+          type: string
+          format: uuid
+          description: unique id for correlating this specific error to logs
+        name:
+          type: string
+          description: name of the error
+        code:
+          type: string
+          description: backwards compatible Affinidi error code
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - debugId
+        - name
+        - code
+    UserDto:
+      type: object
+      additionalProperties: false
+      properties:
+        principalId:
+          type: string
+      required:
+        - principalId
+    TypedPricipalId:
+      type: object
+      additionalProperties: false
+      properties:
+        principalId:
+          type: string
+      required:
+        - principalId
+    AddUserToProjectInput:
+      type: object
+      additionalProperties: false
+      properties:
+        principalId:
+          type: string
+        principalType:
+          type: string
+      required:
+        - principalId
+        - principalType
+    CreateProjectScopedTokenInput:
+      type: object
+      additionalProperties: false
+      properties:
+        projectId:
+          type: string
+      required:
+        - projectId
+    CreateProjectScopedTokenOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+        scope:
+          type: string
+      required:
+        - accessToken
+        - expiresIn
+        - scope
+    ProjectDto:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          description: creation date and time in ISO-8601 format, e.g. 2023-09-20T07:12:13
+      required:
+        - id
+        - name
+    CreateProjectInput:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+    ProjectList:
+      type: object
+      additionalProperties: false
+      properties:
+        projects:
+          items:
+            $ref: '#/components/schemas/ProjectDto'
+          type: array
+      required:
+        - projects
+    UserList:
+      type: object
+      additionalProperties: false
+      properties:
+        records:
+          items:
+            $ref: '#/components/schemas/UserDto'
+          type: array
+      required:
+        - records
+    PolicyStatementDto:
+      type: object
+      additionalProperties: false
+      properties:
+        action:
+          type: array
+          items:
+            type: string
+        effect:
+          type: string
+        principal:
+          type: array
+          items:
+            type: string
+        resource:
+          type: array
+          items:
+            type: string
+      required:
+        - action
+        - effect
+        - principal
+        - resource
+    WhoamiDto:
+      type: object
+      additionalProperties: false
+      properties:
+        principalId:
+          type: string
+        principalType:
+          type: string
+      required:
+        - principalId
+        - principalType
+    PolicyDto:
+      type: object
+      additionalProperties: false
+      properties:
+        principalId:
+          type: string
+        projectId:
+          type: string
+        version:
+          type: string
+        statement:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyStatementDto'
+      required:
+        - version
+        - statement
+    JsonWebKeyDto:
+      type: object
+      additionalProperties: false
+      properties:
+        kid:
+          type: string
+        kty:
+          type: string
+        'n':
+          type: string
+        e:
+          type: string
+        x:
+          type: string
+        'y':
+          type: string
+        crv:
+          type: string
+        alg:
+          type: string
+        use:
+          type: string
+      required:
+        - kid
+        - kty
+        - alg
+        - use
+    JsonWebKeySetDto:
+      type: object
+      additionalProperties: false
+      properties:
+        keys:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/JsonWebKeyDto'
+      required:
+        - keys
+    TokenPrivateKeyAuthenticationMethodDto:
+      example: >-
+        {"type": "PRIVATE_KEY", "signingAlgorithm": "RS256", "publicKeyInfo": {
+        "jwks":
+        {"keys":[{"use":"sig","kty":"RSA","kid":"some-kid","alg":"RS256","n":"some-n-value","e":"some-e-value"}]}
+        }}
+      type: object
+      additionalProperties: false
+      description: >-
+        Private Key JWT Authentication of Client with `private_key_jwt` oAuth
+        Method
+      properties:
+        type:
+          type: string
+          enum:
+            - PRIVATE_KEY
+        signingAlgorithm:
+          type: string
+          enum:
+            - RS256
+            - RS512
+            - ES256
+            - ES512
+        publicKeyInfo:
+          description: >-
+            Corresponding Public Key Info provided either as a URL or a
+            Hardcoded Object
+          oneOf:
+            - type: object
+              additionalProperties: false
+              properties:
+                jwks:
+                  $ref: '#/components/schemas/JsonWebKeySetDto'
+              required:
+                - jwks
+            - type: object
+              additionalProperties: false
+              properties:
+                jwksUri:
+                  type: string
+                  format: url
+              required:
+                - jwksUri
+      required:
+        - type
+        - signingAlgorithm
+        - publicKeyInfo
+    TokenAuthenticationMethodDto:
+      oneOf:
+        - $ref: '#/components/schemas/TokenPrivateKeyAuthenticationMethodDto'
+      description: How the Token will be authenticate against our Authorization Server
+    TokenDto:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          description: Token Id
+          type: string
+          format: uuid
+          example: c5817ea6-8367-4458-9131-54cd2c5b9b48
+        ari:
+          description: Token ARI
+          type: string
+          example: token/c5817ea6-8367-4458-9131-54cd2c5b9b48
+        ownerAri:
+          description: The Token owner's ARI
+          type: string
+          example: ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc
+        name:
+          description: Owner defined Token display name
+          type: string
+          example: AIV/Concierge API - affinidi-elements-iam-dev
+        authenticationMethod:
+          $ref: '#/components/schemas/TokenAuthenticationMethodDto'
+        scopes:
+          description: Scopes that will be assigned to the Token on authentication
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - ari
+        - ownerAri
+        - name
+        - authenticationMethod
+        - scopes
+    TokenList:
+      type: object
+      additionalProperties: false
+      properties:
+        tokens:
+          items:
+            $ref: '#/components/schemas/TokenDto'
+          type: array
+      required:
+        - tokens
+    CreateTokenInput:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          example: AIV/Concierge API - affinidi-elements-iam-dev
+          pattern: .{3,}
+        authenticationMethod:
+          $ref: '#/components/schemas/TokenAuthenticationMethodDto'
+      required:
+        - name
+        - authenticationMethod
+    UpdateTokenInput:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          example: AIV/Concierge API - affinidi-elements-iam-dev
+          pattern: .{3,}
+        authenticationMethod:
+          $ref: '#/components/schemas/TokenAuthenticationMethodDto'
+      required:
+        - name
+        - authenticationMethod
+    UnexpectedError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - UnexpectedError
+        message:
+          type: string
+          enum:
+            - Unexpected Error Occurred.
+        httpStatusCode:
+          type: number
+          enum:
+            - 500
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    InvalidParameterError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - InvalidParameterError
+        message:
+          type: string
+          enum:
+            - 'Invalid parameter: ${param}.'
+        httpStatusCode:
+          type: number
+          enum:
+            - 400
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    NotFoundError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - NotFoundError
+        message:
+          type: string
+          enum:
+            - 'Not found: ${param}.'
+        httpStatusCode:
+          type: number
+          enum:
+            - 404
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    PrincipalDoesNotBelongToProjectError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - PrincipalDoesNotBelongToProjectError
+        message:
+          type: string
+          enum:
+            - Principal does not belong to the given project
+        httpStatusCode:
+          type: number
+          enum:
+            - 403
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    ActionForbiddenError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - ActionForbiddenError
+        message:
+          type: string
+          enum:
+            - Principal can not execute action on given resource
+        httpStatusCode:
+          type: number
+          enum:
+            - 403
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    ConsumerAuthTokenEndpointInput:
+      type: object
+      additionalProperties: true
+      properties:
+        grant_type:
+          type: string
+        code:
+          type: string
+        refresh_token:
+          type: string
+        redirect_uri:
+          type: string
+        client_id:
+          type: string
+      required:
+        - grant_type
+    ConsumerAuthTokenEndpointOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        access_token:
+          description: The access token issued by the authorization server.
+          type: string
+        expires_in:
+          description: |-
+            The lifetime in seconds of the access token. For
+            example, the value "3600" denotes that the access token will
+            expire in one hour from the time the response was generated.
+          type: integer
+          format: int64
+        id_token:
+          description: To retrieve a refresh token request the id_token scope.
+          type: integer
+          format: int64
+        refresh_token:
+          description: >-
+            The refresh token, which can be used to obtain new
+
+            access tokens. To retrieve it add the scope "offline" to your access
+            token request.
+          type: string
+        scope:
+          description: The scope of the access token
+          type: string
+        token_type:
+          description: The type of the token issued
+          type: string
+    InvalidJwtTokenError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - InvalidJwtTokenError
+        message:
+          type: string
+          enum:
+            - JWT token is invalid
+        httpStatusCode:
+          type: number
+          enum:
+            - 401
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    UnauthorizedError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - UnauthorizedError
+        message:
+          type: string
+          enum:
+            - Unauthorized
+        httpStatusCode:
+          type: number
+          enum:
+            - 403
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+  examples: {}
+paths:
+  /.well-known/jwks.json:
+    get:
+      operationId: getWellKnownJwks
+      security: []
+      responses:
+        '200':
+          $ref: '#/components/responses/GetWellKnownJwksOK'
+        '500':
+          $ref: '#/components/responses/GetWellKnownJwksUnexpectedError'
+      tags:
+        - well-known
+  /v1/sts/create-project-scoped-token:
+    post:
+      operationId: createProjectScopedToken
+      security:
+        - UserTokenAuth: []
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateProjectScopedToken'
+      responses:
+        '200':
+          $ref: '#/components/responses/CreateProjectScopedTokenOK'
+        '400':
+          $ref: '#/components/responses/CreateProjectScopedTokenBadRequestError'
+        '403':
+          $ref: '#/components/responses/CreateProjectScopedTokenForbiddenError'
+        '500':
+          $ref: '#/components/responses/CreateProjectScopedTokenUnexpectedError'
+      tags:
+        - sts
+  /v1/sts/whoami:
+    get:
+      operationId: whoami
+      security:
+        - UserTokenAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/WhoamiOK'
+        '403':
+          $ref: '#/components/responses/WhoamiForbiddenError'
+        '404':
+          $ref: '#/components/responses/WhoamiNotFoundError'
+        '500':
+          $ref: '#/components/responses/WhoamiUnexpectedError'
+      tags:
+        - sts
+  /v1/projects:
+    post:
+      operationId: createProject
+      security:
+        - UserTokenAuth: []
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateProject'
+      responses:
+        '200':
+          $ref: '#/components/responses/CreateProjectOK'
+        '400':
+          $ref: '#/components/responses/CreateProjectBadRequestError'
+        '500':
+          $ref: '#/components/responses/CreateProjectUnexpectedError'
+      tags:
+        - projects
+    get:
+      operationId: listProject
+      security:
+        - UserTokenAuth: []
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ListProjectOK'
+        '500':
+          $ref: '#/components/responses/ListProjectUnexpectedError'
+      tags:
+        - projects
+  /v1/projects/principals:
+    get:
+      operationId: listPrincipalsOfProject
+      security:
+        - ProjectTokenAuth: []
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ListPrincipalsOfProjectOK'
+        '400':
+          $ref: '#/components/responses/ListPrincipalsOfProjectBadRequestError'
+        '403':
+          $ref: '#/components/responses/ListPrincipalsOfProjectForbiddenError'
+        '500':
+          $ref: '#/components/responses/ListPrincipalsOfProjectUnexpectedError'
+      tags:
+        - projects
+    post:
+      operationId: addPrincipalToProject
+      security:
+        - ProjectTokenAuth: []
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/AddPrincipalToProject'
+      responses:
+        '204':
+          description: NoContent
+        '400':
+          $ref: '#/components/responses/AddPrincipalToProjectBadRequestError'
+        '403':
+          $ref: '#/components/responses/AddPrincipalToProjectForbiddenError'
+        '500':
+          $ref: '#/components/responses/AddPrincipalToProjectUnexpectedError'
+      tags:
+        - projects
+  /v1/projects/principals/{principalId}:
+    delete:
+      operationId: deletePrincipalFromProject
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - in: path
+          name: principalId
+          description: id of principal
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: principalType
+          description: type of principal
+          required: true
+          schema:
+            type: string
+            enum:
+              - user
+              - token
+      responses:
+        '204':
+          description: Ok
+        '400':
+          $ref: '#/components/responses/DeletePrincipalFromProjectBadRequestError'
+        '403':
+          $ref: '#/components/responses/DeletePrincipalFromProjectForbiddenError'
+        '500':
+          $ref: '#/components/responses/DeletePrincipalFromProjectUnexpectedError'
+      tags:
+        - projects
+  /v1/policies/principals/{principalId}:
+    get:
+      operationId: getPolicies
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - in: path
+          name: principalId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: principalType
+          required: true
+          schema:
+            type: string
+            enum:
+              - user
+              - token
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPoliciesOK'
+        '400':
+          $ref: '#/components/responses/GetPoliciesBadRequestError'
+        '404':
+          $ref: '#/components/responses/GetPoliciesNotFoundError'
+        '500':
+          $ref: '#/components/responses/GetPoliciesUnexpectedError'
+      tags:
+        - policies
+    put:
+      operationId: updatePolicies
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - in: path
+          name: principalId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: principalType
+          required: true
+          schema:
+            type: string
+            enum:
+              - user
+              - token
+      requestBody:
+        $ref: '#/components/requestBodies/UpdatePolicies'
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdatePoliciesOK'
+        '400':
+          $ref: '#/components/responses/UpdatePoliciesBadRequestError'
+        '500':
+          $ref: '#/components/responses/UpdatePoliciesUnexpectedError'
+      tags:
+        - policies
+  /v1/tokens:
+    post:
+      operationId: createToken
+      security:
+        - UserTokenAuth: []
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateToken'
+      responses:
+        '200':
+          $ref: '#/components/responses/CreateTokenOK'
+        '400':
+          $ref: '#/components/responses/CreateTokenBadRequestError'
+        '500':
+          $ref: '#/components/responses/CreateTokenUnexpectedError'
+      tags:
+        - tokens
+    get:
+      operationId: listToken
+      security:
+        - UserTokenAuth: []
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ListTokenOK'
+        '400':
+          $ref: '#/components/responses/ListTokenBadRequestError'
+        '500':
+          $ref: '#/components/responses/ListTokenUnexpectedError'
+      tags:
+        - tokens
+  /v1/tokens/{tokenId}:
+    get:
+      operationId: getToken
+      security:
+        - UserTokenAuth: []
+      parameters:
+        - in: path
+          name: tokenId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/GetTokenOK'
+        '403':
+          $ref: '#/components/responses/GetTokenForbiddenError'
+        '404':
+          $ref: '#/components/responses/GetTokenNotFoundError'
+        '500':
+          $ref: '#/components/responses/GetTokenUnexpectedError'
+      tags:
+        - tokens
+    patch:
+      operationId: updateToken
+      security:
+        - UserTokenAuth: []
+      parameters:
+        - in: path
+          name: tokenId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateToken'
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdateTokenOK'
+        '403':
+          $ref: '#/components/responses/UpdateTokenForbiddenError'
+        '404':
+          $ref: '#/components/responses/UpdateTokenNotFoundError'
+        '500':
+          $ref: '#/components/responses/UpdateTokenUnexpectedError'
+      tags:
+        - tokens
+    delete:
+      operationId: deleteToken
+      security:
+        - UserTokenAuth: []
+      parameters:
+        - in: path
+          name: tokenId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Token Deleted
+        '403':
+          $ref: '#/components/responses/DeleteTokenForbiddenError'
+        '404':
+          $ref: '#/components/responses/DeleteTokenNotFoundError'
+        '500':
+          $ref: '#/components/responses/DeleteTokenUnexpectedError'
+      tags:
+        - tokens
+  /v1/consumer/oauth2/token:
+    post:
+      operationId: consumerAuthTokenEndpoint
+      summary: The Consumer OAuth 2.0 Token Endpoint
+      description: >-
+        Use open source libraries to perform OAuth 2.0 and OpenID Connect
+
+        available for any programming language. You can find a list of libraries
+        here https://oauth.net/code/
+
+
+        The Ory SDK is not yet able to this endpoint properly.
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/ConsumerAuthTokenEndpoint'
+      responses:
+        '200':
+          $ref: '#/components/responses/ConsumerAuthTokenEndpointOK'
+        '403':
+          $ref: '#/components/responses/ConsumerAuthTokenEndpointForbiddenError'
+        '500':
+          $ref: '#/components/responses/ConsumerAuthTokenEndpointUnexpectedError'
+      tags:
+        - consumerAuth

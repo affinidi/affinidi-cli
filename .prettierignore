@@ -1,3 +1,4 @@
 .releaserc.json
-commitlint.config.js
 service-info.yaml
+catalog-info.yaml
+README.md
