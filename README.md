@@ -31,7 +31,7 @@ npm update -g @affinidi/cli
 
 ## What can I do with Affinidi CLI?
 
-Affinidi CLI is all you need to interact and consume Affinidi services. Optionally you can also use [Affinidi Portal](https://portal.affinidi.com/) or call Affinidi APIs directly.
+Affinidi CLI is all you need to interact and consume Affinidi services. Optionally you can also use [Affinidi Portal](https://portal.affinidi.com) or call Affinidi APIs directly.
 
 ### Set up Affinidi Login for your applications
 
