@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Run release
-        run: npx semantic-release@21 --dry-run
+        run: npx semantic-release@21
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
