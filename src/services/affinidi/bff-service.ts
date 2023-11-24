@@ -17,12 +17,13 @@ export const instance = axios.create({
   baseURL: config.bffHost,
 })
 
-export function getBFFHeaders(): RawAxiosRequestHeaders {
+export async function getBFFHeaders(): Promise<RawAxiosRequestHeaders> {
+  const sessionId = await credentialsVault.getSessionId()
   return {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     'Accept-Encoding': 'gzip, deflate, br',
-    Cookie: `${config.bffCookieName}=${credentialsVault.getSessionId()}`,
+    Cookie: `${config.bffCookieName}=${sessionId}`,
     'affinidi-cli-version': module.exports.version,
   }
 }
@@ -43,17 +44,19 @@ export class BFFService {
   }
 
   public async logout(): Promise<void> {
+    const headers = await getBFFHeaders()
     try {
-      await instance.post('/api/auth/logout', {}, { headers: getBFFHeaders() })
-      credentialsVault.clear()
+      await instance.post('/api/auth/logout', {}, { headers })
+      await credentialsVault.clear()
     } catch (error) {
       handleServiceError(error)
     }
   }
 
   public async whoami(): Promise<any> {
+    const headers = await getBFFHeaders()
     try {
-      const res = await instance.get('/api/whoami', { headers: getBFFHeaders() })
+      const res = await instance.get('/api/whoami', { headers })
       return res.data
     } catch (error) {
       handleServiceError(error)
@@ -61,8 +64,9 @@ export class BFFService {
   }
 
   public async getAuthUrl(): Promise<URL> {
+    const headers = await getBFFHeaders()
     try {
-      const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`, { headers: getBFFHeaders() })
+      const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`, { headers })
       return new URL(response.data.authUrl)
     } catch (error) {
       handleServiceError(error)
@@ -70,8 +74,9 @@ export class BFFService {
   }
 
   public async getSessionId(state: string): Promise<string> {
+    const headers = await getBFFHeaders()
     try {
-      const res = await instance.get('/api/session-id', { params: { state: state }, headers: getBFFHeaders() })
+      const res = await instance.get('/api/session-id', { params: { state: state }, headers })
       return res.data.sessionId
     } catch (error) {
       handleServiceError(error)
@@ -79,13 +84,15 @@ export class BFFService {
   }
 
   public async getProjects(): Promise<ProjectDto[]> {
-    const res = await instance.get('/api/projects', { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.get('/api/projects', { headers })
     return res.data as ProjectDto[]
   }
 
   public async createProject(projectInput: CreateProjectInput): Promise<ProjectDto> {
+    const headers = await getBFFHeaders()
     try {
-      const res = await instance.post('/api/project', projectInput, { headers: getBFFHeaders() })
+      const res = await instance.post('/api/project', projectInput, { headers })
       return res.data as ProjectDto
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data?.errorCodeStr === 'ProjectCreation') {
@@ -116,10 +123,11 @@ export class BFFService {
   }
 
   public async stats(): Promise<StatsResponseOutput> {
+    const headers = await getBFFHeaders()
     try {
       const project = await this.getActiveProject()
 
-      const res = await instance.get(`/api/stats/${project.id}`, { headers: getBFFHeaders() })
+      const res = await instance.get(`/api/stats/${project.id}`, { headers })
       return res.data
     } catch (error) {
       handleServiceError(error)
@@ -127,32 +135,38 @@ export class BFFService {
   }
 
   public async getActiveProject(): Promise<ProjectDto> {
-    const res = await instance.get('/api/project', { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.get('/api/project', { headers })
     return res.data as ProjectDto
   }
 
   public async setSessionActiveProject(projectId: string): Promise<string> {
-    const res = await instance.get(`/api/projects/${projectId}`, { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.get(`/api/projects/${projectId}`, { headers })
     return res.data.projectId as string
   }
 
   public async exportLoginConfigs(ids: string[]): Promise<any> {
-    const res = await instance.post('/api/login/export-login-configs', { ids }, { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.post('/api/login/export-login-configs', { ids }, { headers })
     return res.data as any
   }
 
   public async importLoginConfigs(data: any): Promise<any> {
-    const res = await instance.post('/api/login/import-login-configs', { data }, { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.post('/api/login/import-login-configs', { data }, { headers })
     return res.data as any
   }
 
   public async exportGroups(groupNames: string[]): Promise<any> {
-    const res = await instance.post('/api/login/export-user-groups', { groupNames }, { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.post('/api/login/export-user-groups', { groupNames }, { headers })
     return res.data as any
   }
 
   public async importGroups(data: any): Promise<any> {
-    const res = await instance.post('/api/login/import-user-groups', { data }, { headers: getBFFHeaders() })
+    const headers = await getBFFHeaders()
+    const res = await instance.post('/api/login/import-user-groups', { data }, { headers })
     return res.data as any
   }
 }
