@@ -15,7 +15,6 @@ const common = {
   redirectTimeoutMs: 5 * 60 * 1000,
   bffUxClient: 4,
   logLevel: 'info' as LogLevel,
-  credentialsFileName: 'credentials-v2',
 }
 
 const configs = {

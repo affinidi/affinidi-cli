@@ -29,6 +29,27 @@ Update the Affinidi CLI
 npm update -g @affinidi/cli
 ```
 
+#### On Linux 🐧
+
+For Linux `libsecret` is used to store session ID in OS Keychain. So you may need to install it before installing `@affinidi/cli`.
+
+Depending on your distribution, you will need to run the following command:
+
+* Debian/Ubuntu:
+```bash
+sudo apt-get install libsecret-1-dev
+```
+
+* Red Hat-based:
+```bash
+sudo yum install libsecret-devel
+```
+
+* Arch Linux:
+```bash
+sudo pacman -S libsecret
+```
+
 ## What can I do with Affinidi CLI?
 
 Affinidi CLI is all you need to interact and consume Affinidi services. Optionally you can also use [Affinidi Portal](https://portal.affinidi.com) or call Affinidi APIs directly.
@@ -252,13 +273,11 @@ To switch the active project use the command [`affinidi project select-project`]
 
 When you authenticate to Affinidi, the first project is set as your active one by default. You can specify which project you want to be active with a flag `affinidi start --project-id <uuid>`
 
-### Session and configuration files
+### Session
 
-When you authenticate to Affinidi with affinidi start the CLI will create a folder with a credentials file in your home directory.
+When you authenticate to Affinidi with `affinidi start` the CLI will store your current session in OS Keychain.
 
-`~/.affinidi/credentials-v2.json` - Stores your current session credentials. Keep it secret as this allows you to call Affinidi services.
-
-When you run affinidi stop your session information is deleted.
+When you run `affinidi stop` your session information is deleted.
 
 
 ## Support & Feedback

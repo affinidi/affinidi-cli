@@ -53,8 +53,9 @@ class VPAdapterService {
     createLoginConfigInput: CreateLoginConfigurationInput,
   ): Promise<CreateLoginConfigurationOutput> => {
     try {
+      const headers = await getBFFHeaders()
       const response = await this.client.v1.createLoginConfigurations(createLoginConfigInput, {
-        headers: getBFFHeaders(),
+        headers,
       })
       return response.data
     } catch (error) {
@@ -70,8 +71,9 @@ class VPAdapterService {
   }
 
   public listLoginConfigurations = async (): Promise<ListLoginConfigurationOutput> => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listLoginConfigurations({ headers: getBFFHeaders() })
+      const response = await this.client.v1.listLoginConfigurations({ headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -79,8 +81,9 @@ class VPAdapterService {
   }
 
   public getLoginConfigurationById = async (id: string): Promise<GetLoginConfigurationOutput> => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.getLoginConfigurationsById(id, { headers: getBFFHeaders() })
+      const response = await this.client.v1.getLoginConfigurationsById(id, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -88,8 +91,9 @@ class VPAdapterService {
   }
 
   public deleteLoginConfigurationById = async (id: string): Promise<void> => {
+    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.deleteLoginConfigurationsById(id, { headers: getBFFHeaders() })
+      await this.client.v1.deleteLoginConfigurationsById(id, { headers })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
@@ -99,9 +103,10 @@ class VPAdapterService {
     id: string,
     updateLoginConfigurationInput: UpdateLoginConfigurationInput,
   ): Promise<UpdateLoginConfigurationOutput> => {
+    const headers = await getBFFHeaders()
     try {
       const response = await this.client.v1.updateLoginConfigurationsById(id, updateLoginConfigurationInput, {
-        headers: getBFFHeaders(),
+        headers,
       })
       return response.data
     } catch (error) {
@@ -110,8 +115,9 @@ class VPAdapterService {
   }
 
   public createGroup = async (groupName: string): Promise<GroupDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.createGroup({ groupName: groupName }, { headers: getBFFHeaders() })
+      const response = await this.client.v1.createGroup({ groupName: groupName }, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -119,8 +125,9 @@ class VPAdapterService {
   }
 
   public getGroup = async (groupName: string): Promise<GroupDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.getGroupById(groupName, { headers: getBFFHeaders() })
+      const response = await this.client.v1.getGroupById(groupName, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -128,16 +135,18 @@ class VPAdapterService {
   }
 
   public deleteGroup = async (name: string): Promise<void> => {
+    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.deleteGroup(name, { headers: getBFFHeaders() })
+      await this.client.v1.deleteGroup(name, { headers })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
   public listGroups = async (): Promise<GroupsList> => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listGroups({ headers: getBFFHeaders() })
+      const response = await this.client.v1.listGroups({ headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -145,8 +154,9 @@ class VPAdapterService {
   }
 
   public addUserToGroup = async (groupName: string, userId: string) => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.addUserToGroup(groupName, { userId }, { headers: getBFFHeaders() })
+      const response = await this.client.v1.addUserToGroup(groupName, { userId }, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -154,16 +164,18 @@ class VPAdapterService {
   }
 
   public removeUserFromGroup = async (groupName: string, userId: string): Promise<void> => {
+    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.removeUserFromGroup(groupName, { userId }, { headers: getBFFHeaders() })
+      await this.client.v1.removeUserFromGroup(groupName, { userId }, { headers })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
   public listGroupUsers = async (groupName: string): Promise<GroupUserMappingsList> => {
+    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listGroupUserMappings(groupName, { headers: getBFFHeaders() })
+      const response = await this.client.v1.listGroupUserMappings(groupName, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
