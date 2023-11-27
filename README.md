@@ -252,7 +252,7 @@ To switch the active project use the command [`affinidi project select-project`]
 
 When you authenticate to Affinidi, the first project is set as your active one by default. You can specify which project you want to be active with a flag `affinidi start --project-id <uuid>`
 
-### Session
+### Session and configuration files
 
 When you authenticate to Affinidi with `affinidi start` the CLI will store your current session in OS Keychain (on macOS the passwords are managed by the Keychain, on Linux they are managed by the Secret Service API/libsecret, and on Windows they are managed by Credential Vault).
 
