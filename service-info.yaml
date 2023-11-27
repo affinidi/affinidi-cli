@@ -1,8 +1,8 @@
 name: affinidi-cli
 description: |-
-  Greenfield version of Affinidi CLI
+  Affinidi CLI
 criticality: high
-visibility: internal
+visibility: external
 tech-stack: lib
 team-name: developer-experience
 code-repository: https://github.com/affinidi/affinidi-cli.git
