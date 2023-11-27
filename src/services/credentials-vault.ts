@@ -39,9 +39,9 @@ class CredentialsVault {
     }
   }
 
-  getSessionId(): Promise<string | null> | string {
+  async getSessionId(): Promise<string | null> {
     try {
-      return keytar.getPassword(service, account)
+      return await keytar.getPassword(service, account)
     } catch (error) {
       this.logger.info(fallbackMessage)
 
@@ -49,13 +49,13 @@ class CredentialsVault {
     }
   }
 
-  setSessionId(value: string): Promise<void> | void {
+  async setSessionId(value: string): Promise<void> {
     try {
-      return keytar.setPassword(service, account, value)
+      await keytar.setPassword(service, account, value)
     } catch (error) {
       this.logger.info(fallbackMessage)
 
-      return this.store.set('sessionId', value)
+      this.store.set('sessionId', value)
     }
   }
 }
