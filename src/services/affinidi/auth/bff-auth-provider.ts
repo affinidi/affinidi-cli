@@ -101,7 +101,7 @@ export class BFFAuthProvider implements AuthProvider {
       const sessionId = await bffService.getSessionId(state)
       this.logger.debug(`Received session: ${JSON.stringify(sessionId)}`)
       await credentialsVault.setSessionId(sessionId)
-      this.logger.debug(`Session stored in the keychain`)
+      this.logger.debug('Session stored in vault')
       resolve(sessionId)
       res.end(
         authResultPage(
