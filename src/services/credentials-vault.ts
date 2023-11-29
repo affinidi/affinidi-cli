@@ -14,8 +14,6 @@ type Credentials = z.infer<typeof credentialsSchema>
 const account = 'Affinidi'
 const service = 'sessionID (@affinidi/cli)'
 
-const fallbackMessage = 'Failed to access Keychain. Using file to store `sessionId.`'
-
 // NOTE: `keytar` allows to manage credentials in system's keychain.
 //       On macOS the passwords are managed by the Keychain,
 //       on Linux they are managed by the Secret Service API/libsecret,
@@ -33,8 +31,6 @@ class CredentialsVault {
     try {
       await keytar.deletePassword(service, account)
     } catch (error) {
-      this.logger.info(fallbackMessage)
-
       this.store.clear()
     }
   }
@@ -43,8 +39,6 @@ class CredentialsVault {
     try {
       return await keytar.getPassword(service, account)
     } catch (error) {
-      this.logger.info(fallbackMessage)
-
       return this.store.get('sessionId')
     }
   }
@@ -53,8 +47,6 @@ class CredentialsVault {
     try {
       await keytar.setPassword(service, account, value)
     } catch (error) {
-      this.logger.info(fallbackMessage)
-
       this.store.set('sessionId', value)
     }
   }
