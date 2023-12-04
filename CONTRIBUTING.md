@@ -36,6 +36,16 @@ As an example, let's say you want to add an `auth` command with two subcommands:
 
 For simple commands, you can also take advantage of oclif's [command generation tool](https://oclif.io/docs/generator_commands#oclif-generate-command-name) directly in the terminal, which will scaffold a single command file in the `src/commands/` directory and a test file in `test/commands/` directory.
 
+#### Updating README
+
+Another oclif's handy tool alows to update README.md with all the documentation of newly added command. To do this run
+
+```bash
+npm run generate:readme
+```
+
+Read more here: https://github.com/oclif/oclif#oclif-readme
+
 ### Testing
 
 Tests in the CLI use Oclif's default testing framework of [mocha](https://mochajs.org) and [fancy-test](https://github.com/oclif/fancy-test).
@@ -213,6 +223,15 @@ Introducing breaking changes will require a lengthy deprecation process. Keep th
 - Warn users when they are using a deprecated command or flag.
 
 - Changing output for humans is usually OK. Encourage the usage of machine flags like `--json` or `--quiet`.
+
+### BFF
+
+Affinidi CLI uses Backend For Frontend (BFF - backend service for the [Affinidi Dev Portal](https://portal.affinidi.com/)) for authentication and making proxy calls to other Affinidi services such as IAM and VPA.
+Once user is authenticated, BFF stores user's auth tokens in a session and returns to CLI a sessionId, and CLI stores it as described [here](https://github.com/affinidi/affinidi-cli#session-and-configuration-files). That sessionId has to be passed to BFF on each request in headers.
+
+BFF has middlewares that performs token management (including refreshing tokens) and gets project scoped token for proxied calls to IAM and VPA services.
+
+Please refer to the implementation details (f.e. `affinidi login list-configs` command, [link to code](https://github.com/affinidi/affinidi-cli/blob/main/src/commands/login/list-configs.ts)) how the call is proxied to BFF.
 
 ---
 
