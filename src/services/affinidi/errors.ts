@@ -2,6 +2,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import { AxiosError } from 'axios'
 import chalk from 'chalk'
 import { StatusCodes } from 'http-status-codes'
+import { credentialsVault } from '../credentials-vault'
 
 export const AuthTokenExpired = "Your session has expired. Please, run command 'affinidi start' and try again."
 export const InvalidOrMissingAuthToken =
@@ -65,6 +66,10 @@ export function handleServiceError(
   serviceErrorMessageHandler?: (response: any) => string | null,
 ): never {
   if (error instanceof AxiosError && error.response) {
+    if (error.response.status >= 500) {
+      credentialsVault.clear()
+    }
+
     const { name, details, message, errorCodeStr } = error.response.data
 
     const isJwtExpired =
