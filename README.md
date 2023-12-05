@@ -250,7 +250,7 @@ To check what is the current active project use the command [`affinidi project g
 
 To switch the active project use the command [`affinidi project select-project`](#affinidi-project-select-project)
 
-When you authenticate to Affinidi, the first project is set as your active one by default. You can specify which project you want to be active with a flag `affinidi start --project-id <uuid>`
+When you authenticate to Affinidi, the first project is set as your active one by default.
 
 ### Session and configuration files
 
@@ -1128,7 +1128,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.12/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1147,7 +1147,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.12/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1282,5 +1282,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0-beta.12/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0/dist/commands/whoami.ts)_
 <!-- commandsstop -->
