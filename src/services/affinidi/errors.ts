@@ -2,6 +2,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import { AxiosError } from 'axios'
 import chalk from 'chalk'
 import { StatusCodes } from 'http-status-codes'
+import { credentialsVault } from '../credentials-vault'
 
 export const AuthTokenExpired = "Your session has expired. Please, run command 'affinidi start' and try again."
 export const InvalidOrMissingAuthToken =
@@ -64,7 +65,19 @@ export function handleServiceError(
   error: unknown,
   serviceErrorMessageHandler?: (response: any) => string | null,
 ): never {
-  if (error instanceof AxiosError && error.response) {
+  const isAxiosError = error instanceof AxiosError
+
+  if (!isAxiosError) {
+    throw error
+  }
+
+  const isServerError = isAxiosError && error.response && error.response.status >= 500
+
+  if (isServerError) {
+    credentialsVault.clear()
+  }
+
+  if (error?.response?.data) {
     const { name, details, message, errorCodeStr } = error.response.data
 
     const isJwtExpired =
@@ -77,15 +90,11 @@ export function handleServiceError(
     if (errorCodeStr === 'CLIVersionInvalid' && message) {
       throw new CLIError(message)
     }
-
-    if (error.response) {
-      throw new CLIError(
-        serviceErrorMessageHandler
-          ? serviceErrorMessageHandler(error.response) ?? getCommonAPIErrorMessage(error.response)
-          : getCommonAPIErrorMessage(error.response),
-      )
-    }
   }
 
-  throw error
+  throw new CLIError(
+    serviceErrorMessageHandler
+      ? serviceErrorMessageHandler(error.response) ?? getCommonAPIErrorMessage(error.response)
+      : getCommonAPIErrorMessage(error.response),
+  )
 }
