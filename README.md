@@ -254,12 +254,12 @@ When you authenticate to Affinidi, the first project is set as your active one b
 
 ### Session and configuration files
 
-When you authenticate to Affinidi with affinidi start the CLI will create a folder with a credentials file in your home directory.
+When you authenticate to Affinidi with `affinidi start` the CLI will store your current session in OS Keychain (on macOS the passwords are managed by the Keychain, on Linux they are managed by the Secret Service API/libsecret, and on Windows they are managed by Credential Vault).
 
+NOTE: If system keychain is not available, the CLI will create a folder with a credentials file in your home directory.
 `~/.affinidi/credentials-v2.json` - Stores your current session credentials. Keep it secret as this allows you to call Affinidi services.
 
-When you run affinidi stop your session information is deleted.
-
+When you run `affinidi stop` your session information is deleted.
 
 ## Support & Feedback
 

@@ -28,8 +28,9 @@ class IAMService {
   ) {}
 
   public createProject = async (projectInput: CreateProjectInput): Promise<ProjectDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const result = await this.client.v1.createProject(projectInput, { headers: getBFFHeaders() })
+      const result = await this.client.v1.createProject(projectInput, { headers })
       return result.data
     } catch (error) {
       handleServiceError(error)
@@ -37,8 +38,9 @@ class IAMService {
   }
 
   public listProjects = async (): Promise<Array<any>> => {
+    const headers = await getBFFHeaders()
     try {
-      const res = await this.client.v1.listProject({ headers: getBFFHeaders() })
+      const res = await this.client.v1.listProject({ headers })
       console.log(JSON.stringify(res.data))
       return res.data.projects
     } catch (error) {
@@ -47,8 +49,9 @@ class IAMService {
   }
 
   public whoAmI = async (): Promise<WhoamiDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const { data } = await this.client.v1.whoami({ headers: getBFFHeaders() })
+      const { data } = await this.client.v1.whoami({ headers })
       return data
     } catch (error) {
       handleServiceError(error)
@@ -56,8 +59,9 @@ class IAMService {
   }
 
   public createProjectScopedToken = async (projectId: string): Promise<CreateProjectScopedTokenOutput> => {
+    const headers = await getBFFHeaders()
     try {
-      const { data } = await this.client.v1.createProjectScopedToken({ projectId }, { headers: getBFFHeaders() })
+      const { data } = await this.client.v1.createProjectScopedToken({ projectId }, { headers })
       return data
     } catch (error) {
       handleServiceError(error)
@@ -65,8 +69,9 @@ class IAMService {
   }
 
   public listM2MKeys = async (): Promise<TokenList> => {
+    const headers = await getBFFHeaders()
     try {
-      const { data } = await this.client.v1.listToken({ headers: getBFFHeaders() })
+      const { data } = await this.client.v1.listToken({ headers })
       return data
     } catch (error) {
       handleServiceError(error)
@@ -74,16 +79,18 @@ class IAMService {
   }
 
   public deleteToken = async (tokenId: string): Promise<void> => {
+    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.deleteToken(tokenId, { headers: getBFFHeaders() })
+      await this.client.v1.deleteToken(tokenId, { headers })
     } catch (error) {
       handleServiceError(error)
     }
   }
 
   public getToken = async (tokenId: string): Promise<TokenDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const { data } = await this.client.v1.getToken(tokenId, { headers: getBFFHeaders() })
+      const { data } = await this.client.v1.getToken(tokenId, { headers })
       return data
     } catch (error) {
       handleServiceError(error)
@@ -91,8 +98,9 @@ class IAMService {
   }
 
   public createToken = async (createTokenInput: CreateTokenInput): Promise<TokenDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const { data } = await this.client.v1.createToken(createTokenInput, { headers: getBFFHeaders() })
+      const { data } = await this.client.v1.createToken(createTokenInput, { headers })
       return data
     } catch (error) {
       handleServiceError(error)
@@ -101,8 +109,9 @@ class IAMService {
 
   public updateToken = async (tokenId: string, updateTokenInput: UpdateTokenInput): Promise<TokenDto> => {
     try {
+      const headers = await getBFFHeaders()
       const { data } = await this.client.v1.updateToken(tokenId, updateTokenInput, {
-        headers: getBFFHeaders(),
+        headers,
       })
       return data
     } catch (error) {
@@ -111,8 +120,9 @@ class IAMService {
   }
 
   public listPrincipalsOfProject = async (): Promise<UserList> => {
+    const headers = await getBFFHeaders()
     try {
-      const result = await this.client.v1.listPrincipalsOfProject({ headers: getBFFHeaders() })
+      const result = await this.client.v1.listPrincipalsOfProject({ headers })
       return result.data
     } catch (error) {
       handleServiceError(error)
@@ -120,24 +130,27 @@ class IAMService {
   }
 
   public addPrincipalToProject = async (addUserToProjectInput: AddUserToProjectInput): Promise<void> => {
+    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.addPrincipalToProject(addUserToProjectInput, { headers: getBFFHeaders() })
+      await this.client.v1.addPrincipalToProject(addUserToProjectInput, { headers })
     } catch (error) {
       handleServiceError(error)
     }
   }
 
   public deletePrincipalFromProject = async (principalId: string, principalType: 'user' | 'token'): Promise<void> => {
+    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.deletePrincipalFromProject(principalId, { principalType }, { headers: getBFFHeaders() })
+      await this.client.v1.deletePrincipalFromProject(principalId, { principalType }, { headers })
     } catch (error) {
       handleServiceError(error)
     }
   }
 
   public getPolicies = async (principalId: string, principalType: 'user' | 'token'): Promise<PolicyDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const result = await this.client.v1.getPolicies(principalId, { principalType }, { headers: getBFFHeaders() })
+      const result = await this.client.v1.getPolicies(principalId, { principalType }, { headers })
       return result.data
     } catch (error) {
       handleServiceError(error)
@@ -149,10 +162,9 @@ class IAMService {
     principalType: 'user' | 'token',
     data: PolicyDto,
   ): Promise<PolicyDto> => {
+    const headers = await getBFFHeaders()
     try {
-      const result = await this.client.v1.updatePolicies(principalId, { principalType }, data, {
-        headers: getBFFHeaders(),
-      })
+      const result = await this.client.v1.updatePolicies(principalId, { principalType }, data, { headers })
       return result.data
     } catch (error) {
       handleServiceError(error)
