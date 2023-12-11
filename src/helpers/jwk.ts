@@ -21,3 +21,11 @@ export function getKeyType(algorithm: SupportedAlgorithms): SupportedKeyTypes {
       return SupportedKeyTypes.RSA
   }
 }
+
+export async function JWKToPem(publicKey: jose.KeyLike): Promise<string> {
+  try {
+    return await jose.exportSPKI(publicKey)
+  } catch (_) {
+    throw new CLIError('Unable to convert the provided public key to pem format')
+  }
+}

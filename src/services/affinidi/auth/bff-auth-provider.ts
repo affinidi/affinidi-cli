@@ -18,7 +18,7 @@ export class BFFAuthProvider implements AuthProvider {
     this.logger = logger
   }
 
-  public async authenticate({ privateKey, publicKey }: { privateKey: string; publicKey: string }): Promise<string> {
+  public async authenticate(publicKey: string): Promise<string> {
     const port = 64287
     const isPortInUse = await check(config.redirectPort)
     if (isPortInUse) {
@@ -29,8 +29,6 @@ export class BFFAuthProvider implements AuthProvider {
     }
 
     const authUrl = await bffService.postAuthUrl(publicKey)
-    console.log('authUrl:', authUrl)
-    throw Error('boum')
     const state = authUrl.searchParams.get('state')
     if (!state) {
       throw new Error('Unexpected error occurred. state parameter missing')
@@ -64,7 +62,7 @@ export class BFFAuthProvider implements AuthProvider {
           this.handleError({ reject, req, res, timeout })
           this.shutDownServer(server)
         } else {
-          await this.handleSuccess({ privateKey, resolve, reject, res, timeout, state })
+          await this.handleSuccess({ resolve, reject, res, timeout, state })
           this.shutDownServer(server)
         }
       })
@@ -92,16 +90,15 @@ export class BFFAuthProvider implements AuthProvider {
     resolve: (value: string | PromiseLike<string>) => void
     reject: (reason?: any) => void
     res: express.Response
-    privateKey: string
     timeout: NodeJS.Timeout
     state: string
   }) {
-    const { privateKey, resolve, reject, res, timeout, state } = params
+    const { resolve, reject, res, timeout, state } = params
 
     clearTimeout(timeout)
     try {
       this.logger.debug(`Getting sessionId for state: ${JSON.stringify(state)}`)
-      const sessionId = await bffService.getAndDecodeSessionId(state, privateKey)
+      const sessionId = await bffService.getSessionId(state)
       this.logger.debug(`Received session: ${JSON.stringify(sessionId)}`)
       await credentialsVault.setSessionId(sessionId)
       this.logger.debug('Session stored in vault')

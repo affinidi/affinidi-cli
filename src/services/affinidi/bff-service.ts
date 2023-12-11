@@ -10,6 +10,7 @@ import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
 import { ServiceResourceIds } from '../../common/constants'
 import { credentialsVault } from '../credentials-vault'
 import { config } from '../env-config'
+import { JWKToPem } from '../../helpers/jwk'
 
 /* eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
 require('pkginfo')(module, 'version')
@@ -41,8 +42,9 @@ export class BFFService {
   }
 
   public async login(): Promise<string> {
-    const { privateKey, publicKey } = await this.generateKeyPair()
-    return this.authProvider.authenticate({ privateKey: String(privateKey), publicKey: String(publicKey) })
+    const { publicKey } = await this.generateKeyPair()
+    const publicKeyPem = await JWKToPem(publicKey)
+    return this.authProvider.authenticate(publicKeyPem)
   }
 
   public async logout(): Promise<void> {
