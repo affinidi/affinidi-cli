@@ -1,8 +1,9 @@
 import { CLIError } from '@oclif/core/lib/errors'
-import axios, { RawAxiosRequestHeaders, AxiosError } from 'axios'
+import axios, { AxiosError, RawAxiosRequestHeaders } from 'axios'
+import { KeyLike, generateKeyPair } from 'jose'
 import { BFFAuthProvider } from './auth/bff-auth-provider'
 import { AuthProvider } from './auth/types'
-import { StatsResponseOutput, StatsProjectResourceLimit } from './bff-service.types'
+import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.types'
 import { handleServiceError } from './errors'
 import { CreateProjectInput, ProjectDto } from './iam/iam.api'
 import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
@@ -39,8 +40,9 @@ export class BFFService {
     })
   }
 
-  public login(): Promise<string> {
-    return this.authProvider.authenticate()
+  public async login(): Promise<string> {
+    const { privateKey, publicKey } = await this.generateKeyPair()
+    return this.authProvider.authenticate({ privateKey: String(privateKey), publicKey: String(publicKey) })
   }
 
   public async logout(): Promise<void> {
@@ -63,10 +65,13 @@ export class BFFService {
     }
   }
 
-  public async getAuthUrl(): Promise<URL> {
-    const headers = await getBFFHeaders()
+  public async postAuthUrl(publicKey: string): Promise<URL> {
     try {
-      const response = await instance.get(`/api/auth-url?uxclient=${config.bffUxClient}`, { headers })
+      const response = await instance.post<{ authUrl: string }>(
+        '/api/auth/url',
+        { publicKey, uxClient: config.bffUxClient },
+        { headers: getBFFHeaders() },
+      )
       return new URL(response.data.authUrl)
     } catch (error) {
       handleServiceError(error)
@@ -196,6 +201,11 @@ export class BFFService {
     } catch (error) {
       handleServiceError(error)
     }
+  }
+
+  public async generateKeyPair(): Promise<{ publicKey: KeyLike; privateKey: KeyLike }> {
+    const { publicKey, privateKey } = await generateKeyPair('PS256')
+    return { publicKey, privateKey }
   }
 }
 

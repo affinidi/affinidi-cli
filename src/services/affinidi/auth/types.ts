@@ -1,7 +1,7 @@
 import { LoggerAdapter } from '../logger'
 
 export interface AuthProvider {
-  authenticate(): Promise<string>
+  authenticate(keys: { privateKey: string; publicKey: string }): Promise<string>
 }
 
 export type AuthProviderConfig = {
