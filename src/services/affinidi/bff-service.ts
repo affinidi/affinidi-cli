@@ -72,7 +72,7 @@ export class BFFService {
       const response = await instance.post<{ authUrl: string }>(
         '/api/auth/url',
         { publicKey, uxClient: config.bffUxClient },
-        { headers: getBFFHeaders() },
+        { headers: await getBFFHeaders() },
       )
       return new URL(response.data.authUrl)
     } catch (error) {
