@@ -150,32 +150,52 @@ export class BFFService {
 
   public async setSessionActiveProject(projectId: string): Promise<string> {
     const headers = await getBFFHeaders()
-    const res = await instance.get(`/api/projects/${projectId}`, { headers })
-    return res.data.projectId as string
+    try {
+      const res = await instance.get(`/api/projects/${projectId}`, { headers })
+      return res.data.projectId as string
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async exportLoginConfigs(ids: string[]): Promise<any> {
     const headers = await getBFFHeaders()
-    const res = await instance.post('/api/login/export-login-configs', { ids }, { headers })
-    return res.data as any
+    try {
+      const res = await instance.post('/api/login/export-login-configs', { ids }, { headers })
+      return res.data as any
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async importLoginConfigs(data: any): Promise<any> {
     const headers = await getBFFHeaders()
-    const res = await instance.post('/api/login/import-login-configs', { data }, { headers })
-    return res.data as any
+    try {
+      const res = await instance.post('/api/login/import-login-configs', { data }, { headers })
+      return res.data as any
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async exportGroups(groupNames: string[]): Promise<any> {
     const headers = await getBFFHeaders()
-    const res = await instance.post('/api/login/export-user-groups', { groupNames }, { headers })
-    return res.data as any
+    try {
+      const res = await instance.post('/api/login/export-user-groups', { groupNames }, { headers })
+      return res.data as any
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async importGroups(data: any): Promise<any> {
     const headers = await getBFFHeaders()
-    const res = await instance.post('/api/login/import-user-groups', { data }, { headers })
-    return res.data as any
+    try {
+      const res = await instance.post('/api/login/import-user-groups', { data }, { headers })
+      return res.data as any
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 }
 

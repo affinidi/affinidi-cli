@@ -74,7 +74,7 @@ export function handleServiceError(
   const isServerError = isAxiosError && error.response && error.response.status >= 500
 
   if (isServerError) {
-    credentialsVault.clear()
+    void credentialsVault.clear()
   }
 
   if (error?.response?.data) {
