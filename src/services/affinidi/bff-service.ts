@@ -85,8 +85,12 @@ export class BFFService {
 
   public async getProjects(): Promise<ProjectDto[]> {
     const headers = await getBFFHeaders()
-    const res = await instance.get('/api/projects', { headers })
-    return res.data as ProjectDto[]
+    try {
+      const res = await instance.get('/api/projects', { headers })
+      return res.data as ProjectDto[]
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async createProject(projectInput: CreateProjectInput): Promise<ProjectDto> {
@@ -136,8 +140,12 @@ export class BFFService {
 
   public async getActiveProject(): Promise<ProjectDto> {
     const headers = await getBFFHeaders()
-    const res = await instance.get('/api/project', { headers })
-    return res.data as ProjectDto
+    try {
+      const res = await instance.get('/api/project', { headers })
+      return res.data as ProjectDto
+    } catch (error) {
+      handleServiceError(error)
+    }
   }
 
   public async setSessionActiveProject(projectId: string): Promise<string> {
