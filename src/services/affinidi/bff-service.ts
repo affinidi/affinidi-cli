@@ -7,10 +7,9 @@ import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.ty
 import { handleServiceError } from './errors'
 import { CreateProjectInput, ProjectDto } from './iam/iam.api'
 import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
-import { ServiceResourceIds } from '../../common/constants'
+import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants'
 import { credentialsVault } from '../credentials-vault'
 import { config } from '../env-config'
-import { JWKToPem } from '../../helpers/jwk'
 
 /* eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
 require('pkginfo')(module, 'version')
@@ -42,9 +41,8 @@ export class BFFService {
   }
 
   public async login(): Promise<string> {
-    const { publicKey } = await this.generateKeyPair()
-    const publicKeyPem = await JWKToPem(publicKey)
-    return this.authProvider.authenticate(publicKeyPem)
+    const { privateKey, publicKey } = await this.generateKeyPair()
+    return this.authProvider.authenticate({ privateKey, publicKey })
   }
 
   public async logout(): Promise<void> {
@@ -206,7 +204,7 @@ export class BFFService {
   }
 
   public async generateKeyPair(): Promise<{ publicKey: KeyLike; privateKey: KeyLike }> {
-    const { publicKey, privateKey } = await generateKeyPair('PS256')
+    const { publicKey, privateKey } = await generateKeyPair(SupportedAlgorithms.RS256)
     return { publicKey, privateKey }
   }
 }
