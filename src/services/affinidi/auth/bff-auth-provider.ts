@@ -101,8 +101,9 @@ export class BFFAuthProvider implements AuthProvider {
     clearTimeout(timeout)
     try {
       this.logger.debug(`Getting sessionId for state: ${JSON.stringify(state)}`)
-      const encodedSessionId = await bffService.getSessionId(state)
-      const sessionId = await decryptSessionIdWithPrivateKey(encodedSessionId, privateKey)
+      const encryptedSessionIdBase64 = await bffService.getSessionId(state)
+      const encryptedSessionId = Buffer.from(encryptedSessionIdBase64, 'base64').toString('utf-8')
+      const sessionId = await decryptSessionIdWithPrivateKey(encryptedSessionId, privateKey)
       this.logger.debug(`Received session: ${JSON.stringify(sessionId)}`)
       await credentialsVault.setSessionId(sessionId)
       this.logger.debug('Session stored in vault')

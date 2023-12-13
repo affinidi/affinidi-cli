@@ -66,6 +66,7 @@ export class BFFService {
   }
 
   public async postAuthUrl(publicKey: string): Promise<URL> {
+    console.log('!!!!!!!!!', { publicKey })
     try {
       const response = await instance.post<{ authUrl: string }>(
         '/api/auth/url',
