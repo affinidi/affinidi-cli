@@ -2,10 +2,12 @@ import http from 'http'
 import chalk from 'chalk'
 import express from 'express'
 import helmet from 'helmet'
+import { KeyLike } from 'jose'
 import open from 'open'
 import { check } from 'tcp-port-used'
 import { authResultPage } from './auth-result-page'
 import { AuthProvider, AuthProviderConfig } from './types'
+import { JWKToPem, decryptSessionIdWithPrivateKey } from '../../../helpers/jwk'
 import { credentialsVault } from '../../credentials-vault'
 import { config } from '../../env-config'
 import { bffService } from '../bff-service'
@@ -18,7 +20,7 @@ export class BFFAuthProvider implements AuthProvider {
     this.logger = logger
   }
 
-  public async authenticate(): Promise<string> {
+  public async authenticate({ privateKey, publicKey }: { privateKey: KeyLike; publicKey: KeyLike }): Promise<string> {
     const port = 64287
     const isPortInUse = await check(config.redirectPort)
     if (isPortInUse) {
@@ -28,7 +30,7 @@ export class BFFAuthProvider implements AuthProvider {
       )
     }
 
-    const authUrl = await bffService.getAuthUrl()
+    const authUrl = await bffService.postAuthUrl(await JWKToPem(publicKey))
     const state = authUrl.searchParams.get('state')
     if (!state) {
       throw new Error('Unexpected error occurred. state parameter missing')
@@ -62,7 +64,7 @@ export class BFFAuthProvider implements AuthProvider {
           this.handleError({ reject, req, res, timeout })
           this.shutDownServer(server)
         } else {
-          await this.handleSuccess({ resolve, reject, res, timeout, state })
+          await this.handleSuccess({ privateKey, resolve, reject, res, timeout, state })
           this.shutDownServer(server)
         }
       })
@@ -87,18 +89,21 @@ export class BFFAuthProvider implements AuthProvider {
    * @private
    */
   private async handleSuccess(params: {
+    privateKey: KeyLike
     resolve: (value: string | PromiseLike<string>) => void
     reject: (reason?: any) => void
     res: express.Response
     timeout: NodeJS.Timeout
     state: string
   }) {
-    const { resolve, reject, res, timeout, state } = params
+    const { privateKey, resolve, reject, res, timeout, state } = params
 
     clearTimeout(timeout)
     try {
       this.logger.debug(`Getting sessionId for state: ${JSON.stringify(state)}`)
-      const sessionId = await bffService.getSessionId(state)
+      const encryptedSessionIdBase64 = await bffService.getSessionId(state)
+      const encryptedSessionId = Buffer.from(encryptedSessionIdBase64, 'base64').toString('utf-8')
+      const sessionId = await decryptSessionIdWithPrivateKey(encryptedSessionId, privateKey)
       this.logger.debug(`Received session: ${JSON.stringify(sessionId)}`)
       await credentialsVault.setSessionId(sessionId)
       this.logger.debug('Session stored in vault')
