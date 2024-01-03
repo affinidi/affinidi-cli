@@ -87,3 +87,7 @@ export function getSupportedAppsInformation(apps: object) {
 
   return { providers, frameworks, libraries }
 }
+
+export function getRedirectUri(apps: any, appName: string) {
+  return apps[appName].redirectUris.callbackUrl
+}

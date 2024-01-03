@@ -7,7 +7,7 @@ import { BaseCommand, RefAppProvider } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
-import { getAppName, getApps, getSupportedAppsInformation } from '../../helpers/app'
+import { getAppName, getApps, getRedirectUri, getSupportedAppsInformation } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
@@ -115,18 +115,43 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         ux.action.start('Fetching available login configurations')
         const configs = await vpAdapterService.listLoginConfigurations()
         ux.action.stop('Fetched successfully!')
-        const choices = configs.configurations.map((config) => ({
+        let choices = configs.configurations.map((config) => ({
           value: {
             id: config.configurationId,
             auth: config.auth,
           },
           name: `${config.name} [id: ${config.configurationId}]`,
         }))
+        choices.push({
+          value: {
+            id: 'new-config',
+            auth: undefined
+          },
+          name: 'Create new login config'
+        })
         const selectedConfig = await select({
           message: 'Select a login configuration to use in your reference application',
           choices,
         })
-        const clientSecret = validateInputLength(
+        let newConfigClientSecret = undefined
+        // Create a new login config
+        if (selectedConfig.id === 'new-config') {
+          const newConfigName = validateInputLength(
+            await input({ message: `Enter a name for the login config` }),
+            INPUT_LIMIT,
+          )
+          const redirectUri = getRedirectUri(GenerateApp.apps, appName)
+          const createLoginConfigInput = {
+            name: newConfigName,
+            redirectUris: [redirectUri],
+          }
+          const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
+          selectedConfig.id = createConfigOutput.configurationId
+          selectedConfig.auth = createConfigOutput.auth
+          newConfigClientSecret = createConfigOutput.auth.clientSecret
+        }
+
+        const clientSecret = newConfigClientSecret ?? validateInputLength(
           await password({
             message: "What is the login configuration's client secret?",
             mask: true,
