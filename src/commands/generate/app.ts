@@ -115,7 +115,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         ux.action.start('Fetching available login configurations')
         const configs = await vpAdapterService.listLoginConfigurations()
         ux.action.stop('Fetched successfully!')
-        let choices = configs.configurations.map((config) => ({
+        const choices = configs.configurations.map((config) => ({
           value: {
             id: config.configurationId,
             auth: config.auth,
@@ -125,9 +125,9 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         choices.push({
           value: {
             id: 'new-config',
-            auth: undefined
+            auth: undefined,
           },
-          name: 'Create new login config'
+          name: 'Create new login config',
         })
         const selectedConfig = await select({
           message: 'Select a login configuration to use in your reference application',
@@ -151,13 +151,15 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           newConfigClientSecret = createConfigOutput.auth.clientSecret
         }
 
-        const clientSecret = newConfigClientSecret ?? validateInputLength(
-          await password({
-            message: "What is the login configuration's client secret?",
-            mask: true,
-          }),
-          INPUT_LIMIT,
-        )
+        const clientSecret =
+          newConfigClientSecret ??
+          validateInputLength(
+            await password({
+              message: "What is the login configuration's client secret?",
+              mask: true,
+            }),
+            INPUT_LIMIT,
+          )
 
         if (provider === RefAppProvider.AFFINIDI) {
           ux.action.start('Configuring reference application')
