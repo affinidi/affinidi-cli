@@ -7,7 +7,7 @@ import { BaseCommand, RefAppProvider } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
-import { AppsInformation, getAppName, getApps, getSupportedAppsInformation } from '../../helpers/app'
+import { AppsInformation, getAppName, getApps, getRedirectUri, getSupportedAppsInformation } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
@@ -134,17 +134,50 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             },
             name: `${config.name} [id: ${config.configurationId}]`,
           }))
+          choices.push({
+            value: {
+              id: 'new-config',
+              auth: undefined,
+            },
+            name: 'Create new login config',
+          })
           const selectedConfig = await select({
             message: 'Select a login configuration to use in your reference application',
             choices,
           })
-          const clientSecret = validateInputLength(
-            await password({
-              message: "What is the login configuration's client secret?",
-              mask: true,
-            }),
-            INPUT_LIMIT,
-          )
+          let newConfigClientSecret = undefined
+          // Create a new login config
+          if (selectedConfig.id === 'new-config') {
+            const newConfigName = validateInputLength(
+              await input({ message: `Enter a name for the login config` }),
+              INPUT_LIMIT,
+            )
+            const redirectUri = getRedirectUri(GenerateApp.apps, appName)
+            const createLoginConfigInput = {
+              name: newConfigName,
+              redirectUris: [redirectUri],
+            }
+            const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
+            this.warn(
+              this.chalk.red.bold(
+                'Please save the clientSecret somewhere safe. You will not be able to view it again.',
+              ),
+            )
+            this.logJson({ loginConfig: createConfigOutput.auth })
+            selectedConfig.id = createConfigOutput.configurationId
+            selectedConfig.auth = createConfigOutput.auth
+            newConfigClientSecret = createConfigOutput.auth.clientSecret
+          }
+
+          const clientSecret =
+            newConfigClientSecret ??
+            validateInputLength(
+              await password({
+                message: "What is the login configuration's client secret?",
+                mask: true,
+              }),
+              INPUT_LIMIT,
+            )
 
           if (provider === RefAppProvider.AFFINIDI) {
             ux.action.start('Configuring reference application')
@@ -183,8 +216,9 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       }
 
       this.log('Please read the generated README for instructions on how to run your reference application')
-    } catch (err) {
-      throw new CLIError('Unexpected error while generating reference app')
+    } catch (err: any) {
+      if (!err?.oclif) throw new CLIError('Unexpected error while generating reference app')
+      else throw new CLIError(err)
     }
   }
 }
