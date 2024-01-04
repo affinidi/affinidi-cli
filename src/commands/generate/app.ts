@@ -7,7 +7,7 @@ import { BaseCommand, RefAppProvider } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
-import { getAppName, getApps, getSupportedAppsInformation } from '../../helpers/app'
+import { AppsInformation, getAppName, getApps, getSupportedAppsInformation } from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
@@ -17,7 +17,7 @@ const APPS_INFORMATION_GITHUB_LOCATION = 'samples/apps.json'
 const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
-  static apps: any
+  static apps: AppsInformation
   static providers: string[] = []
   static frameworks: Map<string, string[]>
   static libraries: Map<string, string[]>

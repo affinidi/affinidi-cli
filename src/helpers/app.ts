@@ -1,18 +1,26 @@
 import { CLIError } from '@oclif/core/lib/errors'
 import axios from 'axios'
 
+export type AppsInformation = {
+  [key: string]: {
+    [innerKey: string]: {
+      [innermostKey: string]: string
+    }
+  }
+}
+
 export function getAppName(framework: string, provider: string, library: string) {
   return `${provider}-${framework}-${library}`
 }
 
-export async function getApps(filePath: string): Promise<object> {
+export async function getApps(filePath: string): Promise<AppsInformation> {
   const githubFileUrl = `https://api.github.com/repos/affinidi/reference-app-affinidi-vault/contents/${filePath}`
 
   try {
     const response = await axios.get(githubFileUrl)
     if (response.data && response.data.content) {
       const content = Buffer.from(response.data.content, 'base64').toString('utf-8')
-      const apps = JSON.parse(content)
+      const apps: AppsInformation = JSON.parse(content)
 
       return apps
     }
@@ -23,7 +31,7 @@ export async function getApps(filePath: string): Promise<object> {
   }
 }
 
-export function getSupportedSampleApps(appsInformation: object) {
+export function getSupportedSampleApps(appsInformation: AppsInformation) {
   return Object.keys(appsInformation)
 }
 
@@ -86,7 +94,7 @@ export function getSupportedLibraries(sampleApps: string[]) {
   }
 }
 
-export function getSupportedAppsInformation(apps: object) {
+export function getSupportedAppsInformation(apps: AppsInformation) {
   const sampleApps = getSupportedSampleApps(apps)
   const providers = getSupportedProviders(sampleApps)
   const frameworks = getSupportedFrameworks(sampleApps)
