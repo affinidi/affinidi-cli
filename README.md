@@ -421,11 +421,13 @@ Generates a reference application that integrates Affinidi Login. Requires git
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-f <value>] [-a <value>] [-p <value>] [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-a <value>] [-f <value>] [-l <value>] [-p <value>]
+    [--force]
 
 FLAGS
   -a, --provider=<value>   Authentication provider for the reference app
   -f, --framework=<value>  Framework for the reference app
+  -l, --library=<value>    Library for the reference app
   -p, --path=<value>       Relative or absolute path where reference application should be cloned into
   --force                  Override destination directory if exists
 
@@ -1128,7 +1130,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1147,7 +1149,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1282,5 +1284,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.0.0/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/whoami.ts)_
 <!-- commandsstop -->

@@ -1,8 +1,8 @@
 import { CLIError } from '@oclif/core/lib/errors'
 import axios from 'axios'
 
-export function getAppName(framework: string, provider: string, libraries: Map<string, string[]>) {
-  return `${provider}-${framework}-${libraries.get(framework)![0]}` // Can change this logic once more libraries are supported
+export function getAppName(framework: string, provider: string, library: string) {
+  return `${provider}-${framework}-${library}`
 }
 
 export async function getApps(filePath: string): Promise<object> {
@@ -61,19 +61,21 @@ export function getSupportedFrameworks(sampleApps: string[]) {
 
 export function getSupportedLibraries(sampleApps: string[]) {
   try {
-    const libaries: Map<string, string[]> = new Map()
+    const libraries: Map<string, string[]> = new Map()
     for (const sampleApp of sampleApps) {
       const nameSplit = sampleApp.split('-')
+      const provider = nameSplit[0]
       const framework = nameSplit[1]
-      const libNames = libaries.get(framework)
+      const libNames = libraries.get(`${provider}-${framework}`)
       if (!libNames) {
-        libaries.set(framework, [nameSplit[2]])
+        libraries.set(`${provider}-${framework}`, [nameSplit[2]])
       } else if (!libNames.includes(nameSplit[2])) {
         libNames.push(nameSplit[2])
+        libraries.set(`${provider}-${framework}`, libNames)
       }
     }
 
-    return libaries
+    return libraries
   } catch (err) {
     throw new CLIError('Unable to fetch supported libraries')
   }

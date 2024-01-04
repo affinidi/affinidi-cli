@@ -29,13 +29,17 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   ]
 
   static flags = {
+    provider: Flags.string({
+      char: 'a',
+      summary: 'Authentication provider for the reference app',
+    }),
     framework: Flags.string({
       char: 'f',
       summary: 'Framework for the reference app',
     }),
-    provider: Flags.string({
-      char: 'a',
-      summary: 'Authentication provider for the reference app',
+    library: Flags.string({
+      char: 'l',
+      summary: 'Library for the reference app',
     }),
     path: Flags.string({
       char: 'p',
@@ -89,17 +93,29 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
           value,
         })),
       }))
+    const library =
+      flags.library ??
+      (await select({
+        message: 'Select the library for the reference app.',
+        choices: GenerateApp.libraries.get(`${provider}-${framework}`)!.map((value) => ({
+          name: value,
+          value,
+        })),
+      }))
+
     const promptFlags = await promptRequiredParameters(['path'], flags)
     promptFlags.framework = framework
     promptFlags.provider = provider
+    promptFlags.library = library
 
     const schema = z.object({
       path: z.string().max(INPUT_LIMIT),
       framework: z.string().max(INPUT_LIMIT),
       provider: z.string().max(INPUT_LIMIT),
+      library: z.string().max(INPUT_LIMIT),
     })
     const validatedFlags = schema.parse(promptFlags)
-    const appName = getAppName(framework, provider, GenerateApp.libraries)
+    const appName = getAppName(framework, provider, library)
 
     ux.action.start('Generating reference application')
 
