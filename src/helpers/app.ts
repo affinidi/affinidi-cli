@@ -1,18 +1,26 @@
 import { CLIError } from '@oclif/core/lib/errors'
 import axios from 'axios'
 
-export function getAppName(framework: string, provider: string, libraries: Map<string, string[]>) {
-  return `${provider}-${framework}-${libraries.get(framework)![0]}` // Can change this logic once more libraries are supported
+export type AppsInformation = {
+  [key: string]: {
+    [innerKey: string]: {
+      [innermostKey: string]: string
+    }
+  }
 }
 
-export async function getApps(filePath: string): Promise<object> {
+export function getAppName(framework: string, provider: string, library: string) {
+  return `${provider}-${framework}-${library}`
+}
+
+export async function getApps(filePath: string): Promise<AppsInformation> {
   const githubFileUrl = `https://api.github.com/repos/affinidi/reference-app-affinidi-vault/contents/${filePath}`
 
   try {
     const response = await axios.get(githubFileUrl)
     if (response.data && response.data.content) {
       const content = Buffer.from(response.data.content, 'base64').toString('utf-8')
-      const apps = JSON.parse(content)
+      const apps: AppsInformation = JSON.parse(content)
 
       return apps
     }
@@ -23,7 +31,7 @@ export async function getApps(filePath: string): Promise<object> {
   }
 }
 
-export function getSupportedSampleApps(appsInformation: object) {
+export function getSupportedSampleApps(appsInformation: AppsInformation) {
   return Object.keys(appsInformation)
 }
 
@@ -45,11 +53,16 @@ export function getSupportedProviders(sampleApps: string[]) {
 
 export function getSupportedFrameworks(sampleApps: string[]) {
   try {
-    const frameworks: string[] = []
+    const frameworks: Map<string, string[]> = new Map()
     for (const sampleApp of sampleApps) {
       const nameSplit = sampleApp.split('-')
-      if (!frameworks.includes(nameSplit[1])) {
-        frameworks.push(nameSplit[1])
+      const provider = nameSplit[0]
+      const frameworkNames = frameworks.get(provider)
+      if (!frameworkNames) {
+        frameworks.set(provider, [nameSplit[1]])
+      } else if (!frameworkNames.includes(nameSplit[1])) {
+        frameworkNames.push(nameSplit[1])
+        frameworks.set(provider, frameworkNames)
       }
     }
 
@@ -61,25 +74,27 @@ export function getSupportedFrameworks(sampleApps: string[]) {
 
 export function getSupportedLibraries(sampleApps: string[]) {
   try {
-    const libaries: Map<string, string[]> = new Map()
+    const libraries: Map<string, string[]> = new Map()
     for (const sampleApp of sampleApps) {
       const nameSplit = sampleApp.split('-')
+      const provider = nameSplit[0]
       const framework = nameSplit[1]
-      const libNames = libaries.get(framework)
+      const libNames = libraries.get(`${provider}-${framework}`)
       if (!libNames) {
-        libaries.set(framework, [nameSplit[2]])
+        libraries.set(`${provider}-${framework}`, [nameSplit[2]])
       } else if (!libNames.includes(nameSplit[2])) {
         libNames.push(nameSplit[2])
+        libraries.set(`${provider}-${framework}`, libNames)
       }
     }
 
-    return libaries
+    return libraries
   } catch (err) {
     throw new CLIError('Unable to fetch supported libraries')
   }
 }
 
-export function getSupportedAppsInformation(apps: object) {
+export function getSupportedAppsInformation(apps: AppsInformation) {
   const sampleApps = getSupportedSampleApps(apps)
   const providers = getSupportedProviders(sampleApps)
   const frameworks = getSupportedFrameworks(sampleApps)
