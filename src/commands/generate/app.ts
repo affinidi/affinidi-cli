@@ -158,6 +158,12 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
               redirectUris: [redirectUri],
             }
             const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
+            this.warn(
+              this.chalk.red.bold(
+                'Please save the clientSecret somewhere safe. You will not be able to view it again.',
+              ),
+            )
+            this.logJson({ loginConfig: createConfigOutput.auth })
             selectedConfig.id = createConfigOutput.configurationId
             selectedConfig.auth = createConfigOutput.auth
             newConfigClientSecret = createConfigOutput.auth.clientSecret
