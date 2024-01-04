@@ -45,11 +45,16 @@ export function getSupportedProviders(sampleApps: string[]) {
 
 export function getSupportedFrameworks(sampleApps: string[]) {
   try {
-    const frameworks: string[] = []
+    const frameworks: Map<string, string[]> = new Map()
     for (const sampleApp of sampleApps) {
       const nameSplit = sampleApp.split('-')
-      if (!frameworks.includes(nameSplit[1])) {
-        frameworks.push(nameSplit[1])
+      const provider = nameSplit[0]
+      const frameworkNames = frameworks.get(provider)
+      if (!frameworkNames) {
+        frameworks.set(provider, [nameSplit[1]])
+      } else if (!frameworkNames.includes(nameSplit[1])) {
+        frameworkNames.push(nameSplit[1])
+        frameworks.set(provider, frameworkNames)
       }
     }
 

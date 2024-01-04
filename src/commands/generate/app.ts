@@ -19,7 +19,7 @@ const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static apps: any
   static providers: string[] = []
-  static frameworks: string[] = []
+  static frameworks: Map<string, string[]>
   static libraries: Map<string, string[]>
   static summary = 'Generates a reference application that integrates Affinidi Login. Requires git'
   static examples = [
@@ -57,11 +57,6 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
     GenerateApp.frameworks = frameworks
     GenerateApp.libraries = libraries
 
-    GenerateApp.flags.framework = Flags.string({
-      char: 'f',
-      summary: 'Framework for the reference app',
-      options: frameworks,
-    })
     GenerateApp.flags.provider = Flags.string({
       char: 'a',
       summary: 'Authentication provider for the reference app',
@@ -88,7 +83,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       flags.framework ??
       (await select({
         message: 'Select the framework for the reference app.',
-        choices: GenerateApp.frameworks.map((value) => ({
+        choices: GenerateApp.frameworks.get(provider)!.map((value) => ({
           name: value,
           value,
         })),
