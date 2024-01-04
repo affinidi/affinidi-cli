@@ -65,149 +65,154 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   }
 
   public async run(): Promise<void> {
-    const { flags } = await this.parse(GenerateApp)
-    if (flags['no-input']) {
-      if (!flags.provider) throw new CLIError(giveFlagInputErrorMessage('provider'))
-      if (!flags.framework) throw new CLIError(giveFlagInputErrorMessage('framework'))
-    }
-    const provider =
-      flags.provider ??
-      (await select({
-        message: 'Select the provider for the reference app.',
-        choices: GenerateApp.providers.map((value) => ({
-          name: value,
-          value,
-        })),
-      }))
-    const framework =
-      flags.framework ??
-      (await select({
-        message: 'Select the framework for the reference app.',
-        choices: GenerateApp.frameworks.get(provider)!.map((value) => ({
-          name: value,
-          value,
-        })),
-      }))
-    const library =
-      flags.library ??
-      (await select({
-        message: 'Select the library for the reference app.',
-        choices: GenerateApp.libraries.get(`${provider}-${framework}`)!.map((value) => ({
-          name: value,
-          value,
-        })),
-      }))
-
-    const promptFlags = await promptRequiredParameters(['path'], flags)
-    promptFlags.framework = framework
-    promptFlags.provider = provider
-    promptFlags.library = library
-
-    const schema = z.object({
-      path: z.string().max(INPUT_LIMIT),
-      framework: z.string().max(INPUT_LIMIT),
-      provider: z.string().max(INPUT_LIMIT),
-      library: z.string().max(INPUT_LIMIT),
-    })
-    const validatedFlags = schema.parse(promptFlags)
-    const appName = getAppName(framework, provider, library)
-
-    ux.action.start('Generating reference application')
-
-    await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
-
-    ux.action.stop('Generated successfully!')
-
-    if (!flags['no-input']) {
-      const configure = await confirm({
-        message: 'Automatically configure reference app environment?',
-      })
-      if (configure) {
-        ux.action.start('Fetching available login configurations')
-        const configs = await vpAdapterService.listLoginConfigurations()
-        ux.action.stop('Fetched successfully!')
-        const choices = configs.configurations.map((config) => ({
-          value: {
-            id: config.configurationId,
-            auth: config.auth,
-          },
-          name: `${config.name} [id: ${config.configurationId}]`,
+    try {
+      const { flags } = await this.parse(GenerateApp)
+      if (flags['no-input']) {
+        if (!flags.provider) throw new CLIError(giveFlagInputErrorMessage('provider'))
+        if (!flags.framework) throw new CLIError(giveFlagInputErrorMessage('framework'))
+      }
+      const provider =
+        flags.provider ??
+        (await select({
+          message: 'Select the provider for the reference app.',
+          choices: GenerateApp.providers.map((value) => ({
+            name: value,
+            value,
+          })),
         }))
-        choices.push({
-          value: {
-            id: 'new-config',
-            auth: undefined,
-          },
-          name: 'Create new login config',
-        })
-        const selectedConfig = await select({
-          message: 'Select a login configuration to use in your reference application',
-          choices,
-        })
-        let newConfigClientSecret = undefined
-        // Create a new login config
-        if (selectedConfig.id === 'new-config') {
-          const newConfigName = validateInputLength(
-            await input({ message: `Enter a name for the login config` }),
-            INPUT_LIMIT,
-          )
-          const redirectUri = getRedirectUri(GenerateApp.apps, appName)
-          const createLoginConfigInput = {
-            name: newConfigName,
-            redirectUris: [redirectUri],
-          }
-          const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
-          selectedConfig.id = createConfigOutput.configurationId
-          selectedConfig.auth = createConfigOutput.auth
-          newConfigClientSecret = createConfigOutput.auth.clientSecret
-        }
+      const framework =
+        flags.framework ??
+        (await select({
+          message: 'Select the framework for the reference app.',
+          choices: GenerateApp.frameworks.get(provider)!.map((value) => ({
+            name: value,
+            value,
+          })),
+        }))
+      const library =
+        flags.library ??
+        (await select({
+          message: 'Select the library for the reference app.',
+          choices: GenerateApp.libraries.get(`${provider}-${framework}`)!.map((value) => ({
+            name: value,
+            value,
+          })),
+        }))
 
-        const clientSecret =
-          newConfigClientSecret ??
-          validateInputLength(
-            await password({
-              message: "What is the login configuration's client secret?",
-              mask: true,
-            }),
-            INPUT_LIMIT,
-          )
+      const promptFlags = await promptRequiredParameters(['path'], flags)
+      promptFlags.framework = framework
+      promptFlags.provider = provider
+      promptFlags.library = library
 
-        if (provider === RefAppProvider.AFFINIDI) {
-          ux.action.start('Configuring reference application')
-          await configureAppEnvironment(
-            validatedFlags.path,
-            selectedConfig.auth.clientId,
-            clientSecret,
-            selectedConfig.auth.issuer,
-          )
-          ux.action.stop('Configured successfully!')
-        } else if (provider === RefAppProvider.AUTH0) {
-          const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
-          const accessToken = validateInputLength(
-            await password({ message: 'What is your Auth0 access token?' }),
-            TOKEN_LIMIT,
-          )
-          ux.action.start('Creating Auth0 resources and configuring reference application')
-          const socialConnectionName = `Affinidi-${framework}`
-          const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
-            accessToken,
-            domain,
-            selectedConfig.auth.clientId,
-            clientSecret,
-            selectedConfig.auth.issuer,
-            socialConnectionName,
-            {
-              callbackUrl: GenerateApp.apps.appName.redirectUris.callbackUrl,
-              logOutUrl: GenerateApp.apps.appName.redirectUris.logOutUrl,
-              webOriginUrl: GenerateApp.apps.appName.redirectUris.webOriginUrl,
+      const schema = z.object({
+        path: z.string().max(INPUT_LIMIT),
+        framework: z.string().max(INPUT_LIMIT),
+        provider: z.string().max(INPUT_LIMIT),
+        library: z.string().max(INPUT_LIMIT),
+      })
+      const validatedFlags = schema.parse(promptFlags)
+      const appName = getAppName(framework, provider, library)
+
+      ux.action.start('Generating reference application')
+
+      await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
+
+      ux.action.stop('Generated successfully!')
+
+      if (!flags['no-input']) {
+        const configure = await confirm({
+          message: 'Automatically configure reference app environment?',
+        })
+        if (configure) {
+          ux.action.start('Fetching available login configurations')
+          const configs = await vpAdapterService.listLoginConfigurations()
+          ux.action.stop('Fetched successfully!')
+          const choices = configs.configurations.map((config) => ({
+            value: {
+              id: config.configurationId,
+              auth: config.auth,
             },
-          )
-          await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
-          ux.action.stop('Configured successfully!')
+            name: `${config.name} [id: ${config.configurationId}]`,
+          }))
+          choices.push({
+            value: {
+              id: 'new-config',
+              auth: undefined,
+            },
+            name: 'Create new login config',
+          })
+          const selectedConfig = await select({
+            message: 'Select a login configuration to use in your reference application',
+            choices,
+          })
+          let newConfigClientSecret = undefined
+          // Create a new login config
+          if (selectedConfig.id === 'new-config') {
+            const newConfigName = validateInputLength(
+              await input({ message: `Enter a name for the login config` }),
+              INPUT_LIMIT,
+            )
+            const redirectUri = getRedirectUri(GenerateApp.apps, appName)
+            const createLoginConfigInput = {
+              name: newConfigName,
+              redirectUris: [redirectUri],
+            }
+            const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
+            selectedConfig.id = createConfigOutput.configurationId
+            selectedConfig.auth = createConfigOutput.auth
+            newConfigClientSecret = createConfigOutput.auth.clientSecret
+          }
+
+          const clientSecret =
+            newConfigClientSecret ??
+            validateInputLength(
+              await password({
+                message: "What is the login configuration's client secret?",
+                mask: true,
+              }),
+              INPUT_LIMIT,
+            )
+
+          if (provider === RefAppProvider.AFFINIDI) {
+            ux.action.start('Configuring reference application')
+            await configureAppEnvironment(
+              validatedFlags.path,
+              selectedConfig.auth.clientId,
+              clientSecret,
+              selectedConfig.auth.issuer,
+            )
+            ux.action.stop('Configured successfully!')
+          } else if (provider === RefAppProvider.AUTH0) {
+            const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
+            const accessToken = validateInputLength(
+              await password({ message: 'What is your Auth0 access token?' }),
+              TOKEN_LIMIT,
+            )
+            ux.action.start('Creating Auth0 resources and configuring reference application')
+            const socialConnectionName = `Affinidi-${framework}`
+            const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+              accessToken,
+              domain,
+              selectedConfig.auth.clientId,
+              clientSecret,
+              selectedConfig.auth.issuer,
+              socialConnectionName,
+              {
+                callbackUrl: GenerateApp.apps.appName.redirectUris.callbackUrl,
+                logOutUrl: GenerateApp.apps.appName.redirectUris.logOutUrl,
+                webOriginUrl: GenerateApp.apps.appName.redirectUris.webOriginUrl,
+              },
+            )
+            await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
+            ux.action.stop('Configured successfully!')
+          }
         }
       }
-    }
 
-    this.log('Please read the generated README for instructions on how to run your reference application')
+      this.log('Please read the generated README for instructions on how to run your reference application')
+    } catch (err: any) {
+      if (!err?.oclif) throw new CLIError('Unexpected error while generating reference app')
+      else throw new CLIError(err)
+    }
   }
 }
