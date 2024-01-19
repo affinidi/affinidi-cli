@@ -71,7 +71,7 @@ export class BFFAuthProvider implements AuthProvider {
 
       this.logger.info(
         `\nAttempting to automatically open the authentication page in your default browser.\n` +
-          `\nIf the browser doesn't open automatically, or if your default browser isn't Google Chrome, please open the following URL in the Chrome browser:\n` +
+          `\nIf the browser doesn't open automatically or your default browser isn't Chromium based , please open the following link on a Chromium based browser ( e.g. Chrome , Edge, Opera, Brave ):\n` +
           `\n${chalk.underline(authUrl)}\n\n`,
       )
 
