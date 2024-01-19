@@ -1130,7 +1130,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1149,7 +1149,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1284,5 +1284,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/whoami.ts)_
 <!-- commandsstop -->
