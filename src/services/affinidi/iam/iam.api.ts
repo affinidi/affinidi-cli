@@ -63,6 +63,12 @@ export interface CreateProjectInput {
   description?: string
 }
 
+export interface UpdateProjectInput {
+  id: string,
+  name?: string
+  description?: string
+}
+
 export interface ProjectList {
   projects: ProjectDto[]
 }

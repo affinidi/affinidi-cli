@@ -339,6 +339,8 @@ Please note that this FAQ is provided for informational purposes only and is not
 * [`affinidi login remove-user-from-group`](#affinidi-login-remove-user-from-group)
 * [`affinidi login update-config`](#affinidi-login-update-config)
 * [`affinidi project create-project`](#affinidi-project-create-project)
+* [`affinidi project edit-project-description`](#affinidi-project-edit-project-description)
+* [`affinidi project edit-project-name`](#affinidi-project-edit-project-name)
 * [`affinidi project get-active-project`](#affinidi-project-get-active-project)
 * [`affinidi project list-projects`](#affinidi-project-list-projects)
 * [`affinidi project select-project`](#affinidi-project-select-project)
@@ -1039,6 +1041,52 @@ EXAMPLES
   $ affinidi project create-project --name "My project name"
 ```
 
+## `affinidi project edit-project-description`
+
+Updates project description
+
+```
+USAGE
+  $ affinidi project edit-project-description [--json] [--no-color] [--no-input] [-i <value>] [-d <value>]
+
+FLAGS
+  -d, --description=<value>  Description of the project
+  -i, --id=<value>           Project Id
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi project edit-project-description -d MyUpdatedProjectDescription
+
+  $ affinidi project edit-project-description --description "My Updated Project Description"
+```
+
+## `affinidi project edit-project-name`
+
+Updates project name
+
+```
+USAGE
+  $ affinidi project edit-project-name [--json] [--no-color] [--no-input] [-i <value>] [-n <value>]
+
+FLAGS
+  -i, --id=<value>    Project Id
+  -n, --name=<value>  Name of the project
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi project edit-project-name -n MyUpdatedProjectName
+
+  $ affinidi project edit-project-name --name "My project name"
+```
+
 ## `affinidi project get-active-project`
 
 Gets the current active project
@@ -1130,7 +1178,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1149,7 +1197,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1284,5 +1332,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/whoami.ts)_
 <!-- commandsstop -->
