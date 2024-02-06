@@ -339,11 +339,10 @@ Please note that this FAQ is provided for informational purposes only and is not
 * [`affinidi login remove-user-from-group`](#affinidi-login-remove-user-from-group)
 * [`affinidi login update-config`](#affinidi-login-update-config)
 * [`affinidi project create-project`](#affinidi-project-create-project)
-* [`affinidi project edit-project-description`](#affinidi-project-edit-project-description)
-* [`affinidi project edit-project-name`](#affinidi-project-edit-project-name)
 * [`affinidi project get-active-project`](#affinidi-project-get-active-project)
 * [`affinidi project list-projects`](#affinidi-project-list-projects)
 * [`affinidi project select-project`](#affinidi-project-select-project)
+* [`affinidi project update-project`](#affinidi-project-update-project)
 * [`affinidi search`](#affinidi-search)
 * [`affinidi start`](#affinidi-start)
 * [`affinidi stop`](#affinidi-stop)
@@ -1041,52 +1040,6 @@ EXAMPLES
   $ affinidi project create-project --name "My project name"
 ```
 
-## `affinidi project edit-project-description`
-
-Updates project description
-
-```
-USAGE
-  $ affinidi project edit-project-description [--json] [--no-color] [--no-input] [-i <value>] [-d <value>]
-
-FLAGS
-  -d, --description=<value>  Description of the project
-  -i, --id=<value>           Project Id
-
-GLOBAL FLAGS
-  --json      Format output as json.
-  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
-  --no-input  Disables all the interactive prompts
-
-EXAMPLES
-  $ affinidi project edit-project-description -d MyUpdatedProjectDescription
-
-  $ affinidi project edit-project-description --description "My Updated Project Description"
-```
-
-## `affinidi project edit-project-name`
-
-Updates project name
-
-```
-USAGE
-  $ affinidi project edit-project-name [--json] [--no-color] [--no-input] [-i <value>] [-n <value>]
-
-FLAGS
-  -i, --id=<value>    Project Id
-  -n, --name=<value>  Name of the project
-
-GLOBAL FLAGS
-  --json      Format output as json.
-  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
-  --no-input  Disables all the interactive prompts
-
-EXAMPLES
-  $ affinidi project edit-project-name -n MyUpdatedProjectName
-
-  $ affinidi project edit-project-name --name "My project name"
-```
-
 ## `affinidi project get-active-project`
 
 Gets the current active project
@@ -1143,6 +1096,30 @@ EXAMPLES
   $ affinidi project select-project -i <project-id>
 
   $ affinidi project select-project --project-id <project-id>
+```
+
+## `affinidi project update-project`
+
+Updates project details
+
+```
+USAGE
+  $ affinidi project update-project [--json] [--no-color] [--no-input] [-i <value>] [-n <value>] [-d <value>]
+
+FLAGS
+  -d, --description=<value>  Description of the project
+  -i, --id=<value>           Project Id
+  -n, --name=<value>         Name of the project
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi project update-project -n MyUpdatedProjectName -d MyUpdatedProjectDescription
+
+  $ affinidi project update-project --name="My project name" --description="My project description
 ```
 
 ## `affinidi search`
