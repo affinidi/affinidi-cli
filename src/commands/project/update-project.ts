@@ -42,7 +42,8 @@ export class UpdateProject extends BaseCommand<typeof UpdateProject> {
 
     const updateProjectOutput = await bffService.updateProject({
       id: validatedFlags.id,
-      name: validatedFlags.name,
+      name: validatedFlags?.name ?? undefined,
+      description: validatedFlags?.description ?? undefined,
     })
 
     ux.action.stop('Updated successfully!')
