@@ -342,6 +342,7 @@ Please note that this FAQ is provided for informational purposes only and is not
 * [`affinidi project get-active-project`](#affinidi-project-get-active-project)
 * [`affinidi project list-projects`](#affinidi-project-list-projects)
 * [`affinidi project select-project`](#affinidi-project-select-project)
+* [`affinidi project update-project`](#affinidi-project-update-project)
 * [`affinidi search`](#affinidi-search)
 * [`affinidi start`](#affinidi-start)
 * [`affinidi stop`](#affinidi-stop)
@@ -1097,6 +1098,30 @@ EXAMPLES
   $ affinidi project select-project --project-id <project-id>
 ```
 
+## `affinidi project update-project`
+
+Updates project details
+
+```
+USAGE
+  $ affinidi project update-project [--json] [--no-color] [--no-input] [-i <value>] [-n <value>] [-d <value>]
+
+FLAGS
+  -d, --description=<value>  Description of the project
+  -i, --id=<value>           Project Id
+  -n, --name=<value>         Name of the project
+
+GLOBAL FLAGS
+  --json      Format output as json.
+  --no-color  Disables color in the output. If you have trouble distinguishing colors, consider using this flag.
+  --no-input  Disables all the interactive prompts
+
+EXAMPLES
+  $ affinidi project update-project -n MyUpdatedProjectName -d MyUpdatedProjectDescription
+
+  $ affinidi project update-project --name="My project name" --description="My project description
+```
+
 ## `affinidi search`
 
 Search for a command.
@@ -1130,7 +1155,7 @@ EXAMPLES
   $ affinidi start
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/start.ts)_
 
 ## `affinidi stop`
 
@@ -1149,7 +1174,7 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/stop.ts)_
+_See code: [dist/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/stop.ts)_
 
 ## `affinidi token create-token`
 
@@ -1284,5 +1309,5 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.1.0/dist/commands/whoami.ts)_
+_See code: [dist/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.2.0/dist/commands/whoami.ts)_
 <!-- commandsstop -->

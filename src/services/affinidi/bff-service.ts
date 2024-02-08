@@ -5,7 +5,7 @@ import { BFFAuthProvider } from './auth/bff-auth-provider'
 import { AuthProvider } from './auth/types'
 import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.types'
 import { handleServiceError } from './errors'
-import { CreateProjectInput, ProjectDto } from './iam/iam.api'
+import { CreateProjectInput, ProjectDto, UpdateProjectInput } from './iam/iam.api'
 import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
 import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants'
 import { credentialsVault } from '../credentials-vault'
@@ -112,6 +112,16 @@ export class BFFService {
         )
       }
 
+      handleServiceError(error)
+    }
+  }
+
+  public async updateProject(projectInput: UpdateProjectInput): Promise<ProjectDto> {
+    const headers = await getBFFHeaders()
+    try {
+      const res = await instance.patch('/api/project', projectInput, { headers })
+      return res.data as ProjectDto
+    } catch (error) {
       handleServiceError(error)
     }
   }
