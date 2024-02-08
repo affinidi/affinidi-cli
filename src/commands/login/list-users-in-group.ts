@@ -39,8 +39,8 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       exclusiveStartKey: validatedFlags['starting-token'] ?? undefined,
     })
     ux.action.stop('Fetched successfully!')
-
-    if (!this.jsonEnabled()) this.logJson(listGroupUsersOutput)
+    const { lastEvaluatedKey, ...rest } = listGroupUsersOutput
+    if (!this.jsonEnabled()) this.logJson({ ...rest, 'starting-token': lastEvaluatedKey })
 
     if (listGroupUsersOutput.lastEvaluatedKey && (await confirm({ message: 'Do you want to fetch next page?' }))) {
       const maxItemsFlag = validatedFlags['max-items'] ? [`--max-items=${validatedFlags['max-items']}`] : []
