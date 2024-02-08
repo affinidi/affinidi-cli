@@ -1,4 +1,8 @@
 import { AxiosError } from 'axios'
+import { ServiceResourceIds } from '../../../common/constants'
+import { config } from '../../env-config'
+import { getBFFHeaders, bffService } from '../bff-service'
+import { handleServiceError } from '../errors'
 import {
   Api as VPAdapterApi,
   CreateLoginConfigurationInput,
@@ -11,10 +15,6 @@ import {
   GroupsList,
   GroupUserMappingsList,
 } from './vp-adapter.api'
-import { ServiceResourceIds } from '../../../common/constants'
-import { config } from '../../env-config'
-import { getBFFHeaders, bffService } from '../bff-service'
-import { handleServiceError } from '../errors'
 
 export const VPA_SERVICE = 'vp-adapter'
 
@@ -73,7 +73,8 @@ class VPAdapterService {
   public listLoginConfigurations = async (): Promise<ListLoginConfigurationOutput> => {
     const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listLoginConfigurations({ headers })
+      // TODO: implemet pagination
+      const response = await this.client.v1.listLoginConfigurations(undefined, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -172,10 +173,13 @@ class VPAdapterService {
     }
   }
 
-  public listGroupUsers = async (groupName: string): Promise<GroupUserMappingsList> => {
+  public listGroupUsers = async (
+    groupName: string,
+    query: { limit?: number; exclusiveStartKey?: string },
+  ): Promise<GroupUserMappingsList> => {
     const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listGroupUserMappings(groupName, { headers })
+      const response = await this.client.v1.listGroupUserMappings(groupName, query, { headers })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
