@@ -73,7 +73,6 @@ class VPAdapterService {
   public listLoginConfigurations = async (): Promise<ListLoginConfigurationOutput> => {
     const headers = await getBFFHeaders()
     try {
-      // TODO: implemet pagination
       const response = await this.client.v1.listLoginConfigurations(undefined, { headers })
       return response.data
     } catch (error) {

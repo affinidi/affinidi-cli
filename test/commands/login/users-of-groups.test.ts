@@ -44,6 +44,7 @@ describe('login: group users commands', function () {
               addedAt: '2023-09-22T06:20:56.372Z',
             },
           ],
+          totalUserCount: 1,
         }),
       )
       .stdout()
@@ -53,6 +54,7 @@ describe('login: group users commands', function () {
         expect(response).to.have.a.property('users')
         expect(response.users[0]).to.have.a.property('userId')
         expect(response.users[0]).to.have.a.property('addedAt')
+        expect(response).to.have.a.property('totalUserCount')
       })
   })
 
