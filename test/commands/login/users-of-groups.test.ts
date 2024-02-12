@@ -37,7 +37,7 @@ describe('login: group users commands', function () {
 
     test
       .nock(VP_ADAPTER_URL, (api) =>
-        api.get(`/v1/groups/${data.existingGroupName}/users?limit=20`).reply(200, {
+        api.get(`/v1/groups/${data.existingGroupName}/users?limit=15`).reply(200, {
           users: [
             {
               userId: 'did:key:12345',
