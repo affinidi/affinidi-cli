@@ -35,7 +35,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
 
     ux.action.start('Fetching users in the user group')
     const listGroupUsersOutput = await vpAdapterService.listGroupUsers(validatedFlags['group-name'], {
-      limit: validatedFlags['max-items'] ?? undefined,
+      limit: validatedFlags['max-items'] ?? MAX_ITEMS_LIMIT,
       exclusiveStartKey: validatedFlags['starting-token'] ?? undefined,
     })
     ux.action.stop('Fetched successfully!')
