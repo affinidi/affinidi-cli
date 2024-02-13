@@ -3,13 +3,14 @@ import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT, MAX_ITEMS_LIMIT } from '../../common/validators'
+import { INPUT_LIMIT } from '../../common/validators'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { GroupUserMappingsList } from '../../services/affinidi/vp-adapter/vp-adapter.api'
 
 const NEXT = 'Next'
 const PREVIOUS = 'Previous'
 const EXIT = 'Exit'
+export const PAGE_SIZE_DEFAULT = 15
 
 export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
   static summary = 'Use this command to list users in the user group'
@@ -20,7 +21,6 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
     }),
     'page-size': Flags.integer({
       summary: "The total number of items to return in the command's output",
-      max: 20,
     }),
     'starting-token': Flags.string({
       summary: 'A token to specify where to start paginating',
@@ -38,7 +38,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       'starting-token': z.string().optional(),
     })
     const validatedFlags = schema.parse(promptFlags)
-    const pageSize = validatedFlags['page-size'] ?? MAX_ITEMS_LIMIT
+    const pageSize = validatedFlags['page-size'] ?? PAGE_SIZE_DEFAULT
     const startingToken = validatedFlags['starting-token'] ?? undefined
 
     ux.action.start('Fetching users in the user group')
