@@ -1,4 +1,4 @@
-import { select } from '@inquirer/prompts'
+import { confirm, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common'
@@ -9,6 +9,7 @@ import { GroupUserMappingsList } from '../../services/affinidi/vp-adapter/vp-ada
 
 const NEXT = 'Next'
 const PREVIOUS = 'Previous'
+const EXIT = 'Exit'
 
 export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
   static summary = 'Use this command to list users in the user group'
@@ -24,12 +25,9 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
     'starting-token': Flags.string({
       summary: 'A token to specify where to start paginating',
     }),
-    'last-evaluated-keys': Flags.string({
-      summary: 'A comma seperated string containing all las evaluated keys',
-      hidden: true,
-    }),
   }
   static pageNumber = 1
+  static lastEvalutatedKeys = ''
 
   public async run(): Promise<GroupUserMappingsList> {
     const { flags } = await this.parse(ListUsersInGroup)
@@ -38,7 +36,6 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       'group-name': z.string().max(INPUT_LIMIT),
       'page-size': z.number().optional(),
       'starting-token': z.string().optional(),
-      'last-evaluated-keys': z.string().optional(),
     })
     const validatedFlags = schema.parse(promptFlags)
     const pageSize = validatedFlags['page-size'] ?? MAX_ITEMS_LIMIT
@@ -51,34 +48,41 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
     ux.action.stop('Fetched successfully!')
 
     const { lastEvaluatedKey, ...rest } = listGroupUsersOutput
-    let lastEvalKeys = validatedFlags['last-evaluated-keys'] ?? ''
+    let lastEvalKeys = ListUsersInGroup.lastEvalutatedKeys ?? ''
     if (!this.jsonEnabled())
       this.logJson({
         ...rest,
         'starting-token': lastEvaluatedKey,
-        'previous-starting-token': lastEvalKeys.split(',').slice(-2, -1).pop(),
       })
 
-    if ((lastEvaluatedKey || lastEvalKeys) && !flags['no-input']) {
+    if (
+      (lastEvaluatedKey || lastEvalKeys) &&
+      !flags['no-input'] &&
+      !(validatedFlags['starting-token'] && ListUsersInGroup.pageNumber === 1)
+    ) {
       const totalPages = Math.ceil(listGroupUsersOutput.totalUserCount! / pageSize)
-      const choices = [{ value: NEXT }, { value: PREVIOUS }, { value: 'Exit' }]
+      const choices = [{ value: NEXT }, { value: PREVIOUS }, { value: EXIT }]
 
       if (ListUsersInGroup.pageNumber === 1) choices.splice(1, 1)
       if (!lastEvaluatedKey) choices.splice(0, 1)
 
-      const selected = await select({
-        message: `Showing page ${ListUsersInGroup.pageNumber}/${totalPages}`,
-        choices: choices,
-      })
+      let selected = await select({ choices, message: `Showing page ${ListUsersInGroup.pageNumber}/${totalPages}` })
+
+      if (selected === EXIT) {
+        const exitConfirmation = await confirm({ message: 'Are you sure you want to exit pagination?' })
+        if (!exitConfirmation) {
+          selected = await select({ choices, message: `Showing page ${ListUsersInGroup.pageNumber}/${totalPages}` })
+        }
+      }
 
       if (selected === NEXT && lastEvaluatedKey) {
         ListUsersInGroup.pageNumber++
         lastEvalKeys += lastEvaluatedKey + ','
+        ListUsersInGroup.lastEvalutatedKeys = lastEvalKeys
         const pageSizeFlag = pageSize ? [`--page-size=${pageSize}`] : []
         await this.config.runCommand('login:list-users-in-group', [
           `--group-name=${validatedFlags['group-name']}`,
           `--starting-token=${lastEvaluatedKey}`,
-          `--last-evaluated-keys=${lastEvalKeys}`,
           ...pageSizeFlag,
         ])
       } else if (selected === PREVIOUS) {
@@ -86,15 +90,11 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
         const pageSizeFlag = pageSize ? [`--page-size=${pageSize}`] : []
         const lastEvalKeysArray = lastEvalKeys.split(',').slice(0, -2)
         const previuosStartingToken = lastEvalKeysArray.pop()
-        const lastEvaluatedKeysFlag = lastEvalKeysArray.length
-          ? [`--last-evaluated-keys=${lastEvalKeysArray.join(',')}`]
-          : []
+        ListUsersInGroup.lastEvalutatedKeys = lastEvalKeysArray.length ? lastEvalKeysArray.join(',') : ''
         const startingTokenFlag = previuosStartingToken ? [`--starting-token=${previuosStartingToken}`] : []
-
         await this.config.runCommand('login:list-users-in-group', [
           `--group-name=${validatedFlags['group-name']}`,
           ...startingTokenFlag,
-          ...lastEvaluatedKeysFlag,
           ...pageSizeFlag,
         ])
       }
