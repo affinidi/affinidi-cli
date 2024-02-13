@@ -59,7 +59,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
         'previous-starting-token': lastEvalKeys.split(',').slice(-2, -1).pop(),
       })
 
-    if (lastEvaluatedKey || lastEvalKeys) {
+    if ((lastEvaluatedKey || lastEvalKeys) && !flags['no-input']) {
       const totalPages = Math.ceil(listGroupUsersOutput.totalUserCount! / pageSize)
       const choices = [{ value: NEXT }, { value: PREVIOUS }, { value: 'Exit' }]
 
