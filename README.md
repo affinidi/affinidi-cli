@@ -936,10 +936,13 @@ Use this command to list users in the user group
 
 ```
 USAGE
-  $ affinidi login list-users-in-group [--json] [--no-color] [--no-input] [--group-name <value>]
+  $ affinidi login list-users-in-group [--json] [--no-color] [--no-input] [--group-name <value>] [--page-size <value>]
+    [--starting-token <value>]
 
 FLAGS
-  --group-name=<value>  Name of the user group
+  --group-name=<value>      Name of the user group
+  --page-size=<value>       The total number of items to return in the command's output
+  --starting-token=<value>  A token to specify where to start paginating
 
 GLOBAL FLAGS
   --json      Format output as json.
