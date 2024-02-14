@@ -34,7 +34,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
     const promptFlags = await promptRequiredParameters(['group-name'], flags)
     const schema = z.object({
       'group-name': z.string().max(INPUT_LIMIT),
-      'page-size': z.number().optional(),
+      'page-size': z.number().positive().optional(),
       'starting-token': z.string().optional(),
     })
     const validatedFlags = schema.parse(promptFlags)
@@ -60,7 +60,11 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       !flags['no-input'] &&
       !(startingToken && ListUsersInGroup.pageNumber === 1)
     ) {
-      const totalPages = Math.ceil(listGroupUsersOutput.totalUserCount! / pageSize)
+      let totalPages = listGroupUsersOutput.totalUserCount
+        ? Math.ceil(listGroupUsersOutput.totalUserCount / pageSize)
+        : 1
+      totalPages = totalPages === 0 ? 1 : totalPages
+
       const choices = [{ value: NEXT }, { value: PREVIOUS }, { value: EXIT }]
 
       if (ListUsersInGroup.pageNumber === 1) choices.splice(1, 1) // Remove PREVIOUS if on first page
