@@ -13,12 +13,5 @@ export function validateInputLength(text: string, maxLength: number): string {
 }
 
 export function split(text: string, delimiter: string): string[] {
-  const arr: string[] = []
-  const items = text.split(delimiter)
-
-  for (const item of items) {
-    if (item.length > 0) arr.push(item)
-  }
-
-  return arr
+  return text.split(delimiter).filter((item) => item.length > 0)
 }
