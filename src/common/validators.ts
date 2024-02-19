@@ -11,3 +11,7 @@ export function validateInputLength(text: string, maxLength: number): string {
 
   return text
 }
+
+export function split(text: string, delimiter: string): string[] {
+  return text.split(delimiter).filter((item) => item.length > 0)
+}

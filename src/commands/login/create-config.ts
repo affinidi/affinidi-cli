@@ -5,7 +5,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand, IdTokenClaimFormats } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../common/validators'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
   CreateLoginConfigurationInput,
@@ -95,13 +95,14 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
         name:
           flags.name ??
           validateInputLength(await input({ message: 'Enter the login configuration name' }), INPUT_LIMIT),
-        redirectUris: (
+        redirectUris: split(
           flags['redirect-uris'] ??
-          validateInputLength(
-            await input({ message: 'Enter the OAuth 2.0 redirect URIs, separated by space' }),
-            INPUT_LIMIT,
-          )
-        ).split(' '),
+            validateInputLength(
+              await input({ message: 'Enter the OAuth 2.0 redirect URIs, separated by space' }),
+              INPUT_LIMIT,
+            ),
+          ' ',
+        ),
         claimFormat: flags['claim-format'],
         tokenEndpointAuthMethod: flags['token-endpoint-auth-method'],
       }
@@ -116,7 +117,7 @@ export class CreateConfig extends BaseCommand<typeof CreateConfig> {
 
     const createConfigSchema = z.object({
       name: z.string().min(1).max(INPUT_LIMIT),
-      redirectUris: z.string().max(INPUT_LIMIT).url().array(),
+      redirectUris: z.string().max(INPUT_LIMIT).url().array().min(1),
       presentationDefinition: z.object({}).passthrough().optional(),
       idTokenMapping: z
         .object({

@@ -4,7 +4,7 @@ import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common'
 import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../common/validators'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import {
   LoginConfigurationObject,
@@ -81,7 +81,7 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
     else {
       data = {
         name: promptFlags.name,
-        redirectUris: promptFlags['redirect-uris'] ? promptFlags['redirect-uris'].split(' ') : undefined,
+        redirectUris: promptFlags['redirect-uris'] ? split(promptFlags['redirect-uris'], ' ') : undefined,
         tokenEndpointAuthMethod: promptFlags['token-endpoint-auth-method'],
       }
       if (promptFlags['client-name'] || promptFlags['client-origin'] || promptFlags['client-logo']) {
@@ -95,7 +95,7 @@ export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConf
 
     const updateConfigSchema = z.object({
       name: z.string().min(1).max(INPUT_LIMIT).optional(),
-      redirectUris: z.string().max(INPUT_LIMIT).url().array().optional(),
+      redirectUris: z.string().max(INPUT_LIMIT).url().array().min(1).optional(),
       presentationDefinition: z.object({}).passthrough().optional(),
       idTokenMapping: z
         .object({
