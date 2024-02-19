@@ -12,9 +12,9 @@ export function validateInputLength(text: string, maxLength: number): string {
   return text
 }
 
-export function split(text: string, splitChar: string): string[] {
+export function split(text: string, delimiter: string): string[] {
   const arr: string[] = []
-  const items = text.split(splitChar)
+  const items = text.split(delimiter)
 
   for (const item of items) {
     if (item.length > 0) arr.push(item)
