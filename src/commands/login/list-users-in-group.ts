@@ -72,7 +72,11 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
           startingTokenProvided: true,
           firstStartingToken: startingToken,
         }
+        ListUsersInGroup.lastEvalutatedKeys += startingToken + ','
       }
+
+      if (ListUsersInGroup.middleListPrompting.firstStartingToken === startingToken)
+        ListUsersInGroup.lastEvalutatedKeys = startingToken + ',' + ListUsersInGroup.lastEvalutatedKeys
       let totalPages = ListUsersInGroup.middleListPrompting.startingTokenProvided
         ? 'Page number information is not available'
         : listGroupUsersOutput.totalUserCount
@@ -100,7 +104,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
 
       let shouldExit = false
       while (paginationChoice === EXIT && !shouldExit) {
-        shouldExit = await confirm({ message: 'Are you sure you want to exit pagination?' })
+        shouldExit = await confirm({ message: 'Are you sure you want to exit?' })
         if (!shouldExit) {
           paginationChoice = await select({
             choices,
@@ -114,18 +118,18 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
         const pageSizeFlag = pageSize ? [`--page-size=${pageSize}`] : []
 
         if (paginationChoice === NEXT && lastEvaluatedKey) {
+          ListUsersInGroup.lastEvalutatedKeys += startingToken ? startingToken + ',' : ''
           if (!ListUsersInGroup.middleListPrompting.startingTokenProvided) ListUsersInGroup.pageNumber++
           if (ListUsersInGroup.middleListPrompting.firstPage) ListUsersInGroup.middleListPrompting.firstPage = false
-          ListUsersInGroup.lastEvalutatedKeys += lastEvaluatedKey + ','
           startingTokenFlag = [`--starting-token=${lastEvaluatedKey}`]
         } else if (paginationChoice === PREVIOUS) {
           if (!ListUsersInGroup.middleListPrompting.startingTokenProvided) ListUsersInGroup.pageNumber--
-          const lastEvalKeysArray = ListUsersInGroup.lastEvalutatedKeys.split(',').slice(0, -2)
+          const lastEvalKeysArray = ListUsersInGroup.lastEvalutatedKeys.split(',').slice(0, -1)
           const previuosStartingToken = lastEvalKeysArray.pop()
           if (ListUsersInGroup.middleListPrompting.firstStartingToken === previuosStartingToken) {
             ListUsersInGroup.middleListPrompting.firstPage = true
           }
-          ListUsersInGroup.lastEvalutatedKeys = lastEvalKeysArray.length ? lastEvalKeysArray.join(',') : ''
+          ListUsersInGroup.lastEvalutatedKeys = lastEvalKeysArray.length ? lastEvalKeysArray.join(',') + ',' : ''
           startingTokenFlag = previuosStartingToken ? [`--starting-token=${previuosStartingToken}`] : []
         }
 
