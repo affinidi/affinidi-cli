@@ -74,7 +74,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
         }
       }
       let totalPages = ListUsersInGroup.middleListPrompting.startingTokenProvided
-        ? 'Page information is not available'
+        ? 'Page number information is not available'
         : listGroupUsersOutput.totalUserCount
         ? Math.ceil(listGroupUsersOutput.totalUserCount / pageSize).toString()
         : '1' || '1'
