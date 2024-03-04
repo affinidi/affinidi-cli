@@ -61,6 +61,12 @@ components:
       type: apiKey
       name: authorization
       in: header
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: request
+        authorizerUri: >-
+          arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:792104784284:function:iam-dev-ConsumerTokenAuthorizerLambda91B1796B-QT4lOBGrUdPH:live-alias/invocations
+        authorizerResultTtlInSeconds: 0
     UserTokenAuth:
       type: apiKey
       name: authorization
@@ -145,6 +151,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/RemoveUserFromGroupInput'
+    GroupNames:
+      description: List of group names as input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupNamesInput'
+    BlockedUsers:
+      description: List of blocked users as input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BlockedUsersInput'
   responses:
     CORSResponse:
       description: Default response for CORS Method
@@ -294,6 +312,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GetUserInfo'
+    GroupNames:
+      description: Groups Names Response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupNames'
+    BlockedUsers:
+      description: Blocked user ids response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BlockedUsers'
+    ConsentRequestBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginConfigurationReadInvalidClientIdError'
+    LoginSessionForIdpBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginConfigurationReadInvalidClientIdError'
     LoginSessionForIdpForbiddenError:
       description: ForbiddenError
       content:
@@ -506,6 +548,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/NotFoundError'
+    BlockGroupsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidGroupsError'
+    UnblockGroupsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidGroupsError'
+    AllowGroupsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidGroupsError'
+    DisallowGroupsBadRequestError:
+      description: BadRequestError
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidGroupsError'
   schemas:
     ServiceErrorResponse:
       type: object
@@ -572,6 +638,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LoginConfigurationObject'
+        lastEvaluatedKey:
+          type: string
       required:
         - configurations
     CreateLoginConfigurationInput:
@@ -601,6 +669,12 @@ components:
           enum:
             - array
             - map
+        failOnMappingConflict:
+          description: >-
+            Interrupts login process if duplications of data fields names will
+            be found
+          type: boolean
+          default: true
         scope:
           type: string
           description: List of groups separated by space
@@ -691,6 +765,11 @@ components:
           $ref: '#/components/schemas/LoginConfigurationClientMetadata'
         tokenEndpointAuthMethod:
           $ref: '#/components/schemas/TokenEndpointAuthMethod'
+        failOnMappingConflict:
+          type: boolean
+          description: >-
+            Interrupts login process if duplications of data fields names will
+            be found
     UpdateLoginConfigurationOutput:
       $ref: '#/components/schemas/LoginConfigurationObject'
     LoginSessionDto:
@@ -839,6 +918,9 @@ components:
           idTokenClaim:
             type: string
             description: Name of the corresponding field in the id_token
+          inputDescriptorId:
+            type: string
+            description: Id of related input descriptor from presentation definition
         required:
           - sourceField
           - idTokenClaim
@@ -921,6 +1003,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GroupUserMappingDto'
+        lastEvaluatedKey:
+          type: string
+        totalUserCount:
+          type: number
     LoginConfigurationClientMetadata:
       type: object
       additionalProperties: true
@@ -1745,6 +1831,128 @@ components:
         - message
         - httpStatusCode
         - traceId
+    GroupNamesInput:
+      type: object
+      additionalProperties: false
+      properties:
+        groupNames:
+          type: array
+          items:
+            type: string
+          maxItems: 25
+      required:
+        - groupNames
+    GroupNames:
+      type: object
+      properties:
+        groupNames:
+          type: array
+          items:
+            type: string
+        pageToken:
+          type: object
+      required:
+        - groupNames
+    BlockedUsersInput:
+      type: object
+      additionalProperties: false
+      properties:
+        userIds:
+          type: array
+          items:
+            type: string
+          maxItems: 25
+      required:
+        - userIds
+    BlockedUsers:
+      type: object
+      properties:
+        userIds:
+          type: array
+          items:
+            type: string
+        pageToken:
+          type: object
+      required:
+        - userIds
+    InvalidGroupsError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - InvalidGroupsError
+        message:
+          type: string
+          enum:
+            - Invalid groups names
+        httpStatusCode:
+          type: number
+          enum:
+            - 400
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
+    LoginConfigurationReadInvalidClientIdError:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum:
+            - LoginConfigurationReadInvalidClientIdError
+        message:
+          type: string
+          enum:
+            - LoginConfigurationReadInvalidClientIdError
+        httpStatusCode:
+          type: number
+          enum:
+            - 400
+        traceId:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              issue:
+                type: string
+              field:
+                type: string
+              value:
+                type: string
+              location:
+                type: string
+            required:
+              - issue
+      required:
+        - name
+        - message
+        - httpStatusCode
+        - traceId
   examples:
     ConfigurationObject:
       value:
@@ -1756,19 +1964,18 @@ components:
         idTokenMapping:
           - sourceField: $.type
             idTokenClaim: type
+            inputDescriptorId: email_vc
           - sourceField: $.credentialSubject.email
             idTokenClaim: email
-          - sourceField: $.credentialSubject.data.score
-            idTokenClaim: vp_score
-          - sourceField: $.credentialSubject.data.like
-            idTokenClaim: vp_likes
+            inputDescriptorId: email_vc
         vpDefinition: >-
           {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
           VC\",\"purpose\":\"Check if VC data contains necessary
           fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"purpose\":\"Check
           if VC type is
-          correct\",\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
+          correct\",\"filter\":{\"type\":\"array\",\"contains\":{\"type\":\"string\",\"pattern\":\"Email\"}}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
           if VC contains email field\",\"filter\":{\"type\":\"string\"}}]}}]}
+        tokenEndpointAuthMethod: client_secret_post
         presentationDefinition: |-
           {
             "id": "vp_token_with_email_vc",
@@ -1786,7 +1993,10 @@ components:
                       "purpose": "Check if VC type is correct",
                       "filter": {
                         "type": "array",
-                        "pattern": "Email"
+                        "contains": {
+                          "type": "string",
+                          "pattern": "Email"
+                        }
                       }
                     },
                     {
@@ -1803,7 +2013,7 @@ components:
               }
             ]
           }
-        id: c13de9cd6f19f28ed0f663884ff70bf3
+        configurationId: c13de9cd6f19f28ed0f663884ff70bf3
         clientMetadata:
           name: insurance
           origin: https://insurance.com
@@ -1820,11 +2030,12 @@ components:
         creationDate: '2023-05-11T10:15:44Z'
         redirectUris:
           - https://my-fancy-project.eu.auth0.com/login/callback
-        id: c13de9cd6f19f28ed0f663884ff70bf3
+        configurationId: c13de9cd6f19f28ed0f663884ff70bf3
         clientMetadata:
           name: insurance
           origin: https://insurance.com
           logo: https://insurance.com/logo.png
+        tokenEndpointAuthMethod: client_secret_post
     CreateLoginConfigurationInput:
       value:
         name: Reference App Client
@@ -1838,19 +2049,18 @@ components:
         idTokenMapping:
           - sourceField: $.type
             idTokenClaim: type
+            inputDescriptorId: email_vc
           - sourceField: $.credentialSubject.email
             idTokenClaim: email
-          - sourceField: $.credentialSubject.data.score
-            idTokenClaim: vp_score
-          - sourceField: $.credentialSubject.data.like
-            idTokenClaim: vp_likes
+            inputDescriptorId: email_vc
         vpDefinition: >-
           {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
           VC\",\"purpose\":\"Check if VC data contains necessary
           fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"purpose\":\"Check
           if VC type is
-          correct\",\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
+          correct\",\"filter\":{\"type\":\"array\",\"contains\":{\"type\":\"string\",\"pattern\":\"Email\"}}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
           if VC contains email field\",\"filter\":{\"type\":\"string\"}}]}}]}
+        tokenEndpointAuthMethod: client_secret_post
         presentationDefinition: |-
           {
             "id": "vp_token_with_email_vc",
@@ -1868,7 +2078,10 @@ components:
                       "purpose": "Check if VC type is correct",
                       "filter": {
                         "type": "array",
-                        "pattern": "Email"
+                        "contains": {
+                          "type": "string",
+                          "pattern": "Email"
+                        }
                       }
                     },
                     {
@@ -1897,12 +2110,10 @@ components:
         idTokenMapping:
           - sourceField: $.type
             idTokenClaim: type
+            inputDescriptorId: email_vc
           - sourceField: $.credentialSubject.email
             idTokenClaim: email
-          - sourceField: $.credentialSubject.data.score
-            idTokenClaim: vp_score
-          - sourceField: $.credentialSubject.data.like
-            idTokenClaim: vp_likes
+            inputDescriptorId: email_vc
     ListLoginConfigurationOutput:
       value:
         configurations:
@@ -1914,20 +2125,19 @@ components:
             idTokenMapping:
               - sourceField: $.type
                 idTokenClaim: type
+                inputDescriptorId: email_vc
               - sourceField: $.credentialSubject.email
                 idTokenClaim: email
-              - sourceField: $.credentialSubject.data.score
-                idTokenClaim: vp_score
-              - sourceField: $.credentialSubject.data.like
-                idTokenClaim: vp_likes
+                inputDescriptorId: email_vc
             vpDefinition: >-
               {\"id\":\"vp_token_with_email_vc\",\"input_descriptors\":[{\"id\":\"email_vc\",\"name\":\"Email
               VC\",\"purpose\":\"Check if VC data contains necessary
               fields\",\"constraints\":{\"fields\":[{\"path\":[\"$.type\"],\"purpose\":\"Check
               if VC type is
-              correct\",\"filter\":{\"type\":\"array\",\"pattern\":\"Email\"}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
+              correct\",\"filter\":{\"type\":\"array\",\"contains\":{\"type\":\"string\",\"pattern\":\"Email\"}}},{\"path\":[\"$.credentialSubject.email\"],\"purpose\":\"Check
               if VC contains email
               field\",\"filter\":{\"type\":\"string\"}}]}}]}
+            tokenEndpointAuthMethod: client_secret_post
             presentationDefinition: |-
               {
                 "id": "vp_token_with_email_vc",
@@ -1945,7 +2155,10 @@ components:
                           "purpose": "Check if VC type is correct",
                           "filter": {
                             "type": "array",
-                            "pattern": "Email"
+                            "contains": {
+                              "type": "string",
+                              "pattern": "Email"
+                            }
                           }
                         },
                         {
@@ -1962,7 +2175,7 @@ components:
                   }
                 ]
               }
-            id: c13de9cd6f19f28ed0f663884ff70bf3
+            configurationId: c13de9cd6f19f28ed0f663884ff70bf3
             clientMetadata:
               name: insurance
               origin: https://insurance.com
@@ -2004,6 +2217,8 @@ paths:
             Location:
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/ConsentRequestBadRequestError'
       tags:
         - consent
   /v1/login/sessions/for-idp:
@@ -2016,6 +2231,8 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/LoginSessionForIdp'
+        '400':
+          $ref: '#/components/responses/LoginSessionForIdpBadRequestError'
         '403':
           $ref: '#/components/responses/LoginSessionForIdpForbiddenError'
       tags:
@@ -2035,9 +2252,9 @@ paths:
           default:
             statusCode: '200'
             responseParameters:
-              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
-              method.response.header.Access-Control-Allow-Methods: '''*'''
-              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             responseTemplates:
               application/json: |
                 {}
@@ -2127,6 +2344,23 @@ paths:
       description: Endpoint to retrieve list of login configurations
       security:
         - ProjectTokenAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Maximum number of records to fetch in a list
+        - name: exclusiveStartKey
+          in: query
+          schema:
+            type: string
+            maxLength: 3000
+          description: >-
+            The base64url encoded key of the first item that this operation will
+            evaluate (it is not returned). Use the value that was returned in
+            the previous operation.
       responses:
         '200':
           $ref: '#/components/responses/ListLoginConfigurations'
@@ -2345,6 +2579,22 @@ paths:
           required: true
           schema:
             type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Maximum number of records to fetch in a list
+        - name: exclusiveStartKey
+          in: query
+          schema:
+            type: string
+            maxLength: 3000
+          description: >-
+            The base64url encoded key of the first item that this operation will
+            evaluate (it is not returned). Use the value that was returned in
+            the previous operation.
       responses:
         '200':
           $ref: '#/components/responses/ListGroupUserMappings'
@@ -2402,6 +2652,143 @@ paths:
           $ref: '#/components/responses/RemoveUserFromGroupNotFoundError'
       tags:
         - group
+  /v1/deny-list/groups/add:
+    post:
+      operationId: blockGroups
+      description: Block Single or Multiple Groups
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/GroupNames'
+      responses:
+        '200':
+          description: Ok
+        '400':
+          $ref: '#/components/responses/BlockGroupsBadRequestError'
+      tags:
+        - deny-list
+  /v1/deny-list/groups:
+    get:
+      operationId: listBlockedGroups
+      description: Get Blocked Groups
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/GroupNames'
+      tags:
+        - deny-list
+  /v1/deny-list/groups/remove:
+    post:
+      operationId: unblockGroups
+      description: Unblock Single or Multiple Groups
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/GroupNames'
+      responses:
+        '200':
+          description: Ok
+        '400':
+          $ref: '#/components/responses/UnblockGroupsBadRequestError'
+      tags:
+        - deny-list
+  /v1/deny-list/users/add:
+    post:
+      operationId: blockUsers
+      description: Block Single or Multiple user ids
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/BlockedUsers'
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - deny-list
+  /v1/deny-list/users:
+    get:
+      operationId: listBlockedUsers
+      description: Get List of Blocked Users
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/BlockedUsers'
+      tags:
+        - deny-list
+  /v1/deny-list/users/remove:
+    post:
+      operationId: unblockUsers
+      description: Unblock Single or Multiple user ids
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/BlockedUsers'
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - deny-list
+  /v1/allow-list/groups/add:
+    post:
+      operationId: allowGroups
+      description: Allow Single or Multiple Groups
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/GroupNames'
+      responses:
+        '200':
+          description: Ok
+        '400':
+          $ref: '#/components/responses/AllowGroupsBadRequestError'
+      tags:
+        - allow-list
+  /v1/allow-list/groups:
+    get:
+      operationId: listAllowedGroups
+      description: Get Allowed Groups
+      security:
+        - ProjectTokenAuth: []
+      parameters:
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/GroupNames'
+      tags:
+        - allow-list
+  /v1/allow-list/groups/remove:
+    post:
+      operationId: disallowGroups
+      description: Disallow Single or Multiple Groups
+      security:
+        - ProjectTokenAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/GroupNames'
+      responses:
+        '200':
+          description: Ok
+        '400':
+          $ref: '#/components/responses/DisallowGroupsBadRequestError'
+      tags:
+        - allow-list
   /v1/login/admin/{proxy+}:
     get:
       x-amazon-apigateway-integration:
