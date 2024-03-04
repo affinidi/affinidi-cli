@@ -37,13 +37,14 @@ describe('login: group users commands', function () {
 
     test
       .nock(VP_ADAPTER_URL, (api) =>
-        api.get(`/v1/groups/${data.existingGroupName}/users`).reply(200, {
+        api.get(`/v1/groups/${data.existingGroupName}/users?limit=15`).reply(200, {
           users: [
             {
               userId: 'did:key:12345',
               addedAt: '2023-09-22T06:20:56.372Z',
             },
           ],
+          totalUserCount: 1,
         }),
       )
       .stdout()
@@ -53,6 +54,7 @@ describe('login: group users commands', function () {
         expect(response).to.have.a.property('users')
         expect(response.users[0]).to.have.a.property('userId')
         expect(response.users[0]).to.have.a.property('addedAt')
+        expect(response).to.have.a.property('totalUserCount')
       })
   })
 

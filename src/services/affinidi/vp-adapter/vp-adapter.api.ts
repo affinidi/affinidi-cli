@@ -46,6 +46,7 @@ export interface RedirectResponse {
 
 export interface ListLoginConfigurationOutput {
   configurations: LoginConfigurationObject[]
+  lastEvaluatedKey?: string
 }
 
 export interface CreateLoginConfigurationInput {
@@ -63,6 +64,11 @@ export interface CreateLoginConfigurationInput {
   clientMetadata?: LoginConfigurationClientMetadata
   /** ID token claims output format. Default is array. */
   claimFormat?: 'array' | 'map'
+  /**
+   * Interrupts login process if duplications of data fields names will be found
+   * @default true
+   */
+  failOnMappingConflict?: boolean
   /** List of groups separated by space */
   scope?: string
   /** Requested Client Authentication method for the Token Endpoint. The options are: `client_secret_post`: (default) Send client_id and client_secret as application/x-www-form-urlencoded in the HTTP body. `client_secret_basic`: Send client_id and client_secret as application/x-www-form-urlencoded encoded in the HTTP Authorization header. `none`: For public clients (native/mobile apps) which can not have secret. */
@@ -116,6 +122,8 @@ export interface UpdateLoginConfigurationInput {
   clientMetadata?: LoginConfigurationClientMetadata
   /** Requested Client Authentication method for the Token Endpoint. The options are: `client_secret_post`: (default) Send client_id and client_secret as application/x-www-form-urlencoded in the HTTP body. `client_secret_basic`: Send client_id and client_secret as application/x-www-form-urlencoded encoded in the HTTP Authorization header. `none`: For public clients (native/mobile apps) which can not have secret. */
   tokenEndpointAuthMethod?: TokenEndpointAuthMethod
+  /** Interrupts login process if duplications of data fields names will be found */
+  failOnMappingConflict?: boolean
 }
 
 export type UpdateLoginConfigurationOutput = LoginConfigurationObject
@@ -204,6 +212,8 @@ export type IdTokenMapping = {
   sourceField: string
   /** Name of the corresponding field in the id_token */
   idTokenClaim: string
+  /** Id of related input descriptor from presentation definition */
+  inputDescriptorId?: string
 }[]
 
 export interface CreateGroupInput {
@@ -251,6 +261,8 @@ export interface GroupsList {
 
 export interface GroupUserMappingsList {
   users?: GroupUserMappingDto[]
+  lastEvaluatedKey?: string
+  totalUserCount?: number
 }
 
 /** login configuration client metadata */
@@ -567,8 +579,53 @@ export interface VPTokenValidationError {
   }[]
 }
 
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
-import axios from 'axios'
+export interface GroupNamesInput {
+  /** @maxItems 25 */
+  groupNames: string[]
+}
+
+export interface GroupNames {
+  groupNames: string[]
+  pageToken?: object
+}
+
+export interface BlockedUsersInput {
+  /** @maxItems 25 */
+  userIds: string[]
+}
+
+export interface BlockedUsers {
+  userIds: string[]
+  pageToken?: object
+}
+
+export interface InvalidGroupsError {
+  name: 'InvalidGroupsError'
+  message: 'Invalid groups names'
+  httpStatusCode: 400
+  traceId: string
+  details?: {
+    issue: string
+    field?: string
+    value?: string
+    location?: string
+  }[]
+}
+
+export interface LoginConfigurationReadInvalidClientIdError {
+  name: 'LoginConfigurationReadInvalidClientIdError'
+  message: 'LoginConfigurationReadInvalidClientIdError'
+  httpStatusCode: 400
+  traceId: string
+  details?: {
+    issue: string
+    field?: string
+    value?: string
+    location?: string
+  }[]
+}
+
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 
 export type QueryParamsType = Record<string | number, any>
 
@@ -725,7 +782,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, void>({
+      this.request<void, void | LoginConfigurationReadInvalidClientIdError>({
         path: `/v1/consent/request`,
         method: 'GET',
         query: query,
@@ -741,7 +798,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/v1/login/sessions/for-idp
      */
     loginSessionForIdp: (data: LoginSessionForIDPInput, params: RequestParams = {}) =>
-      this.request<LoginSessionForIDPOutput, ActionForbiddenError>({
+      this.request<LoginSessionForIDPOutput, LoginConfigurationReadInvalidClientIdError | ActionForbiddenError>({
         path: `/v1/login/sessions/for-idp`,
         method: 'POST',
         body: data,
@@ -842,10 +899,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/v1/login/configurations
      * @secure
      */
-    listLoginConfigurations: (params: RequestParams = {}) =>
+    listLoginConfigurations: (
+      query?: {
+        /**
+         * Maximum number of records to fetch in a list
+         * @min 1
+         * @max 100
+         */
+        limit?: number
+        /**
+         * The base64url encoded key of the first item that this operation will evaluate (it is not returned). Use the value that was returned in the previous operation.
+         * @maxLength 3000
+         */
+        exclusiveStartKey?: string
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<ListLoginConfigurationOutput, InvalidParameterError | ActionForbiddenError>({
         path: `/v1/login/configurations`,
         method: 'GET',
+        query: query,
         secure: true,
         ...params,
       }),
@@ -1015,10 +1088,27 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/v1/groups/{groupName}/users
      * @secure
      */
-    listGroupUserMappings: (groupName: string, params: RequestParams = {}) =>
+    listGroupUserMappings: (
+      groupName: string,
+      query?: {
+        /**
+         * Maximum number of records to fetch in a list
+         * @min 1
+         * @max 100
+         */
+        limit?: number
+        /**
+         * The base64url encoded key of the first item that this operation will evaluate (it is not returned). Use the value that was returned in the previous operation.
+         * @maxLength 3000
+         */
+        exclusiveStartKey?: string
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<GroupUserMappingsList, InvalidParameterError | ActionForbiddenError | NotFoundError>({
         path: `/v1/groups/${groupName}/users`,
         method: 'GET',
+        query: query,
         secure: true,
         ...params,
       }),
@@ -1052,6 +1142,174 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, InvalidParameterError | ActionForbiddenError | NotFoundError>({
         path: `/v1/groups/${groupName}/users`,
         method: 'DELETE',
+        body: data,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Block Single or Multiple Groups
+     *
+     * @tags deny-list
+     * @name BlockGroups
+     * @request POST:/v1/deny-list/groups/add
+     * @secure
+     */
+    blockGroups: (data: GroupNames, params: RequestParams = {}) =>
+      this.request<void, InvalidGroupsError>({
+        path: `/v1/deny-list/groups/add`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Get Blocked Groups
+     *
+     * @tags deny-list
+     * @name ListBlockedGroups
+     * @request GET:/v1/deny-list/groups
+     * @secure
+     */
+    listBlockedGroups: (
+      query?: {
+        pageToken?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<GroupNames, any>({
+        path: `/v1/deny-list/groups`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Unblock Single or Multiple Groups
+     *
+     * @tags deny-list
+     * @name UnblockGroups
+     * @request POST:/v1/deny-list/groups/remove
+     * @secure
+     */
+    unblockGroups: (data: GroupNames, params: RequestParams = {}) =>
+      this.request<void, InvalidGroupsError>({
+        path: `/v1/deny-list/groups/remove`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Block Single or Multiple user ids
+     *
+     * @tags deny-list
+     * @name BlockUsers
+     * @request POST:/v1/deny-list/users/add
+     * @secure
+     */
+    blockUsers: (data: BlockedUsers, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/v1/deny-list/users/add`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Get List of Blocked Users
+     *
+     * @tags deny-list
+     * @name ListBlockedUsers
+     * @request GET:/v1/deny-list/users
+     * @secure
+     */
+    listBlockedUsers: (
+      query?: {
+        pageToken?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<BlockedUsers, any>({
+        path: `/v1/deny-list/users`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Unblock Single or Multiple user ids
+     *
+     * @tags deny-list
+     * @name UnblockUsers
+     * @request POST:/v1/deny-list/users/remove
+     * @secure
+     */
+    unblockUsers: (data: BlockedUsers, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/v1/deny-list/users/remove`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Allow Single or Multiple Groups
+     *
+     * @tags allow-list
+     * @name AllowGroups
+     * @request POST:/v1/allow-list/groups/add
+     * @secure
+     */
+    allowGroups: (data: GroupNames, params: RequestParams = {}) =>
+      this.request<void, InvalidGroupsError>({
+        path: `/v1/allow-list/groups/add`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Get Allowed Groups
+     *
+     * @tags allow-list
+     * @name ListAllowedGroups
+     * @request GET:/v1/allow-list/groups
+     * @secure
+     */
+    listAllowedGroups: (
+      query?: {
+        pageToken?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<GroupNames, any>({
+        path: `/v1/allow-list/groups`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Disallow Single or Multiple Groups
+     *
+     * @tags allow-list
+     * @name DisallowGroups
+     * @request POST:/v1/allow-list/groups/remove
+     * @secure
+     */
+    disallowGroups: (data: GroupNames, params: RequestParams = {}) =>
+      this.request<void, InvalidGroupsError>({
+        path: `/v1/allow-list/groups/remove`,
+        method: 'POST',
         body: data,
         secure: true,
         ...params,
