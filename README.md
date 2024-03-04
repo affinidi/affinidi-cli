@@ -183,27 +183,31 @@ affinidi <topic> <command> [flags]
 
 ### Available commands
 
-In the [All Commands](#all-commands) section below you can find all of the CLI commands, with their help information, which includes usage, descriptions, flags and examples.
+In this section, you can find all of the CLI commands, with their help information, which includes usage, descriptions, flags and examples.
 
-#### Useful commands:
+<!-- commands -->
+# Command Topics
 
-[`affinidi start`](#affinidi-start) Log in to Affinidi
+* [`affinidi autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
+* [`affinidi commands`](docs/commands.md) - list all the commands
+* [`affinidi generate`](docs/generate.md) - Use these commands to generate code to get started or to scaffold your solution
+* [`affinidi help`](docs/help.md) - Display help for affinidi.
+* [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration
+* [`affinidi login`](docs/login.md) - Use these commands for user login configuration and group management
+* [`affinidi project`](docs/project.md) - Use these commands to manage your projects
+* [`affinidi search`](docs/search.md) - Search for a command.
+* [`affinidi start`](docs/start.md) - Log in to Affinidi
+* [`affinidi stop`](docs/stop.md) - Log out from Affinidi
+* [`affinidi token`](docs/token.md) - Use these commands for Personal Access Token (PAT) management
+* [`affinidi whoami`](docs/whoami.md) - Returns user's subject, projects, and token details from the current session.
 
-[`affinidi stop`](#affinidi-stop) Log out of Affinidi
+<!-- commandsstop -->
 
-[`affinidi whoami`](#affinidi-whoami) - Show the current signed in user identifiers
+To get the current version of Affinidi CLI installed on your machine, run:
 
-[`affinidi help`](#affinidi-help-commands) - Print the help information of a topic or command
-
-[`affinidi search`](#affinidi-search) - Search and navigate through available commands
-
-[`affinidi commands`](#affinidi-commands) - List all available commands
-
-[`affinidi generate app`](#affinidi-generate-app) Clones and configures a reference application
-
-[`affinidi autocomplete`](#affinidi-autocomplete-shell) - Print the instructions to set up command autocomplete
-
-`affinidi --version` - Show the current version of the Affinidi CLI installed on your machine
+```bash
+affinidi --version
+```
 
 ### Help
 
@@ -309,23 +313,3 @@ Affinidi collects usage data to improve our products and services. For informati
 
 _Disclaimer:
 Please note that this FAQ is provided for informational purposes only and is not to be considered a legal document. For the legal terms and conditions governing your use of the Affinidi CLI, please refer to our [Terms and Conditions](https://www.affinidi.com/terms-conditions)._
-
-## All commands
-
-<!-- commands -->
-# Command Topics
-
-* [`affinidi autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
-* [`affinidi commands`](docs/commands.md) - list all the commands
-* [`affinidi generate`](docs/generate.md) - Use these commands to generate code to get started or to scaffold your solution
-* [`affinidi help`](docs/help.md) - Display help for affinidi.
-* [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration
-* [`affinidi login`](docs/login.md) - Use these commands for user login configuration and group management
-* [`affinidi project`](docs/project.md) - Use these commands to manage your projects
-* [`affinidi search`](docs/search.md) - Search for a command.
-* [`affinidi start`](docs/start.md) - Log in to Affinidi
-* [`affinidi stop`](docs/stop.md) - Log out from Affinidi
-* [`affinidi token`](docs/token.md) - Use these commands for Personal Access Token (PAT) management
-* [`affinidi whoami`](docs/whoami.md) - Returns user's subject, projects, and token details from the current session.
-
-<!-- commandsstop -->
