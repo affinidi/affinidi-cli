@@ -21,7 +21,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "mocha \"test/**/*.test.ts\"",
-    "generate:readme": "npm run build && oclif readme",
+    "generate:readme": "npm run build && oclif readme --multi --no-aliases",
     "generate:api": "node scripts/generate-api.cjs"
   },
   "publishConfig": {
