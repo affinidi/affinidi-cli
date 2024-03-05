@@ -29,6 +29,12 @@ Update the Affinidi CLI
 npm update -g @affinidi/cli
 ```
 
+View the installed version on your machine
+
+```bash
+affinidi --version
+```
+
 ## What can I do with Affinidi CLI?
 
 Affinidi CLI is all you need to interact and consume Affinidi services. Optionally you can also use [Affinidi Portal](https://portal.affinidi.com) or call Affinidi APIs directly.
@@ -183,31 +189,8 @@ affinidi <topic> <command> [flags]
 
 ### Available commands
 
-In this section, you can find all of the CLI commands, with their help information, which includes usage, descriptions, flags and examples.
+In the [`Command Topics`](#command-topics) section below, you can find the topics with all their commands and help information, which includes usage, descriptions, flags and examples.
 
-<!-- commands -->
-# Command Topics
-
-* [`affinidi autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
-* [`affinidi commands`](docs/commands.md) - list all the commands
-* [`affinidi generate`](docs/generate.md) - Use these commands to generate code to get started or to scaffold your solution
-* [`affinidi help`](docs/help.md) - Display help for affinidi.
-* [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration
-* [`affinidi login`](docs/login.md) - Use these commands for user login configuration and group management
-* [`affinidi project`](docs/project.md) - Use these commands to manage your projects
-* [`affinidi search`](docs/search.md) - Search for a command.
-* [`affinidi start`](docs/start.md) - Log in to Affinidi
-* [`affinidi stop`](docs/stop.md) - Log out from Affinidi
-* [`affinidi token`](docs/token.md) - Use these commands for Personal Access Token (PAT) management
-* [`affinidi whoami`](docs/whoami.md) - Returns user's subject, projects, and token details from the current session.
-
-<!-- commandsstop -->
-
-To get the current version of Affinidi CLI installed on your machine, run:
-
-```bash
-affinidi --version
-```
 
 ### Help
 
@@ -265,13 +248,31 @@ NOTE: If system keychain is not available, the CLI will create a folder with a c
 
 When you run `affinidi stop` your session information is deleted.
 
-## Support & Feedback
+<!-- commands -->
+# Command Topics
+
+* [`affinidi autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
+* [`affinidi commands`](docs/commands.md) - list all the commands
+* [`affinidi generate`](docs/generate.md) - Use these commands to generate code to get started or to scaffold your solution
+* [`affinidi help`](docs/help.md) - Display help for affinidi.
+* [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration
+* [`affinidi login`](docs/login.md) - Use these commands for user login configuration and group management
+* [`affinidi project`](docs/project.md) - Use these commands to manage your projects
+* [`affinidi search`](docs/search.md) - Search for a command.
+* [`affinidi start`](docs/start.md) - Log in to Affinidi
+* [`affinidi stop`](docs/stop.md) - Log out from Affinidi
+* [`affinidi token`](docs/token.md) - Use these commands for Personal Access Token (PAT) management
+* [`affinidi whoami`](docs/whoami.md) - Returns user's subject, projects, and token details from the current session.
+
+<!-- commandsstop -->
+
+# Support & Feedback
 
 If you face any issue or have some suggestion for us please don't hesitate to create a ticket [here](https://share.hsforms.com/1i-4HKZRXSsmENzXtPdIG4g8oa2v).
 
 If you have a technical issue with the CLI's codebase, you can also [create an issue](https://github.com/affinidi/affinidi-cli/issues) directly in GitHub.
 
-## FAQ
+# FAQ
 
 ### What can I develop?
 
