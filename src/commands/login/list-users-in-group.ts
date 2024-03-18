@@ -119,7 +119,6 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       if (paginationChoice !== EXIT) {
         let startingTokenFlag: string[] = []
         const pageSizeFlag = pageSize ? [`--page-size=${pageSize}`] : []
-        console.log({ startingToken })
         if (paginationChoice === NEXT && lastEvaluatedKey) {
           ListUsersInGroup.lastEvalutatedKeys += startingToken ? startingToken + ',' : ''
           if (!ListUsersInGroup.middleListPrompting.startingTokenProvided) ListUsersInGroup.pageNumber++
