@@ -60,7 +60,10 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
         'starting-token': lastEvaluatedKey,
       })
 
-    if ((lastEvaluatedKey || ListUsersInGroup.lastEvalutatedKeys) && !flags['no-input']) {
+    if (
+      (lastEvaluatedKey || ListUsersInGroup.lastEvalutatedKeys || ListUsersInGroup.pageNumber === 2) &&
+      !flags['no-input']
+    ) {
       if (
         startingToken &&
         ListUsersInGroup.pageNumber === 1 &&
@@ -116,7 +119,7 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       if (paginationChoice !== EXIT) {
         let startingTokenFlag: string[] = []
         const pageSizeFlag = pageSize ? [`--page-size=${pageSize}`] : []
-
+        console.log({ startingToken })
         if (paginationChoice === NEXT && lastEvaluatedKey) {
           ListUsersInGroup.lastEvalutatedKeys += startingToken ? startingToken + ',' : ''
           if (!ListUsersInGroup.middleListPrompting.startingTokenProvided) ListUsersInGroup.pageNumber++
