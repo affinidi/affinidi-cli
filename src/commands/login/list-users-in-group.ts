@@ -60,11 +60,11 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
         ...rest,
         'starting-token': lastEvaluatedKey,
       })
-
-    if (
+    const enablePromptingForPagination =
       (lastEvaluatedKey || ListUsersInGroup.lastEvalutatedKeys || ListUsersInGroup.pageNumber === 2) &&
       !flags['no-input']
-    ) {
+
+    if (enablePromptingForPagination) {
       await this.paginationPrompting(
         startingToken,
         lastEvaluatedKey,
