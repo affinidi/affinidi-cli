@@ -21,7 +21,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static providers: string[] = []
   static frameworks: Map<string, string[]>
   static libraries: Map<string, string[]>
-  static summary = 'Generates a reference application that integrates Affinidi Login. Requires git'
+  static summary = 'Generates code samples that integrates Affinidi Login. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> -p "../my-app" -f django -a affinidi',
@@ -31,19 +31,19 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static flags = {
     provider: Flags.string({
       char: 'a',
-      summary: 'Authentication provider for the reference app',
+      summary: 'Authentication provider for the sample app',
     }),
     framework: Flags.string({
       char: 'f',
-      summary: 'Framework for the reference app',
+      summary: 'Framework for the sample app',
     }),
     library: Flags.string({
       char: 'l',
-      summary: 'Library for the reference app',
+      summary: 'Library for the sample app',
     }),
     path: Flags.string({
       char: 'p',
-      summary: 'Relative or absolute path where reference application should be cloned into',
+      summary: 'Relative or absolute path where sample app should be cloned into',
     }),
     force: Flags.boolean({
       summary: 'Override destination directory if exists',
@@ -59,7 +59,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
     GenerateApp.flags.provider = Flags.string({
       char: 'a',
-      summary: 'Authentication provider for the reference app',
+      summary: 'Authentication provider for the sample app',
       options: providers,
     })
   }
@@ -74,7 +74,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       const provider =
         flags.provider ??
         (await select({
-          message: 'Select the provider for the reference app.',
+          message: 'Select the provider for the sample app.',
           choices: GenerateApp.providers.map((value) => ({
             name: value,
             value,
@@ -83,7 +83,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       const framework =
         flags.framework ??
         (await select({
-          message: 'Select the framework for the reference app.',
+          message: 'Select the framework for the sample app.',
           choices: GenerateApp.frameworks.get(provider)!.map((value) => ({
             name: value,
             value,
@@ -92,7 +92,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       const library =
         flags.library ??
         (await select({
-          message: 'Select the library for the reference app.',
+          message: 'Select the library for the sample app.',
           choices: GenerateApp.libraries.get(`${provider}-${framework}`)!.map((value) => ({
             name: value,
             value,
@@ -113,7 +113,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       const validatedFlags = schema.parse(promptFlags)
       const appName = getAppName(framework, provider, library)
 
-      ux.action.start('Generating reference application')
+      ux.action.start('Generating sample app')
 
       await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
 
@@ -121,7 +121,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
       if (!flags['no-input']) {
         const configure = await confirm({
-          message: 'Automatically configure reference app environment?',
+          message: 'Automatically configure sample app environment?',
         })
         if (configure) {
           ux.action.start('Fetching available login configurations')
@@ -142,7 +142,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             name: 'Create new login config',
           })
           const selectedConfig = await select({
-            message: 'Select a login configuration to use in your reference application',
+            message: 'Select a login configuration to use in your sample app',
             choices,
           })
           let newConfigClientSecret = undefined
@@ -180,7 +180,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             )
 
           if (provider === RefAppProvider.AFFINIDI) {
-            ux.action.start('Configuring reference application')
+            ux.action.start('Configuring sample app')
             await configureAppEnvironment(
               validatedFlags.path,
               selectedConfig.auth.clientId,
@@ -194,7 +194,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
               await password({ message: 'What is your Auth0 access token?' }),
               TOKEN_LIMIT,
             )
-            ux.action.start('Creating Auth0 resources and configuring reference application')
+            ux.action.start('Creating Auth0 resources and configuring sample app')
             const socialConnectionName = `Affinidi-${framework}`
             const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
               accessToken,
@@ -215,9 +215,9 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         }
       }
 
-      this.log('Please read the generated README for instructions on how to run your reference application')
+      this.log('Please read the generated README for instructions on how to run your sample app')
     } catch (err: any) {
-      if (!err?.oclif) throw new CLIError('Unexpected error while generating reference app')
+      if (!err?.oclif) throw new CLIError('Unexpected error while generating sample app')
       else throw new CLIError(err)
     }
   }

@@ -7,7 +7,7 @@ Use these commands to generate code to get started or to scaffold your solution
 
 ## `affinidi generate app`
 
-Generates a reference application that integrates Affinidi Login. Requires git
+Generates code samples that integrates Affinidi Login. Requires git
 
 ```
 USAGE
@@ -15,10 +15,10 @@ USAGE
     [--force]
 
 FLAGS
-  -a, --provider=<value>   Authentication provider for the reference app
-  -f, --framework=<value>  Framework for the reference app
-  -l, --library=<value>    Library for the reference app
-  -p, --path=<value>       Relative or absolute path where reference application should be cloned into
+  -a, --provider=<value>   Authentication provider for the sample app
+  -f, --framework=<value>  Framework for the sample app
+  -l, --library=<value>    Library for the sample app
+  -p, --path=<value>       Relative or absolute path where sample app should be cloned into
   --force                  Override destination directory if exists
 
 GLOBAL FLAGS
