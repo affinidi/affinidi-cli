@@ -59,48 +59,64 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     const { token, publicKey, privateKey } = await this.createToken(flags)
 
-    await this.addPrincipal(token.id)
-    await this.updatePolicies(token.id)
+    let projectId
+
+    if (flags.quiet) {
+      const promises = [this.addPrincipal(token.id), bffService.getActiveProject()]
+
+      const [, project] = await Promise.all(promises)
+      projectId = project?.id
+
+      // NOTE: Should run after addPrincipal is completed
+      await this.updatePolicies(token.id)
+    }
 
     ux.action.stop('Created successfully!')
 
-    await this.logToken(flags, token, publicKey, privateKey)
+    this.logToken(flags, token, publicKey, privateKey, projectId as string)
 
     return token
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  private async logToken(flags: any, token: TokenDto, publicKey: string, privateKey: string) {
+  private logToken(
+    flags: CreateToken['flags'],
+    token: TokenDto,
+    publicKey: string,
+    privateKey: string,
+    projectId: string,
+  ) {
+    if (this.jsonEnabled()) return
+
+    if (!flags.quiet) {
+      this.logJson(token)
+      return
+    }
+
+    const isDev = process.env.AFFINIDI_CLI_ENVIRONMENT === 'dev'
+
     const out = {
-      apiGatewayUrl:
-        process.env.AFFINIDI_CLI_ENVIRONMENT === 'dev'
-          ? 'https://apse1.dev.api.affinidi.io'
-          : 'https://apse1.api.affinidi.io',
-      tokenEndpoint:
-        process.env.AFFINIDI_CLI_ENVIRONMENT === 'dev'
-          ? 'https://apse1.dev.auth.developer.affinidi.io/auth/oauth2/token'
-          : 'https://apse1.auth.developer.affinidi.io/auth/oauth2/token',
+      apiGatewayUrl: isDev ? 'https://apse1.dev.api.affinidi.io' : 'https://apse1.api.affinidi.io',
+      tokenEndpoint: isDev
+        ? 'https://apse1.dev.auth.developer.affinidi.io/auth/oauth2/token'
+        : 'https://apse1.auth.developer.affinidi.io/auth/oauth2/token',
       keyId: flags['key-id'],
       tokenId: token.id,
       passphrase: flags.passphrase,
       privateKey,
       publicKey,
-      projectId: (await bffService.getActiveProject()).id,
+      projectId,
     }
 
-    if (!this.jsonEnabled()) flags.quiet ? this.logJson(out) : this.logJson(token)
+    this.logJson(out)
 
-    if (flags.quiet) {
-      this.warn(
-        this.chalk.red.bold(
-          'These are your PAT environment variables that can be used in Affinidi TDK. ❗️Please save publicKey and privateKey somewhere safe. You will not be able to view those again.',
-        ),
-      )
-    }
+    this.warn(
+      this.chalk.red.bold(
+        'These are your PAT variables for Affinidi TDK.\n❗Please save publicKey and privateKey somewhere safe.\nYou will not be able to view those again.',
+      ),
+    )
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  private async validateFlags(flags: any) {
+  private async validateFlags(flags: CreateToken['flags']) {
     let promptFlags
 
     if (flags.quiet) {
@@ -151,26 +167,27 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     return { publicKey: publicKeyPem, privateKey: privateKeyPem, jwks }
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  private async createToken(flags: any) {
+  private async createToken(flags: CreateToken['flags']) {
     let jwks: JsonWebKeySetDto
     let keypair
 
+    const algorithm = flags.algorithm as SupportedAlgorithms
+
     if (flags.quiet) {
-      keypair = this.generateKeyPair(flags.passphrase as string, flags['key-id'] as string, flags.algorithm as string)
+      keypair = this.generateKeyPair(flags.passphrase as string, flags['key-id'] as string, algorithm)
 
       jwks = keypair.jwks as JsonWebKeySetDto
     } else {
       const publicKeyPEM = await readFile(flags['public-key-file'] as string, 'utf8')
-      const jwk = await pemToJWK(publicKeyPEM, flags.algorithm)
+      const jwk = await pemToJWK(publicKeyPEM, algorithm)
 
       jwks = {
         keys: [
           {
             kid: flags['key-id'] as string,
-            alg: flags.algorithm,
+            alg: algorithm,
             use: 'sig',
-            kty: jwk.kty ?? getKeyType(flags.algorithm),
+            kty: jwk.kty ?? getKeyType(algorithm),
             n: jwk.n,
             e: jwk.e,
           },
@@ -179,10 +196,10 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     }
 
     const token = await iamService.createToken({
-      name: flags.name,
+      name: flags.name as string,
       authenticationMethod: {
         type: 'PRIVATE_KEY',
-        signingAlgorithm: flags.algorithm,
+        signingAlgorithm: algorithm,
         publicKeyInfo: {
           jwks,
         },
