@@ -15,15 +15,18 @@ Creates a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k <value>] [-f <value>] [--algorithm
-    RS256|RS512|ES256|ES512]
+  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k <value>] [-f <value>] [-a
+    RS256|RS512|ES256|ES512] [-q] [-p <value>]
 
 FLAGS
+  -a, --algorithm=<option>       [default: RS256] The specific cryptographic algorithm used with the key
+                                 <options: RS256|RS512|ES256|ES512>
   -f, --public-key-file=<value>  Location of the public key PEM file
   -k, --key-id=<value>           Identifier of the key (kid)
   -n, --name=<value>             Name of the Personal Access Token, at least 8 chars long
-  --algorithm=<option>           [default: RS256] The specific cryptographic algorithm used with the key
-                                 <options: RS256|RS512|ES256|ES512>
+  -p, --passphrase=<value>       Passphrase for generation of private public key pair
+  -q, --quiet                    Create ready-to-use PAT with auto-generated private public key pair and set its access
+                                 policies
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -31,6 +34,10 @@ GLOBAL FLAGS
   --no-input  Disables all the interactive prompts
 
 EXAMPLES
+  $ affinidi token create-token -n MyNewToken -q -p top-secret
+
+  $ affinidi token create-token --name MyNewToken --quiet --passphrase top-secret
+
   $ affinidi token create-token -n MyNewToken -k MyKeyID -f publicKey.pem
 
   $ affinidi token create-token --name "My new token" --key-id MyKeyID --public-key-file publicKey.pem --algorithm RS256
