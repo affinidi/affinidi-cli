@@ -15,6 +15,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
   static summary = 'Creates a Personal Access Token (PAT)'
   static examples = [
     '<%= config.bin %> <%= command.id %> -n MyNewToken -q -p top-secret',
+    '<%= config.bin %> <%= command.id %> --name MyNewToken --quiet --passphrase top-secret',
     '<%= config.bin %> <%= command.id %> -n MyNewToken -k MyKeyID -f publicKey.pem',
     '<%= config.bin %> <%= command.id %> --name "My new token" --key-id MyKeyID --public-key-file publicKey.pem --algorithm RS256',
   ]
