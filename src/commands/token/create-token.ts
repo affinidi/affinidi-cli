@@ -14,8 +14,8 @@ import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api'
 export class CreateToken extends BaseCommand<typeof CreateToken> {
   static summary = 'Creates a Personal Access Token (PAT)'
   static examples = [
-    '<%= config.bin %> <%= command.id %> -n MyNewToken -q -p top-secret',
-    '<%= config.bin %> <%= command.id %> --name MyNewToken --quiet --passphrase top-secret',
+    '<%= config.bin %> <%= command.id %> -n MyNewToken -w -p top-secret',
+    '<%= config.bin %> <%= command.id %> --name MyNewToken --with-permissions --passphrase top-secret',
     '<%= config.bin %> <%= command.id %> -n MyNewToken -k MyKeyID -f publicKey.pem',
     '<%= config.bin %> <%= command.id %> --name "My new token" --key-id MyKeyID --public-key-file publicKey.pem --algorithm RS256',
   ]
@@ -39,8 +39,8 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       options: Object.values(SupportedAlgorithms),
       default: SupportedAlgorithms.RS256,
     })(),
-    quiet: Flags.boolean({
-      char: 'q',
+    'with-permissions': Flags.boolean({
+      char: 'w',
       default: false,
       summary: 'Create ready-to-use PAT with auto-generated private public key pair and set its access policies',
     }),
@@ -62,7 +62,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     let projectId
 
-    if (flags.quiet) {
+    if (flags['with-permissions']) {
       const promises = [this.addPrincipal(token.id), bffService.getActiveProject()]
 
       const [, project] = await Promise.all(promises)
@@ -88,7 +88,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
   ) {
     if (this.jsonEnabled()) return
 
-    if (!flags.quiet) {
+    if (!flags['with-permissions']) {
       this.logJson(token)
       return
     }
@@ -120,7 +120,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
   private async validateFlags(flags: CreateToken['flags']) {
     let promptFlags
 
-    if (flags.quiet) {
+    if (flags['with-permissions']) {
       promptFlags = await promptRequiredParameters(['name', 'passphrase'], flags)
     } else {
       promptFlags = await promptRequiredParameters(['name', 'public-key-file'], flags)
@@ -134,8 +134,8 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       name: z.string().max(INPUT_LIMIT).min(8),
       algorithm: z.nativeEnum(SupportedAlgorithms),
       'key-id': z.string().max(INPUT_LIMIT),
-      ...(flags.quiet && { passphrase: z.string().max(INPUT_LIMIT).min(8) }),
-      ...(!flags.quiet && { 'public-key-file': z.string().max(INPUT_LIMIT) }),
+      ...(flags['with-permissions'] && { passphrase: z.string().max(INPUT_LIMIT).min(8) }),
+      ...(!flags['with-permissions'] && { 'public-key-file': z.string().max(INPUT_LIMIT) }),
     })
 
     schema.parse(promptFlags)
@@ -174,7 +174,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     const algorithm = flags.algorithm as SupportedAlgorithms
 
-    if (flags.quiet) {
+    if (flags['with-permissions']) {
       keypair = this.generateKeyPair(flags.passphrase as string, flags['key-id'] as string, algorithm)
 
       jwks = keypair.jwks as JsonWebKeySetDto
