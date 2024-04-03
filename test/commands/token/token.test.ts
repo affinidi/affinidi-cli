@@ -63,11 +63,11 @@ describe('login: token management commands', function () {
       })
   })
 
-  describe('token:create-token quiet', () => {
+  describe('token:create-token with-permissions', () => {
     const validArgs = [
       'token:create-token',
       `--name=${data.newTokenName}`,
-      `--quiet`,
+      `--with-permissions`,
       `--passphrase=${data.passphrase}`,
     ]
 
