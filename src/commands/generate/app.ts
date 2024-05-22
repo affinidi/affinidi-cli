@@ -14,7 +14,7 @@ import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
 
 const APPS_INFORMATION_GITHUB_LOCATION = 'samples/apps.json'
-const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
+const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples?ref=flutter_mobile_app'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static apps: AppsInformation
@@ -115,7 +115,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
 
       ux.action.start('Generating sample app')
 
-      await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
+      await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}#flutter_mobile_app`, validatedFlags.path, flags.force)
 
       ux.action.stop('Generated successfully!')
 
