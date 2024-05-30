@@ -14,7 +14,7 @@ import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
 
 const APPS_INFORMATION_GITHUB_LOCATION = 'samples/apps.json'
-const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples?ref=flutter_mobile_app'
+const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
 
 export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static apps: AppsInformation
@@ -24,14 +24,18 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
   static summary = 'Generates code samples that integrates Affinidi Login. Requires git'
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-    '<%= config.bin %> <%= command.id %> -p "../my-app" -f django -a affinidi',
-    '<%= config.bin %> <%= command.id %> --path "../my-app" --framework django --provider affinidi --force',
+    '<%= config.bin %> <%= command.id %> -p "../my-app" -f flutter -a affinidi',
+    '<%= config.bin %> <%= command.id %> --path "../my-app" --framework flutter --provider affinidi --force',
   ]
 
   static flags = {
     provider: Flags.string({
       char: 'a',
       summary: 'Authentication provider for the sample app',
+    }),
+    mobile: Flags.boolean({
+      char: 'm',
+      summary: 'Specifies if it is a mobile app',
     }),
     framework: Flags.string({
       char: 'f',
@@ -109,13 +113,14 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
         framework: z.string().max(INPUT_LIMIT),
         provider: z.string().max(INPUT_LIMIT),
         library: z.string().max(INPUT_LIMIT),
+        mobile: z.boolean()
       })
       const validatedFlags = schema.parse(promptFlags)
       const appName = getAppName(framework, provider, library)
 
       ux.action.start('Generating sample app')
 
-      await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}#flutter_mobile_app`, validatedFlags.path, flags.force)
+      await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
 
       ux.action.stop('Generated successfully!')
 
@@ -178,47 +183,58 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
               }),
               INPUT_LIMIT,
             )
-
-          if (provider === RefAppProvider.AFFINIDI) {
-            ux.action.start('Configuring sample app')
-            await configureAppEnvironment(
-              validatedFlags.path,
-              selectedConfig.auth.clientId,
-              clientSecret,
-              selectedConfig.auth.issuer,
-            )
-            ux.action.stop('Configured successfully!')
-          } else if (provider === RefAppProvider.AUTH0) {
-            const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
-            const accessToken = validateInputLength(
-              await password({ message: 'What is your Auth0 access token?' }),
-              TOKEN_LIMIT,
-            )
-            ux.action.start('Creating Auth0 resources and configuring sample app')
-            const socialConnectionName = `Affinidi-${framework}`
-            const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
-              accessToken,
-              domain,
-              selectedConfig.auth.clientId,
-              clientSecret,
-              selectedConfig.auth.issuer,
-              socialConnectionName,
-              {
-                callbackUrl: GenerateApp.apps.appName.redirectUris.callbackUrl,
-                logOutUrl: GenerateApp.apps.appName.redirectUris.logOutUrl,
-                webOriginUrl: GenerateApp.apps.appName.redirectUris.webOriginUrl,
-              },
-            )
-            await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
-            ux.action.stop('Configured successfully!')
+          if (validatedFlags.mobile) {
+            
+            this._setupConfig(provider, `${validatedFlags.path}/frontend`, framework, selectedConfig, clientSecret);
+            this._setupConfig(provider, `${validatedFlags.path}/backend`, framework, selectedConfig, clientSecret);
+          }else{
+            this._setupConfig(provider, validatedFlags.path, framework, selectedConfig, clientSecret);
           }
+          
         }
       }
 
       this.log('Please read the generated README for instructions on how to run your sample app')
     } catch (err: any) {
+      console.error(err.message)
       if (!err?.oclif) throw new CLIError('Unexpected error while generating sample app')
       else throw new CLIError(err)
     }
   }
+  async _setupConfig(provider: string,validatedPath: string, framework: string, selectedConfig: any, clientSecret: string): Promise<void> {
+    if (provider === RefAppProvider.AFFINIDI) {
+      ux.action.start('Configuring sample app')
+      await configureAppEnvironment(
+        validatedPath,
+        selectedConfig.auth.clientId,
+        clientSecret,
+        selectedConfig.auth.issuer,
+      )
+      ux.action.stop('Configured successfully!')
+    } else if (provider === RefAppProvider.AUTH0) {
+      const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
+      const accessToken = validateInputLength(
+        await password({ message: 'What is your Auth0 access token?' }),
+        TOKEN_LIMIT,
+      )
+      ux.action.start('Creating Auth0 resources and configuring sample app')
+      const socialConnectionName = `Affinidi-${framework}`
+      const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+        accessToken,
+        domain,
+        selectedConfig.auth.clientId,
+        clientSecret,
+        selectedConfig.auth.issuer,
+        socialConnectionName,
+        {
+          callbackUrl: GenerateApp.apps.appName.redirectUris.callbackUrl,
+          logOutUrl: GenerateApp.apps.appName.redirectUris.logOutUrl,
+          webOriginUrl: GenerateApp.apps.appName.redirectUris.webOriginUrl,
+        },
+      )
+      await configureAppEnvironment(validatedPath, auth0ClientId, auth0ClientSecret, domain, connectionName)
+      ux.action.stop('Configured successfully!')
+    }
+  }
 }
+
