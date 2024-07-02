@@ -58,7 +58,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     ux.action.start('Creating Personal Access Token')
 
-    const { token, publicKey, privateKey } = await this.createToken(flags)
+    const { token, privateKey } = await this.createToken(flags)
 
     let projectId
 
@@ -74,18 +74,12 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     ux.action.stop('Created successfully!')
 
-    this.logToken(flags, token, publicKey, privateKey, projectId as string)
+    this.logToken(flags, token, privateKey, projectId as string)
 
     return token
   }
 
-  private logToken(
-    flags: CreateToken['flags'],
-    token: TokenDto,
-    publicKey: string,
-    privateKey: string,
-    projectId: string,
-  ) {
+  private logToken(flags: CreateToken['flags'], token: TokenDto, privateKey: string, projectId: string) {
     if (this.jsonEnabled()) return
 
     if (!flags['with-permissions']) {
@@ -104,7 +98,6 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       tokenId: token.id,
       passphrase: flags.passphrase,
       privateKey,
-      publicKey,
       projectId,
     }
 
@@ -112,7 +105,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     this.warn(
       this.chalk.red.bold(
-        'These are your PAT variables for Affinidi TDK.\n❗Please save publicKey and privateKey somewhere safe.\nYou will not be able to view those again.',
+        'These are your PAT variables for Affinidi TDK.\n❗Please save privateKey somewhere safe.\nYou will not be able to view it again.',
       ),
     )
   }
