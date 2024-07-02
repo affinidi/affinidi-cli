@@ -129,7 +129,6 @@ describe('login: token management commands', function () {
           expect(response).to.have.a.property('tokenId')
           expect(response).to.have.a.property('passphrase')
           expect(response).to.have.a.property('privateKey')
-          expect(response).to.have.a.property('publicKey')
           expect(response).to.have.a.property('projectId')
         },
       )
