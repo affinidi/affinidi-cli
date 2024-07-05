@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { BaseCommand, PrincipalTypes } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT, validateInputLength } from '../../common/validators'
+import { INPUT_LIMIT, policiesDataSchema, validateInputLength } from '../../common/validators'
 import { bffService } from '../../services/affinidi/bff-service'
 import { iamService } from '../../services/affinidi/iam'
 import { PolicyDto } from '../../services/affinidi/iam/iam.api'
@@ -59,18 +59,6 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
     })
     const validatedFlags = flagsSchema.parse(promptFlags)
 
-    const policiesDataSchema = z.object({
-      version: z.string().max(INPUT_LIMIT),
-      statement: z
-        .object({
-          principal: z.string().max(INPUT_LIMIT).array().length(1),
-          action: z.string().max(INPUT_LIMIT).array().nonempty(),
-          resource: z.string().max(INPUT_LIMIT).array().nonempty(),
-          effect: z.literal('Allow'),
-        })
-        .array()
-        .nonempty(),
-    })
     let policiesData = null
     if (validatedFlags.file) {
       const rawData = await readFile(validatedFlags.file, 'utf8')
@@ -90,11 +78,17 @@ export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {
       )
       this.warn('\nThis will override the existing principal statements')
       const resourceFilters = validateInputLength(
-        await input({ message: 'Enter the resource filters, separated by space' }),
+        await input({
+          message: 'Enter the allowed resources, separated by spaces. Use * to allow access to all project resources',
+          default: '*',
+        }),
         INPUT_LIMIT,
       )
       const actions = validateInputLength(
-        await input({ message: 'Enter the allowed actions, separated by space' }),
+        await input({
+          message: 'Enter the allowed actions, separated by spaces. Use * to allow all actions',
+          default: '*',
+        }),
         INPUT_LIMIT,
       )
 
