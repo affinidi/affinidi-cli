@@ -15,18 +15,18 @@ Creates a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k <value>] [-f <value>] [-a
-    RS256|RS512|ES256|ES512] [-w] [-p <value>]
+  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k <value>] [-a
+    RS256|RS512|ES256|ES512] [-w] [-p <value> [-g | -f <value>]]
 
 FLAGS
   -a, --algorithm=<option>       [default: RS256] The specific cryptographic algorithm used with the key
                                  <options: RS256|RS512|ES256|ES512>
   -f, --public-key-file=<value>  Location of the public key PEM file
+  -g, --auto-generate-key        Auto-generate private-public key pair
   -k, --key-id=<value>           Identifier of the key (kid)
   -n, --name=<value>             Name of the Personal Access Token, at least 8 chars long
   -p, --passphrase=<value>       Passphrase for generation of private public key pair
-  -w, --with-permissions         Create ready-to-use PAT with auto-generated private public key pair and set its access
-                                 policies
+  -w, --with-permissions         Set token policies to perform any action on the active project
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -34,13 +34,19 @@ GLOBAL FLAGS
   --no-input  Disables all the interactive prompts
 
 EXAMPLES
-  $ affinidi token create-token -n MyNewToken -w -p top-secret
+  $ affinidi token create-token
 
-  $ affinidi token create-token --name MyNewToken --with-permissions --passphrase top-secret
+  $ affinidi token create-token --name "My new token"
 
-  $ affinidi token create-token -n MyNewToken -k MyKeyID -f publicKey.pem
+  $ affinidi token create-token -n MyNewToken --with-permissions
 
-  $ affinidi token create-token --name "My new token" --key-id MyKeyID --public-key-file publicKey.pem --algorithm RS256
+  $ affinidi token create-token -n MyNewToken --auto-generate-key
+
+  $ affinidi token create-token -n MyNewToken --auto-generate-key --passphrase "MySecretPassphrase" --with-permissions
+
+  $ affinidi token create-token -n MyNewToken --public-key-file publicKey.pem --key-id MyKeyID --algorithm RS256 --with-permissions
+
+  $ affinidi token create-token -n MyNewToken -g -w
 ```
 
 ## `affinidi token delete-token`
