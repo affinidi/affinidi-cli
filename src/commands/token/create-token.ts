@@ -1,5 +1,7 @@
+import { KeyExportOptions } from 'crypto'
 import { readFile } from 'fs/promises'
 import { generateKeyPairSync } from 'node:crypto'
+import { confirm, input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
@@ -10,8 +12,6 @@ import { getKeyType, pemToJWK } from '../../helpers/jwk'
 import { bffService } from '../../services/affinidi/bff-service'
 import { iamService } from '../../services/affinidi/iam'
 import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api'
-import { confirm, input } from '@inquirer/prompts'
-import { KeyExportOptions } from 'crypto'
 
 const flagsSchema = z
   .object({
@@ -165,7 +165,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     }
 
     if (promptFlags['auto-generate-key'] && !promptFlags['no-input']) {
-      promptFlags['passphrase'] = validateInputLength(
+      promptFlags.passphrase = validateInputLength(
         await input({
           message: 'Enter a passphrase to encrypt the private key. Leave it empty for no encryption',
         }),
@@ -185,14 +185,14 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     }
 
     if (!promptFlags['no-input'] && promptFlags['with-permissions']) {
-      promptFlags['resources'] = validateInputLength(
+      promptFlags.resources = validateInputLength(
         await input({
           message: 'Enter the allowed resources, separated by spaces. Use * to allow access to all project resources',
           default: '*',
         }),
         INPUT_LIMIT,
       )
-      promptFlags['actions'] = validateInputLength(
+      promptFlags.actions = validateInputLength(
         await input({
           message: 'Enter the allowed actions, separated by spaces. Use * to allow all actions',
           default: '*',
