@@ -3,13 +3,11 @@ import { config } from '../../../src/services/env-config'
 
 const IAM_URL = `${config.bffHost}/iam`
 
-const tokenId = 'c4a32776-3203-4bf7-87d9-a6e6f9ddd09e'
-
 const data = {
   newTokenName: 'new-token-name',
   keyId: '12345',
   publicKeyFilePath: 'test/helpers/public_key.pem',
-  tokenId,
+  tokenId: 'c4a32776-3203-4bf7-87d9-a6e6f9ddd09e',
   passphrase: 'top-secret',
 }
 
@@ -20,6 +18,8 @@ describe('login: token management commands', function () {
       `--name=${data.newTokenName}`,
       `--key-id=${data.keyId}`,
       `--public-key-file=${data.publicKeyFilePath}`,
+      '--no-input',
+      '--json',
     ]
 
     test
@@ -63,12 +63,15 @@ describe('login: token management commands', function () {
       })
   })
 
-  describe('token:create-token with-permissions', () => {
+  describe('token:create-token with-permissions auto-generate-key', () => {
     const validArgs = [
       'token:create-token',
       `--name=${data.newTokenName}`,
+      `--public-key-file=${data.publicKeyFilePath}`,
+      `--key-id=${data.keyId}`,
       `--with-permissions`,
-      `--passphrase=${data.passphrase}`,
+      '--no-input',
+      `--json`,
     ]
 
     const getPoliciesApiResponse = {
@@ -86,7 +89,7 @@ describe('login: token management commands', function () {
     test
       .nock(IAM_URL, (api) =>
         api.post('/v1/tokens').reply(200, {
-          id: tokenId,
+          id: data.tokenId,
           ari: 'ari:iam:::user/2f4b3468-516f-4af3-87db-8816b0d320cc',
           ownerAri: 'AIV/Concierge API - affinidi-elements-iam-dev',
           name: 'test',
@@ -99,7 +102,7 @@ describe('login: token management commands', function () {
                   {
                     use: 'sig',
                     kty: 'RSA',
-                    kid: '12345',
+                    kid: data.tokenId,
                     alg: 'RS256',
                     n: '3CNY1aZmssMdh2dGKJpGki_BD5URuW8ngNMkZhJ1ux9X6vjng3XMLnvY2yTm3ucnEfl_XDLXE6K0wIt_1z2aGf-Kq1okCivnKv6DS1afX8J-ewvS-TnKTNFrtX9fRHxdBp2Pah144niZxScJKWhBQDjtrNJOEk-JpEkp-6MzvEQ-pac2_7ZyEAnWncQ8ncR_liYgxGj5ZQ6q2md-Gkk6dxmAe3W2oQPNOMqOtVUkQ1u79e8pmdgVEnuTJ2vdoyWaXmQBHsSISEHozaxjgf5wKiGy0K1aT30pfxzGy9xGdNAVj7g9lUoPRqfk-Sz4Uyy4osCn8jVqkrAmypTPVb_PFQ',
                     e: 'AQAB',
@@ -112,24 +115,21 @@ describe('login: token management commands', function () {
         }),
       )
       .nock(IAM_URL, (api) => api.post('/v1/projects/principals').reply(200))
-      .nock(IAM_URL, (api) =>
-        api.get(`/v1/policies/principals/${tokenId}?principalType=token`).reply(200, getPoliciesApiResponse),
-      )
-      .nock(IAM_URL, (api) => api.put(`/v1/policies/principals/${tokenId}?principalType=token`).reply(200))
+      .nock(IAM_URL, (api) => api.put(`/v1/policies/principals/${data.tokenId}?principalType=token`).reply(200))
       .nock(config.bffHost, (api) => api.get('/api/project').reply(200, { id: '1234' }))
       .stdout()
+      .stderr()
       .command(validArgs)
       .it(
         'generates private public key pair used for token creation, updates policies, returns PAT variables for TDK',
         async (ctx) => {
           const response = JSON.parse(ctx.stdout)
-          expect(response).to.have.a.property('apiGatewayUrl')
-          expect(response).to.have.a.property('tokenEndpoint')
-          expect(response).to.have.a.property('keyId')
-          expect(response).to.have.a.property('tokenId')
-          expect(response).to.have.a.property('passphrase')
-          expect(response).to.have.a.property('privateKey')
-          expect(response).to.have.a.property('projectId')
+          expect(response).to.have.a.property('id')
+          expect(response).to.have.a.property('ari')
+          expect(response).to.have.a.property('ownerAri')
+          expect(response).to.have.a.property('name')
+          expect(response).to.have.a.property('scopes')
+          expect(response).to.have.a.property('authenticationMethod')
         },
       )
   })

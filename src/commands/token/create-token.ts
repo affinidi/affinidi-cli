@@ -13,12 +13,6 @@ import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api'
 import { confirm, input } from '@inquirer/prompts'
 import { KeyExportOptions } from 'crypto'
 
-type Token = {
-  token: TokenDto
-  privateKey?: string
-  passphrase?: string
-}
-
 const flagsSchema = z
   .object({
     name: z.string().max(INPUT_LIMIT),
@@ -28,8 +22,8 @@ const flagsSchema = z
     'auto-generate-key': z.boolean(),
     passphrase: z.string().max(INPUT_LIMIT).optional(),
     'with-permissions': z.boolean(),
-    resources: z.string().max(INPUT_LIMIT).optional(),
-    actions: z.string().max(INPUT_LIMIT).optional(),
+    resources: z.string().max(INPUT_LIMIT).optional().default('*'),
+    actions: z.string().max(INPUT_LIMIT).optional().default('*'),
   })
   .refine(
     (data) => {
@@ -67,7 +61,6 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     'public-key-file': Flags.string({
       char: 'f',
       summary: 'Location of the public key PEM file',
-      required: false,
     }),
     algorithm: Flags.custom<SupportedAlgorithms>({
       char: 'a',
@@ -78,23 +71,20 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     'with-permissions': Flags.boolean({
       char: 'w',
       summary: 'Set token policies to perform any action on the active project',
-      required: false,
     }),
     'auto-generate-key': Flags.boolean({
       char: 'g',
       summary: 'Auto-generate private-public key pair',
       exclusive: ['public-key-file'],
-      required: false,
     }),
     passphrase: Flags.string({
       char: 'p',
       summary: 'Passphrase for generation of private public key pair',
       dependsOn: ['auto-generate-key'],
-      required: false,
     }),
   }
 
-  public async run(): Promise<Token> {
+  public async run(): Promise<TokenDto> {
     const { flags } = await this.parse(CreateToken)
     const validatedFlags = await this.validateFlags(flags)
 
@@ -124,10 +114,6 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     ux.action.stop('Created successfully!')
 
-    const out: Token = {
-      token,
-    }
-
     let projectId
     if (validatedFlags['with-permissions']) {
       ux.action.start('Adding token to active project')
@@ -143,41 +129,34 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       ux.action.stop('Granted successfully!')
     }
 
-    if (validatedFlags['auto-generate-key']) {
-      out['privateKey'] = keypair?.privateKey as string
-      if (validatedFlags.passphrase) {
-        out['passphrase'] = validatedFlags.passphrase
-      }
-    }
-
     if (!this.jsonEnabled()) {
-      this.logJson(out)
+      this.logJson(token)
+      this.log(
+        '\nUse the projectId, tokenId, privateKey and passphrase (if provided) to use this token with Affinidi TDK',
+      )
+      this.logJson({
+        tokenId: token.id,
+        ...(validatedFlags['with-permissions'] && { projectId }),
+        ...(validatedFlags['auto-generate-key'] && {
+          privateKey: keypair?.privateKey as string,
+          ...(validatedFlags.passphrase && { passphrase: validatedFlags.passphrase }),
+        }),
+      })
       if (validatedFlags['auto-generate-key']) {
         this.warn(
-          this.chalk.red.bold(
-            'Please save the privateKey and passphrase (if provided) somewhere safe. You will not be able to view them again.',
+          this.chalk.yellowBright.bold(
+            '\nPlease save the privateKey and passphrase (if provided) somewhere safe. You will not be able to view them again.\n',
           ),
         )
       }
-
-      if (validatedFlags['with-permissions']) {
-        this.log(
-          '\nUse the projectId, tokenId, privateKey and passphrase (if provided) to use this token with Affinidi TDK',
-        )
-        this.logJson({
-          projectId: projectId,
-          tokenId: token.id,
-        })
-        this.log('\n')
-      }
     }
-    return out
+    return token
   }
 
   private async validateFlags(flags: CreateToken['flags']) {
     let promptFlags = await promptRequiredParameters(['name'], flags)
 
-    if (!promptFlags['no-input']) {
+    if (!promptFlags['public-key-file'] && !promptFlags['no-input']) {
       promptFlags['auto-generate-key'] ??= await confirm({
         message: 'Generate a new keypair for the token?',
       })
@@ -185,9 +164,15 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       promptFlags['auto-generate-key'] = !!promptFlags['auto-generate-key']
     }
 
-    if (promptFlags['auto-generate-key']) {
-      promptFlags = await promptRequiredParameters(['passphrase'], promptFlags)
-    } else {
+    if (promptFlags['auto-generate-key'] && !promptFlags['no-input']) {
+      promptFlags['passphrase'] = validateInputLength(
+        await input({
+          message: 'Enter a passphrase to encrypt the private key. Leave it empty for no encryption',
+        }),
+        INPUT_LIMIT,
+      )
+    }
+    if (!promptFlags['auto-generate-key']) {
       promptFlags = await promptRequiredParameters(['public-key-file'], promptFlags)
     }
 
@@ -199,7 +184,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       promptFlags['with-permissions'] = !!promptFlags['with-permissions']
     }
 
-    if (promptFlags['with-permissions']) {
+    if (!promptFlags['no-input'] && promptFlags['with-permissions']) {
       promptFlags['resources'] = validateInputLength(
         await input({
           message: 'Enter the allowed resources, separated by spaces. Use * to allow access to all project resources',
