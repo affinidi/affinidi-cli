@@ -11,7 +11,6 @@ import { bffService } from '../../services/affinidi/bff-service'
 import { iamService } from '../../services/affinidi/iam'
 import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api'
 import { confirm, input } from '@inquirer/prompts'
-import chalk from 'chalk'
 
 type Token = {
   token: TokenDto
@@ -23,7 +22,7 @@ const flagsSchema = z
   .object({
     name: z.string().max(INPUT_LIMIT),
     algorithm: z.nativeEnum(SupportedAlgorithms),
-    'key-id': z.string().max(INPUT_LIMIT),
+    'key-id': z.string().max(INPUT_LIMIT).optional(),
     'public-key-file': z.string().max(INPUT_LIMIT).optional(),
     'auto-generate-key': z.boolean(),
     passphrase: z.string().max(INPUT_LIMIT).optional(),
@@ -47,10 +46,13 @@ const flagsSchema = z
 export class CreateToken extends BaseCommand<typeof CreateToken> {
   static summary = 'Creates a Personal Access Token (PAT)'
   static examples = [
-    '<%= config.bin %> <%= command.id %> -n MyNewToken -w -p top-secret',
-    '<%= config.bin %> <%= command.id %> --name MyNewToken --with-permissions --passphrase top-secret',
-    '<%= config.bin %> <%= command.id %> -n MyNewToken -k MyKeyID -f publicKey.pem',
-    '<%= config.bin %> <%= command.id %> --name "My new token" --key-id MyKeyID --public-key-file publicKey.pem --algorithm RS256',
+    '<%= config.bin %> <%= command.id %>',
+    '<%= config.bin %> <%= command.id %> --name "My new token"',
+    '<%= config.bin %> <%= command.id %> -n MyNewToken --with-permissions',
+    '<%= config.bin %> <%= command.id %> -n MyNewToken --auto-generate-key',
+    '<%= config.bin %> <%= command.id %> -n MyNewToken --auto-generate-key --passphrase "MySecretPassphrase" --with-permissions',
+    '<%= config.bin %> <%= command.id %> -n MyNewToken --public-key-file publicKey.pem --key-id MyKeyID --algorithm RS256 --with-permissions',
+    '<%= config.bin %> <%= command.id %> -n MyNewToken -g -w',
   ]
   static flags = {
     name: Flags.string({
@@ -74,20 +76,20 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     })(),
     'with-permissions': Flags.boolean({
       char: 'w',
-      required: false,
       summary: 'Set token policies to perform any action on the active project',
+      required: false,
     }),
     'auto-generate-key': Flags.boolean({
       char: 'g',
-      required: false,
       summary: 'Auto-generate private-public key pair',
       exclusive: ['public-key-file'],
+      required: false,
     }),
     passphrase: Flags.string({
       char: 'p',
       summary: 'Passphrase for generation of private public key pair',
-      required: false,
       dependsOn: ['auto-generate-key'],
+      required: false,
     }),
   }
 
@@ -97,8 +99,9 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     ux.action.start('Creating Personal Access Token')
     let keypair, jwks
+    const kid = validatedFlags['key-id'] ?? uuidv4()
     if (validatedFlags['auto-generate-key']) {
-      keypair = this.generateKeyPair(validatedFlags['key-id'], validatedFlags.algorithm, validatedFlags.passphrase)
+      keypair = this.generateKeyPair(kid, validatedFlags.algorithm, validatedFlags.passphrase)
       jwks = keypair.jwks as JsonWebKeySetDto
     } else {
       const publicKeyPEM = await readFile(validatedFlags['public-key-file'] as string, 'utf8')
@@ -106,7 +109,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       jwks = {
         keys: [
           {
-            kid: validatedFlags['key-id'] as string,
+            kid,
             alg: validatedFlags.algorithm,
             use: 'sig',
             kty: jwk.kty ?? getKeyType(validatedFlags.algorithm),
@@ -116,59 +119,53 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
         ],
       }
     }
-    const token = await this.createToken(validatedFlags.name, validatedFlags.algorithm, jwks)
+    const token = await this.createToken(validatedFlags.name, validatedFlags.algorithm, jwks, validatedFlags['key-id'])
+
     ux.action.stop('Created successfully!')
 
     const out: Token = {
       token,
     }
-    if (validatedFlags['auto-generate-key']) {
-      out['privateKey'] = keypair?.privateKey as string
-      out['passphrase'] = validatedFlags.passphrase
-      if (!this.jsonEnabled()) {
-        if (validatedFlags['auto-generate-key']) {
-          this.warn(
-            this.chalk.red.bold(
-              'Please save privateKey and passphrase somewhere safe. You will not be able to view them again.',
-            ),
-          )
-        }
-      }
-    }
-    if (!this.jsonEnabled()) this.logJson(out)
 
+    let projectId
     if (validatedFlags['with-permissions']) {
-      // todo add setting of policies
-      // todo validate no-input flag
-      // todo validate json flag
-
-      ux.action.start('Adding token to project')
+      ux.action.start('Adding token to active project')
       const promises = [this.addPrincipal(token.id), bffService.getActiveProject()]
       const [, activeProject] = await Promise.all(promises)
+      projectId = activeProject!.id
       ux.action.stop('Added successfully!')
 
       ux.action.start('Granting permissions to token')
-      await this.updatePolicies(
-        token.id,
-        activeProject!.id,
-        validatedFlags.actions ?? '*',
-        validatedFlags.resources ?? '*',
-      )
+      const actions = validatedFlags.actions ? validatedFlags.actions.split(' ') : ['*']
+      const resources = validatedFlags.actions ? validatedFlags.actions.split(' ') : ['*']
+      await this.updatePolicies(token.id, projectId, actions, resources)
       ux.action.stop('Granted successfully!')
-
-      if (!this.jsonEnabled()) {
-        const connectionString = JSON.stringify({
-          project: activeProject!.id,
-          token: token.id,
-          key: validatedFlags['key-id'],
-        })
-        this.log(
-          '\nUse the private key, passphrase and the following connection string to use this token with Affinidi TDK:',
-        )
-        this.log(`${chalk.inverse(connectionString)}\n`)
-      }
     }
 
+    if (validatedFlags['auto-generate-key']) {
+      out['privateKey'] = keypair?.privateKey as string
+      out['passphrase'] = validatedFlags.passphrase
+    }
+
+    if (!this.jsonEnabled()) {
+      this.logJson(out)
+      if (validatedFlags['auto-generate-key']) {
+        this.warn(
+          this.chalk.red.bold(
+            'Please save the privateKey and passphrase somewhere safe. You will not be able to view them again.',
+          ),
+        )
+      }
+
+      if (validatedFlags['with-permissions']) {
+        this.log('\nUse the projectId, tokenId, privateKey and passphrase to use this token with Affinidi TDK')
+        this.logJson({
+          projectId: projectId,
+          tokenId: token.id,
+        })
+        this.log('\n')
+      }
+    }
     return out
   }
 
@@ -179,6 +176,8 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       promptFlags['auto-generate-key'] ??= await confirm({
         message: 'Generate a new keypair for the token?',
       })
+    } else {
+      promptFlags['auto-generate-key'] = !!promptFlags['auto-generate-key']
     }
 
     if (promptFlags['auto-generate-key']) {
@@ -191,6 +190,8 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       promptFlags['with-permissions'] ??= await confirm({
         message: 'Add token to active project and grant permissions?',
       })
+    } else {
+      promptFlags['with-permissions'] = !!promptFlags['with-permissions']
     }
 
     if (promptFlags['with-permissions']) {
@@ -210,13 +211,11 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       )
     }
 
-    promptFlags['key-id'] ??= uuidv4()
-
     return flagsSchema.parse(promptFlags)
   }
 
-  private async createToken(name: string, algorithm: SupportedAlgorithms, jwks: JsonWebKeySetDto) {
-    return await iamService.createToken({
+  private async createToken(name: string, algorithm: SupportedAlgorithms, jwks: JsonWebKeySetDto, keyId?: string) {
+    let token = await iamService.createToken({
       name,
       authenticationMethod: {
         type: 'PRIVATE_KEY',
@@ -226,6 +225,21 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
         },
       },
     })
+    // If keyId was not provided it means that a randomly generated uuid was assigned and we should change it to the tokenId
+    if (!keyId) {
+      jwks.keys[0].kid = token.id
+      token = await iamService.updateToken(token.id, {
+        name,
+        authenticationMethod: {
+          type: 'PRIVATE_KEY',
+          signingAlgorithm: algorithm,
+          publicKeyInfo: {
+            jwks,
+          },
+        },
+      })
+    }
+    return token
   }
 
   private generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {
@@ -262,14 +276,14 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     })
   }
 
-  private async updatePolicies(tokenId: string, activeProjectId: string, actions: string, resources: string) {
+  private async updatePolicies(tokenId: string, activeProjectId: string, actions: string[], resources: string[]) {
     const policiesData = {
       version: '2022-12-15',
       statement: [
         {
           principal: [`ari:iam::${activeProjectId}:token/${tokenId}`],
-          action: actions.split(' '),
-          resource: resources.split(' '),
+          action: actions,
+          resource: resources,
           effect: 'Allow',
         },
       ],
