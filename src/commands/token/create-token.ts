@@ -11,6 +11,7 @@ import { bffService } from '../../services/affinidi/bff-service'
 import { iamService } from '../../services/affinidi/iam'
 import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api'
 import { confirm, input } from '@inquirer/prompts'
+import { KeyExportOptions } from 'crypto'
 
 type Token = {
   token: TokenDto
@@ -144,7 +145,9 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     if (validatedFlags['auto-generate-key']) {
       out['privateKey'] = keypair?.privateKey as string
-      out['passphrase'] = validatedFlags.passphrase
+      if (validatedFlags.passphrase) {
+        out['passphrase'] = validatedFlags.passphrase
+      }
     }
 
     if (!this.jsonEnabled()) {
@@ -152,13 +155,15 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       if (validatedFlags['auto-generate-key']) {
         this.warn(
           this.chalk.red.bold(
-            'Please save the privateKey and passphrase somewhere safe. You will not be able to view them again.',
+            'Please save the privateKey and passphrase (if provided) somewhere safe. You will not be able to view them again.',
           ),
         )
       }
 
       if (validatedFlags['with-permissions']) {
-        this.log('\nUse the projectId, tokenId, privateKey and passphrase to use this token with Affinidi TDK')
+        this.log(
+          '\nUse the projectId, tokenId, privateKey and passphrase (if provided) to use this token with Affinidi TDK',
+        )
         this.logJson({
           projectId: projectId,
           tokenId: token.id,
@@ -246,13 +251,15 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 4096 })
 
     const publicKeyPem = publicKey.export({ format: 'pem', type: 'spki' })
-    const privateKeyPem = privateKey.export({
+    const exportOptions: KeyExportOptions<'pem'> = {
       format: 'pem',
       type: 'pkcs8',
-      cipher: 'aes-256-cbc',
-      passphrase,
-    })
-
+    }
+    if (passphrase) {
+      exportOptions.cipher = 'aes-256-cbc'
+      exportOptions.passphrase = passphrase
+    }
+    const privateKeyPem = privateKey.export(exportOptions)
     const publicKeyJwk = publicKey.export({ format: 'jwk' })
 
     const jwks = {
