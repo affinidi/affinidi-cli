@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - beta
 
 jobs:
   release:
@@ -12,15 +11,27 @@ jobs:
     environment:
       name: publishEnv
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Generate token from app token #https://github.com/tibdex/github-app-token
+        id: generate_token
+        uses: tibdex/github-app-token@v2
         with:
-          persist-credentials: false
+          app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private_key: ${{ secrets.RELEASE_BOT_PKEY }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: configure git
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
           scope: '@affinidi'
 
@@ -34,4 +45,4 @@ jobs:
         run: npx semantic-release@21
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
