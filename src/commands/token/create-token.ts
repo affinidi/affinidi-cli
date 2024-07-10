@@ -165,7 +165,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     }
 
     if (promptFlags['auto-generate-key'] && !promptFlags['no-input']) {
-      promptFlags.passphrase = validateInputLength(
+      promptFlags.passphrase ??= validateInputLength(
         await input({
           message: 'Enter a passphrase to encrypt the private key. Leave it empty for no encryption',
         }),
