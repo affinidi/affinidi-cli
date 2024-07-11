@@ -3,15 +3,26 @@ import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/lib/errors'
 import z from 'zod'
-import { BaseCommand, RefAppProvider } from '../../common'
+import { BaseCommand, RefAppProvider, SupportedAlgorithms } from '../../common'
 import { giveFlagInputErrorMessage } from '../../common/error-messages'
 import { promptRequiredParameters } from '../../common/prompts'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators'
-import { AppsInformation, getAppName, getApps, getRedirectUri, getSupportedAppsInformation } from '../../helpers/app'
+import {
+  AppsInformation,
+  getAppMetadataToken,
+  getAppName,
+  getApps,
+  getRedirectUri,
+  getSupportedAppsInformation,
+} from '../../helpers/app'
 import { cloneWithDegit } from '../../helpers/degit'
+import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter'
 import { createAuth0Resources } from '../../services/generator/auth0'
 import { configureAppEnvironment } from '../../services/generator/env-configurer'
+import { v4 as uuidv4 } from 'uuid'
+import { JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api'
+import { bffService } from '../../services/affinidi/bff-service'
 
 const APPS_INFORMATION_GITHUB_LOCATION = 'samples/apps.json'
 const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
@@ -74,17 +85,24 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       const provider =
         flags.provider ??
         (await select({
-          message: 'Select the provider for the sample app.',
+          message: 'Select the provider for the sample app',
           choices: GenerateApp.providers.map((value) => ({
             name: value,
             value,
           })),
         }))
+
+      // Make nextjs first option
+      const frameworks = GenerateApp.frameworks.get(provider)!
+      const nextJsIndex = frameworks.indexOf('nextjs')
+      if (nextJsIndex > 0) {
+        frameworks.unshift(frameworks.splice(nextJsIndex, 1)[0])
+      }
       const framework =
         flags.framework ??
         (await select({
-          message: 'Select the framework for the sample app.',
-          choices: GenerateApp.frameworks.get(provider)!.map((value) => ({
+          message: 'Select the framework for the sample app',
+          choices: frameworks.map((value) => ({
             name: value,
             value,
           })),
@@ -92,7 +110,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       const library =
         flags.library ??
         (await select({
-          message: 'Select the library for the sample app.',
+          message: 'Select the library for the sample app',
           choices: GenerateApp.libraries.get(`${provider}-${framework}`)!.map((value) => ({
             name: value,
             value,
@@ -116,14 +134,15 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
       ux.action.start('Generating sample app')
 
       await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}`, validatedFlags.path, flags.force)
+      // await cloneWithDegit(`${APPS_GITHUB_LOCATION}/${appName}#token-metadata`, validatedFlags.path, flags.force)
 
       ux.action.stop('Generated successfully!')
 
       if (!flags['no-input']) {
-        const configure = await confirm({
-          message: 'Automatically configure sample app environment?',
+        const configureLogin = await confirm({
+          message: 'Automatically configure Affinidi Login?',
         })
-        if (configure) {
+        if (configureLogin) {
           ux.action.start('Fetching available login configurations')
           const configs = await vpAdapterService.listLoginConfigurations()
           ux.action.stop('Fetched successfully!')
@@ -134,7 +153,7 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             },
             name: `${config.name} [id: ${config.configurationId}]`,
           }))
-          choices.push({
+          choices.unshift({
             value: {
               id: 'new-config',
               auth: undefined,
@@ -145,77 +164,117 @@ export default class GenerateApp extends BaseCommand<typeof GenerateApp> {
             message: 'Select a login configuration to use in your sample app',
             choices,
           })
-          let newConfigClientSecret = undefined
           // Create a new login config
           if (selectedConfig.id === 'new-config') {
             const newConfigName = validateInputLength(
-              await input({ message: `Enter a name for the login config` }),
+              await input({
+                message: `Enter a name for the login config`,
+                default: `sample-login-config-${Math.random().toString(36).slice(2, 7)}`,
+              }),
               INPUT_LIMIT,
             )
+            ux.action.start('Creating login configuration')
             const redirectUri = getRedirectUri(GenerateApp.apps, appName)
             const createLoginConfigInput = {
               name: newConfigName,
               redirectUris: [redirectUri],
             }
             const createConfigOutput = await vpAdapterService.createLoginConfig(createLoginConfigInput)
+            ux.action.stop('Created successfully!')
+            this.logJson({ loginConfig: createConfigOutput.auth })
             this.warn(
-              this.chalk.red.bold(
-                'Please save the clientSecret somewhere safe. You will not be able to view it again.',
+              this.chalk.yellowBright.bold(
+                "\nPlease save the clientSecret somewhere safe. It will be added to the app env's file. You will not be able to view it again.\n",
               ),
             )
-            this.logJson({ loginConfig: createConfigOutput.auth })
             selectedConfig.id = createConfigOutput.configurationId
             selectedConfig.auth = createConfigOutput.auth
-            newConfigClientSecret = createConfigOutput.auth.clientSecret
           }
 
-          const clientSecret =
-            newConfigClientSecret ??
-            validateInputLength(
-              await password({
-                message: "What is the login configuration's client secret?",
-                mask: true,
-              }),
-              INPUT_LIMIT,
-            )
+          let clientId = selectedConfig.auth.clientId
+          let clientSecret = selectedConfig.auth.clientSecret
+          let issuer = selectedConfig.auth.issuer
+          let connectionName
 
-          if (provider === RefAppProvider.AFFINIDI) {
-            ux.action.start('Configuring sample app')
-            await configureAppEnvironment(
-              validatedFlags.path,
-              selectedConfig.auth.clientId,
-              clientSecret,
-              selectedConfig.auth.issuer,
-            )
-            ux.action.stop('Configured successfully!')
-          } else if (provider === RefAppProvider.AUTH0) {
+          clientSecret ??= validateInputLength(
+            await password({
+              message: "What is the login configuration's client secret?",
+              mask: true,
+            }),
+            INPUT_LIMIT,
+          )
+
+          if (provider === RefAppProvider.AUTH0) {
             const domain = validateInputLength(await input({ message: 'What is your Auth0 tenant URL?' }), INPUT_LIMIT)
             const accessToken = validateInputLength(
               await password({ message: 'What is your Auth0 access token?' }),
               TOKEN_LIMIT,
             )
-            ux.action.start('Creating Auth0 resources and configuring sample app')
-            const socialConnectionName = `Affinidi-${framework}`
-            const { auth0ClientId, auth0ClientSecret, connectionName } = await createAuth0Resources(
+            ux.action.start('Creating Auth0 resources')
+            connectionName = `Affinidi-${framework}`
+            const { auth0ClientId, auth0ClientSecret } = await createAuth0Resources(
               accessToken,
               domain,
               selectedConfig.auth.clientId,
               clientSecret,
               selectedConfig.auth.issuer,
-              socialConnectionName,
+              connectionName,
               {
                 callbackUrl: GenerateApp.apps.appName.redirectUris.callbackUrl,
-                logOutUrl: GenerateApp.apps.appName.redirectUris.logOutUrl,
-                webOriginUrl: GenerateApp.apps.appName.redirectUris.webOriginUrl,
+                logOutUrl: GenerateApp.apps.appName.redirectUris.logOutUrl!,
+                webOriginUrl: GenerateApp.apps.appName.redirectUris.webOriginUrl!,
               },
             )
-            await configureAppEnvironment(validatedFlags.path, auth0ClientId, auth0ClientSecret, domain, connectionName)
-            ux.action.stop('Configured successfully!')
+            clientId = auth0ClientId
+            clientSecret = auth0ClientSecret
+            issuer = domain
+            ux.action.stop('Created successfully!')
           }
+
+          const tokenMetadata = getAppMetadataToken(GenerateApp.apps, appName)
+          let tokenParams
+          if (tokenMetadata) {
+            const configureToken = await confirm({
+              message:
+                'Configure Personal Access Token to enable features like credential issuance and Affinidi Iota Framework?',
+            })
+            if (configureToken) {
+              ux.action.start('Creating Personal Access Token and assigning app permissions on active project')
+              const keypair = generateKeyPair(uuidv4(), SupportedAlgorithms.RS256)
+              const jwks = keypair.jwks as JsonWebKeySetDto
+              const tokenName = `sample-app-token-${Math.random().toString(36).slice(2, 7)}`
+              const token = await createToken(tokenName, SupportedAlgorithms.RS256, jwks)
+              const promises = [addPrincipal(token.id), bffService.getActiveProject()]
+              const [, activeProject] = await Promise.all(promises)
+              const projectId = activeProject!.id
+              await updatePolicies(token.id, projectId, tokenMetadata.policy.actions, [`*:${projectId}:*`])
+              tokenParams = {
+                projectId,
+                tokenId: token.id,
+                privateKey: keypair.privateKey as string,
+              }
+              ux.action.stop('Created successfully!')
+              this.logJson(tokenParams)
+              this.warn(
+                this.chalk.yellowBright.bold(
+                  "\nPlease save the privateKey somewhere safe. It will be added to the app env's file. You will not be able to view it again.\n",
+                ),
+              )
+            }
+          }
+          await configureAppEnvironment(
+            validatedFlags.path,
+            {
+              clientId,
+              clientSecret,
+              issuer,
+              connectionName,
+            },
+            tokenParams,
+          )
         }
       }
-
-      this.log('Please read the generated README for instructions on how to run your sample app')
+      this.log('\nPlease read the generated README for instructions on how to run your sample app\n')
     } catch (err: any) {
       if (!err?.oclif) throw new CLIError('Unexpected error while generating sample app')
       else throw new CLIError(err)
