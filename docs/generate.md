@@ -11,15 +11,15 @@ Generates code samples that integrates Affinidi Login. Requires git
 
 ```
 USAGE
-  $ affinidi generate app [--json] [--no-color] [--no-input] [-a <value>] [-f <value>] [-l <value>] [-p <value>]
-    [--force]
+  $ affinidi generate app [--json] [--no-color] [--no-input] [-a <value>] [-f
+    <value>] [-l <value>] [-p <value>] [--force]
 
 FLAGS
   -a, --provider=<value>   Authentication provider for the sample app
   -f, --framework=<value>  Framework for the sample app
   -l, --library=<value>    Library for the sample app
   -p, --path=<value>       Relative or absolute path where sample app should be cloned into
-  --force                  Override destination directory if exists
+      --force              Override destination directory if exists
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -33,3 +33,5 @@ EXAMPLES
 
   $ affinidi generate app --path "../my-app" --framework django --provider affinidi --force
 ```
+
+_See code: [src/commands/generate/app.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/generate/app.ts)_

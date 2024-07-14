@@ -251,8 +251,8 @@ When you run `affinidi stop` your session information is deleted.
 <!-- commands -->
 # Command Topics
 
-* [`affinidi autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
-* [`affinidi commands`](docs/commands.md) - list all the commands
+* [`affinidi autocomplete`](docs/autocomplete.md) - Display autocomplete installation instructions.
+* [`affinidi commands`](docs/commands.md) - List all affinidi commands.
 * [`affinidi generate`](docs/generate.md) - Use these commands to generate code to get started or to scaffold your solution
 * [`affinidi help`](docs/help.md) - Display help for affinidi.
 * [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration

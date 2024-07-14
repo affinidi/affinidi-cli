@@ -1,4 +1,4 @@
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import axios from 'axios'
 
 export type AppsInformation = {

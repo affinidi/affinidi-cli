@@ -1,5 +1,5 @@
 import { Command, Flags, Interfaces } from '@oclif/core'
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import chalk from 'chalk'
 import { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
@@ -38,6 +38,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       flags: this.ctor.flags,
       // eslint-disable-next-line  @typescript-eslint/consistent-type-assertions
       baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
+      enableJsonFlag: this.ctor.enableJsonFlag,
       args: this.ctor.args,
       strict: this.ctor.strict,
     })

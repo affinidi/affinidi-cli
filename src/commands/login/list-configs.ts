@@ -1,7 +1,7 @@
 import { ux } from '@oclif/core'
-import { BaseCommand } from '../../common'
-import { vpAdapterService } from '../../services/affinidi/vp-adapter'
-import { ListLoginConfigurationOutput } from '../../services/affinidi/vp-adapter/vp-adapter.api'
+import { BaseCommand } from '../../common/base-command.js'
+import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
+import { ListLoginConfigurationOutput } from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 export class ListLoginConfigurations extends BaseCommand<typeof ListLoginConfigurations> {
   static summary = 'Lists login configurations in your active project'

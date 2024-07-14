@@ -1,4 +1,4 @@
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import chalk from 'chalk'
 import degit from 'degit'
 

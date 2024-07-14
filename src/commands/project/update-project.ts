@@ -1,10 +1,10 @@
 import { Flags, ux } from '@oclif/core'
 import z from 'zod'
-import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT } from '../../common/validators'
-import { bffService } from '../../services/affinidi/bff-service'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api'
+import { BaseCommand } from '../../common/base-command.js'
+import { promptRequiredParameters } from '../../common/prompts.js'
+import { INPUT_LIMIT } from '../../common/validators.js'
+import { bffService } from '../../services/affinidi/bff-service.js'
+import { ProjectDto } from '../../services/affinidi/iam/iam.api.js'
 
 export class UpdateProject extends BaseCommand<typeof UpdateProject> {
   static summary = 'Updates project details'

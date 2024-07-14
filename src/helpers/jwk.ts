@@ -1,6 +1,6 @@
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import * as jose from 'jose'
-import { SupportedAlgorithms, SupportedKeyTypes } from '../common'
+import { SupportedAlgorithms, SupportedKeyTypes } from '../common/constants.js'
 
 export async function pemToJWK(publicKeyPEM: string, algorithm: SupportedAlgorithms) {
   try {

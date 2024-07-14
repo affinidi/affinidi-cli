@@ -15,8 +15,8 @@ Creates a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k <value>] [-a
-    RS256|RS512|ES256|ES512] [-w] [-p <value> [-g | -f <value>]]
+  $ affinidi token create-token [--json] [--no-color] [--no-input] [-n <value>] [-k
+    <value>] [-a RS256|RS512|ES256|ES512] [-w] [-p <value> [-g | -f <value>]]
 
 FLAGS
   -a, --algorithm=<option>       [default: RS256] The specific cryptographic algorithm used with the key
@@ -49,6 +49,8 @@ EXAMPLES
   $ affinidi token create-token -n MyNewToken -g -w
 ```
 
+_See code: [src/commands/token/create-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/token/create-token.ts)_
+
 ## `affinidi token delete-token`
 
 Deletes a Personal Access Token (PAT)
@@ -70,6 +72,8 @@ EXAMPLES
 
   $ affinidi token delete-token --token-id <uuid>
 ```
+
+_See code: [src/commands/token/delete-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/token/delete-token.ts)_
 
 ## `affinidi token get-token`
 
@@ -93,6 +97,8 @@ EXAMPLES
   $ affinidi token get-token --token-id <uuid>
 ```
 
+_See code: [src/commands/token/get-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/token/get-token.ts)_
+
 ## `affinidi token list-tokens`
 
 Lists your Personal Access Tokens (PATs)
@@ -110,21 +116,23 @@ EXAMPLES
   $ affinidi token list-tokens
 ```
 
+_See code: [src/commands/token/list-tokens.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/token/list-tokens.ts)_
+
 ## `affinidi token update-token`
 
 Updates a Personal Access Token (PAT)
 
 ```
 USAGE
-  $ affinidi token update-token [--json] [--no-color] [--no-input] [-i <value>] [-n <value>] [-k <value>] [-f <value>]
-    [--algorithm RS256|RS512|ES256|ES512]
+  $ affinidi token update-token [--json] [--no-color] [--no-input] [-i <value>] [-n
+    <value>] [-k <value>] [-f <value>] [--algorithm RS256|RS512|ES256|ES512]
 
 FLAGS
   -f, --public-key-file=<value>  Location of the public key PEM file
   -i, --token-id=<value>         ID of the Personal Access Token
   -k, --key-id=<value>           Identifier of the key (kid)
   -n, --name=<value>             Name of the Personal Access Token, at least 8 chars long
-  --algorithm=<option>           [default: RS256] The specific cryptographic algorithm used with the key
+      --algorithm=<option>       [default: RS256] The specific cryptographic algorithm used with the key
                                  <options: RS256|RS512|ES256|ES512>
 
 GLOBAL FLAGS
@@ -137,3 +145,5 @@ EXAMPLES
 
   $ affinidi token update-token --token-id <uuid> --name "My new token" --key-id "My key ID" --public-key-file publicKey.pem --algorithm RS256
 ```
+
+_See code: [src/commands/token/update-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/token/update-token.ts)_

@@ -1,4 +1,4 @@
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 
 export const INPUT_LIMIT = 2000

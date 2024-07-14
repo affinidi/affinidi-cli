@@ -1,7 +1,7 @@
 import { ux } from '@oclif/core'
 import chalk from 'chalk'
-import { BaseCommand } from '../common'
-import { bffService } from '../services/affinidi/bff-service'
+import { BaseCommand } from '../common/base-command.js'
+import { bffService } from '../services/affinidi/bff-service.js'
 
 export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'

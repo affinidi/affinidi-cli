@@ -11,10 +11,10 @@ import {
   UpdateTokenInput,
   UserList,
   WhoamiDto,
-} from './iam.api'
-import { config } from '../../env-config'
-import { getBFFHeaders } from '../bff-service'
-import { handleServiceError } from '../errors'
+} from './iam.api.js'
+import { config } from '../../env-config.js'
+import { getBFFHeaders } from '../bff-service.js'
+import { handleServiceError } from '../errors.js'
 
 class IAMService {
   constructor(
@@ -41,7 +41,6 @@ class IAMService {
     const headers = await getBFFHeaders()
     try {
       const res = await this.client.v1.listProject({ headers })
-      console.log(JSON.stringify(res.data))
       return res.data.projects
     } catch (error) {
       handleServiceError(error)

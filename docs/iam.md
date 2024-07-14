@@ -15,7 +15,8 @@ Adds a principal (user or token) to the active project
 
 ```
 USAGE
-  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
+  $ affinidi iam add-principal [--json] [--no-color] [--no-input] [-i <value>] [-t
+    token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
@@ -43,13 +44,16 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
+_See code: [src/commands/iam/add-principal.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/iam/add-principal.ts)_
+
 ## `affinidi iam get-policies`
 
 Gets the policies of a principal (user or token)
 
 ```
 USAGE
-  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
+  $ affinidi iam get-policies [--json] [--no-color] [--no-input] [-i <value>] [-t
+    token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
@@ -78,6 +82,8 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
+_See code: [src/commands/iam/get-policies.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/iam/get-policies.ts)_
+
 ## `affinidi iam list-principals`
 
 Lists the principals (users and tokens) in the active project
@@ -100,13 +106,16 @@ EXAMPLES
   $ affinidi iam list-principals
 ```
 
+_See code: [src/commands/iam/list-principals.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/iam/list-principals.ts)_
+
 ## `affinidi iam remove-principal`
 
 Removes a principal (user or token) from the active project
 
 ```
 USAGE
-  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t token|user]
+  $ affinidi iam remove-principal [--json] [--no-color] [--no-input] [-i <value>] [-t
+    token|user]
 
 FLAGS
   -i, --principal-id=<value>     ID of the principal
@@ -134,13 +143,16 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
+_See code: [src/commands/iam/remove-principal.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/iam/remove-principal.ts)_
+
 ## `affinidi iam update-policies`
 
 Updates the policies of a principal (user or token) in the active project
 
 ```
 USAGE
-  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t token|user] [-f <value>]
+  $ affinidi iam update-policies [--json] [--no-color] [--no-input] [-i <value>] [-t
+    token|user] [-f <value>]
 
 FLAGS
   -f, --file=<value>             Location of a json file containing principal policies
@@ -169,3 +181,5 @@ FLAG DESCRIPTIONS
 
     Get a list of possible IDs with command affinidi token list-tokens
 ```
+
+_See code: [src/commands/iam/update-policies.ts](https://github.com/affinidi/affinidi-cli/blob/v2.6.1/src/commands/iam/update-policies.ts)_
