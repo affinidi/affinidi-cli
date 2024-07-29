@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT, policiesDataSchema, validateInputLength } from '../../common/validators.js'
+import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
 import { getKeyType, pemToJWK } from '../../helpers/jwk.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { iamService } from '../../services/affinidi/iam/service.js'
 import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api.js'
 import { SupportedAlgorithms } from '../../common/constants.js'
+import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
 
 const flagsSchema = z
   .object({

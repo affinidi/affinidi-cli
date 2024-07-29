@@ -1,9 +1,9 @@
 import { KeyExportOptions } from 'crypto'
 import { generateKeyPairSync } from 'node:crypto'
-import { SupportedAlgorithms } from '../common'
-import { policiesDataSchema } from '../common/validators'
-import { JsonWebKeySetDto } from '../services/affinidi/iam/iam.api'
-import { iamService } from '../services/affinidi/iam/index'
+import { SupportedAlgorithms } from '../common/constants.js'
+import { policiesDataSchema } from '../common/validators.js'
+import { JsonWebKeySetDto } from '../services/affinidi/iam/iam.api.js'
+import { iamService } from '../services/affinidi/iam/service.js'
 
 export function generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {
   const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 4096 })

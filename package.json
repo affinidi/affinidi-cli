@@ -52,7 +52,7 @@
     "@oclif/plugin-search": "^1.2.3",
     "@oclif/plugin-warn-if-update-available": "^3.1.9",
     "@postman/node-keytar": "^7.9.3",
-    "axios": "^1.7.1",
+    "axios": "^1.7.2",
     "chalk": "^5.3.0",
     "conf": "^13.0.1",
     "degit": "^2.8.4",
