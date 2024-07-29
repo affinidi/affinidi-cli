@@ -3,8 +3,39 @@ import axios from 'axios'
 
 export type AppsInformation = {
   [key: string]: {
-    [innerKey: string]: {
-      [innermostKey: string]: string
+    redirectUris: {
+      callbackUrl: string
+      logOutUrl?: string
+      webOriginUrl?: string
+    }
+    metadata: {
+      name: string
+      description: string
+      features?: string[]
+      idp: {
+        name: string
+        link: string
+      }
+      framework: {
+        name: string
+        icon: string
+        link: string
+      }
+      language: {
+        name: string
+        icon: string
+        link: string
+      }
+      library: {
+        name: string
+        icon: string
+        link: string
+      }
+      token?: {
+        policy: {
+          actions: string[]
+        }
+      }
     }
   }
 }
@@ -15,6 +46,8 @@ export function getAppName(framework: string, provider: string, library: string)
 
 export async function getApps(filePath: string): Promise<AppsInformation> {
   const githubFileUrl = `https://api.github.com/repos/affinidi/reference-app-affinidi-vault/contents/${filePath}`
+  // const githubFileUrl =
+  //   'https://api.github.com/repos/affinidi/reference-app-affinidi-vault/contents/samples/apps.json?ref=token-metadata'
 
   try {
     const response = await axios.get(githubFileUrl)
@@ -105,4 +138,8 @@ export function getSupportedAppsInformation(apps: AppsInformation) {
 
 export function getRedirectUri(apps: AppsInformation, appName: string) {
   return apps[appName].redirectUris.callbackUrl
+}
+
+export function getAppMetadataToken(apps: AppsInformation, appName: string) {
+  return apps[appName].metadata.token
 }

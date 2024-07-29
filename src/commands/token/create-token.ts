@@ -1,6 +1,4 @@
-import { KeyExportOptions } from 'crypto'
 import { readFile } from 'fs/promises'
-import { generateKeyPairSync } from 'node:crypto'
 import { confirm, input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { v4 as uuidv4 } from 'uuid'
@@ -93,7 +91,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     let keypair, jwks
     const kid = validatedFlags['key-id'] ?? uuidv4()
     if (validatedFlags['auto-generate-key']) {
-      keypair = this.generateKeyPair(kid, validatedFlags.algorithm, validatedFlags.passphrase)
+      keypair = generateKeyPair(kid, validatedFlags.algorithm, validatedFlags.passphrase)
       jwks = keypair.jwks as JsonWebKeySetDto
     } else {
       const publicKeyPEM = await readFile(validatedFlags['public-key-file'] as string, 'utf8')
@@ -111,14 +109,14 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
         ],
       }
     }
-    const token = await this.createToken(validatedFlags.name, validatedFlags.algorithm, jwks, validatedFlags['key-id'])
+    const token = await createToken(validatedFlags.name, validatedFlags.algorithm, jwks, validatedFlags['key-id'])
 
     ux.action.stop('Created successfully!')
 
     let projectId
     if (validatedFlags['with-permissions']) {
       ux.action.start('Adding token to active project')
-      const promises = [this.addPrincipal(token.id), bffService.getActiveProject()]
+      const promises = [addPrincipal(token.id), bffService.getActiveProject()]
       const [, activeProject] = await Promise.all(promises)
       projectId = activeProject!.id
       ux.action.stop('Added successfully!')
@@ -126,7 +124,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
       ux.action.start('Granting permissions to token')
       const actions = validatedFlags.actions ? validatedFlags.actions.split(' ') : ['*']
       const resources = validatedFlags.actions ? validatedFlags.actions.split(' ') : ['*']
-      await this.updatePolicies(token.id, projectId, actions, resources)
+      await updatePolicies(token.id, projectId, actions, resources)
       ux.action.stop('Granted successfully!')
     }
 
@@ -203,86 +201,5 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     }
 
     return flagsSchema.parse(promptFlags)
-  }
-
-  private async createToken(name: string, algorithm: SupportedAlgorithms, jwks: JsonWebKeySetDto, keyId?: string) {
-    let token = await iamService.createToken({
-      name,
-      authenticationMethod: {
-        type: 'PRIVATE_KEY',
-        signingAlgorithm: algorithm,
-        publicKeyInfo: {
-          jwks,
-        },
-      },
-    })
-    // If keyId was not provided it means that a randomly generated uuid was assigned and we should change it to the tokenId
-    if (!keyId) {
-      jwks.keys[0].kid = token.id
-      token = await iamService.updateToken(token.id, {
-        name,
-        authenticationMethod: {
-          type: 'PRIVATE_KEY',
-          signingAlgorithm: algorithm,
-          publicKeyInfo: {
-            jwks,
-          },
-        },
-      })
-    }
-    return token
-  }
-
-  private generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {
-    const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 4096 })
-
-    const publicKeyPem = publicKey.export({ format: 'pem', type: 'spki' })
-    const exportOptions: KeyExportOptions<'pem'> = {
-      format: 'pem',
-      type: 'pkcs8',
-    }
-    if (passphrase) {
-      exportOptions.cipher = 'aes-256-cbc'
-      exportOptions.passphrase = passphrase
-    }
-    const privateKeyPem = privateKey.export(exportOptions)
-    const publicKeyJwk = publicKey.export({ format: 'jwk' })
-
-    const jwks = {
-      keys: [
-        {
-          use: 'sig',
-          kid: keyId,
-          alg: algorithm,
-          ...publicKeyJwk,
-        },
-      ],
-    }
-
-    return { publicKey: publicKeyPem, privateKey: privateKeyPem, jwks }
-  }
-
-  private async addPrincipal(tokenId: string) {
-    await iamService.addPrincipalToProject({
-      principalId: tokenId,
-      principalType: 'token',
-    })
-  }
-
-  private async updatePolicies(tokenId: string, activeProjectId: string, actions: string[], resources: string[]) {
-    const policiesData = {
-      version: '2022-12-15',
-      statement: [
-        {
-          principal: [`ari:iam::${activeProjectId}:token/${tokenId}`],
-          action: actions,
-          resource: resources,
-          effect: 'Allow',
-        },
-      ],
-    }
-    const validatedPolicies = policiesDataSchema.parse(policiesData)
-    const result = await iamService.updatePolicies(tokenId, 'token', validatedPolicies)
-    return result
   }
 }
