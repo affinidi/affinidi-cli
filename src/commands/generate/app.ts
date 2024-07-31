@@ -1,22 +1,28 @@
-import { password } from '@inquirer/prompts'
-import { confirm, input, select } from '@inquirer/prompts'
+import { confirm, input, password, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
+import { v4 as uuidv4 } from 'uuid'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { RefAppProvider, SupportedAlgorithms } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators.js'
-import { AppsInformation, getAppMetadataToken, getAppName, getApps, getRedirectUri, getSupportedAppsInformation } from '../../helpers/app.js'
+import {
+  AppsInformation,
+  getAppMetadataToken,
+  getAppName,
+  getApps,
+  getRedirectUri,
+  getSupportedAppsInformation,
+} from '../../helpers/app.js'
 import { cloneWithDegit } from '../../helpers/degit.js'
+import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
+import { bffService } from '../../services/affinidi/bff-service.js'
+import { JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
 import { createAuth0Resources } from '../../services/generator/auth0.js'
 import { configureAppEnvironment } from '../../services/generator/env-configurer.js'
-import { v4 as uuidv4 } from 'uuid'
-import { RefAppProvider, SupportedAlgorithms } from '../../common/constants.js'
-import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
-import { JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api.js'
-import { bffService } from '../../services/affinidi/bff-service.js'
 
 const APPS_INFORMATION_GITHUB_LOCATION = 'samples/apps.json'
 const APPS_GITHUB_LOCATION = 'affinidi/reference-app-affinidi-vault/samples'
