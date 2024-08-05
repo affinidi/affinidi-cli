@@ -10,9 +10,9 @@ Before you start contributing please read the CLI's [#philosophy](#philosophy) a
 - Run `npm test` to execute tests
 - Run `npm run lint` to check for linting errors
 
-To run commands in development mode use `./bin/dev [command]`
+To run commands in development mode use `./bin/dev.js [command]`
 
-To run commands in production mode first build the project with `npm run build` and then use `./bin/run [command]`.
+To run commands in production mode first build the project with `npm run build` and then use `./bin/run.js [command]`.
 
 You can also link the production build to your path with `npm link` and then you can run `affinidi [command]`.
 

@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { Auth0Config } from '../../common'
+import { Auth0Config } from '../../common/constants.js'
 
 export async function createAuth0Resources(
   accessToken: string,

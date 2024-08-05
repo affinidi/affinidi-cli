@@ -1,7 +1,7 @@
 import { ux } from '@oclif/core'
-import { BaseCommand } from '../../common'
-import { iamService } from '../../services/affinidi/iam'
-import { TokenDto } from '../../services/affinidi/iam/iam.api'
+import { BaseCommand } from '../../common/base-command.js'
+import { iamService } from '../../services/affinidi/iam/service.js'
+import { TokenDto } from '../../services/affinidi/iam/iam.api.js'
 
 export class ListTokens extends BaseCommand<typeof ListTokens> {
   static summary = 'Lists your Personal Access Tokens (PATs)'

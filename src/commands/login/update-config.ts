@@ -1,16 +1,16 @@
 import { readFile } from 'fs/promises'
 import { Flags, ux } from '@oclif/core'
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
-import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators'
-import { vpAdapterService } from '../../services/affinidi/vp-adapter'
+import { BaseCommand } from '../../common/base-command.js'
+import { promptRequiredParameters } from '../../common/prompts.js'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators.js'
+import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
 import {
   LoginConfigurationObject,
   TokenEndpointAuthMethod,
   UpdateLoginConfigurationInput,
-} from '../../services/affinidi/vp-adapter/vp-adapter.api'
+} from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 export class UpdateLoginConfiguration extends BaseCommand<typeof UpdateLoginConfiguration> {
   static summary = 'Updates a login configuration'

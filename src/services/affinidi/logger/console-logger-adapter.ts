@@ -1,4 +1,4 @@
-import { LoggerAdapter, LogLevel } from './logger-adapter'
+import { LoggerAdapter, LogLevel } from './logger-adapter.js'
 
 export class ConsoleLoggerAdapter implements LoggerAdapter {
   private readonly logLevel: LogLevel

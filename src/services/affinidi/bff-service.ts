@@ -1,18 +1,20 @@
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import axios, { AxiosError, RawAxiosRequestHeaders } from 'axios'
 import { KeyLike, generateKeyPair } from 'jose'
-import { BFFAuthProvider } from './auth/bff-auth-provider'
-import { AuthProvider } from './auth/types'
-import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.types'
-import { handleServiceError } from './errors'
-import { CreateProjectInput, ProjectDto, UpdateProjectInput } from './iam/iam.api'
-import { ConsoleLoggerAdapter, LoggerAdapter } from './logger'
-import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants'
-import { credentialsVault } from '../credentials-vault'
-import { config } from '../env-config'
+import { BFFAuthProvider } from './auth/bff-auth-provider.js'
+import { AuthProvider } from './auth/types.js'
+import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.types.js'
+import { handleServiceError } from './errors.js'
+import { CreateProjectInput, ProjectDto, UpdateProjectInput } from './iam/iam.api.js'
+import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
+import { credentialsVault } from '../credentials-vault.js'
+import { config } from '../env-config.js'
+import { LoggerAdapter } from './logger/logger-adapter.js'
+import { ConsoleLoggerAdapter } from './logger/console-logger-adapter.js'
+import { createRequire } from 'module'
 
-/* eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
-require('pkginfo')(module, 'version')
+const require = createRequire(import.meta.url)
+const pkg = require('../../../package.json')
 
 export const instance = axios.create({
   baseURL: config.bffHost,
@@ -25,7 +27,7 @@ export async function getBFFHeaders(): Promise<RawAxiosRequestHeaders> {
     Accept: 'application/json',
     'Accept-Encoding': 'gzip, deflate, br',
     Cookie: `${config.bffCookieName}=${sessionId}`,
-    'affinidi-cli-version': module.exports.version,
+    'affinidi-cli-version': pkg.version,
   }
 }
 

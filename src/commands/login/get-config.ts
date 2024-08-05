@@ -1,10 +1,10 @@
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
-import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT } from '../../common/validators'
-import { vpAdapterService } from '../../services/affinidi/vp-adapter'
-import { LoginConfigurationObject } from '../../services/affinidi/vp-adapter/vp-adapter.api'
+import { BaseCommand } from '../../common/base-command.js'
+import { promptRequiredParameters } from '../../common/prompts.js'
+import { INPUT_LIMIT } from '../../common/validators.js'
+import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
+import { LoginConfigurationObject } from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 export class GetLoginConfiguration extends BaseCommand<typeof GetLoginConfiguration> {
   static summary = 'Gets the details of a login configuration in your active project'

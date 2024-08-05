@@ -1,9 +1,9 @@
 import { ux, Flags } from '@oclif/core'
 import { z } from 'zod'
-import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT } from '../../common/validators'
-import { iamService } from '../../services/affinidi/iam'
+import { BaseCommand } from '../../common/base-command.js'
+import { promptRequiredParameters } from '../../common/prompts.js'
+import { INPUT_LIMIT } from '../../common/validators.js'
+import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class DeleteToken extends BaseCommand<typeof DeleteToken> {
   static summary = 'Deletes a Personal Access Token (PAT)'

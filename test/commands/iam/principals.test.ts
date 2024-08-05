@@ -1,5 +1,7 @@
-import { expect, test } from '@oclif/test'
-import { config } from '../../../src/services/env-config'
+import { runCommand } from '@oclif/test'
+import { config } from '../../../src/services/env-config.js'
+import nock from 'nock'
+import { expect } from 'chai'
 
 // TODO: Extract the mocked data in a shared folder, remove mock duplicates if any.
 
@@ -27,47 +29,43 @@ const listPrincipalsApiResponse = {
 
 describe('iam: commands', function () {
   describe('add-principal', function () {
-    test
-      .nock(IAM_URL, (api) => api.post('/v1/projects/principals').reply(200))
-      .stdout()
-      .command(['iam add-principal', `--principal-id=${principalId}`, `--principal-type=${principalType}`])
-      .it('Adds a principal (user or token) to the active project')
+    it('Adds a principal (user or token) to the active project', async () => {
+      nock(IAM_URL).post('/v1/projects/principals').reply(200)
+      await runCommand(['iam add-principal', `--principal-id=${principalId}`, `--principal-type=${principalType}`])
+    })
   })
 
   describe('list-principals', function () {
-    test
-      .nock(IAM_URL, (api) => api.get('/v1/projects/principals').reply(200, listPrincipalsApiResponse))
-      .stdout()
-      .command(['iam list-principals'])
-      .it('Should return list of projects', (ctx) => {
-        const response = JSON.parse(ctx.stdout)
-        expect(response).to.have.a.property('records')
-        expect(response?.records).to.be.instanceOf(Array)
-        expect(response?.records).to.have.length.greaterThanOrEqual(1)
-
-        for (const record of response.records) {
-          expect(record).to.have.a.property('projectId')
-          expect(record).to.have.a.property('projectName')
-          expect(record).to.have.a.property('principalId')
-          expect(record).to.have.a.property('version')
-          expect(record).to.have.a.property('statement')
-        }
-      })
+    it('Should return list of projects', async () => {
+      nock(IAM_URL).get('/v1/projects/principals').reply(200, listPrincipalsApiResponse)
+      const { stdout } = await runCommand(['iam list-principals'])
+      const response = JSON.parse(stdout)
+      expect(response).to.have.a.property('records')
+      expect(response?.records).to.be.instanceOf(Array)
+      expect(response?.records).to.have.length.greaterThanOrEqual(1)
+      for (const record of response.records) {
+        expect(record).to.have.a.property('projectId')
+        expect(record).to.have.a.property('projectName')
+        expect(record).to.have.a.property('principalId')
+        expect(record).to.have.a.property('version')
+        expect(record).to.have.a.property('statement')
+      }
+    })
   })
 
   describe('remove-principal', function () {
-    test
-      .nock(IAM_URL, (api) =>
-        api.delete(`/v1/projects/principals/${principalId}?principalType=${principalType}`).reply(200),
-      )
-      .stdout()
-      .command(['iam remove-principal', `--principal-id=${principalId}`, `--principal-type=${principalType}`])
-      .it('Does nothing when user has a single project.', (ctx) => {
-        const response = JSON.parse(ctx.stdout)
-        expect(response).to.have.a.property('principal-id')
-        expect(response).to.have.a.property('principal-type')
-        expect(response['principal-id']).to.be.equal(principalId)
-        expect(response['principal-type']).to.be.equal('token')
-      })
+    it('Does nothing when user has a single project.', async () => {
+      nock(IAM_URL).delete(`/v1/projects/principals/${principalId}?principalType=${principalType}`).reply(200)
+      const { stdout } = await runCommand([
+        'iam remove-principal',
+        `--principal-id=${principalId}`,
+        `--principal-type=${principalType}`,
+      ])
+      const response = JSON.parse(stdout)
+      expect(response).to.have.a.property('principal-id')
+      expect(response).to.have.a.property('principal-type')
+      expect(response['principal-id']).to.be.equal(principalId)
+      expect(response['principal-type']).to.be.equal('token')
+    })
   })
 })

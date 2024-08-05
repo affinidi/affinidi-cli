@@ -1,17 +1,18 @@
 import { readFile } from 'fs/promises'
 import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
-import { BaseCommand, IdTokenClaimFormats } from '../../common'
-import { giveFlagInputErrorMessage } from '../../common/error-messages'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators'
-import { vpAdapterService } from '../../services/affinidi/vp-adapter'
+import { BaseCommand } from '../../common/base-command.js'
+import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators.js'
+import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
 import {
   CreateLoginConfigurationInput,
   CreateLoginConfigurationOutput,
   TokenEndpointAuthMethod,
-} from '../../services/affinidi/vp-adapter/vp-adapter.api'
+} from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
+import { IdTokenClaimFormats } from '../../common/constants.js'
 
 export class CreateConfig extends BaseCommand<typeof CreateConfig> {
   static summary = 'Creates a login configuration in your active project'

@@ -3,8 +3,7 @@ import path from 'path'
 import keytar from '@postman/node-keytar'
 import Conf from 'conf'
 import z from 'zod'
-import { config } from './env-config'
-import { ConsoleLoggerAdapter, LoggerAdapter } from '../services/affinidi/logger'
+import { config } from './env-config.js'
 
 const sessionIdSchema = z.string()
 const credentialsSchema = z.object({
@@ -21,11 +20,7 @@ const service = 'sessionID (@affinidi/cli)'
 // NOTE: `keytar` uses `libsecret` for Linux, and if that service is
 //        not installed, CLI falls back to saving sessionId into file.
 class CredentialsVault {
-  private readonly logger: LoggerAdapter
-
-  constructor(private readonly store: Conf<Credentials>) {
-    this.logger = new ConsoleLoggerAdapter(config.logLevel)
-  }
+  constructor(private readonly store: Conf<Credentials>) {}
 
   async clear(): Promise<void> {
     try {

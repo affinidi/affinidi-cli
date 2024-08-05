@@ -1,9 +1,9 @@
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
-import { BaseCommand } from '../../common'
-import { promptRequiredParameters } from '../../common/prompts'
-import { INPUT_LIMIT } from '../../common/validators'
-import { vpAdapterService } from '../../services/affinidi/vp-adapter'
+import { BaseCommand } from '../../common/base-command.js'
+import { promptRequiredParameters } from '../../common/prompts.js'
+import { INPUT_LIMIT } from '../../common/validators.js'
+import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
 
 export class RemoveUserFromGroup extends BaseCommand<typeof RemoveUserFromGroup> {
   static summary = 'Removes a user from a user group'

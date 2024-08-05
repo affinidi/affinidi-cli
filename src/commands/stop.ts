@@ -1,9 +1,9 @@
-import confirm from '@inquirer/confirm'
+import { confirm } from '@inquirer/prompts'
 import { ux } from '@oclif/core'
-import { CLIError } from '@oclif/core/lib/errors'
-import { BaseCommand } from '../common'
-import { bffService } from '../services/affinidi/bff-service'
-import { credentialsVault } from '../services/credentials-vault'
+import { CLIError } from '@oclif/core/errors'
+import { BaseCommand } from '../common/base-command.js'
+import { bffService } from '../services/affinidi/bff-service.js'
+import { credentialsVault } from '../services/credentials-vault.js'
 
 export class Stop extends BaseCommand<typeof Stop> {
   static summary = 'Log out from Affinidi'

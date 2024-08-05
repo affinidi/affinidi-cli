@@ -48,7 +48,8 @@ out
 *.tgz
 
 # dotenv environment variables file
-.env
+.env*
+!.env.example
 .npmrc
 
 *.pem

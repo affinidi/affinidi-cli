@@ -1,6 +1,6 @@
-const path = require('path')
+import { resolve } from 'path'
 
-process.env.TS_NODE_PROJECT = path.resolve('tsconfig-test.json')
+process.env.TS_NODE_PROJECT = resolve('tsconfig-test.json')
 process.env.NODE_ENV = 'test'
 // TODO remove or use carefully
 process.env.AFFINIDI_CLI_ENVIRONMENT = 'local'

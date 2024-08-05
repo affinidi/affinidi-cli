@@ -3,18 +3,18 @@
 
 Display help for affinidi.
 
-* [`affinidi help [COMMANDS]`](#affinidi-help-commands)
+* [`affinidi help [COMMAND]`](#affinidi-help-command)
 
-## `affinidi help [COMMANDS]`
+## `affinidi help [COMMAND]`
 
 Display help for affinidi.
 
 ```
 USAGE
-  $ affinidi help [COMMANDS] [-n]
+  $ affinidi help [COMMAND...] [-n]
 
 ARGUMENTS
-  COMMANDS  Command to show help for.
+  COMMAND...  Command to show help for.
 
 FLAGS
   -n, --nested-commands  Include all nested commands in the output.
@@ -23,4 +23,4 @@ DESCRIPTION
   Display help for affinidi.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.18/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.7/src/commands/help.ts)_

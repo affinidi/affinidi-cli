@@ -15,7 +15,8 @@ Creates a project and sets it as the active project
 
 ```
 USAGE
-  $ affinidi project create-project [--json] [--no-color] [--no-input] [-n <value>] [-d <value>]
+  $ affinidi project create-project [--json] [--no-color] [--no-input] [-n <value>] [-d
+    <value>]
 
 FLAGS
   -d, --description=<value>  Description of the project
@@ -31,6 +32,8 @@ EXAMPLES
 
   $ affinidi project create-project --name "My project name"
 ```
+
+_See code: [src/commands/project/create-project.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/project/create-project.ts)_
 
 ## `affinidi project get-active-project`
 
@@ -49,6 +52,8 @@ EXAMPLES
   $ affinidi project get-active-project
 ```
 
+_See code: [src/commands/project/get-active-project.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/project/get-active-project.ts)_
+
 ## `affinidi project list-projects`
 
 Lists your projects
@@ -65,6 +70,8 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi project list-projects
 ```
+
+_See code: [src/commands/project/list-projects.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/project/list-projects.ts)_
 
 ## `affinidi project select-project`
 
@@ -90,13 +97,16 @@ EXAMPLES
   $ affinidi project select-project --project-id <project-id>
 ```
 
+_See code: [src/commands/project/select-project.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/project/select-project.ts)_
+
 ## `affinidi project update-project`
 
 Updates project details
 
 ```
 USAGE
-  $ affinidi project update-project [--json] [--no-color] [--no-input] [-i <value>] [-n <value>] [-d <value>]
+  $ affinidi project update-project [--json] [--no-color] [--no-input] [-i <value>] [-n
+    <value>] [-d <value>]
 
 FLAGS
   -d, --description=<value>  Description of the project
@@ -113,3 +123,5 @@ EXAMPLES
 
   $ affinidi project update-project --name="My project name" --description="My project description
 ```
+
+_See code: [src/commands/project/update-project.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/project/update-project.ts)_

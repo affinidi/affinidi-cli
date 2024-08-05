@@ -26,7 +26,8 @@ Adds a user to a user group
 
 ```
 USAGE
-  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-id <value>]
+  $ affinidi login add-user-to-group [--json] [--no-color] [--no-input] [--group-name
+    <value>] [--user-id <value>]
 
 FLAGS
   --group-name=<value>  Name of the user group
@@ -41,28 +42,30 @@ EXAMPLES
   $ affinidi login add-user-to-group --group-name my_group --user-id did:key:12345
 ```
 
+_See code: [src/commands/login/add-user-to-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/add-user-to-group.ts)_
+
 ## `affinidi login create-config`
 
 Creates a login configuration in your active project
 
 ```
 USAGE
-  $ affinidi login create-config [--json] [--no-color] [--no-input] [-f <value> | -n <value> | -u <value> |
-    --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --claim-format array|map | --client-name
-    <value> | --client-origin <value> | --client-logo <value>]
+  $ affinidi login create-config [--json] [--no-color] [--no-input] [-f <value> | -n
+    <value> | -u <value> | --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --claim-format
+    array|map | --client-name <value> | --client-origin <value> | --client-logo <value>]
 
 FLAGS
-  -f, --file=<value>                     Location of a json file containing login configuration data
-  -n, --name=<value>                     Name of the login configuration
-  -u, --redirect-uris=<value>            OAuth 2.0 redirect URIs, separated by space
-  --claim-format=<option>                ID token claims output format. Defaults to array
-                                         <options: array|map>
-  --client-logo=<value>                  URL of a logo for the client, displayed in the consent page
-  --client-name=<value>                  Name of the client, displayed in the consent page
-  --client-origin=<value>                Origin of the client, displayed in the consent page
-  --token-endpoint-auth-method=<option>  Client authentication method for the token endpoint. Defaults to
-                                         client_secret_post
-                                         <options: client_secret_basic|client_secret_post|none>
+  -f, --file=<value>                         Location of a json file containing login configuration data
+  -n, --name=<value>                         Name of the login configuration
+  -u, --redirect-uris=<value>                OAuth 2.0 redirect URIs, separated by space
+      --claim-format=<option>                ID token claims output format. Defaults to array
+                                             <options: array|map>
+      --client-logo=<value>                  URL of a logo for the client, displayed in the consent page
+      --client-name=<value>                  Name of the client, displayed in the consent page
+      --client-origin=<value>                Origin of the client, displayed in the consent page
+      --token-endpoint-auth-method=<option>  Client authentication method for the token endpoint. Defaults to
+                                             client_secret_post
+                                             <options: client_secret_basic|client_secret_post|none>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -90,6 +93,8 @@ FLAG DESCRIPTIONS
     none: For public clients (native/mobile apps) which can not have a secret
 ```
 
+_See code: [src/commands/login/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/create-config.ts)_
+
 ## `affinidi login create-group`
 
 Create a user group in your active project
@@ -111,6 +116,8 @@ EXAMPLES
 
   $ affinidi login create-group --name my_new_group
 ```
+
+_See code: [src/commands/login/create-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/create-group.ts)_
 
 ## `affinidi login delete-config`
 
@@ -134,6 +141,8 @@ EXAMPLES
   $ affinidi login delete-config --id <value>
 ```
 
+_See code: [src/commands/login/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/delete-config.ts)_
+
 ## `affinidi login delete-group`
 
 Deletes a user group from your active project
@@ -156,13 +165,16 @@ EXAMPLES
   $ affinidi login delete-group --name my_group
 ```
 
+_See code: [src/commands/login/delete-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/delete-group.ts)_
+
 ## `affinidi login export-configs`
 
 Export selected login configurations of your active project
 
 ```
 USAGE
-  $ affinidi login export-configs [--json] [--no-color] [--no-input] [-i <value>] [-p <value>]
+  $ affinidi login export-configs [--json] [--no-color] [--no-input] [-i <value>] [-p
+    <value>]
 
 FLAGS
   -i, --ids=<value>   IDs of the login configurations to export, separated by space
@@ -179,13 +191,16 @@ EXAMPLES
   $ affinidi login export-configs --ids "configurationId1 configurationId2" --path "../my-configs.json"
 ```
 
+_See code: [src/commands/login/export-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/export-configs.ts)_
+
 ## `affinidi login export-groups`
 
 Export selected user groups with its users
 
 ```
 USAGE
-  $ affinidi login export-groups [--json] [--no-color] [--no-input] [-n <value>] [-p <value>]
+  $ affinidi login export-groups [--json] [--no-color] [--no-input] [-n <value>] [-p
+    <value>]
 
 FLAGS
   -n, --names=<value>  Group names to export, separated by space
@@ -201,6 +216,8 @@ EXAMPLES
 
   $ affinidi login export-groups --names "groupName1 groupName2" --path "../my-user-groups.json"
 ```
+
+_See code: [src/commands/login/export-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/export-groups.ts)_
 
 ## `affinidi login get-config`
 
@@ -224,6 +241,8 @@ EXAMPLES
   $ affinidi login get-config --id <value>
 ```
 
+_See code: [src/commands/login/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/get-config.ts)_
+
 ## `affinidi login get-group`
 
 Gets the details of a user group
@@ -245,6 +264,8 @@ EXAMPLES
 
   $ affinidi login get-group --name my_group
 ```
+
+_See code: [src/commands/login/get-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/get-group.ts)_
 
 ## `affinidi login import-configs`
 
@@ -268,6 +289,8 @@ EXAMPLES
   $ affinidi login import-configs --path "../my-configs.json"
 ```
 
+_See code: [src/commands/login/import-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/import-configs.ts)_
+
 ## `affinidi login import-groups`
 
 Import groups with its users
@@ -290,6 +313,8 @@ EXAMPLES
   $ affinidi login import-groups --path "../my-groups.json"
 ```
 
+_See code: [src/commands/login/import-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/import-groups.ts)_
+
 ## `affinidi login list-configs`
 
 Lists login configurations in your active project
@@ -306,6 +331,8 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi login list-configs
 ```
+
+_See code: [src/commands/login/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/list-configs.ts)_
 
 ## `affinidi login list-groups`
 
@@ -324,14 +351,16 @@ EXAMPLES
   $ affinidi login list-groups
 ```
 
+_See code: [src/commands/login/list-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/list-groups.ts)_
+
 ## `affinidi login list-users-in-group`
 
 Use this command to list users in the user group
 
 ```
 USAGE
-  $ affinidi login list-users-in-group [--json] [--no-color] [--no-input] [--group-name <value>] [--page-size <value>]
-    [--starting-token <value>]
+  $ affinidi login list-users-in-group [--json] [--no-color] [--no-input] [--group-name
+    <value>] [--page-size <value>] [--starting-token <value>]
 
 FLAGS
   --group-name=<value>      Name of the user group
@@ -347,13 +376,16 @@ EXAMPLES
   $ affinidi login list-users-in-group --group-name my_group
 ```
 
+_See code: [src/commands/login/list-users-in-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/list-users-in-group.ts)_
+
 ## `affinidi login remove-user-from-group`
 
 Removes a user from a user group
 
 ```
 USAGE
-  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name <value>] [--user-id <value>]
+  $ affinidi login remove-user-from-group [--json] [--no-color] [--no-input] [--group-name
+    <value>] [--user-id <value>]
 
 FLAGS
   --group-name=<value>  Name of the user group
@@ -368,27 +400,29 @@ EXAMPLES
   $ affinidi login remove-user-from-group --group-name my_group --user-id did:key:12345
 ```
 
+_See code: [src/commands/login/remove-user-from-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/remove-user-from-group.ts)_
+
 ## `affinidi login update-config`
 
 Updates a login configuration
 
 ```
 USAGE
-  $ affinidi login update-config [--json] [--no-color] [--no-input] [-i <value>] [-f <value> | -n <value> | -u <value> |
-    --token-endpoint-auth-method client_secret_basic|client_secret_post|none | --client-name <value> | --client-origin
-    <value> | --client-logo <value>]
+  $ affinidi login update-config [--json] [--no-color] [--no-input] [-i <value>] [-f
+    <value> | -n <value> | -u <value> | --token-endpoint-auth-method client_secret_basic|client_secret_post|none |
+    --client-name <value> | --client-origin <value> | --client-logo <value>]
 
 FLAGS
-  -f, --file=<value>                     Location of a json file containing login configuration data
-  -i, --id=<value>                       ID of the login configuration
-  -n, --name=<value>                     Name of the login configuration
-  -u, --redirect-uris=<value>            OAuth 2.0 redirect URIs, separated by space
-  --client-logo=<value>                  URL of a logo for the client, displayed in the consent page
-  --client-name=<value>                  Name of the client, displayed in the consent page
-  --client-origin=<value>                Origin of the client, displayed in the consent page
-  --token-endpoint-auth-method=<option>  Client authentication method for the token endpoint. Defaults to
-                                         client_secret_post
-                                         <options: client_secret_basic|client_secret_post|none>
+  -f, --file=<value>                         Location of a json file containing login configuration data
+  -i, --id=<value>                           ID of the login configuration
+  -n, --name=<value>                         Name of the login configuration
+  -u, --redirect-uris=<value>                OAuth 2.0 redirect URIs, separated by space
+      --client-logo=<value>                  URL of a logo for the client, displayed in the consent page
+      --client-name=<value>                  Name of the client, displayed in the consent page
+      --client-origin=<value>                Origin of the client, displayed in the consent page
+      --token-endpoint-auth-method=<option>  Client authentication method for the token endpoint. Defaults to
+                                             client_secret_post
+                                             <options: client_secret_basic|client_secret_post|none>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -413,3 +447,5 @@ FLAG DESCRIPTIONS
     Authorization header
     none: For public clients (native/mobile apps) which can not have a secret
 ```
+
+_See code: [src/commands/login/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/update-config.ts)_

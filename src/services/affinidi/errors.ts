@@ -1,8 +1,8 @@
-import { CLIError } from '@oclif/core/lib/errors'
+import { CLIError } from '@oclif/core/errors'
 import { AxiosError } from 'axios'
 import chalk from 'chalk'
 import { StatusCodes } from 'http-status-codes'
-import { credentialsVault } from '../credentials-vault'
+import { credentialsVault } from '../credentials-vault.js'
 
 export const AuthTokenExpired = "Your session has expired. Please, run command 'affinidi start' and try again."
 export const InvalidOrMissingAuthToken =

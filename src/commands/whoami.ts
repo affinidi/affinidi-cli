@@ -1,6 +1,6 @@
 import { ux } from '@oclif/core'
-import { BaseCommand } from '../common'
-import { bffService } from '../services/affinidi/bff-service'
+import { BaseCommand } from '../common/base-command.js'
+import { bffService } from '../services/affinidi/bff-service.js'
 
 export class WhoAmI extends BaseCommand<typeof WhoAmI> {
   static summary = "Returns user's subject, projects, and token details from the current session."
