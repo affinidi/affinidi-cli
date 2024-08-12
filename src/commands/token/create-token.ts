@@ -4,13 +4,13 @@ import { Flags, ux } from '@oclif/core'
 import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { SupportedAlgorithms } from '../../common/constants.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
 import { getKeyType, pemToJWK } from '../../helpers/jwk.js'
+import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
 import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api.js'
-import { SupportedAlgorithms } from '../../common/constants.js'
-import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
 
 const flagsSchema = z
   .object({
@@ -130,11 +130,10 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
     if (!this.jsonEnabled()) {
       this.logJson(token)
-      this.log(
-        '\nUse the projectId, tokenId, privateKey and passphrase (if provided) to use this token with Affinidi TDK',
-      )
+      this.log('\nCopy the following fields to use this token with Affinidi TDK')
       this.logJson({
         tokenId: token.id,
+        ...(validatedFlags['key-id'] && { keyId: validatedFlags['key-id'] }),
         ...(validatedFlags['with-permissions'] && { projectId }),
         ...(validatedFlags['auto-generate-key'] && {
           privateKey: keypair?.privateKey as string,
