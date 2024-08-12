@@ -35,3 +35,8 @@ export enum ServiceResourceIds {
   IAM_PROJECTS = 'iam.resource.Projects',
   VPA_CONFIGURATIONS = 'vpa.resource.Configurations',
 }
+
+export enum DidMethods {
+  KEY = 'key',
+  WEB = 'web',
+}
