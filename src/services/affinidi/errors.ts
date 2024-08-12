@@ -61,10 +61,11 @@ const getCommonAPIErrorMessage = (response: any): string => {
   }
 }
 
-export function handleServiceError(
-  error: unknown,
-  serviceErrorMessageHandler?: (response: any) => string | null,
-): never {
+export function handleServiceError(error: any, serviceErrorMessageHandler?: (response: any) => string | null): never {
+  if (error?.message === 'Session expired') {
+    throw new Error(AuthTokenExpired)
+  }
+
   const isAxiosError = error instanceof AxiosError
 
   if (!isAxiosError) {
