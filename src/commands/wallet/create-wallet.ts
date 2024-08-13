@@ -1,4 +1,4 @@
-import { CreateWalletInput, WalletDto } from '@affinidi-tdk/wallets-client'
+import { WalletDto } from '@affinidi-tdk/wallets-client'
 import { input } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
