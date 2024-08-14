@@ -1,6 +1,8 @@
 import { ux, Flags } from '@oclif/core'
+import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
@@ -20,6 +22,12 @@ export class DeletePexQuery extends BaseCommand<typeof DeletePexQuery> {
   public async run(): Promise<{ queryId: string }> {
     const { flags } = await this.parse(DeletePexQuery)
     const promptFlags = await promptRequiredParameters(['configuration-id', 'query-id'], flags)
+
+    if (flags['no-input']) {
+      if (!flags['query-id']) throw new CLIError(giveFlagInputErrorMessage('query-id'))
+      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
+    }
+
     const schema = z.object({
       'configuration-id': z.string().max(INPUT_LIMIT).uuid(),
       'query-id': z.string().max(INPUT_LIMIT).uuid(),

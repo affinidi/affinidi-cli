@@ -1,7 +1,9 @@
 import { PexQueryDto } from '@affinidi-tdk/iota-client'
 import { ux, Flags } from '@oclif/core'
+import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
@@ -22,6 +24,10 @@ export class ListPexQueries extends BaseCommand<typeof ListPexQueries> {
   public async run(): Promise<PexQueryDto[]> {
     const { flags } = await this.parse(ListPexQueries)
     const promptFlags = await promptRequiredParameters(['configuration-id'], flags)
+
+    if (flags['no-input']) {
+      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
+    }
 
     const schema = z.object({
       'configuration-id': z.string().min(1).max(INPUT_LIMIT).uuid(),

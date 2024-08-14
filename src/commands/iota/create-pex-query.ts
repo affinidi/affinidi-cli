@@ -39,6 +39,12 @@ export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
     const { flags } = await this.parse(CreatePexQuery)
     const promptFlags = await promptRequiredParameters(['configuration-id', 'name', 'file'], flags)
 
+    if (flags['no-input']) {
+      if (!flags.name) throw new CLIError(giveFlagInputErrorMessage('name'))
+      if (!flags.file) throw new CLIError(giveFlagInputErrorMessage('file'))
+      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
+    }
+
     const flagsSchema = z.object({
       'configuration-id': z.string().max(INPUT_LIMIT).uuid(),
       name: z.string().min(3).max(INPUT_LIMIT),
@@ -63,12 +69,6 @@ export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
       }
     } catch (error) {
       throw new CLIError(`Provided file is not a valid JSON\n${(error as Error).message}`)
-    }
-
-    if (flags['no-input']) {
-      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
-      if (!flags.name) throw new CLIError(giveFlagInputErrorMessage('name'))
-      if (!flags.file) throw new CLIError(giveFlagInputErrorMessage('file'))
     }
 
     const inputSchema = z.object({
