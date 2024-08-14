@@ -37,6 +37,11 @@ export class UpdatePexQuery extends BaseCommand<typeof UpdatePexQuery> {
     const { flags } = await this.parse(UpdatePexQuery)
     const promptFlags = await promptRequiredParameters(['configuration-id', 'query-id'], flags)
 
+    if (flags['no-input']) {
+      if (!flags['query-id']) throw new CLIError(giveFlagInputErrorMessage('query-id'))
+      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
+    }
+
     const flagsSchema = z.object({
       'configuration-id': z.string().max(INPUT_LIMIT).uuid(),
       'query-id': z.string().max(INPUT_LIMIT).uuid(),
