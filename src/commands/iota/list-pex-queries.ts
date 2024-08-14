@@ -24,7 +24,7 @@ export class ListPexQueries extends BaseCommand<typeof ListPexQueries> {
     const promptFlags = await promptRequiredParameters(['configuration-id'], flags)
 
     const schema = z.object({
-      'configuration-id': z.string().max(INPUT_LIMIT),
+      'configuration-id': z.string().min(1).max(INPUT_LIMIT).uuid(),
     })
     const validatedFlags = schema.parse(promptFlags)
 
