@@ -58,13 +58,14 @@ export class UpdatePexQuery extends BaseCommand<typeof UpdatePexQuery> {
 
       try {
         data = JSON.parse(rawData)
-        const vpDefinition = JSON.stringify(data)
-        validateInputLength(vpDefinition, PRESENTATION_DEFINITION_LIMIT)
-
-        data.vpDefinition = vpDefinition
       } catch (error) {
         throw new CLIError(`Provided file is not a valid JSON\n${(error as Error).message}`)
       }
+
+      const vpDefinition = JSON.stringify(data)
+      validateInputLength(vpDefinition, PRESENTATION_DEFINITION_LIMIT)
+
+      data.vpDefinition = vpDefinition
     }
 
     if (validatedFlags.description) {
