@@ -9,7 +9,7 @@ import { INPUT_LIMIT } from '../../common/validators.js'
 import { cweService } from '../../services/affinidi/cwe/service.js'
 
 export class GetWallet extends BaseCommand<typeof GetWallet> {
-  static summary = 'Gets the details of wallet in your active project'
+  static summary = 'Gets wallet details in your active project'
   static examples = [
     '<%= config.bin %> <%= command.id %> -i <value>',
     '<%= config.bin %> <%= command.id %> --id <value>',
