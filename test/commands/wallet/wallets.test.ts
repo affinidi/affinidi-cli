@@ -1,9 +1,9 @@
 import { runCommand } from '@oclif/test'
-import { config } from '../../../src/services/env-config.js'
-import nock from 'nock'
 import { expect } from 'chai'
+import nock from 'nock'
 
 import { DidMethods } from '../../../src/common/constants.js'
+import { config } from '../../../src/services/env-config.js'
 
 const CWE_URL = `${config.bffHost}/cwe`
 
@@ -105,7 +105,7 @@ describe('wallet', function () {
     })
   })
 
-  describe('token:get-token', () => {
+  describe('wallet:get-wallet', () => {
     it('outputs the token info based on id', async () => {
       nock(CWE_URL).get(`/v1/wallets/${didKeyWallet.id}`).reply(200, didKeyWallet)
       const { stdout } = await runCommand(['wallet:get-wallet', `--id=${didKeyWallet.id}`])
