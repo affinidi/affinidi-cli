@@ -1,5 +1,5 @@
 import { WalletDto } from '@affinidi-tdk/wallets-client'
-import { input } from '@inquirer/prompts'
+import { input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
@@ -26,12 +26,12 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
     description: Flags.string({
       char: 'd',
       summary: 'Description of the wallet',
+      default: '',
     }),
     'did-method': Flags.string({
       char: 'm',
       summary: 'DID method',
       options: Object.values(DidMethods),
-      default: DidMethods.KEY,
     }),
     'did-web-url': Flags.string({
       char: 'u',
@@ -61,22 +61,46 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
       }
     }
 
-    const data: any = {}
+    const walletDidMethodChoices = Object.values(DidMethods).map((method: string) => ({
+      name: method,
+      value: method,
+      default: DidMethods.KEY,
+    }))
 
-    if (flags['did-method'] === DidMethods.WEB) {
-      data.name = flags.name
-      data.description = flags.description
-      data.didMethod = flags['did-method']
-      data.didWebUrl =
-        flags['did-web-url'] ?? validateInputLength(await input({ message: 'Enter did:web URL' }), INPUT_LIMIT)
+    const name = flags.name ?? validateInputLength(await input({ message: 'Enter wallet name' }), INPUT_LIMIT)
+    const description =
+      flags.description ??
+      validateInputLength(await input({ message: 'Enter wallet description (optional)' }), INPUT_LIMIT)
+    const didMethod =
+      flags['did-method'] ?? (await select({ message: 'Select DID method of wallet', choices: walletDidMethodChoices }))
+
+    const isDidWeb = didMethod === DidMethods.WEB
+    const didWebUrl = isDidWeb
+      ? flags['did-web-url'] ??
+        validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT)
+      : undefined
+
+    const data: any = {
+      name,
+      description,
+      didMethod,
+      ...(isDidWeb && { didWebUrl }),
     }
 
-    const schema = z.object({
-      name: z.string().min(1).max(INPUT_LIMIT).optional(),
-      description: z.string().min(1).max(INPUT_LIMIT).optional(),
-      didMethod: z.nativeEnum(DidMethods).optional(),
-      didWebUrl: z.string().min(1).max(INPUT_LIMIT).optional(),
-    })
+    const schema = z
+      .object({
+        name: z.string().min(3).max(INPUT_LIMIT).optional(),
+        description: z.string().max(INPUT_LIMIT).optional(),
+        didMethod: z.nativeEnum(DidMethods).optional(),
+        didWebUrl: z.string().min(3).max(INPUT_LIMIT).optional(),
+      })
+      .refine((wallet) => {
+        if (wallet.didMethod === DidMethods.WEB && !wallet.didWebUrl) {
+          return false
+        }
+        return true
+      })
+
     const createWalletInput = schema.parse(data)
 
     ux.action.start('Creating wallet')
