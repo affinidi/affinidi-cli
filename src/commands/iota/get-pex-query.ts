@@ -30,13 +30,13 @@ export class GetPexQuery extends BaseCommand<typeof GetPexQuery> {
     }
 
     const schema = z.object({
-      configurationId: z.string().max(INPUT_LIMIT).uuid(),
-      queryId: z.string().max(INPUT_LIMIT).uuid(),
+      'configuration-id': z.string().min(1).max(INPUT_LIMIT).uuid(),
+      'query-id': z.string().min(1).max(INPUT_LIMIT).uuid(),
     })
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Fetching PEX query')
-    const output = await iotaService.getPexQueryById(validatedFlags.configurationId, validatedFlags.queryId)
+    const output = await iotaService.getPexQueryById(validatedFlags['configuration-id'], validatedFlags['query-id'])
     ux.action.stop('Fetched successfully!')
 
     if (!this.jsonEnabled()) this.logJson(output)

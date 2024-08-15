@@ -43,7 +43,7 @@ const configuration = {
   configurationId: '8740f97f-d5cb-4fdb-af23-4c769cfed3ab',
 }
 
-describe.only('iota configs', function () {
+describe('iota configs', function () {
   describe('iota:create-config', () => {
     it('creates a configutation and outputs its info', async () => {
       nock(AIS_URL).post('/v1/configurations').reply(200, configuration)

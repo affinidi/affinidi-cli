@@ -48,7 +48,7 @@ export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
     const flagsSchema = z.object({
       'configuration-id': z.string().max(INPUT_LIMIT).uuid(),
       name: z.string().min(3).max(INPUT_LIMIT),
-      description: z.string().min(3).max(INPUT_LIMIT).optional(),
+      description: z.string().max(INPUT_LIMIT).optional(),
       file: z.string(),
     })
     const validatedFlags = flagsSchema.parse(promptFlags)
@@ -58,17 +58,18 @@ export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
 
     try {
       data = JSON.parse(rawData)
-      const vpDefinition = JSON.stringify(data)
-      validateInputLength(vpDefinition, PRESENTATION_DEFINITION_LIMIT)
-
-      data.name = validatedFlags.name
-      data.vpDefinition = vpDefinition
-
-      if (validatedFlags.description) {
-        data.description = validatedFlags.description
-      }
     } catch (error) {
       throw new CLIError(`Provided file is not a valid JSON\n${(error as Error).message}`)
+    }
+
+    const vpDefinition = JSON.stringify(data)
+    validateInputLength(vpDefinition, PRESENTATION_DEFINITION_LIMIT)
+
+    data.name = validatedFlags.name
+    data.vpDefinition = vpDefinition
+
+    if (validatedFlags.description) {
+      data.description = validatedFlags.description
     }
 
     const inputSchema = z.object({
