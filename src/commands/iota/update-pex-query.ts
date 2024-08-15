@@ -10,7 +10,7 @@ import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from 
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
 export class UpdatePexQuery extends BaseCommand<typeof UpdatePexQuery> {
-  static summary = 'Creates Iota configuration in your active project'
+  static summary = 'Updates PEX query for your Iota configuration'
   static examples = [
     '<%= config.bin %> <%= command.id %> --configuration-id <value> --query-id <value> -d <value> -f pexQuery.json',
     '<%= config.bin %> <%= command.id %> --configuration-id <value> --query-id <value> --description <value> --file pexQuery.json',
@@ -45,7 +45,7 @@ export class UpdatePexQuery extends BaseCommand<typeof UpdatePexQuery> {
     const flagsSchema = z.object({
       'configuration-id': z.string().max(INPUT_LIMIT).uuid(),
       'query-id': z.string().max(INPUT_LIMIT).uuid(),
-      description: z.string().min(3).max(INPUT_LIMIT).optional(),
+      description: z.string().max(INPUT_LIMIT).optional(),
       file: z.string().optional(),
     })
 
@@ -72,10 +72,6 @@ export class UpdatePexQuery extends BaseCommand<typeof UpdatePexQuery> {
       data.description = validatedFlags.description
     }
 
-    if (flags['no-input']) {
-      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
-    }
-
     const inputSchema = z.object({
       description: z.string().optional(),
       vpDefinition: z.string().optional(),
@@ -83,13 +79,13 @@ export class UpdatePexQuery extends BaseCommand<typeof UpdatePexQuery> {
 
     const input = inputSchema.parse(data)
 
-    ux.action.start('Creating PEX query')
+    ux.action.start('Updating PEX query')
     const output = await iotaService.updatePexQueryById(
       validatedFlags['configuration-id'],
       validatedFlags['query-id'],
       input,
     )
-    ux.action.stop('Created successfully!')
+    ux.action.stop('Updated successfully!')
 
     if (!this.jsonEnabled()) this.logJson(output)
     return output

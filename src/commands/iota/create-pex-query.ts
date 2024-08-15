@@ -10,7 +10,7 @@ import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from 
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
 export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
-  static summary = 'Creates Iota configuration in your active project'
+  static summary = 'Creates PEX query for your Iota configuration'
   static examples = [
     '<%= config.bin %> <%= command.id %> -i <value> -n <value> -d <value> -f pexQuery.json',
     '<%= config.bin %> <%= command.id %> --configuration-id <value> --name <value> --description <value> --file pexQuery.json',
