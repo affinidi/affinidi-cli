@@ -81,7 +81,7 @@ describe('iota pex-queries', function () {
     })
   })
 
-  describe.skip('iota:update-pex-query', () => {
+  describe('iota:update-pex-query', () => {
     it('updates PEX query', async () => {
       nock(AIS_URL).patch(`/v1/configurations/${configurationId}/pex-queries/${pexQuery.queryId}`).reply(200, pexQuery)
 
@@ -89,6 +89,7 @@ describe('iota pex-queries', function () {
         'iota:update-pex-query',
         `--configuration-id=${configurationId}`,
         `--query-id=${pexQuery.queryId}`,
+        `--file=${pexQueryFilePath}`,
         `--description=${pexQuery.description}`,
       ])
       const response = JSON.parse(stdout)
