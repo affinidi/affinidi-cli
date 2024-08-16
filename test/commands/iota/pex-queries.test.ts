@@ -24,12 +24,13 @@ const pexQuery = {
   queryId: '790a97ee-35eb-4e0e-84d1-357ae94d1cb6',
 }
 
-describe('iota pex-queries', function () {
-  describe.skip('iota:create-pex-query', () => {
+describe('iota: pex-queries commands', function () {
+  describe('iota:create-pex-query', () => {
     it('creates a PEX query and outputs its info', async () => {
       nock(AIS_URL).post(`/v1/configurations/${configurationId}/pex-queries`).reply(200, pexQuery)
       const { stdout } = await runCommand([
         'iota:create-pex-query',
+        `--configuration-id=${configurationId}`,
         `--name=${pexQuery.name}`,
         `--description=${pexQuery.description}`,
         `--file=${pexQueryFilePath}`,
