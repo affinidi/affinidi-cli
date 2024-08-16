@@ -143,7 +143,7 @@ describe('wallet', function () {
 
       const { stdout } = await runCommand([
         'wallet:update-wallet',
-        `--description=${didKeyWalletUpdated.description}`,
+        `--name=${didKeyWalletUpdated.name}`,
         `--id=${didKeyWallet.id}`,
       ])
       const response = JSON.parse(stdout)

@@ -35,6 +35,7 @@ export class UpdateWallet extends BaseCommand<typeof UpdateWallet> {
 
     if (flags['no-input']) {
       if (!flags.id) throw new CLIError(giveFlagInputErrorMessage('id'))
+      if (!flags.name && !flags.description) throw new CLIError(giveFlagInputErrorMessage('`name` or `description`'))
     }
 
     let data: UpdateWalletInput = {}
@@ -44,15 +45,26 @@ export class UpdateWallet extends BaseCommand<typeof UpdateWallet> {
       description: promptFlags.description,
     }
 
-    const schema = z.object({
-      id: z.string().max(INPUT_LIMIT),
-      name: z.string().min(1).max(INPUT_LIMIT).optional(),
-      description: z.string().min(1).max(INPUT_LIMIT).optional(),
-    })
-    const validatedFlags = schema.parse(promptFlags)
+    const schema = z
+      .object({
+        name: z.string().max(INPUT_LIMIT).optional(),
+        description: z.string().max(INPUT_LIMIT).optional(),
+      })
+      .refine(
+        (value) => {
+          if (!value.name && !value.description) {
+            return false
+          }
+          return true
+        },
+        {
+          message: 'at least one field `name` or `description` has to be provided',
+        },
+      )
+    const input = schema.parse(data)
 
     ux.action.start('Updating wallet')
-    const output = await cweService.updateWallet(validatedFlags.id, data)
+    const output = await cweService.updateWallet(promptFlags.id, input)
     ux.action.stop('Updated successfully!')
 
     if (!this.jsonEnabled()) this.logJson(output)
