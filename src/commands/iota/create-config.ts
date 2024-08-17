@@ -32,8 +32,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       summary: 'ARI of the wallet',
     }),
     'token-max-age': Flags.integer({
-      summary: 'Token expiration time in minutes - integer between 1 and 10',
-      default: 10,
+      summary: 'Token expiration time in seconds',
     }),
     'response-webhook-url': Flags.string({
       summary: 'Affinidi Iota Framework response webhook URL',
@@ -148,13 +147,9 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       description: flags.description ?? '',
       walletAri,
       iotaResponseWebhookURL: flags['response-webhook-url'] ?? '',
-      enableVerification:
-        flags['enable-verification'] ?? (await confirm({ message: 'Enable verification?', default: false })),
-      enableConsentAuditLog:
-        flags['enable-consent-audit-log'] ?? (await confirm({ message: 'Enable consent audit log?', default: false })),
-      tokenMaxAge:
-        flags['token-max-age'] ??
-        (await number({ message: 'Enter token max age, minutes: 1-10', min: 1, max: 10, default: 10 })),
+      enableVerification: flags['enable-verification'] || false,
+      enableConsentAuditLog: flags['enable-consent-audit-log'] || false,
+      tokenMaxAge: flags['token-max-age'] ?? undefined,
       clientMetadata: {
         name: flags['client-name'] ?? '',
         origin: flags['client-origin'] ?? '',
