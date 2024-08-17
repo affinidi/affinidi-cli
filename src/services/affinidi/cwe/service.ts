@@ -1,4 +1,12 @@
-import { WalletApi, Configuration, CreateWalletInput, UpdateWalletInput } from '@affinidi-tdk/wallets-client'
+import {
+  WalletApi,
+  WalletDto,
+  Configuration,
+  WalletsListDto,
+  CreateWalletInput,
+  UpdateWalletInput,
+  CreateWalletResponse,
+} from '@affinidi-tdk/wallets-client'
 import { config } from '../../env-config.js'
 import { getBFFHeaders } from '../bff-service.js'
 import { handleServiceError } from '../errors.js'
@@ -10,7 +18,7 @@ const basePath = `${config.bffHost}/cwe`
 class CweService {
   constructor(private readonly client = new WalletApi(new Configuration({ basePath, baseOptions }))) {}
 
-  public listWallets = async (): Promise<any> => {
+  public listWallets = async (): Promise<WalletsListDto> => {
     try {
       const response = await this.client.listWallets()
 
@@ -20,7 +28,7 @@ class CweService {
     }
   }
 
-  public getWallet = async (id: string): Promise<any> => {
+  public getWallet = async (id: string): Promise<WalletDto> => {
     try {
       const response = await this.client.getWallet(id)
 
@@ -30,7 +38,7 @@ class CweService {
     }
   }
 
-  public updateWallet = async (id: string, input: UpdateWalletInput): Promise<any> => {
+  public updateWallet = async (id: string, input: UpdateWalletInput): Promise<WalletDto> => {
     try {
       const response = await this.client.updateWallet(id, input)
 
@@ -40,7 +48,7 @@ class CweService {
     }
   }
 
-  public createWallet = async (input: CreateWalletInput): Promise<any> => {
+  public createWallet = async (input: CreateWalletInput): Promise<CreateWalletResponse> => {
     try {
       const response = await this.client.createWallet(input)
 

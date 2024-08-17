@@ -24,12 +24,12 @@ const pexQuery = {
   queryId: '790a97ee-35eb-4e0e-84d1-357ae94d1cb6',
 }
 
-describe('iota: pex-queries commands', function () {
-  describe('iota:create-pex-query', () => {
+describe('iota: queries commands', function () {
+  describe('iota:create-query', () => {
     it('creates a PEX query and outputs its info', async () => {
       nock(AIS_URL).post(`/v1/configurations/${configurationId}/pex-queries`).reply(200, pexQuery)
       const { stdout } = await runCommand([
-        'iota:create-pex-query',
+        'iota:create-query',
         `--configuration-id=${configurationId}`,
         `--name=${pexQuery.name}`,
         `--description=${pexQuery.description}`,
@@ -47,11 +47,11 @@ describe('iota: pex-queries commands', function () {
     })
   })
 
-  describe('iota:get-pex-query', () => {
+  describe('iota:get-query', () => {
     it('outputs PEX query info based on query ID', async () => {
       nock(AIS_URL).get(`/v1/configurations/${configurationId}/pex-queries/${pexQuery.queryId}`).reply(200, pexQuery)
       const { stdout } = await runCommand([
-        'iota:get-pex-query',
+        'iota:get-query',
         `--configuration-id=${configurationId} --query-id=${pexQuery.queryId}`,
       ])
       const response = JSON.parse(stdout)
@@ -64,14 +64,14 @@ describe('iota: pex-queries commands', function () {
     })
   })
 
-  describe('iota:list-pex-queries', () => {
+  describe('iota:list-queries', () => {
     it('outputs the list of PEX queries', async () => {
       nock(AIS_URL)
         .get(`/v1/configurations/${configurationId}/pex-queries`)
         .reply(200, {
           pexQueries: [pexQuery],
         })
-      const { stdout } = await runCommand([`iota:list-pex-queries --configuration-id=${configurationId}`])
+      const { stdout } = await runCommand([`iota:list-queries --configuration-id=${configurationId}`])
       const { pexQueries: response } = JSON.parse(stdout)
       expect(response[0]).to.have.a.property('ari')
       expect(response[0]).to.have.a.property('name')
@@ -82,12 +82,12 @@ describe('iota: pex-queries commands', function () {
     })
   })
 
-  describe('iota:update-pex-query', () => {
+  describe('iota:update-query', () => {
     it('updates PEX query', async () => {
       nock(AIS_URL).patch(`/v1/configurations/${configurationId}/pex-queries/${pexQuery.queryId}`).reply(200, pexQuery)
 
       const { stdout } = await runCommand([
-        'iota:update-pex-query',
+        'iota:update-query',
         `--configuration-id=${configurationId}`,
         `--query-id=${pexQuery.queryId}`,
         `--file=${pexQueryFilePath}`,
@@ -103,11 +103,11 @@ describe('iota: pex-queries commands', function () {
     })
   })
 
-  describe('iota:delete-pex-query', () => {
+  describe('iota:delete-query', () => {
     it('deletes PEX query', async () => {
       nock(AIS_URL).delete(`/v1/configurations/${configurationId}/pex-queries/${pexQuery.queryId}`).reply(200)
       const { stdout } = await runCommand([
-        'iota:delete-pex-query',
+        'iota:delete-query',
         `--configuration-id=${configurationId} --query-id=${pexQuery.queryId}`,
       ])
       const response = JSON.parse(stdout)

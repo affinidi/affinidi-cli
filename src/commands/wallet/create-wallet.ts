@@ -1,4 +1,4 @@
-import { WalletDto } from '@affinidi-tdk/wallets-client'
+import { CreateWalletInput, CreateWalletResponse } from '@affinidi-tdk/wallets-client'
 import { input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -6,7 +6,6 @@ import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { DidMethods } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
 import { cweService } from '../../services/affinidi/cwe/service.js'
 
@@ -43,20 +42,18 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
           type: 'all',
           flags: [
             // Include `didWebUrl` but only when `method` is equal to `web`
-            { name: 'did-web-url', when: async (flags: any) => flags['did-method'] === DidMethods.WEB },
+            { name: 'did-web-url', when: async (flags) => flags['did-method'] === DidMethods.WEB },
           ],
         },
       ],
     }),
   }
 
-  public async run(): Promise<WalletDto> {
+  public async run(): Promise<CreateWalletResponse> {
     const { flags } = await this.parse(CreateWallet)
 
     if (flags['no-input'] && flags['did-method'] === DidMethods.WEB) {
-      const promptFlags = await promptRequiredParameters(['did-web-url'], flags)
-
-      if (!promptFlags['did-web-url']) {
+      if (!flags['did-web-url']) {
         throw new CLIError(giveFlagInputErrorMessage('did-web-url'))
       }
     }
@@ -80,7 +77,7 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
         validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT)
       : undefined
 
-    const data: any = {
+    const data = {
       name,
       description,
       didMethod,
@@ -104,7 +101,7 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
     const createWalletInput = schema.parse(data)
 
     ux.action.start('Creating wallet')
-    const output = await cweService.createWallet(createWalletInput as any)
+    const output = await cweService.createWallet(createWalletInput as CreateWalletInput)
     ux.action.stop('Created successfully!')
 
     if (!this.jsonEnabled()) this.logJson(output)

@@ -4,22 +4,21 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
-export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
-  static summary = 'Creates PEX query for your Iota configuration'
+export class CreateQuery extends BaseCommand<typeof CreateQuery> {
+  static summary = 'Creates PEX query for your Affinidi Iota Framework configuration'
   static examples = [
-    '<%= config.bin %> <%= command.id %> -i <value> -n <value> -d <value> -f pexQuery.json',
+    '<%= config.bin %> <%= command.id %> -c <value> -n <value> -d <value> -f pexQuery.json',
     '<%= config.bin %> <%= command.id %> --configuration-id <value> --name <value> --description <value> --file pexQuery.json',
   ]
 
   static flags = {
     'configuration-id': Flags.string({
-      char: 'i',
-      summary: 'ID of the Iota configuration',
+      char: 'c',
+      summary: 'ID of the Affinidi Iota Framework configuration',
     }),
     name: Flags.string({
       char: 'n',
@@ -36,14 +35,8 @@ export class CreatePexQuery extends BaseCommand<typeof CreatePexQuery> {
   }
 
   public async run(): Promise<PexQueryDto> {
-    const { flags } = await this.parse(CreatePexQuery)
+    const { flags } = await this.parse(CreateQuery)
     const promptFlags = await promptRequiredParameters(['configuration-id', 'name', 'file'], flags)
-
-    if (flags['no-input']) {
-      if (!flags.name) throw new CLIError(giveFlagInputErrorMessage('name'))
-      if (!flags.file) throw new CLIError(giveFlagInputErrorMessage('file'))
-      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
-    }
 
     const flagsSchema = z.object({
       'configuration-id': z.string().max(INPUT_LIMIT).uuid(),

@@ -1,33 +1,27 @@
-import { PexQueryDto } from '@affinidi-tdk/iota-client'
+import { ListPexQueriesOK } from '@affinidi-tdk/iota-client'
 import { ux, Flags } from '@oclif/core'
-import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
-export class ListPexQueries extends BaseCommand<typeof ListPexQueries> {
-  static summary = 'Lists PEX queries for your Iota configuration'
+export class ListQueries extends BaseCommand<typeof ListQueries> {
+  static summary = 'Lists PEX queries for your Affinidi Iota Framework configuration'
   static examples = [
-    '<%= config.bin %> <%= command.id %> -i <value>',
+    '<%= config.bin %> <%= command.id %> -c <value>',
     '<%= config.bin %> <%= command.id %> --configuration-id <value>',
   ]
   static flags = {
     'configuration-id': Flags.string({
-      char: 'i',
-      summary: 'ID of the Iota configuration',
+      char: 'c',
+      summary: 'ID of the Affinidi Iota Framework configuration',
     }),
   }
 
-  public async run(): Promise<PexQueryDto[]> {
-    const { flags } = await this.parse(ListPexQueries)
+  public async run(): Promise<ListPexQueriesOK> {
+    const { flags } = await this.parse(ListQueries)
     const promptFlags = await promptRequiredParameters(['configuration-id'], flags)
-
-    if (flags['no-input']) {
-      if (!flags['configuration-id']) throw new CLIError(giveFlagInputErrorMessage('configuration-id'))
-    }
 
     const schema = z.object({
       'configuration-id': z.string().min(1).max(INPUT_LIMIT).uuid(),
