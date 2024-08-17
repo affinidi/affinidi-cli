@@ -52,8 +52,12 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
   public async run(): Promise<CreateWalletResponse> {
     const { flags } = await this.parse(CreateWallet)
 
-    if (flags['no-input'] && flags['did-method'] === DidMethods.WEB) {
-      if (!flags['did-web-url']) {
+    if (flags['no-input']) {
+      if (!flags['did-method']) {
+        throw new CLIError(giveFlagInputErrorMessage('did-method'))
+      }
+
+      if (flags['did-method'] === DidMethods.WEB && !flags['did-web-url']) {
         throw new CLIError(giveFlagInputErrorMessage('did-web-url'))
       }
     }
@@ -64,10 +68,8 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
       default: DidMethods.KEY,
     }))
 
-    const name = flags.name ?? validateInputLength(await input({ message: 'Enter wallet name' }), INPUT_LIMIT)
-    const description =
-      flags.description ??
-      validateInputLength(await input({ message: 'Enter wallet description (optional)' }), INPUT_LIMIT)
+    const name = flags.name ?? ''
+    const description = flags.description ?? ''
     const didMethod =
       flags['did-method'] ?? (await select({ message: 'Select DID method of wallet', choices: walletDidMethodChoices }))
 
@@ -86,7 +88,7 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
 
     const schema = z
       .object({
-        name: z.string().min(3).max(INPUT_LIMIT).optional(),
+        name: z.string().max(INPUT_LIMIT).optional(),
         description: z.string().max(INPUT_LIMIT).optional(),
         didMethod: z.nativeEnum(DidMethods).optional(),
         didWebUrl: z.string().min(3).max(INPUT_LIMIT).optional(),
