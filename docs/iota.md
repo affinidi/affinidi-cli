@@ -34,7 +34,7 @@ FLAGS
       --enable-consent-audit-log      Log consents
       --enable-verification           Perform verification
       --response-webhook-url=<value>  Affinidi Iota Framework response webhook URL
-      --token-max-age=<value>         [default: 10] Token expiration time in minutes - integer between 1 and 10
+      --token-max-age=<value>         Token expiration time in seconds
 
 GLOBAL FLAGS
   --json      Format output as json.
