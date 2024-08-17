@@ -2,8 +2,10 @@ import {
   PexQueryApi,
   PexQueryDto,
   CreatePexQueryInput,
+  ListConfigurationOK,
   UpdatePexQueryInput,
   Configuration,
+  ListPexQueriesOK,
   ConfigurationsApi,
   IotaConfigurationDto,
   CreateIotaConfigurationInput,
@@ -23,7 +25,7 @@ class IotaService {
     private readonly pexQueryApiClient = new PexQueryApi(new Configuration({ basePath, baseOptions })),
   ) {}
 
-  public listIotaConfigurations = async (): Promise<any> => {
+  public listIotaConfigurations = async (): Promise<ListConfigurationOK> => {
     try {
       const response = await this.configurationsApiClient.listIotaConfigurations()
 
@@ -43,7 +45,10 @@ class IotaService {
     }
   }
 
-  public updateIotaConfigById = async (configurationId: string, input: UpdateConfigurationByIdInput): Promise<any> => {
+  public updateIotaConfigById = async (
+    configurationId: string,
+    input: UpdateConfigurationByIdInput,
+  ): Promise<IotaConfigurationDto> => {
     try {
       const response = await this.configurationsApiClient.updateIotaConfigurationById(configurationId, input)
 
@@ -71,7 +76,7 @@ class IotaService {
     }
   }
 
-  public listPexQueries = async (configurationId: string): Promise<any> => {
+  public listPexQueries = async (configurationId: string): Promise<ListPexQueriesOK> => {
     try {
       const response = await this.pexQueryApiClient.listPexQueries(configurationId)
 
@@ -95,7 +100,7 @@ class IotaService {
     configurationId: string,
     queryId: string,
     input: UpdatePexQueryInput,
-  ): Promise<any> => {
+  ): Promise<PexQueryDto> => {
     try {
       const response = await this.pexQueryApiClient.updatePexQueryById(configurationId, queryId, input)
 

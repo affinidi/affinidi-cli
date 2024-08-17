@@ -1,4 +1,5 @@
 import { CreateIotaConfigurationInput, IotaConfigurationDto } from '@affinidi-tdk/iota-client'
+import { WalletDto, CreateWalletInput } from '@affinidi-tdk/wallets-client'
 import { input, select, confirm, number } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -11,21 +12,23 @@ import { cweService } from '../../services/affinidi/cwe/service.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
 export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
-  static summary = 'Creates Iota configuration in your active project'
+  static summary = 'Creates Affinidi Iota Framework configuration in your active project'
   static examples = [
+    '<%= config.bin %> <%= command.id %> -n <value> -w <value>',
     '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value>',
-    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log <value> --enable-verification <value> --token-max-age <value>',
+    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value>',
   ]
   static flags = {
     name: Flags.string({
       char: 'n',
-      summary: 'Name of the Iota configuration',
+      summary: 'Name of the Affinidi Iota Framework configuration',
     }),
     description: Flags.string({
       char: 'd',
-      summary: 'Description of the Iota configuration',
+      summary: 'Description of the Affinidi Iota Framework configuration',
     }),
     'wallet-ari': Flags.string({
+      char: 'w',
       summary: 'ARI of the wallet',
     }),
     'token-max-age': Flags.integer({
@@ -33,7 +36,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       default: 10,
     }),
     'response-webhook-url': Flags.string({
-      summary: 'Iota response webhook URL',
+      summary: 'Affinidi Iota Framework response webhook URL',
     }),
     'enable-verification': Flags.boolean({
       summary: 'Perform verification',
@@ -62,23 +65,26 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       if (!flags['wallet-ari']) throw new CLIError(giveFlagInputErrorMessage('wallet-ari'))
     }
 
-    let walletAri: string = flags['wallet-ari'] || ''
+    let walletAri = flags['wallet-ari']
 
+    ux.action.start('Fetching wallets')
     const { wallets } = await cweService.listWallets()
+    ux.action.stop('Fetched successfully!')
 
-    const walletAris = wallets.map((wallet: any) => wallet.ari)
+    const walletAris = wallets?.map((wallet: WalletDto) => wallet.ari) || []
     const wrongAriProvided = !walletAris.includes(walletAri)
 
-    if (!walletAri || wallets.length === 0 || wrongAriProvided) {
-      const walletChoices = wallets.map((wallet: any) => ({
-        name: wallet.name || wallet.id,
-        value: wallet.ari,
-      }))
+    if (!walletAri || wallets?.length === 0 || wrongAriProvided) {
+      const walletChoices =
+        wallets?.map((wallet: WalletDto) => ({
+          name: wallet.name || wallet.id,
+          value: wallet.ari,
+        })) || []
 
       const CREATE_NEW_WALLET = 'Create new wallet'
       walletChoices.push({ name: CREATE_NEW_WALLET, value: CREATE_NEW_WALLET })
 
-      const selectedWallet: string = await select({
+      const selectedWallet = await select({
         message: 'Select the wallet used to sign the request token to the Affinidi Vault',
         choices: walletChoices,
       })
@@ -90,43 +96,55 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
           default: DidMethods.KEY,
         }))
 
+        const name = validateInputLength(await input({ message: 'Enter wallet name' }), INPUT_LIMIT)
+        const description = validateInputLength(
+          await input({ message: 'Enter wallet description (optional)' }),
+          INPUT_LIMIT,
+        )
         const didMethod = await select({ message: 'Select DID method of wallet', choices: walletDidMethodChoices })
 
+        const isDidWeb = didMethod === DidMethods.WEB
+        const didWebUrl = isDidWeb
+          ? validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT)
+          : undefined
+
         const newWalletData = {
-          name: validateInputLength(await input({ message: 'Enter wallet name' }), INPUT_LIMIT),
-          description: validateInputLength(
-            await input({ message: 'Enter wallet description (optional)' }),
-            INPUT_LIMIT,
-          ),
+          name,
+          description,
           didMethod,
-          ...(didMethod === DidMethods.WEB && {
-            didWebUrl: validateInputLength(
-              await input({ message: 'Enter did:web URL (your applications domain)' }),
-              INPUT_LIMIT,
-            ),
-          }),
+          ...(isDidWeb && { didWebUrl }),
         }
 
-        const walletSchema = z.object({
-          name: z.string().min(3).max(INPUT_LIMIT).optional(),
-          description: z.string().max(INPUT_LIMIT).optional(),
-          didMethod: z.nativeEnum(DidMethods).optional(),
-          didWebUrl: z.string().max(INPUT_LIMIT).optional(),
-        })
+        const walletSchema = z
+          .object({
+            name: z.string().min(3).max(INPUT_LIMIT).optional(),
+            description: z.string().max(INPUT_LIMIT).optional(),
+            didMethod: z.nativeEnum(DidMethods).optional(),
+            didWebUrl: z.string().min(3).max(INPUT_LIMIT).optional(),
+          })
+          .refine((wallet) => {
+            if (wallet.didMethod === DidMethods.WEB && !wallet.didWebUrl) {
+              return false
+            }
+            return true
+          })
+
         const createWalletInput = walletSchema.parse(newWalletData)
 
         ux.action.start('Creating wallet')
-        const { wallet } = await cweService.createWallet(createWalletInput as any)
+        const output = await cweService.createWallet(createWalletInput as CreateWalletInput)
         ux.action.stop('Created successfully!')
 
-        walletAri = wallet.ari
+        walletAri = output.wallet?.ari || ''
       } else {
-        walletAri = selectedWallet
+        walletAri = selectedWallet || ''
       }
     }
 
     const data: CreateIotaConfigurationInput = {
-      name: flags.name ?? validateInputLength(await input({ message: 'Enter Iota configuration name' }), INPUT_LIMIT),
+      name:
+        flags.name ??
+        validateInputLength(await input({ message: 'Enter Affinidi Iota Framework configuration name' }), INPUT_LIMIT),
       description: flags.description ?? '',
       walletAri,
       iotaResponseWebhookURL: flags['response-webhook-url'] ?? '',
@@ -160,7 +178,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
     })
     const configInput = schema.parse(data)
 
-    ux.action.start('Creating Iota configurations')
+    ux.action.start('Creating Affinidi Iota Framework configuration')
     const output = await iotaService.createIotaConfig(configInput)
     ux.action.stop('Created successfully!')
 

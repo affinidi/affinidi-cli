@@ -1,15 +1,13 @@
 import { UpdateConfigurationByIdInput, IotaConfigurationDto } from '@affinidi-tdk/iota-client'
 import { ux, Flags } from '@oclif/core'
-import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
 export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
-  static summary = 'Updates Iota configuration in your active project'
+  static summary = 'Updates Affinidi Iota Framework configuration in your active project'
   static examples = [
     '<%= config.bin %> <%= command.id %> -i <value>',
     '<%= config.bin %> <%= command.id %> --id <value>',
@@ -17,15 +15,15 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
   static flags = {
     id: Flags.string({
       char: 'i',
-      summary: 'ID of the Iota configuration',
+      summary: 'ID of the Affinidi Iota Framework configuration',
     }),
     name: Flags.string({
       char: 'n',
-      summary: 'Name of the Iota configuration',
+      summary: 'Name of the Affinidi Iota Framework configuration',
     }),
     description: Flags.string({
       char: 'd',
-      summary: 'Description of the Iota configuration',
+      summary: 'Description of the Affinidi Iota Framework configuration',
     }),
     'wallet-ari': Flags.string({
       summary: 'ARI of the wallet',
@@ -34,7 +32,7 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
       summary: 'Token expiration time in seconds - integer between 1 and 10',
     }),
     'response-webhook-url': Flags.string({
-      summary: 'Iota response webhook URL',
+      summary: 'Affinidi Iota Framework response webhook URL',
     }),
     'enable-verification': Flags.boolean({
       summary: 'Perform verification',
@@ -57,10 +55,6 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
     const { flags } = await this.parse(UpdateIotaConfig)
     const promptFlags = await promptRequiredParameters(['id'], flags)
 
-    if (flags['no-input']) {
-      if (!flags.id) throw new CLIError(giveFlagInputErrorMessage('id'))
-    }
-
     const flagsSchema = z.object({ id: z.string().max(INPUT_LIMIT).uuid() })
     const validatedFlags = flagsSchema.parse(promptFlags)
 
@@ -69,8 +63,8 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
       description: promptFlags.description ?? undefined,
       walletAri: promptFlags['wallet-ari'] ?? undefined,
       iotaResponseWebhookURL: promptFlags['response-webhook-url'] ?? undefined,
-      enableVerification: promptFlags['enable-verification'] ?? undefined,
-      enableConsentAuditLog: promptFlags['enable-consent-audit-log'] ?? undefined,
+      enableVerification: promptFlags['enable-verification'] ?? false,
+      enableConsentAuditLog: promptFlags['enable-consent-audit-log'] ?? false,
       tokenMaxAge: promptFlags['token-max-age'] ?? undefined,
     }
 
@@ -100,7 +94,7 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
     })
     const configInput = schema.parse(data)
 
-    ux.action.start('Updating Iota configurations')
+    ux.action.start('Updating Affinidi Iota Framework configuration')
     const output = await iotaService.updateIotaConfigById(validatedFlags.id, configInput)
     ux.action.stop('Updated successfully!')
 
