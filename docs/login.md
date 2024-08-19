@@ -42,7 +42,7 @@ EXAMPLES
   $ affinidi login add-user-to-group --group-name my_group --user-id did:key:12345
 ```
 
-_See code: [src/commands/login/add-user-to-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/add-user-to-group.ts)_
+_See code: [src/commands/login/add-user-to-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/add-user-to-group.ts)_
 
 ## `affinidi login create-config`
 
@@ -93,7 +93,7 @@ FLAG DESCRIPTIONS
     none: For public clients (native/mobile apps) which can not have a secret
 ```
 
-_See code: [src/commands/login/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/create-config.ts)_
+_See code: [src/commands/login/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/create-config.ts)_
 
 ## `affinidi login create-group`
 
@@ -117,7 +117,7 @@ EXAMPLES
   $ affinidi login create-group --name my_new_group
 ```
 
-_See code: [src/commands/login/create-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/create-group.ts)_
+_See code: [src/commands/login/create-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/create-group.ts)_
 
 ## `affinidi login delete-config`
 
@@ -141,7 +141,7 @@ EXAMPLES
   $ affinidi login delete-config --id <value>
 ```
 
-_See code: [src/commands/login/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/delete-config.ts)_
+_See code: [src/commands/login/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/delete-config.ts)_
 
 ## `affinidi login delete-group`
 
@@ -165,7 +165,7 @@ EXAMPLES
   $ affinidi login delete-group --name my_group
 ```
 
-_See code: [src/commands/login/delete-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/delete-group.ts)_
+_See code: [src/commands/login/delete-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/delete-group.ts)_
 
 ## `affinidi login export-configs`
 
@@ -191,7 +191,7 @@ EXAMPLES
   $ affinidi login export-configs --ids "configurationId1 configurationId2" --path "../my-configs.json"
 ```
 
-_See code: [src/commands/login/export-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/export-configs.ts)_
+_See code: [src/commands/login/export-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/export-configs.ts)_
 
 ## `affinidi login export-groups`
 
@@ -217,7 +217,7 @@ EXAMPLES
   $ affinidi login export-groups --names "groupName1 groupName2" --path "../my-user-groups.json"
 ```
 
-_See code: [src/commands/login/export-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/export-groups.ts)_
+_See code: [src/commands/login/export-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/export-groups.ts)_
 
 ## `affinidi login get-config`
 
@@ -241,7 +241,7 @@ EXAMPLES
   $ affinidi login get-config --id <value>
 ```
 
-_See code: [src/commands/login/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/get-config.ts)_
+_See code: [src/commands/login/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/get-config.ts)_
 
 ## `affinidi login get-group`
 
@@ -265,7 +265,7 @@ EXAMPLES
   $ affinidi login get-group --name my_group
 ```
 
-_See code: [src/commands/login/get-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/get-group.ts)_
+_See code: [src/commands/login/get-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/get-group.ts)_
 
 ## `affinidi login import-configs`
 
@@ -289,7 +289,7 @@ EXAMPLES
   $ affinidi login import-configs --path "../my-configs.json"
 ```
 
-_See code: [src/commands/login/import-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/import-configs.ts)_
+_See code: [src/commands/login/import-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/import-configs.ts)_
 
 ## `affinidi login import-groups`
 
@@ -313,7 +313,7 @@ EXAMPLES
   $ affinidi login import-groups --path "../my-groups.json"
 ```
 
-_See code: [src/commands/login/import-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/import-groups.ts)_
+_See code: [src/commands/login/import-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/import-groups.ts)_
 
 ## `affinidi login list-configs`
 
@@ -332,7 +332,7 @@ EXAMPLES
   $ affinidi login list-configs
 ```
 
-_See code: [src/commands/login/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/list-configs.ts)_
+_See code: [src/commands/login/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/list-configs.ts)_
 
 ## `affinidi login list-groups`
 
@@ -351,7 +351,7 @@ EXAMPLES
   $ affinidi login list-groups
 ```
 
-_See code: [src/commands/login/list-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/list-groups.ts)_
+_See code: [src/commands/login/list-groups.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/list-groups.ts)_
 
 ## `affinidi login list-users-in-group`
 
@@ -376,7 +376,7 @@ EXAMPLES
   $ affinidi login list-users-in-group --group-name my_group
 ```
 
-_See code: [src/commands/login/list-users-in-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/list-users-in-group.ts)_
+_See code: [src/commands/login/list-users-in-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/list-users-in-group.ts)_
 
 ## `affinidi login remove-user-from-group`
 
@@ -400,7 +400,7 @@ EXAMPLES
   $ affinidi login remove-user-from-group --group-name my_group --user-id did:key:12345
 ```
 
-_See code: [src/commands/login/remove-user-from-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/remove-user-from-group.ts)_
+_See code: [src/commands/login/remove-user-from-group.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/remove-user-from-group.ts)_
 
 ## `affinidi login update-config`
 
@@ -448,4 +448,4 @@ FLAG DESCRIPTIONS
     none: For public clients (native/mobile apps) which can not have a secret
 ```
 
-_See code: [src/commands/login/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.7.0/src/commands/login/update-config.ts)_
+_See code: [src/commands/login/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/login/update-config.ts)_
