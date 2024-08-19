@@ -43,6 +43,8 @@
     "oclif"
   ],
   "dependencies": {
+    "@affinidi-tdk/iota-client": "^1.11.0",
+    "@affinidi-tdk/wallets-client": "^1.14.0",
     "@inquirer/prompts": "^5.3.4",
     "@oclif/core": "^4.0.17",
     "@oclif/plugin-autocomplete": "^3.1.11",
@@ -128,6 +130,12 @@
       },
       "generate": {
         "description": "Use these commands to generate code to get started or to scaffold your solution"
+      },
+      "iota": {
+        "description": "Use these commands to manage Iota configurations"
+      },
+      "wallet": {
+        "description": "Use these commands to manage your wallets"
       }
     },
     "warn-if-update-available": {

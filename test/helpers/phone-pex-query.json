@@ -1,0 +1,32 @@
+{
+  "id": "token_with_contact_vc",
+  "input_descriptors": [
+    {
+      "id": "profile_phone",
+      "name": "Contact VC",
+      "purpose": "Check if Vault contains the required VC.",
+      "constraints": {
+        "fields": [
+          {
+            "path": [
+              "$.type"
+            ],
+            "purpose": "Check if VC type is correct",
+            "filter": {
+              "type": "array",
+              "contains": {
+                "type": "string",
+                "pattern": "^HITPhoneNumber$"
+              }
+            }
+          },
+          {
+            "path": [
+              "$.credentialSubject.phoneNumber"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

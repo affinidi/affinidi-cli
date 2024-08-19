@@ -256,12 +256,14 @@ When you run `affinidi stop` your session information is deleted.
 * [`affinidi generate`](docs/generate.md) - Use these commands to generate code to get started or to scaffold your solution
 * [`affinidi help`](docs/help.md) - Display help for affinidi.
 * [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration
+* [`affinidi iota`](docs/iota.md) - Use these commands to manage Iota configurations
 * [`affinidi login`](docs/login.md) - Use these commands for user login configuration and group management
 * [`affinidi project`](docs/project.md) - Use these commands to manage your projects
 * [`affinidi search`](docs/search.md) - Search for a command.
 * [`affinidi start`](docs/start.md) - Log in to Affinidi
 * [`affinidi stop`](docs/stop.md) - Log out from Affinidi
 * [`affinidi token`](docs/token.md) - Use these commands for Personal Access Token (PAT) management
+* [`affinidi wallet`](docs/wallet.md) - Use these commands to manage your wallets
 * [`affinidi whoami`](docs/whoami.md) - Returns user's subject, projects, and token details from the current session.
 
 <!-- commandsstop -->
