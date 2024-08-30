@@ -43,6 +43,7 @@
     "oclif"
   ],
   "dependencies": {
+    "@affinidi-tdk/credential-issuance-client": "^1.21.0",
     "@affinidi-tdk/iota-client": "^1.11.0",
     "@affinidi-tdk/wallets-client": "^1.14.0",
     "@inquirer/prompts": "^5.3.4",
@@ -136,6 +137,9 @@
       },
       "wallet": {
         "description": "Use these commands to manage your wallets"
+      },
+      "issuance": {
+        "description": "Use these commands to manage credential issuance configuration"
       }
     },
     "warn-if-update-available": {
