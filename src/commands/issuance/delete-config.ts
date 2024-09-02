@@ -3,10 +3,10 @@ import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
-import { iotaService } from '../../services/affinidi/iota/service.js'
+import { issuanceService } from '../../services/affinidi/cis/service.js'
 
-export class DeleteIotaConfig extends BaseCommand<typeof DeleteIotaConfig> {
-  static summary = 'Deletes Affinidi Iota Framework configuration from your active project'
+export class DeleteIssuanceConfig extends BaseCommand<typeof DeleteIssuanceConfig> {
+  static summary = 'Deletes credential issuance configuration from your active project'
   static examples = [
     '<%= config.bin %> <%= command.id %> -i <value>',
     '<%= config.bin %> <%= command.id %> --id <value>',
@@ -14,12 +14,12 @@ export class DeleteIotaConfig extends BaseCommand<typeof DeleteIotaConfig> {
   static flags = {
     id: Flags.string({
       char: 'i',
-      summary: 'ID of the Affinidi Iota Framework configuration',
+      summary: 'ID of the credential issuance configuration',
     }),
   }
 
   public async run(): Promise<{ id: string }> {
-    const { flags } = await this.parse(DeleteIotaConfig)
+    const { flags } = await this.parse(DeleteIssuanceConfig)
     const promptFlags = await promptRequiredParameters(['id'], flags)
 
     const schema = z.object({
@@ -27,8 +27,8 @@ export class DeleteIotaConfig extends BaseCommand<typeof DeleteIotaConfig> {
     })
     const validatedFlags = schema.parse(promptFlags)
 
-    ux.action.start('Deleting Affinidi Iota Framework configuration')
-    await iotaService.deleteIotaConfigById(validatedFlags.id)
+    ux.action.start('Deleting credential issuance configuration')
+    await issuanceService.deleteIssuanceConfigById(validatedFlags.id)
     ux.action.stop('Deleted successfully!')
 
     if (!this.jsonEnabled()) this.logJson({ id: validatedFlags.id })
