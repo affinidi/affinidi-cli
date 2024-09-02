@@ -139,7 +139,7 @@
         "description": "Use these commands to manage your wallets"
       },
       "issuance": {
-        "description": "Use these commands to manage credential issuance configuration"
+        "description": "Use these commands to manage credential issuance configurations"
       }
     },
     "warn-if-update-available": {
