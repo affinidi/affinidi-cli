@@ -257,6 +257,7 @@ When you run `affinidi stop` your session information is deleted.
 * [`affinidi help`](docs/help.md) - Display help for affinidi.
 * [`affinidi iam`](docs/iam.md) - Use these commands to manage policies for access configuration
 * [`affinidi iota`](docs/iota.md) - Use these commands to manage Iota configurations
+* [`affinidi issuance`](docs/issuance.md) - Use these commands to manage credential issuance configurations
 * [`affinidi login`](docs/login.md) - Use these commands for user login configuration and group management
 * [`affinidi project`](docs/project.md) - Use these commands to manage your projects
 * [`affinidi search`](docs/search.md) - Search for a command.
