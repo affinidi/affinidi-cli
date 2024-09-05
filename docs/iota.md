@@ -49,7 +49,7 @@ EXAMPLES
   $ affinidi iota create-config --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value>
 ```
 
-_See code: [src/commands/iota/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/create-config.ts)_
+_See code: [src/commands/iota/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/create-config.ts)_
 
 ## `affinidi iota create-query`
 
@@ -77,7 +77,7 @@ EXAMPLES
   $ affinidi iota create-query --configuration-id <value> --name <value> --description <value> --file pexQuery.json
 ```
 
-_See code: [src/commands/iota/create-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/create-query.ts)_
+_See code: [src/commands/iota/create-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/create-query.ts)_
 
 ## `affinidi iota delete-config`
 
@@ -101,7 +101,7 @@ EXAMPLES
   $ affinidi iota delete-config --id <value>
 ```
 
-_See code: [src/commands/iota/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/delete-config.ts)_
+_See code: [src/commands/iota/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/delete-config.ts)_
 
 ## `affinidi iota delete-query`
 
@@ -127,7 +127,7 @@ EXAMPLES
   $ affinidi iota delete-query --configuration-id <uuid> --query-id <uuid>
 ```
 
-_See code: [src/commands/iota/delete-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/delete-query.ts)_
+_See code: [src/commands/iota/delete-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/delete-query.ts)_
 
 ## `affinidi iota get-config`
 
@@ -151,7 +151,7 @@ EXAMPLES
   $ affinidi iota get-config --id <value>
 ```
 
-_See code: [src/commands/iota/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/get-config.ts)_
+_See code: [src/commands/iota/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/get-config.ts)_
 
 ## `affinidi iota get-query`
 
@@ -177,7 +177,7 @@ EXAMPLES
   $ affinidi iota get-query --configuration-id <uuid> --query-id <uuid>
 ```
 
-_See code: [src/commands/iota/get-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/get-query.ts)_
+_See code: [src/commands/iota/get-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/get-query.ts)_
 
 ## `affinidi iota list-configs`
 
@@ -196,7 +196,7 @@ EXAMPLES
   $ affinidi iota list-configs
 ```
 
-_See code: [src/commands/iota/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/list-configs.ts)_
+_See code: [src/commands/iota/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/list-configs.ts)_
 
 ## `affinidi iota list-queries`
 
@@ -220,7 +220,7 @@ EXAMPLES
   $ affinidi iota list-queries --configuration-id <value>
 ```
 
-_See code: [src/commands/iota/list-queries.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/list-queries.ts)_
+_See code: [src/commands/iota/list-queries.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/list-queries.ts)_
 
 ## `affinidi iota update-config`
 
@@ -257,7 +257,7 @@ EXAMPLES
   $ affinidi iota update-config --id <value>
 ```
 
-_See code: [src/commands/iota/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/update-config.ts)_
+_See code: [src/commands/iota/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/update-config.ts)_
 
 ## `affinidi iota update-query`
 
@@ -287,4 +287,4 @@ EXAMPLES
   $ affinidi iota update-query --configuration-id <value> --query-id <value> --description <value> --file pexQuery.json
 ```
 
-_See code: [src/commands/iota/update-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.8.1/src/commands/iota/update-query.ts)_
+_See code: [src/commands/iota/update-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/update-query.ts)_
