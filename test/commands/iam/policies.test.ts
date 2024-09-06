@@ -1,7 +1,7 @@
 import { runCommand } from '@oclif/test'
-import { config } from '../../../src/services/env-config.js'
-import nock from 'nock'
 import { expect } from 'chai'
+import nock from 'nock'
+import { config } from '../../../src/services/env-config.js'
 
 const IAM_URL = `${config.bffHost}/iam`
 const principalId = 'b2ce7675-5418-4058-b973-d254270de2d4'

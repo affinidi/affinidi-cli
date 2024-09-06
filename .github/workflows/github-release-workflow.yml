@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
           scope: '@affinidi'
@@ -42,7 +42,7 @@ jobs:
         run: npm run build
 
       - name: Run release
-        run: npx semantic-release@21
+        run: npx semantic-release@24
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}

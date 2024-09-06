@@ -3,8 +3,8 @@ import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
-import { iamService } from '../../services/affinidi/iam/service.js'
 import { TokenDto } from '../../services/affinidi/iam/iam.api.js'
+import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class GetToken extends BaseCommand<typeof GetToken> {
   static summary = 'Gets the details of a Personal Access Token (PAT)'

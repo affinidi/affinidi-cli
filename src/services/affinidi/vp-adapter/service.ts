@@ -1,8 +1,4 @@
 import { AxiosError } from 'axios'
-import { ServiceResourceIds } from '../../../common/constants.js'
-import { config } from '../../env-config.js'
-import { getBFFHeaders, bffService } from '../bff-service.js'
-import { handleServiceError } from '../errors.js'
 import {
   Api as VPAdapterApi,
   CreateLoginConfigurationInput,
@@ -15,6 +11,10 @@ import {
   GroupsList,
   GroupUserMappingsList,
 } from './vp-adapter.api.js'
+import { ServiceResourceIds } from '../../../common/constants.js'
+import { config } from '../../env-config.js'
+import { getBFFHeaders, bffService } from '../bff-service.js'
+import { handleServiceError } from '../errors.js'
 
 export const VPA_SERVICE = 'vp-adapter'
 
