@@ -1,8 +1,8 @@
 import { ux } from '@oclif/core'
 import chalk from 'chalk'
 import { BaseCommand } from '../../common/base-command.js'
-import { iamService } from '../../services/affinidi/iam/service.js'
 import { UserList } from '../../services/affinidi/iam/iam.api.js'
+import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class ListPrincipals extends BaseCommand<typeof ListPrincipals> {
   static summary = 'Lists the principals (users and tokens) in the active project'

@@ -12,7 +12,9 @@
     "resolveJsonModule": true,
     "stripInternal": true,
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   },
   "include": ["./src/**/*"],
   "ts-node": {

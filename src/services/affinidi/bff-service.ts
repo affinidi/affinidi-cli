@@ -1,3 +1,4 @@
+import { createRequire } from 'module'
 import { CLIError } from '@oclif/core/errors'
 import axios, { AxiosError, RawAxiosRequestHeaders } from 'axios'
 import { KeyLike, generateKeyPair } from 'jose'
@@ -6,12 +7,11 @@ import { AuthProvider } from './auth/types.js'
 import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.types.js'
 import { handleServiceError } from './errors.js'
 import { CreateProjectInput, ProjectDto, UpdateProjectInput } from './iam/iam.api.js'
+import { ConsoleLoggerAdapter } from './logger/console-logger-adapter.js'
+import { LoggerAdapter } from './logger/logger-adapter.js'
 import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
 import { credentialsVault } from '../credentials-vault.js'
 import { config } from '../env-config.js'
-import { LoggerAdapter } from './logger/logger-adapter.js'
-import { ConsoleLoggerAdapter } from './logger/console-logger-adapter.js'
-import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
 const pkg = require('../../../package.json')

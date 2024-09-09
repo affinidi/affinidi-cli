@@ -4,6 +4,7 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { IdTokenClaimFormats } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
@@ -12,7 +13,6 @@ import {
   CreateLoginConfigurationOutput,
   TokenEndpointAuthMethod,
 } from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
-import { IdTokenClaimFormats } from '../../common/constants.js'
 
 export class CreateConfig extends BaseCommand<typeof CreateConfig> {
   static summary = 'Creates a login configuration in your active project'

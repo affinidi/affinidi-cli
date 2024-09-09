@@ -4,11 +4,11 @@ import { CLIError } from '@oclif/core/errors'
 import chalk from 'chalk'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { PrincipalTypes } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { iamService } from '../../services/affinidi/iam/service.js'
-import { PrincipalTypes } from '../../common/constants.js'
 
 export class AddPrincipal extends BaseCommand<typeof AddPrincipal> {
   static summary = 'Adds a principal (user or token) to the active project'

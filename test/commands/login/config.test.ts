@@ -1,7 +1,7 @@
 import { runCommand } from '@oclif/test'
-import { config } from '../../../src/services/env-config.js'
-import nock from 'nock'
 import { expect } from 'chai'
+import nock from 'nock'
+import { config } from '../../../src/services/env-config.js'
 
 const VP_ADAPTER_URL = `${config.bffHost}/vpa`
 

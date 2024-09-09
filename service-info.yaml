@@ -1,8 +1,0 @@
-name: affinidi-cli
-description: |-
-  Affinidi CLI
-criticality: high
-visibility: external
-tech-stack: lib
-team-name: developer-experience
-code-repository: https://github.com/affinidi/affinidi-cli.git
