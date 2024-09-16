@@ -1,13 +1,17 @@
-import { CreateIotaConfigurationInput, IotaConfigurationDto } from '@affinidi-tdk/iota-client'
+import {
+  CreateIotaConfigurationInput,
+  IotaConfigurationDto,
+  CreateIotaConfigurationInputModeEnum,
+} from '@affinidi-tdk/iota-client'
 import { WalletDto, CreateWalletInput } from '@affinidi-tdk/wallets-client'
-import { input, select, confirm, number } from '@inquirer/prompts'
+import { input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { DidMethods } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
+import { INPUT_LIMIT, validateInputLength, split } from '../../common/validators.js'
 import { cweService } from '../../services/affinidi/cwe/service.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
@@ -16,7 +20,8 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
   static examples = [
     '<%= config.bin %> <%= command.id %> -n <value> -w <value>',
     '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value>',
-    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value>',
+    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode websocket',
+    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode redirect --redirectUris <value>',
   ]
   static flags = {
     name: Flags.string({
@@ -30,6 +35,16 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
     'wallet-ari': Flags.string({
       char: 'w',
       summary: 'ARI of the wallet',
+    }),
+    mode: Flags.custom<CreateIotaConfigurationInputModeEnum>({
+      char: 'm',
+      summary: 'Mode: websocket | redirect',
+      options: Object.values(CreateIotaConfigurationInputModeEnum),
+    })(),
+    'redirect-uris': Flags.string({
+      char: 'u',
+      summary: 'Redirect URIs, separated by space',
+      dependsOn: ['mode'],
     }),
     'token-max-age': Flags.integer({
       summary: 'Token expiration time in seconds',
@@ -59,9 +74,15 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
   public async run(): Promise<IotaConfigurationDto> {
     const { flags } = await this.parse(CreateIotaConfig)
 
+    const MODE_REDIRECT = CreateIotaConfigurationInputModeEnum.Redirect
+    const MODE_WEBSOCKET = CreateIotaConfigurationInputModeEnum.Websocket
+
+    const noRedirectUris = flags.mode === MODE_REDIRECT && !flags['redirect-uris']
+
     if (flags['no-input']) {
       if (!flags.name) throw new CLIError(giveFlagInputErrorMessage('name'))
       if (!flags['wallet-ari']) throw new CLIError(giveFlagInputErrorMessage('wallet-ari'))
+      if (noRedirectUris) throw new CLIError(giveFlagInputErrorMessage('redirect-uris'))
     }
 
     let walletAri = flags['wallet-ari']
@@ -72,6 +93,10 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
 
     const walletAris = wallets?.map((wallet: WalletDto) => wallet.ari) || []
     const wrongAriProvided = !walletAris.includes(walletAri)
+
+    if (flags['no-input']) {
+      if (wrongAriProvided) throw new CLIError('Wrong wallet ARI provided.')
+    }
 
     if (!walletAri || wallets?.length === 0 || wrongAriProvided) {
       const walletChoices =
@@ -140,12 +165,37 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       }
     }
 
+    const mode =
+      flags.mode ??
+      (await select({
+        message: 'Select mode',
+        choices: Object.values(CreateIotaConfigurationInputModeEnum).map((value) => ({
+          name: value,
+          value,
+        })),
+        default: MODE_WEBSOCKET,
+      }))
+
+    let redirectUris: string[] = []
+
+    if (mode === MODE_REDIRECT) {
+      redirectUris = split(
+        flags['redirect-uris'] ??
+          validateInputLength(await input({ message: 'Enter redirect URIs, separated by space' }), INPUT_LIMIT),
+        ' ',
+      )
+    }
+
     const data: CreateIotaConfigurationInput = {
       name:
         flags.name ??
         validateInputLength(await input({ message: 'Enter Affinidi Iota Framework configuration name' }), INPUT_LIMIT),
       description: flags.description ?? '',
       walletAri,
+      mode,
+      ...(mode === MODE_REDIRECT && {
+        redirectUris,
+      }),
       iotaResponseWebhookURL: flags['response-webhook-url'] ?? '',
       enableVerification: flags['enable-verification'] || false,
       enableConsentAuditLog: flags['enable-consent-audit-log'] || false,
@@ -157,20 +207,30 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       },
     }
 
-    const schema = z.object({
-      name: z.string().min(3).max(INPUT_LIMIT),
-      walletAri: z.string().min(1).max(INPUT_LIMIT),
-      enableVerification: z.boolean(),
-      enableConsentAuditLog: z.boolean(),
-      description: z.string().max(INPUT_LIMIT).optional(),
-      tokenMaxAge: z.number().min(1).max(10).optional(),
-      iotaResponseWebhookURL: z.string().max(INPUT_LIMIT).optional(),
-      clientMetadata: z.object({
-        name: z.string().max(INPUT_LIMIT),
-        origin: z.string().max(INPUT_LIMIT),
-        logo: z.string().max(INPUT_LIMIT),
-      }),
-    })
+    const schema = z
+      .object({
+        name: z.string().min(3).max(INPUT_LIMIT),
+        walletAri: z.string().min(1).max(INPUT_LIMIT),
+        mode: z.nativeEnum(CreateIotaConfigurationInputModeEnum).optional(),
+        redirectUris: z.string().max(INPUT_LIMIT).url().array().optional(),
+        enableVerification: z.boolean(),
+        enableConsentAuditLog: z.boolean(),
+        description: z.string().max(INPUT_LIMIT).optional(),
+        tokenMaxAge: z.number().min(1).max(10).optional(),
+        iotaResponseWebhookURL: z.string().max(INPUT_LIMIT).optional(),
+        clientMetadata: z.object({
+          name: z.string().max(INPUT_LIMIT),
+          origin: z.string().max(INPUT_LIMIT),
+          logo: z.string().max(INPUT_LIMIT),
+        }),
+      })
+      .refine((config) => {
+        if (config.mode === MODE_REDIRECT && config.redirectUris?.length === 0) {
+          return false
+        }
+        return true
+      })
+
     const configInput = schema.parse(data)
 
     ux.action.start('Creating Affinidi Iota Framework configuration')

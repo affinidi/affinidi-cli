@@ -1,3 +1,4 @@
+// TODO: update this command after Nucleus finalizes changes for the endpoint
 import { UpdateConfigurationByIdInput, IotaConfigurationDto } from '@affinidi-tdk/iota-client'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
