@@ -102,14 +102,12 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
       ListUsersInGroup.lastEvalutatedKeys = startingToken + ',' + ListUsersInGroup.lastEvalutatedKeys
     let totalPages = '1'
     if (ListUsersInGroup.middleListPrompting.startingTokenProvided) {
-      totalPages = "Page number information is not available"
-    } else if (
-      totalUserCount
-    ) {
+      totalPages = 'Page number information is not available'
+    } else if (totalUserCount) {
       totalPages = Math.ceil(totalUserCount / pageSize).toString()
     }
     totalPages = totalPages === '0' ? '1' : totalPages
-    
+
     const choices = [{ value: NEXT }, { value: PREVIOUS }, { value: EXIT }]
 
     if (
