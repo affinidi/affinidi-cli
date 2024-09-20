@@ -189,12 +189,41 @@ describe('iota: configs commands', function () {
         `--description=${configuration.description}`,
         `--id=${configuration.configurationId}`,
       ])
+      console.log(stdout)
       const response = JSON.parse(stdout)
       expect(response).to.have.a.property('projectId')
       expect(response).to.have.a.property('name')
       expect(response).to.have.a.property('description')
       expect(response).to.have.a.property('ari')
       expect(response).to.have.a.property('walletAri')
+      expect(response).to.have.a.property('mode')
+      expect(response).to.have.a.property('redirectUris')
+      expect(response).to.have.a.property('iotaResponseWebhookURL')
+      expect(response).to.have.a.property('enableVerification')
+      expect(response).to.have.a.property('enableConsentAuditLog')
+      expect(response).to.have.a.property('tokenMaxAge')
+      expect(response).to.have.a.property('clientMetadata')
+      expect(response).to.have.a.property('configurationId')
+    })
+
+    it('updates config websocket to redirect', async () => {
+      nock(AIS_URL).patch(`/v1/configurations/${configuration.configurationId}`).reply(200, configuration)
+
+      const { stdout } = await runCommand([
+        'iota:update-config',
+        `--description=${configuration.description}`,
+        `--id=${configuration.configurationId}`,
+        `--mode=${CreateIotaConfigurationInputModeEnum.Redirect}`,
+        `--redirectUris=${configurationRedirect.redirectUris[0]}`,
+      ])
+      const response = JSON.parse(stdout)
+      expect(response).to.have.a.property('projectId')
+      expect(response).to.have.a.property('name')
+      expect(response).to.have.a.property('description')
+      expect(response).to.have.a.property('ari')
+      expect(response).to.have.a.property('walletAri')
+      expect(response).to.have.a.property('mode')
+      expect(response).to.have.a.property('redirectUris')
       expect(response).to.have.a.property('iotaResponseWebhookURL')
       expect(response).to.have.a.property('enableVerification')
       expect(response).to.have.a.property('enableConsentAuditLog')
