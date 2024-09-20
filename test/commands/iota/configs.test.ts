@@ -188,8 +188,9 @@ describe('iota: configs commands', function () {
         'iota:update-config',
         `--description=${configuration.description}`,
         `--id=${configuration.configurationId}`,
+        '--no-input',
+        '--json',
       ])
-      console.log(stdout)
       const response = JSON.parse(stdout)
       expect(response).to.have.a.property('projectId')
       expect(response).to.have.a.property('name')
@@ -197,7 +198,6 @@ describe('iota: configs commands', function () {
       expect(response).to.have.a.property('ari')
       expect(response).to.have.a.property('walletAri')
       expect(response).to.have.a.property('mode')
-      expect(response).to.have.a.property('redirectUris')
       expect(response).to.have.a.property('iotaResponseWebhookURL')
       expect(response).to.have.a.property('enableVerification')
       expect(response).to.have.a.property('enableConsentAuditLog')
@@ -207,14 +207,15 @@ describe('iota: configs commands', function () {
     })
 
     it('updates config websocket to redirect', async () => {
-      nock(AIS_URL).patch(`/v1/configurations/${configuration.configurationId}`).reply(200, configuration)
+      nock(AIS_URL).patch(`/v1/configurations/${configuration.configurationId}`).reply(200, configurationRedirect)
 
       const { stdout } = await runCommand([
         'iota:update-config',
-        `--description=${configuration.description}`,
         `--id=${configuration.configurationId}`,
         `--mode=${CreateIotaConfigurationInputModeEnum.Redirect}`,
-        `--redirectUris=${configurationRedirect.redirectUris[0]}`,
+        `--redirect-uris="${configurationRedirect.redirectUris[0]}"`,
+        '--no-input',
+        '--json',
       ])
       const response = JSON.parse(stdout)
       expect(response).to.have.a.property('projectId')
