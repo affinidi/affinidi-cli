@@ -37,12 +37,12 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
     }),
     mode: Flags.custom<CreateIotaConfigurationInputModeEnum>({
       char: 'm',
-      summary: 'Mode: websocket | redirect',
+      summary: 'Mode of data sharing: websocket | redirect',
       options: Object.values(CreateIotaConfigurationInputModeEnum),
     })(),
     'redirect-uris': Flags.string({
       char: 'u',
-      summary: 'Redirect URIs, separated by space',
+      summary: 'Redirect URIs, separated by space (required only when mode is `redirect`)',
       dependsOn: ['mode'],
     }),
     'token-max-age': Flags.integer({

@@ -34,4 +34,4 @@ EXAMPLES
   $ affinidi generate app --path "../my-app" --framework django --provider affinidi --force
 ```
 
-_See code: [src/commands/generate/app.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/generate/app.ts)_
+_See code: [src/commands/generate/app.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/generate/app.ts)_

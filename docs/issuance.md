@@ -38,7 +38,7 @@ EXAMPLES
   $ affinidi issuance create-config --name <value> --wallet-id <value> --description <value> --credential-offer-duration <value> --file credentialSchemas.json
 ```
 
-_See code: [src/commands/issuance/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/issuance/create-config.ts)_
+_See code: [src/commands/issuance/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/create-config.ts)_
 
 ## `affinidi issuance delete-config`
 
@@ -62,7 +62,7 @@ EXAMPLES
   $ affinidi issuance delete-config --id <value>
 ```
 
-_See code: [src/commands/issuance/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/issuance/delete-config.ts)_
+_See code: [src/commands/issuance/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/delete-config.ts)_
 
 ## `affinidi issuance get-config`
 
@@ -86,7 +86,7 @@ EXAMPLES
   $ affinidi issuance get-config --id <value>
 ```
 
-_See code: [src/commands/issuance/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/issuance/get-config.ts)_
+_See code: [src/commands/issuance/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/get-config.ts)_
 
 ## `affinidi issuance list-configs`
 
@@ -105,7 +105,7 @@ EXAMPLES
   $ affinidi issuance list-configs
 ```
 
-_See code: [src/commands/issuance/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/issuance/list-configs.ts)_
+_See code: [src/commands/issuance/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/list-configs.ts)_
 
 ## `affinidi issuance update-config`
 
@@ -137,4 +137,4 @@ EXAMPLES
   $ affinidi issuance update-config --id <value> --name <value> --wallet-id <value> --description <value> --credential-offer-duration <value> --file credentialSchemas.json
 ```
 
-_See code: [src/commands/issuance/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/issuance/update-config.ts)_
+_See code: [src/commands/issuance/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/update-config.ts)_

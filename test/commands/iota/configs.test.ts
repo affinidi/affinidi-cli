@@ -22,7 +22,7 @@ const didKeyWallet = {
   ],
 }
 
-const configuration = {
+const configurationWebsocket = {
   projectId: '940e8684-55b3-4d41-8e3d-cd329e9f22f2',
   name: 'ConfigWebsocket',
   description: 'ConfigDescription',
@@ -64,23 +64,23 @@ const configurationRedirect = {
 describe('iota: configs commands', function () {
   describe('iota:create-config', () => {
     it('creates a `websocket` configutation and outputs its info', async () => {
-      nock(AIS_URL).post('/v1/configurations').reply(200, configuration)
+      nock(AIS_URL).post('/v1/configurations').reply(200, configurationWebsocket)
       nock(CWE_URL)
         .get('/v1/wallets')
         .reply(200, { wallets: [didKeyWallet] })
       const { stdout } = await runCommand([
         'iota:create-config',
-        `--name="${configuration.name}"`,
-        `--description="${configuration.description}"`,
+        `--name="${configurationWebsocket.name}"`,
+        `--description="${configurationWebsocket.description}"`,
         `--wallet-ari="${didKeyWallet.ari}"`,
-        `--mode="${configuration.mode}"`,
-        `--response-webhook-url="${configuration.iotaResponseWebhookURL}"`,
-        `--token-max-age="${configuration.tokenMaxAge}"`,
+        `--mode="${configurationWebsocket.mode}"`,
+        `--response-webhook-url="${configurationWebsocket.iotaResponseWebhookURL}"`,
+        `--token-max-age="${configurationWebsocket.tokenMaxAge}"`,
         `--enable-verification`,
         `--enable-consent-audit-log`,
-        `--client-name="${configuration.clientMetadata.name}"`,
-        `--client-logo="${configuration.clientMetadata.logo}"`,
-        `--client-origin="${configuration.clientMetadata.origin}"`,
+        `--client-name="${configurationWebsocket.clientMetadata.name}"`,
+        `--client-logo="${configurationWebsocket.clientMetadata.logo}"`,
+        `--client-origin="${configurationWebsocket.clientMetadata.origin}"`,
         '--no-input',
         '--json',
       ])
@@ -140,8 +140,10 @@ describe('iota: configs commands', function () {
 
   describe('iota:get-config', () => {
     it('outputs configuration info based on id', async () => {
-      nock(AIS_URL).get(`/v1/configurations/${configuration.configurationId}`).reply(200, configuration)
-      const { stdout } = await runCommand(['iota:get-config', `--id=${configuration.configurationId}`])
+      nock(AIS_URL)
+        .get(`/v1/configurations/${configurationWebsocket.configurationId}`)
+        .reply(200, configurationWebsocket)
+      const { stdout } = await runCommand(['iota:get-config', `--id=${configurationWebsocket.configurationId}`])
       const response = JSON.parse(stdout)
       expect(response).to.have.a.property('projectId')
       expect(response).to.have.a.property('name')
@@ -162,7 +164,7 @@ describe('iota: configs commands', function () {
       nock(AIS_URL)
         .get('/v1/configurations')
         .reply(200, {
-          configurations: [configuration],
+          configurations: [configurationWebsocket],
         })
       const { stdout } = await runCommand(['iota:list-configs'])
       const { configurations: response } = JSON.parse(stdout)
@@ -182,12 +184,14 @@ describe('iota: configs commands', function () {
 
   describe('iota:update-config', () => {
     it('updates config', async () => {
-      nock(AIS_URL).patch(`/v1/configurations/${configuration.configurationId}`).reply(200, configuration)
+      nock(AIS_URL)
+        .patch(`/v1/configurations/${configurationWebsocket.configurationId}`)
+        .reply(200, configurationWebsocket)
 
       const { stdout } = await runCommand([
         'iota:update-config',
-        `--description=${configuration.description}`,
-        `--id=${configuration.configurationId}`,
+        `--description=${configurationWebsocket.description}`,
+        `--id=${configurationWebsocket.configurationId}`,
         '--no-input',
         '--json',
       ])
@@ -207,11 +211,13 @@ describe('iota: configs commands', function () {
     })
 
     it('updates config websocket to redirect', async () => {
-      nock(AIS_URL).patch(`/v1/configurations/${configuration.configurationId}`).reply(200, configurationRedirect)
+      nock(AIS_URL)
+        .patch(`/v1/configurations/${configurationWebsocket.configurationId}`)
+        .reply(200, configurationRedirect)
 
       const { stdout } = await runCommand([
         'iota:update-config',
-        `--id=${configuration.configurationId}`,
+        `--id=${configurationWebsocket.configurationId}`,
         `--mode=${CreateIotaConfigurationInputModeEnum.Redirect}`,
         `--redirect-uris="${configurationRedirect.redirectUris[0]}"`,
         '--no-input',
@@ -236,8 +242,8 @@ describe('iota: configs commands', function () {
 
   describe('iota:delete-config', () => {
     it('deletes configuration', async () => {
-      nock(AIS_URL).delete(`/v1/configurations/${configuration.configurationId}`).reply(200)
-      const { stdout } = await runCommand(['iota:delete-config', `--id=${configuration.configurationId}`])
+      nock(AIS_URL).delete(`/v1/configurations/${configurationWebsocket.configurationId}`).reply(200)
+      const { stdout } = await runCommand(['iota:delete-config', `--id=${configurationWebsocket.configurationId}`])
       const response = JSON.parse(stdout)
       expect(response).to.have.a.property('id')
     })
