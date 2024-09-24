@@ -22,4 +22,4 @@ EXAMPLES
   $ affinidi whoami
 ```
 
-_See code: [src/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/whoami.ts)_
+_See code: [src/commands/whoami.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/whoami.ts)_

@@ -44,7 +44,7 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-_See code: [src/commands/iam/add-principal.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iam/add-principal.ts)_
+_See code: [src/commands/iam/add-principal.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iam/add-principal.ts)_
 
 ## `affinidi iam get-policies`
 
@@ -82,7 +82,7 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-_See code: [src/commands/iam/get-policies.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iam/get-policies.ts)_
+_See code: [src/commands/iam/get-policies.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iam/get-policies.ts)_
 
 ## `affinidi iam list-principals`
 
@@ -106,7 +106,7 @@ EXAMPLES
   $ affinidi iam list-principals
 ```
 
-_See code: [src/commands/iam/list-principals.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iam/list-principals.ts)_
+_See code: [src/commands/iam/list-principals.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iam/list-principals.ts)_
 
 ## `affinidi iam remove-principal`
 
@@ -143,7 +143,7 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-_See code: [src/commands/iam/remove-principal.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iam/remove-principal.ts)_
+_See code: [src/commands/iam/remove-principal.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iam/remove-principal.ts)_
 
 ## `affinidi iam update-policies`
 
@@ -182,4 +182,4 @@ FLAG DESCRIPTIONS
     Get a list of possible IDs with command affinidi token list-tokens
 ```
 
-_See code: [src/commands/iam/update-policies.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iam/update-policies.ts)_
+_See code: [src/commands/iam/update-policies.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iam/update-policies.ts)_

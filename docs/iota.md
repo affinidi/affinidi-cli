@@ -21,12 +21,16 @@ Creates Affinidi Iota Framework configuration in your active project
 ```
 USAGE
   $ affinidi iota create-config [--json] [--no-color] [--no-input] [-n <value>] [-d
-    <value>] [-w <value>] [--token-max-age <value>] [--response-webhook-url <value>] [--enable-verification]
-    [--enable-consent-audit-log] [--client-name <value>] [--client-origin <value>] [--client-logo <value>]
+    <value>] [-w <value>] [-u <value> -m redirect|websocket] [--token-max-age <value>] [--response-webhook-url <value>]
+    [--enable-verification] [--enable-consent-audit-log] [--client-name <value>] [--client-origin <value>]
+    [--client-logo <value>]
 
 FLAGS
   -d, --description=<value>           Description of the Affinidi Iota Framework configuration
+  -m, --mode=<option>                 Mode of data sharing: websocket | redirect
+                                      <options: redirect|websocket>
   -n, --name=<value>                  Name of the Affinidi Iota Framework configuration
+  -u, --redirect-uris=<value>         Redirect URIs, separated by space (required only when mode is `redirect`)
   -w, --wallet-ari=<value>            ARI of the wallet
       --client-logo=<value>           Application URL of a logo, displayed in the consent page
       --client-name=<value>           Name, displayed in the consent page
@@ -46,10 +50,12 @@ EXAMPLES
 
   $ affinidi iota create-config --name <value> --wallet-ari <value>
 
-  $ affinidi iota create-config --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value>
+  $ affinidi iota create-config --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode websocket
+
+  $ affinidi iota create-config --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode redirect --redirectUris <value>
 ```
 
-_See code: [src/commands/iota/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/create-config.ts)_
+_See code: [src/commands/iota/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/create-config.ts)_
 
 ## `affinidi iota create-query`
 
@@ -77,7 +83,7 @@ EXAMPLES
   $ affinidi iota create-query --configuration-id <value> --name <value> --description <value> --file pexQuery.json
 ```
 
-_See code: [src/commands/iota/create-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/create-query.ts)_
+_See code: [src/commands/iota/create-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/create-query.ts)_
 
 ## `affinidi iota delete-config`
 
@@ -101,7 +107,7 @@ EXAMPLES
   $ affinidi iota delete-config --id <value>
 ```
 
-_See code: [src/commands/iota/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/delete-config.ts)_
+_See code: [src/commands/iota/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/delete-config.ts)_
 
 ## `affinidi iota delete-query`
 
@@ -127,7 +133,7 @@ EXAMPLES
   $ affinidi iota delete-query --configuration-id <uuid> --query-id <uuid>
 ```
 
-_See code: [src/commands/iota/delete-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/delete-query.ts)_
+_See code: [src/commands/iota/delete-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/delete-query.ts)_
 
 ## `affinidi iota get-config`
 
@@ -151,7 +157,7 @@ EXAMPLES
   $ affinidi iota get-config --id <value>
 ```
 
-_See code: [src/commands/iota/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/get-config.ts)_
+_See code: [src/commands/iota/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/get-config.ts)_
 
 ## `affinidi iota get-query`
 
@@ -177,7 +183,7 @@ EXAMPLES
   $ affinidi iota get-query --configuration-id <uuid> --query-id <uuid>
 ```
 
-_See code: [src/commands/iota/get-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/get-query.ts)_
+_See code: [src/commands/iota/get-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/get-query.ts)_
 
 ## `affinidi iota list-configs`
 
@@ -196,7 +202,7 @@ EXAMPLES
   $ affinidi iota list-configs
 ```
 
-_See code: [src/commands/iota/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/list-configs.ts)_
+_See code: [src/commands/iota/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/list-configs.ts)_
 
 ## `affinidi iota list-queries`
 
@@ -220,7 +226,7 @@ EXAMPLES
   $ affinidi iota list-queries --configuration-id <value>
 ```
 
-_See code: [src/commands/iota/list-queries.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/list-queries.ts)_
+_See code: [src/commands/iota/list-queries.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/list-queries.ts)_
 
 ## `affinidi iota update-config`
 
@@ -229,14 +235,17 @@ Updates Affinidi Iota Framework configuration in your active project
 ```
 USAGE
   $ affinidi iota update-config [--json] [--no-color] [--no-input] [-i <value>] [-n
-    <value>] [-d <value>] [--wallet-ari <value>] [--token-max-age <value>] [--response-webhook-url <value>]
-    [--enable-verification] [--enable-consent-audit-log] [--client-name <value>] [--client-origin <value>]
-    [--client-logo <value>]
+    <value>] [-d <value>] [--wallet-ari <value>] [-u <value> -m redirect|websocket] [--token-max-age <value>]
+    [--response-webhook-url <value>] [--enable-verification] [--enable-consent-audit-log] [--client-name <value>]
+    [--client-origin <value>] [--client-logo <value>]
 
 FLAGS
   -d, --description=<value>           Description of the Affinidi Iota Framework configuration
   -i, --id=<value>                    ID of the Affinidi Iota Framework configuration
+  -m, --mode=<option>                 Mode of data sharing: websocket | redirect
+                                      <options: redirect|websocket>
   -n, --name=<value>                  Name of the Affinidi Iota Framework configuration
+  -u, --redirect-uris=<value>         Redirect URIs, separated by space (required only when mode is `redirect`)
       --client-logo=<value>           Application URL of a logo, displayed in the consent page
       --client-name=<value>           Name, displayed in the consent page
       --client-origin=<value>         Domain, displayed in the consent page
@@ -257,7 +266,7 @@ EXAMPLES
   $ affinidi iota update-config --id <value>
 ```
 
-_See code: [src/commands/iota/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/update-config.ts)_
+_See code: [src/commands/iota/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/update-config.ts)_
 
 ## `affinidi iota update-query`
 
@@ -287,4 +296,4 @@ EXAMPLES
   $ affinidi iota update-query --configuration-id <value> --query-id <value> --description <value> --file pexQuery.json
 ```
 
-_See code: [src/commands/iota/update-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/iota/update-query.ts)_
+_See code: [src/commands/iota/update-query.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/update-query.ts)_

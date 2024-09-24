@@ -40,7 +40,7 @@ EXAMPLES
   $ affinidi wallet create-wallet --name <value> --description <value> --did-method web --did-web-url <value>
 ```
 
-_See code: [src/commands/wallet/create-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/wallet/create-wallet.ts)_
+_See code: [src/commands/wallet/create-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/wallet/create-wallet.ts)_
 
 ## `affinidi wallet delete-wallet`
 
@@ -64,7 +64,7 @@ EXAMPLES
   $ affinidi wallet delete-wallet --id <value>
 ```
 
-_See code: [src/commands/wallet/delete-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/wallet/delete-wallet.ts)_
+_See code: [src/commands/wallet/delete-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/wallet/delete-wallet.ts)_
 
 ## `affinidi wallet get-wallet`
 
@@ -88,7 +88,7 @@ EXAMPLES
   $ affinidi wallet get-wallet --id <value>
 ```
 
-_See code: [src/commands/wallet/get-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/wallet/get-wallet.ts)_
+_See code: [src/commands/wallet/get-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/wallet/get-wallet.ts)_
 
 ## `affinidi wallet list-wallets`
 
@@ -107,7 +107,7 @@ EXAMPLES
   $ affinidi wallet list-wallets
 ```
 
-_See code: [src/commands/wallet/list-wallets.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/wallet/list-wallets.ts)_
+_See code: [src/commands/wallet/list-wallets.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/wallet/list-wallets.ts)_
 
 ## `affinidi wallet update-wallet`
 
@@ -134,4 +134,4 @@ EXAMPLES
   $ affinidi wallet update-wallet --id <value> --name <value> --description <value>
 ```
 
-_See code: [src/commands/wallet/update-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/wallet/update-wallet.ts)_
+_See code: [src/commands/wallet/update-wallet.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/wallet/update-wallet.ts)_

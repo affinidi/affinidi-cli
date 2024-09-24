@@ -22,4 +22,4 @@ EXAMPLES
   $ affinidi stop
 ```
 
-_See code: [src/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.0/src/commands/stop.ts)_
+_See code: [src/commands/stop.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/stop.ts)_
