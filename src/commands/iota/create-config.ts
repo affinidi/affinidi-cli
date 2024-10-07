@@ -54,9 +54,19 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
     }),
     'enable-verification': Flags.boolean({
       summary: 'Perform verification',
+      hidden: true,
+      deprecated: { message: 'This flag is deprecated as verification is now enabled by default.' },
+    }),
+    'disable-verification': Flags.boolean({
+      summary: 'Disable verification',
       default: false,
     }),
     'enable-consent-audit-log': Flags.boolean({
+      summary: 'Log consents',
+      hidden: true,
+      deprecated: { message: 'This flag is deprecated as consent audit logging is now enabled by default.' },
+    }),
+    'disable-consent-audit-log': Flags.boolean({
       summary: 'Log consents',
       default: false,
     }),
@@ -197,8 +207,8 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
         redirectUris,
       }),
       iotaResponseWebhookURL: flags['response-webhook-url'] ?? '',
-      enableVerification: flags['enable-verification'] || false,
-      enableConsentAuditLog: flags['enable-consent-audit-log'] || false,
+      enableVerification: !flags['disable-verification'],
+      enableConsentAuditLog: !flags['disable-consent-audit-log'],
       tokenMaxAge: flags['token-max-age'] ?? undefined,
       clientMetadata: {
         name: flags['client-name'] ?? '',

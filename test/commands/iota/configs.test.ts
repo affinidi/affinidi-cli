@@ -63,7 +63,7 @@ const configurationRedirect = {
 
 describe('iota: configs commands', function () {
   describe('iota:create-config', () => {
-    it('creates a `websocket` configutation and outputs its info', async () => {
+    it('creates a `websocket` configuration and outputs its info', async () => {
       nock(AIS_URL).post('/v1/configurations').reply(200, configurationWebsocket)
       nock(CWE_URL)
         .get('/v1/wallets')
@@ -76,8 +76,6 @@ describe('iota: configs commands', function () {
         `--mode="${configurationWebsocket.mode}"`,
         `--response-webhook-url="${configurationWebsocket.iotaResponseWebhookURL}"`,
         `--token-max-age="${configurationWebsocket.tokenMaxAge}"`,
-        `--enable-verification`,
-        `--enable-consent-audit-log`,
         `--client-name="${configurationWebsocket.clientMetadata.name}"`,
         `--client-logo="${configurationWebsocket.clientMetadata.logo}"`,
         `--client-origin="${configurationWebsocket.clientMetadata.origin}"`,
@@ -113,8 +111,6 @@ describe('iota: configs commands', function () {
         `--mode="${configurationRedirect.mode}"`,
         `--redirect-uris="${configurationRedirect.redirectUris.join(' ')}"`,
         `--token-max-age="${configurationRedirect.tokenMaxAge}"`,
-        `--enable-verification`,
-        `--enable-consent-audit-log`,
         `--client-name="${configurationRedirect.clientMetadata.name}"`,
         `--client-logo="${configurationRedirect.clientMetadata.logo}"`,
         `--client-origin="${configurationRedirect.clientMetadata.origin}"`,
