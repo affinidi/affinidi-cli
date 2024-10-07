@@ -123,7 +123,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
 
       ux.action.start('Granting permissions to token')
       const actions = validatedFlags.actions ? validatedFlags.actions.split(' ') : ['*']
-      const resources = validatedFlags.actions ? validatedFlags.actions.split(' ') : ['*']
+      const resources = validatedFlags.resources ? validatedFlags.resources.split(' ') : ['*']
       await updatePolicies(token.id, projectId, actions, resources)
       ux.action.stop('Granted successfully!')
     }
