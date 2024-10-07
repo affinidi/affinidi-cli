@@ -72,7 +72,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
   }
 
   public async run(): Promise<IotaConfigurationDto> {
-    const { flags } = await this.parse(CreateIotaConfig)
+    const flags = this.flags
 
     const MODE_REDIRECT = CreateIotaConfigurationInputModeEnum.Redirect
     const MODE_WEBSOCKET = CreateIotaConfigurationInputModeEnum.Websocket
