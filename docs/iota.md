@@ -35,8 +35,8 @@ FLAGS
       --client-logo=<value>           Application URL of a logo, displayed in the consent page
       --client-name=<value>           Name, displayed in the consent page
       --client-origin=<value>         Domain, displayed in the consent page
-      --enable-consent-audit-log      Log consents
-      --enable-verification           Perform verification
+      --disable-consent-audit-log     Disable log consents
+      --disable-verification          Disable verification
       --response-webhook-url=<value>  Affinidi Iota Framework response webhook URL
       --token-max-age=<value>         Token expiration time in seconds
 
@@ -50,9 +50,9 @@ EXAMPLES
 
   $ affinidi iota create-config --name <value> --wallet-ari <value>
 
-  $ affinidi iota create-config --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode websocket
+  $ affinidi iota create-config --name <value> --wallet-ari <value> --token-max-age <value> --mode websocket
 
-  $ affinidi iota create-config --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode redirect --redirectUris <value>
+  $ affinidi iota create-config --name <value> --wallet-ari <value> --token-max-age <value> --mode redirect --redirectUris <value>
 ```
 
 _See code: [src/commands/iota/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/iota/create-config.ts)_
