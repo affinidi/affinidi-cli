@@ -21,7 +21,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
     '<%= config.bin %> <%= command.id %> -n <value> -w <value>',
     '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value>',
     '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode websocket',
-    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode redirect --redirectUris <value> --enable-idv-providers',
+    '<%= config.bin %> <%= command.id %> --name <value> --wallet-ari <value> --enable-consent-audit-log --enable-verification --token-max-age <value> --mode redirect --redirectUris <value>',
   ]
   static flags = {
     name: Flags.string({
@@ -58,10 +58,6 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
     }),
     'enable-consent-audit-log': Flags.boolean({
       summary: 'Log consents',
-      default: false,
-    }),
-    'enable-idv-providers': Flags.boolean({
-      summary: 'Perform verification of third-party IDV providers',
       default: false,
     }),
     'client-name': Flags.string({
@@ -203,7 +199,6 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       iotaResponseWebhookURL: flags['response-webhook-url'] ?? '',
       enableVerification: flags['enable-verification'] || false,
       enableConsentAuditLog: flags['enable-consent-audit-log'] || false,
-      enableIdvProviders: flags['enable-idv-providers'] || false,
       tokenMaxAge: flags['token-max-age'] ?? undefined,
       clientMetadata: {
         name: flags['client-name'] ?? '',
@@ -220,7 +215,6 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
         redirectUris: z.string().max(INPUT_LIMIT).url().array().optional(),
         enableVerification: z.boolean(),
         enableConsentAuditLog: z.boolean(),
-        enableIdvProviders: z.boolean(),
         description: z.string().max(INPUT_LIMIT).optional(),
         tokenMaxAge: z.number().min(1).max(10).optional(),
         iotaResponseWebhookURL: z.string().max(INPUT_LIMIT).optional(),
