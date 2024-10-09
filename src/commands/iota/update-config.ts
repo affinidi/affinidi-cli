@@ -57,6 +57,9 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
     'enable-consent-audit-log': Flags.boolean({
       summary: 'Log consents',
     }),
+    'enable-idv-providers': Flags.boolean({
+      summary: 'Perform verification of third-party IDV providers',
+    }),
     'client-name': Flags.string({
       summary: 'Name, displayed in the consent page',
     }),
@@ -98,6 +101,7 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
       iotaResponseWebhookURL: promptFlags['response-webhook-url'] ?? undefined,
       enableVerification: promptFlags['enable-verification'] ?? false,
       enableConsentAuditLog: promptFlags['enable-consent-audit-log'] ?? false,
+      enableIdvProviders: promptFlags['enable-idv-providers'] ?? false,
       tokenMaxAge: promptFlags['token-max-age'] ?? undefined,
     }
 
@@ -118,6 +122,7 @@ export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {
         redirectUris: z.string().max(INPUT_LIMIT).url().array().optional(),
         enableVerification: z.boolean().optional(),
         enableConsentAuditLog: z.boolean().optional(),
+        enableIdvProviders: z.boolean().optional(),
         tokenMaxAge: z.number().min(1).max(10).optional(),
         iotaResponseWebhookURL: z.string().max(INPUT_LIMIT).optional(),
         clientMetadata: z
