@@ -32,7 +32,6 @@ const configurationWebsocket = {
   iotaResponseWebhookURL: 'https://vault.affinidi.com/login',
   enableVerification: true,
   enableConsentAuditLog: true,
-  enableIdvProviders: true,
   tokenMaxAge: 10,
   clientMetadata: {
     name: 'testtest',
@@ -79,7 +78,6 @@ describe('iota: configs commands', function () {
         `--token-max-age="${configurationWebsocket.tokenMaxAge}"`,
         `--enable-verification`,
         `--enable-consent-audit-log`,
-        `--enable-idv-providers`,
         `--client-name="${configurationWebsocket.clientMetadata.name}"`,
         `--client-logo="${configurationWebsocket.clientMetadata.logo}"`,
         `--client-origin="${configurationWebsocket.clientMetadata.origin}"`,
@@ -97,7 +95,6 @@ describe('iota: configs commands', function () {
       expect(response).to.have.a.property('iotaResponseWebhookURL')
       expect(response).to.have.a.property('enableVerification')
       expect(response).to.have.a.property('enableConsentAuditLog')
-      expect(response).to.have.a.property('enableIdvProviders')
       expect(response).to.have.a.property('tokenMaxAge')
       expect(response).to.have.a.property('clientMetadata')
       expect(response).to.have.a.property('configurationId')
