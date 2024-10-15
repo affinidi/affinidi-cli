@@ -102,6 +102,9 @@
     "tslib": "^2.6.3",
     "typescript": "^5.5.3"
   },
+  "overrides": {
+    "cookie": "^0.7.0"
+  },
   "oclif": {
     "bin": "affinidi",
     "theme": "theme.json",
