@@ -4,7 +4,7 @@ import {
   CreateIotaConfigurationInputModeEnum,
 } from '@affinidi-tdk/iota-client'
 import { WalletDto, CreateWalletInput } from '@affinidi-tdk/wallets-client'
-import { input, select } from '@inquirer/prompts'
+import { input, select, confirm } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
@@ -106,6 +106,22 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
 
     if (flags['no-input']) {
       if (wrongAriProvided) throw new CLIError('Wrong wallet ARI provided.')
+    }
+
+    if (flags['disable-verification']) {
+      const confirmation = await confirm({
+        message: `Are you sure you want to disable credential verification?\nWe recommend cryptographically verifying the credential the user shares to ensure it is tamper-evident and authentic. Enable this option to verify the credentials automatically after the user consents to share.`,
+      })
+
+      if (!confirmation) flags['disable-verification'] = false
+    }
+
+    if (flags['disable-consent-audit-log']) {
+      const confirmation = await confirm({
+        message: `Are you sure you want to disable consent audit log?\nWe recommend enabling the Consent Audit Log to record user consent when they share their data with your application for compliance and audit purposes.`,
+      })
+
+      if (!confirmation) flags['disable-consent-audit-log'] = false
     }
 
     if (!walletAri || wallets?.length === 0 || wrongAriProvided) {
