@@ -6,7 +6,6 @@ Affinidi CLI is a developer tool to easily manage your projects and integration 
 
 - [NodeJs v18 or higher](https://nodejs.org)
 - A Chromium-based browser such as [Chrome](https://www.google.com/chrome/), [Microsoft Edge](https://www.microsoft.com/edge/download), [Opera](https://www.opera.com/) or [Brave](https://brave.com/)
-- Install Affinidi Vault [extension](https://chrome.google.com/webstore/detail/fejpjjkbaklcdcibmkbmpanjbiihclon) in your browser
 - To generate reference applications you will also need [git](https://git-scm.com/)
 
 ## Installation
