@@ -4,7 +4,7 @@ import {
   CreateIotaConfigurationInputModeEnum,
 } from '@affinidi-tdk/iota-client'
 import { WalletDto, CreateWalletInput } from '@affinidi-tdk/wallets-client'
-import { input, select } from '@inquirer/prompts'
+import { input, select, confirm } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
@@ -54,9 +54,19 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
     }),
     'enable-verification': Flags.boolean({
       summary: 'Perform verification',
+      hidden: true,
+      deprecated: { message: 'This flag is deprecated as verification is now enabled by default.' },
+    }),
+    'disable-verification': Flags.boolean({
+      summary: 'Disable verification',
       default: false,
     }),
     'enable-consent-audit-log': Flags.boolean({
+      summary: 'Log consents',
+      hidden: true,
+      deprecated: { message: 'This flag is deprecated as consent audit logging is now enabled by default.' },
+    }),
+    'disable-consent-audit-log': Flags.boolean({
       summary: 'Log consents',
       default: false,
     }),
@@ -72,7 +82,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
   }
 
   public async run(): Promise<IotaConfigurationDto> {
-    const { flags } = await this.parse(CreateIotaConfig)
+    const flags = this.flags
 
     const MODE_REDIRECT = CreateIotaConfigurationInputModeEnum.Redirect
     const MODE_WEBSOCKET = CreateIotaConfigurationInputModeEnum.Websocket
@@ -96,6 +106,22 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
 
     if (flags['no-input']) {
       if (wrongAriProvided) throw new CLIError('Wrong wallet ARI provided.')
+    }
+
+    if (flags['disable-verification']) {
+      const confirmation = await confirm({
+        message: `Are you sure you want to disable credential verification?\nWe recommend cryptographically verifying the credential the user shares to ensure it is tamper-evident and authentic. Enable this option to verify the credentials automatically after the user consents to share.`,
+      })
+
+      if (!confirmation) flags['disable-verification'] = false
+    }
+
+    if (flags['disable-consent-audit-log']) {
+      const confirmation = await confirm({
+        message: `Are you sure you want to disable consent audit log?\nWe recommend enabling the Consent Audit Log to record user consent when they share their data with your application for compliance and audit purposes.`,
+      })
+
+      if (!confirmation) flags['disable-consent-audit-log'] = false
     }
 
     if (!walletAri || wallets?.length === 0 || wrongAriProvided) {
@@ -197,8 +223,8 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
         redirectUris,
       }),
       iotaResponseWebhookURL: flags['response-webhook-url'] ?? '',
-      enableVerification: flags['enable-verification'] || false,
-      enableConsentAuditLog: flags['enable-consent-audit-log'] || false,
+      enableVerification: !flags['disable-verification'],
+      enableConsentAuditLog: !flags['disable-consent-audit-log'],
       tokenMaxAge: flags['token-max-age'] ?? undefined,
       clientMetadata: {
         name: flags['client-name'] ?? '',
