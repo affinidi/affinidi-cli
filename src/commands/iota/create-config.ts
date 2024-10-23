@@ -67,7 +67,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
       deprecated: { message: 'This flag is deprecated as consent audit logging is now enabled by default.' },
     }),
     'disable-consent-audit-log': Flags.boolean({
-      summary: 'Log consents',
+      summary: 'Disable consent audit log',
       default: false,
     }),
     'client-name': Flags.string({
