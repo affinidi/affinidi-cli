@@ -48,7 +48,7 @@ const configurationWithDisabledWebhook = {
   webhook: { enabled: false, endpoint: { url: 'https://hook.com' } },
 }
 
-describe.only('issuance: configs commands', function () {
+describe('issuance: configs commands', function () {
   describe('issuance:create-config', () => {
     it('creates a configutation and outputs its info', async () => {
       nock(CIS_URL).post('/v1/configurations').reply(200, configuration)
