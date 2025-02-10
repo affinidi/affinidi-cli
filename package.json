@@ -97,7 +97,7 @@
     "prettier": "^2.7.1",
     "semantic-release": "^24.1.1",
     "shx": "^0.3.4",
-    "swagger-typescript-api": "^13.0.23",
+    "swagger-typescript-api": "^12.0.4",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3"
