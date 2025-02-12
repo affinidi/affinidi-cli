@@ -95,15 +95,15 @@
     "nock": "^13.5.4",
     "oclif": "^4.14.12",
     "prettier": "^2.7.1",
-    "semantic-release": "^24.1.1",
+    "semantic-release": "^24.2.2",
     "shx": "^0.3.4",
-    "swagger-typescript-api": "^12.0.4",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3"
   },
   "overrides": {
-    "cookie": "^0.7.0"
+    "cookie": "^0.7.0",
+    "npm": "^10.9.0"
   },
   "oclif": {
     "bin": "affinidi",
