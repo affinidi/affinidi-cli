@@ -6,6 +6,7 @@ import { config } from '../../../src/services/env-config.js'
 // TODO: Extract the mocked data in a shared folder, remove mock duplicates if any.
 
 const IAM_URL = `${config.bffHost}/iam`
+console.log(`Tests initialized with mocking on ${IAM_URL}`)
 const principalId = 'b2ce7675-5418-4058-b973-d254270de2d4'
 const principalType = 'token'
 const listPrincipalsApiResponse = {

@@ -31,7 +31,9 @@ class IAMService {
     private readonly tokensApiClient = new TokensApi(new Configuration({ basePath, baseOptions })),
     private readonly policiesApiClient = new PoliciesApi(new Configuration({ basePath, baseOptions })),
     private readonly projectsApiClient = new ProjectsApi(new Configuration({ basePath, baseOptions })),
-  ) {}
+  ) {
+    console.log(`${basePath}`)
+  }
 
   public createProject = async (projectInput: CreateProjectInput): Promise<ProjectDto> => {
     try {
