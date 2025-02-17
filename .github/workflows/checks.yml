@@ -37,7 +37,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm audit --level medium
+        run: npm audit --level medium --omit dev
 
       - run: npm ci
       
