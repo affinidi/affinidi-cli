@@ -1,7 +1,7 @@
+import { ProjectDto } from '@affinidi-tdk/iam-client'
 import { select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
-import { ProjectDto } from '@affinidi-tdk/iam-client'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'

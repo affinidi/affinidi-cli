@@ -1,8 +1,5 @@
 import { readFile } from 'fs/promises'
-import {
-  TokenEndpointAuthMethod,
-  CreateLoginConfigurationOutput,
-} from '@affinidi-tdk/login-configuration-client'
+import { TokenEndpointAuthMethod, CreateLoginConfigurationOutput } from '@affinidi-tdk/login-configuration-client'
 import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'

@@ -1,5 +1,5 @@
-import { ux } from '@oclif/core'
 import { ProjectDto } from '@affinidi-tdk/iam-client'
+import { ux } from '@oclif/core'
 import { BaseCommand } from '../../common/base-command.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
 

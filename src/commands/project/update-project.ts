@@ -1,6 +1,6 @@
+import { ProjectDto } from '@affinidi-tdk/iam-client'
 import { Flags, ux } from '@oclif/core'
 import z from 'zod'
-import { ProjectDto } from '@affinidi-tdk/iam-client'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'

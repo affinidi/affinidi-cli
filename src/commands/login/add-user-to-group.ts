@@ -1,4 +1,4 @@
-import { GroupUserMappingDto } from  '@affinidi-tdk/login-configuration-client'
+import { GroupUserMappingDto } from '@affinidi-tdk/login-configuration-client'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'

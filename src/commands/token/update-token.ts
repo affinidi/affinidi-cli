@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
-import { ux, Flags } from '@oclif/core'
 import { TokenDto } from '@affinidi-tdk/iam-client'
+import { ux, Flags } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { SupportedAlgorithms } from '../../common/constants.js'

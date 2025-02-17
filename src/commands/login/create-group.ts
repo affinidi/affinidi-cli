@@ -1,7 +1,7 @@
+import { GroupDto } from '@affinidi-tdk/login-configuration-client'
 import { Flags, ux } from '@oclif/core'
 import chalk from 'chalk'
 import z from 'zod'
-import { GroupDto } from '@affinidi-tdk/login-configuration-client'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'

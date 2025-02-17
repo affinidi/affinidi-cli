@@ -1,6 +1,6 @@
-import { JsonWebKeySetDto } from '@affinidi-tdk/iam-client'
 import { KeyExportOptions } from 'crypto'
 import { generateKeyPairSync } from 'node:crypto'
+import { JsonWebKeySetDto } from '@affinidi-tdk/iam-client'
 import { SupportedAlgorithms } from '../common/constants.js'
 import { policiesDataSchema } from '../common/validators.js'
 import { iamService } from '../services/affinidi/iam/service.js'

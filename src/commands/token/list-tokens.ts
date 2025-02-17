@@ -1,5 +1,5 @@
-import { ux } from '@oclif/core'
 import { TokenDto } from '@affinidi-tdk/iam-client'
+import { ux } from '@oclif/core'
 import { BaseCommand } from '../../common/base-command.js'
 import { iamService } from '../../services/affinidi/iam/service.js'
 
