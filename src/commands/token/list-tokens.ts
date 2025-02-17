@@ -1,6 +1,6 @@
 import { ux } from '@oclif/core'
+import { TokenDto } from '@affinidi-tdk/iam-client'
 import { BaseCommand } from '../../common/base-command.js'
-import { TokenDto } from '../../services/affinidi/iam/iam.api.js'
 import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class ListTokens extends BaseCommand<typeof ListTokens> {

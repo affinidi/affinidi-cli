@@ -1,4 +1,8 @@
 import { readFile } from 'fs/promises'
+import {
+  TokenEndpointAuthMethod,
+  CreateLoginConfigurationOutput,
+} from '@affinidi-tdk/login-configuration-client'
 import { input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -8,10 +12,6 @@ import { IdTokenClaimFormats } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import {
-  TokenEndpointAuthMethod,
-  CreateLoginConfigurationOutput,
-} from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 export class ImportLoginConfigs extends BaseCommand<typeof ImportLoginConfigs> {
   static summary = 'Import login configurations in your active project'

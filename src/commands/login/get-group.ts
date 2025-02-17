@@ -1,10 +1,10 @@
+import { GroupDto } from '@affinidi-tdk/login-configuration-client'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
-import { GroupDto } from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 export class GetGroup extends BaseCommand<typeof GetGroup> {
   static summary = 'Gets the details of a user group'

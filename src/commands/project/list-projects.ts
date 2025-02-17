@@ -1,7 +1,7 @@
 import { ux } from '@oclif/core'
+import { ProjectDto } from '@affinidi-tdk/iam-client'
 import { BaseCommand } from '../../common/base-command.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api.js'
 
 export class ListProjects extends BaseCommand<typeof ListProjects> {
   static summary = 'Lists your projects'

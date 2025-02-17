@@ -39,6 +39,7 @@ describe('login: config commands', function () {
         `--name=${data.newConfigName}`,
         '--redirect-uris=http://localhost:8080/callback',
       ])
+
       const response = JSON.parse(stdout)
       expect(response).to.have.a.property('ari')
       expect(response).to.have.a.property('projectId')

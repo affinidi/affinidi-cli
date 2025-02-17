@@ -1,10 +1,10 @@
+import { GroupUserMappingDto } from  '@affinidi-tdk/login-configuration-client'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
-import { GroupUserMappingDto } from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 export class AddUserToGroup extends BaseCommand<typeof AddUserToGroup> {
   static summary = 'Adds a user to a user group'
@@ -14,7 +14,13 @@ export class AddUserToGroup extends BaseCommand<typeof AddUserToGroup> {
       summary: 'Name of the user group',
     }),
     'user-id': Flags.string({
-      summary: "Id of the user. Currently the user's DID is supported.",
+      summary: "Id of the user. Currently the user's DID is supported",
+    }),
+    'user-name': Flags.string({
+      summary: 'Name of the user',
+    }),
+    'user-description': Flags.string({
+      summary: 'Description of the user',
     }),
   }
 
@@ -24,14 +30,17 @@ export class AddUserToGroup extends BaseCommand<typeof AddUserToGroup> {
     const schema = z.object({
       'group-name': z.string().max(INPUT_LIMIT),
       'user-id': z.string().max(INPUT_LIMIT),
+      'user-name': z.string().max(INPUT_LIMIT).optional(),
+      'user-description': z.string().max(INPUT_LIMIT).optional(),
     })
     const validatedFlags = schema.parse(promptFlags)
 
     ux.action.start('Adding user to group')
-    const addUserToGroupOutput = await vpAdapterService.addUserToGroup(
-      validatedFlags['group-name'],
-      validatedFlags['user-id'],
-    )
+    const addUserToGroupOutput = await vpAdapterService.addUserToGroup(validatedFlags['group-name'], {
+      userId: validatedFlags['user-id'],
+      ...(validatedFlags['user-name'] && { name: validatedFlags['user-name'] }),
+      ...(validatedFlags['user-description'] && { description: validatedFlags['user-description'] }),
+    })
     ux.action.stop('Added successfully!')
 
     if (!this.jsonEnabled()) this.logJson(addUserToGroupOutput)

@@ -1,3 +1,4 @@
+import { GroupUserMappingsList } from '@affinidi-tdk/login-configuration-client'
 import { confirm, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
@@ -5,7 +6,6 @@ import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
-import { GroupUserMappingsList } from '../../services/affinidi/vp-adapter/vp-adapter.api.js'
 
 const NEXT = 'Next'
 const PREVIOUS = 'Previous'
@@ -48,13 +48,14 @@ export class ListUsersInGroup extends BaseCommand<typeof ListUsersInGroup> {
     const groupName = validatedFlags['group-name']
 
     ux.action.start('Fetching users in the user group')
-    const listGroupUsersOutput = await vpAdapterService.listGroupUsers(validatedFlags['group-name'], {
-      limit: pageSize,
-      exclusiveStartKey: startingToken,
-    })
+    const listGroupUsersOutput = await vpAdapterService.listGroupUsers(
+      validatedFlags['group-name'],
+      pageSize,
+      startingToken,
+    )
     ux.action.stop('Fetched successfully!')
-
     const { lastEvaluatedKey, ...rest } = listGroupUsersOutput
+
     if (!this.jsonEnabled())
       this.logJson({
         ...rest,

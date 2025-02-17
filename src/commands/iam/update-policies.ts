@@ -1,4 +1,5 @@
 import { readFile } from 'fs/promises'
+import { PolicyDto } from '@affinidi-tdk/iam-client'
 import { confirm, input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -10,7 +11,6 @@ import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT, policiesDataSchema, validateInputLength } from '../../common/validators.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { PolicyDto } from '../../services/affinidi/iam/iam.api.js'
 import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class UpdatePolicies extends BaseCommand<typeof UpdatePolicies> {

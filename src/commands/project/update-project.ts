@@ -1,10 +1,10 @@
 import { Flags, ux } from '@oclif/core'
 import z from 'zod'
+import { ProjectDto } from '@affinidi-tdk/iam-client'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api.js'
 
 export class UpdateProject extends BaseCommand<typeof UpdateProject> {
   static summary = 'Updates project details'
@@ -40,8 +40,7 @@ export class UpdateProject extends BaseCommand<typeof UpdateProject> {
 
     ux.action.start('Updating the project')
 
-    const updateProjectOutput = await bffService.updateProject({
-      id: validatedFlags.id,
+    const updateProjectOutput = await bffService.updateProject(validatedFlags.id, {
       name: validatedFlags?.name ?? undefined,
       description: validatedFlags?.description ?? undefined,
     })
