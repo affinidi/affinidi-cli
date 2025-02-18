@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "dev": "./bin/dev",
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "shx rm -rf dist && tsc -b && tsc -v",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "mocha \"test/**/*.test.ts\"",
@@ -100,7 +100,7 @@
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
-    "typescript": "5.5.3"
+    "typescript": "^5.5.3"
   },
   "overrides": {
     "cookie": "^0.7.0"
