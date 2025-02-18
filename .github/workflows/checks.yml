@@ -25,6 +25,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Check TypeScript version
+        run: tsc --version
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
