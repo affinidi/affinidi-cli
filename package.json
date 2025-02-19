@@ -22,8 +22,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "mocha \"test/**/*.test.ts\"",
-    "generate:readme": "npm run build && oclif readme --multi --no-aliases",
-    "postinstall": "patch-package"
+    "generate:readme": "npm run build && oclif readme --multi --no-aliases"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -96,13 +95,12 @@
     "mocha": "^11.1.0",
     "nock": "^13.5.4",
     "oclif": "^4.17.30",
-    "patch-package": "^8.0.0",
     "prettier": "^2.7.1",
     "semantic-release": "^24.1.1",
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
-    "typescript": "^5.5.3"
+    "typescript": "5.5.3"
   },
   "overrides": {
     "cookie": "^0.7.0"

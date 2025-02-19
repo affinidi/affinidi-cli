@@ -1,0 +1,29 @@
+name: checks
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm audit --level medium
+
+      - run: npm ci
+      
+      - name: Build
+        run: npm run build
+
+      - run: npm run test
+        name: "test"
