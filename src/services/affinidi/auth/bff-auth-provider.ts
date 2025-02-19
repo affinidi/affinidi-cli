@@ -1,7 +1,7 @@
 import http from 'http'
 import chalk from 'chalk'
 import express from 'express'
-// import helmet from 'helmet'
+import helmet from 'helmet'
 import { KeyLike } from 'jose'
 import open from 'open'
 import { check } from 'tcp-port-used'
@@ -40,15 +40,15 @@ export class BFFAuthProvider implements AuthProvider {
       this.logger.debug('Start express server')
 
       const app = express()
-      // app.use(
-      //   helmet({
-      //     contentSecurityPolicy: {
-      //       directives: {
-      //         scriptSrc: ["'none'"],
-      //       },
-      //     },
-      //   }),
-      // )
+      app.use(
+        helmet({
+          contentSecurityPolicy: {
+            directives: {
+              scriptSrc: ["'none'"],
+            },
+          },
+        }),
+      )
       const server = app.listen(port, () => {
         this.logger.debug(`Express server started listening on port ${port}`)
       })
