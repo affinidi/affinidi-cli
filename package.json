@@ -22,8 +22,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "mocha \"test/**/*.test.ts\"",
-    "generate:readme": "npm run build && oclif readme --multi --no-aliases",
-    "generate:api": "node scripts/generate-api.cjs"
+    "generate:readme": "npm run build && oclif readme --multi --no-aliases"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -44,16 +43,16 @@
   ],
   "dependencies": {
     "@affinidi-tdk/credential-issuance-client": "^1.46.0",
-    "@affinidi-tdk/iota-client": "^1.37.0",
-    "@affinidi-tdk/wallets-client": "^1.37.0",
-    "@affinidi-tdk/login-configuration-client": "^1.40.0",
     "@affinidi-tdk/iam-client": "^1.37.0",
+    "@affinidi-tdk/iota-client": "^1.37.0",
+    "@affinidi-tdk/login-configuration-client": "^1.40.0",
+    "@affinidi-tdk/wallets-client": "^1.37.0",
     "@inquirer/prompts": "^5.3.4",
-    "@oclif/core": "4.0.17",
+    "@oclif/core": "^4.2.6",
     "@oclif/plugin-autocomplete": "^3.1.11",
     "@oclif/plugin-commands": "^4.0.10",
     "@oclif/plugin-help": "^6.2.7",
-    "@oclif/plugin-not-found": "^2.4.1",
+    "@oclif/plugin-not-found": "^3.2.42",
     "@oclif/plugin-search": "^1.2.5",
     "@oclif/plugin-warn-if-update-available": "^3.1.11",
     "@postman/node-keytar": "^7.9.3",
@@ -93,19 +92,18 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-mocha": "^10.4.3",
     "eslint-plugin-prettier": "^4.2.1",
-    "mocha": "^10.6.0",
+    "mocha": "^11.1.0",
     "nock": "^13.5.4",
     "oclif": "^4.14.12",
     "prettier": "^2.7.1",
     "semantic-release": "^24.1.1",
     "shx": "^0.3.4",
-    "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
-    "typescript": "5.5.3"
+    "tsx": "^4.19.3",
+    "typescript": "^5.5.3"
   },
   "overrides": {
-    "cookie": "^0.7.0",
-    "npm": "^10.9.0"
+    "cookie": "^0.7.0"
   },
   "oclif": {
     "bin": "affinidi",
