@@ -1,4 +1,5 @@
 import { readFile } from 'fs/promises'
+import { TokenDto } from '@affinidi-tdk/iam-client'
 import { ux, Flags } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
@@ -6,7 +7,6 @@ import { SupportedAlgorithms } from '../../common/constants.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { getKeyType, pemToJWK } from '../../helpers/jwk.js'
-import { TokenDto } from '../../services/affinidi/iam/iam.api.js'
 import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class UpdateToken extends BaseCommand<typeof UpdateToken> {

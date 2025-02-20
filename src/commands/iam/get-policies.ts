@@ -1,3 +1,4 @@
+import { PolicyDto } from '@affinidi-tdk/iam-client'
 import { select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -8,7 +9,6 @@ import { PrincipalTypes } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
-import { PolicyDto } from '../../services/affinidi/iam/iam.api.js'
 import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class GetPolicies extends BaseCommand<typeof GetPolicies> {

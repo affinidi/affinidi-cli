@@ -1,4 +1,5 @@
 import { createRequire } from 'module'
+import { CreateProjectInput, ProjectDto, UpdateProjectInput } from '@affinidi-tdk/iam-client'
 import { CLIError } from '@oclif/core/errors'
 import axios, { AxiosError, RawAxiosRequestHeaders } from 'axios'
 import { KeyLike, generateKeyPair } from 'jose'
@@ -6,7 +7,6 @@ import { BFFAuthProvider } from './auth/bff-auth-provider.js'
 import { AuthProvider } from './auth/types.js'
 import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.types.js'
 import { handleServiceError } from './errors.js'
-import { CreateProjectInput, ProjectDto, UpdateProjectInput } from './iam/iam.api.js'
 import { ConsoleLoggerAdapter } from './logger/console-logger-adapter.js'
 import { LoggerAdapter } from './logger/logger-adapter.js'
 import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
@@ -118,10 +118,10 @@ export class BFFService {
     }
   }
 
-  public async updateProject(projectInput: UpdateProjectInput): Promise<ProjectDto> {
+  public async updateProject(id: string, projectInput: UpdateProjectInput): Promise<ProjectDto> {
     const headers = await getBFFHeaders()
     try {
-      const res = await instance.patch('/api/project', projectInput, { headers })
+      const res = await instance.patch(`/api/project/${id}`, projectInput, { headers })
       return res.data as ProjectDto
     } catch (error) {
       handleServiceError(error)
