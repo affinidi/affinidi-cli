@@ -1,10 +1,10 @@
+import { ProjectDto } from '@affinidi-tdk/iam-client'
 import { ux, Flags } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT } from '../../common/validators.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { ProjectDto } from '../../services/affinidi/iam/iam.api.js'
 
 export class CreateProject extends BaseCommand<typeof CreateProject> {
   static summary = 'Creates a project and sets it as the active project'

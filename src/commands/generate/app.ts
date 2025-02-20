@@ -1,3 +1,4 @@
+import { JsonWebKeySetDto } from '@affinidi-tdk/iam-client'
 import { confirm, input, password, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -19,7 +20,6 @@ import {
 import { cloneWithDegit } from '../../helpers/degit.js'
 import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
 import { createAuth0Resources } from '../../services/generator/auth0.js'
 import { configureAppEnvironment } from '../../services/generator/env-configurer.js'
