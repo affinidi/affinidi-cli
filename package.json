@@ -103,8 +103,7 @@
     "typescript": "^5.5.3"
   },
   "overrides": {
-    "cookie": "^0.7.0",
-    "npm": "^10.9.0"
+    "cookie": "^0.7.0"
   },
   "oclif": {
     "bin": "affinidi",
