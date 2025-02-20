@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "typings": "dist/index.d.ts",
   "bin": {
-    "affinidi": "./bin/run.js"
+    "affinidi": "bin/run.js"
   },
   "main": "dist/index.js",
   "type": "module",
@@ -22,6 +22,9 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "mocha \"test/**/*.test.ts\"",
+    "generate:api": "node scripts/generate-api.cjs",
+    "install-hooks": "pre-commit install -t commit-msg -t pre-commit",
+    "postinstall": "[[ -z \"$CI\" ]] && npm run install-hooks || echo 'Skipping postinstall in CI'",
     "generate:readme": "npm run build && oclif readme --multi --no-aliases"
   },
   "publishConfig": {
