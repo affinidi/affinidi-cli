@@ -49,7 +49,7 @@ EXAMPLES
   $ affinidi token create-token -n MyNewToken -g -w
 ```
 
-_See code: [src/commands/token/create-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/token/create-token.ts)_
+_See code: [src/commands/token/create-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/token/create-token.ts)_
 
 ## `affinidi token delete-token`
 
@@ -73,7 +73,7 @@ EXAMPLES
   $ affinidi token delete-token --token-id <uuid>
 ```
 
-_See code: [src/commands/token/delete-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/token/delete-token.ts)_
+_See code: [src/commands/token/delete-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/token/delete-token.ts)_
 
 ## `affinidi token get-token`
 
@@ -97,7 +97,7 @@ EXAMPLES
   $ affinidi token get-token --token-id <uuid>
 ```
 
-_See code: [src/commands/token/get-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/token/get-token.ts)_
+_See code: [src/commands/token/get-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/token/get-token.ts)_
 
 ## `affinidi token list-tokens`
 
@@ -116,7 +116,7 @@ EXAMPLES
   $ affinidi token list-tokens
 ```
 
-_See code: [src/commands/token/list-tokens.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/token/list-tokens.ts)_
+_See code: [src/commands/token/list-tokens.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/token/list-tokens.ts)_
 
 ## `affinidi token update-token`
 
@@ -146,4 +146,4 @@ EXAMPLES
   $ affinidi token update-token --token-id <uuid> --name "My new token" --key-id "My key ID" --public-key-file publicKey.pem --algorithm RS256
 ```
 
-_See code: [src/commands/token/update-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/token/update-token.ts)_
+_See code: [src/commands/token/update-token.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/token/update-token.ts)_

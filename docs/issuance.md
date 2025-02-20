@@ -16,7 +16,7 @@ Creates credential issuance configuration in your active project
 ```
 USAGE
   $ affinidi issuance create-config [--json] [--no-color] [--no-input] [-n <value>] [-d
-    <value>] [-w <value>] [--credential-offer-duration <value>] [-f <value>]
+    <value>] [-w <value>] [--credential-offer-duration <value>] [-f <value>] [--enable-webhook] [-u <value>]
 
 FLAGS
   -d, --description=<value>                Description of the credential issuance configuration
@@ -24,8 +24,10 @@ FLAGS
                                            credential offer. One or more schemas can be added to the issuance. The
                                            credential type ID must be unique
   -n, --name=<value>                       Name of the credential issuance configuration
+  -u, --webhook-url=<value>                URL to receive notifications after VC is claimed
   -w, --wallet-id=<value>                  ID of the wallet
       --credential-offer-duration=<value>  Credential offer duration in seconds
+      --[no-]enable-webhook                Enable/Disable VC claim notifications
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -35,10 +37,10 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi issuance create-config -n <value> -w <value> -f credentialSchemas.json
 
-  $ affinidi issuance create-config --name <value> --wallet-id <value> --description <value> --credential-offer-duration <value> --file credentialSchemas.json
+  $ affinidi issuance create-config --name <value> --wallet-id <value> --description <value> --credential-offer-duration <value> --file credentialSchemas.json --[no-]enable-webhook --webhook-url <value>
 ```
 
-_See code: [src/commands/issuance/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/create-config.ts)_
+_See code: [src/commands/issuance/create-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/issuance/create-config.ts)_
 
 ## `affinidi issuance delete-config`
 
@@ -62,7 +64,7 @@ EXAMPLES
   $ affinidi issuance delete-config --id <value>
 ```
 
-_See code: [src/commands/issuance/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/delete-config.ts)_
+_See code: [src/commands/issuance/delete-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/issuance/delete-config.ts)_
 
 ## `affinidi issuance get-config`
 
@@ -86,7 +88,7 @@ EXAMPLES
   $ affinidi issuance get-config --id <value>
 ```
 
-_See code: [src/commands/issuance/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/get-config.ts)_
+_See code: [src/commands/issuance/get-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/issuance/get-config.ts)_
 
 ## `affinidi issuance list-configs`
 
@@ -105,7 +107,7 @@ EXAMPLES
   $ affinidi issuance list-configs
 ```
 
-_See code: [src/commands/issuance/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/list-configs.ts)_
+_See code: [src/commands/issuance/list-configs.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/issuance/list-configs.ts)_
 
 ## `affinidi issuance update-config`
 
@@ -114,7 +116,7 @@ Updates credential issuance configuration in your active project
 ```
 USAGE
   $ affinidi issuance update-config [--json] [--no-color] [--no-input] [-i <value>] [-n
-    <value>] [-d <value>] [-w <value>] [--credential-offer-duration <value>] [-f <value>]
+    <value>] [-d <value>] [-w <value>] [--credential-offer-duration <value>] [-f <value>] [--enable-webhook -u <value>]
 
 FLAGS
   -d, --description=<value>                Description of the credential issuance configuration
@@ -123,8 +125,10 @@ FLAGS
                                            credential type ID must be unique
   -i, --id=<value>                         ID of the credential issuance configuration
   -n, --name=<value>                       Name of the credential issuance configuration
+  -u, --webhook-url=<value>                URL to receive notifications after VC is claimed
   -w, --wallet-id=<value>                  ID of the wallet
       --credential-offer-duration=<value>  Credential offer duration in seconds
+      --[no-]enable-webhook                Enable/Disable VC claim notifications
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -134,7 +138,7 @@ GLOBAL FLAGS
 EXAMPLES
   $ affinidi issuance update-config -i <value> -f credentialSchemas.json
 
-  $ affinidi issuance update-config --id <value> --name <value> --wallet-id <value> --description <value> --credential-offer-duration <value> --file credentialSchemas.json
+  $ affinidi issuance update-config --id <value> --name <value> --wallet-id <value> --description <value> --credential-offer-duration <value> --file credentialSchemas.json --[no-]enable-webhook --webhook-url <value>
 ```
 
-_See code: [src/commands/issuance/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.10.2/src/commands/issuance/update-config.ts)_
+_See code: [src/commands/issuance/update-config.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/issuance/update-config.ts)_
