@@ -50,7 +50,7 @@
     "@inquirer/prompts": "^5.3.4",
     "@oclif/core": "^4.2.6",
     "@oclif/plugin-autocomplete": "^3.1.11",
-    "@oclif/plugin-commands": "^4.0.10",
+    "@oclif/plugin-commands": "4.0.10",
     "@oclif/plugin-help": "^6.2.7",
     "@oclif/plugin-not-found": "^3.2.42",
     "@oclif/plugin-search": "^1.2.5",
