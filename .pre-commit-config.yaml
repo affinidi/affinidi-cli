@@ -17,7 +17,7 @@ repos:
         entry: npm audit
         args:
           - --omit=dev
-          - --audit-level=medium
+          - --audit-level=moderate
         language: node
         verbose: true
         pass_filenames: false
