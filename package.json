@@ -1,12 +1,12 @@
 {
   "name": "@affinidi/cli",
-  "version": "2.13.0",
+  "version": "2.14.0",
   "description": "Affinidi CLI",
   "author": "affinidi.com",
   "license": "Apache-2.0",
   "typings": "dist/index.d.ts",
   "bin": {
-    "affinidi": "./bin/run.js"
+    "affinidi": "bin/run.js"
   },
   "main": "dist/index.js",
   "type": "module",
