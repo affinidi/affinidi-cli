@@ -55,7 +55,7 @@
     "@oclif/plugin-not-found": "^3.2.42",
     "@oclif/plugin-search": "^1.2.5",
     "@oclif/plugin-warn-if-update-available": "^3.1.11",
-    "@postman/node-keytar": "^7.9.3",
+    "@postman/node-keytar": "7.9.3",
     "axios": "^1.7.7",
     "chalk": "^5.3.0",
     "conf": "^13.0.1",
