@@ -1,4 +1,5 @@
 import { readFile } from 'fs/promises'
+import { TokenDto, JsonWebKeySetDto } from '@affinidi-tdk/iam-client'
 import { confirm, input } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import { v4 as uuidv4 } from 'uuid'
@@ -10,7 +11,6 @@ import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
 import { getKeyType, pemToJWK } from '../../helpers/jwk.js'
 import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
-import { TokenDto, JsonWebKeySetDto } from '../../services/affinidi/iam/iam.api.js'
 
 const flagsSchema = z
   .object({

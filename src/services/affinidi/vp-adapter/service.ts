@@ -1,22 +1,28 @@
-import { AxiosError } from 'axios'
 import {
-  Api as VPAdapterApi,
+  GroupApi,
+  Configuration,
+  ConfigurationApi,
   CreateLoginConfigurationInput,
   CreateLoginConfigurationOutput,
   ListLoginConfigurationOutput,
-  GetLoginConfigurationOutput,
-  UpdateLoginConfigurationOutput,
+  LoginConfigurationObject,
   UpdateLoginConfigurationInput,
   GroupDto,
   GroupsList,
   GroupUserMappingsList,
-} from './vp-adapter.api.js'
+  ListGroupUserMappingsSortOrderEnum,
+  AddUserToGroupInput,
+} from '@affinidi-tdk/login-configuration-client'
+
+import { AxiosError } from 'axios'
 import { ServiceResourceIds } from '../../../common/constants.js'
 import { config } from '../../env-config.js'
 import { getBFFHeaders, bffService } from '../bff-service.js'
 import { handleServiceError } from '../errors.js'
 
-export const VPA_SERVICE = 'vp-adapter'
+const headers = await getBFFHeaders()
+const baseOptions = { headers }
+const basePath = `${config.bffHost}/vpa`
 
 const vpaErrorMessageHandler = (response: any): string | null => {
   switch (response.data.name) {
@@ -40,23 +46,15 @@ const vpaErrorMessageHandler = (response: any): string | null => {
 
 class VPAdapterService {
   constructor(
-    private readonly client = new VPAdapterApi({
-      baseURL: `${config.bffHost}/vpa`,
-      withCredentials: true,
-      headers: {
-        'Accept-Encoding': 'application/json',
-      },
-    }),
+    private readonly configurationApiClient = new ConfigurationApi(new Configuration({ basePath, baseOptions })),
+    private readonly groupApiClient = new GroupApi(new Configuration({ basePath, baseOptions })),
   ) {}
 
   public createLoginConfig = async (
     createLoginConfigInput: CreateLoginConfigurationInput,
   ): Promise<CreateLoginConfigurationOutput> => {
     try {
-      const headers = await getBFFHeaders()
-      const response = await this.client.v1.createLoginConfigurations(createLoginConfigInput, {
-        headers,
-      })
+      const response = await this.configurationApiClient.createLoginConfigurations(createLoginConfigInput)
       return response.data
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data?.name === 'ResourceLimitExceededError') {
@@ -71,19 +69,17 @@ class VPAdapterService {
   }
 
   public listLoginConfigurations = async (): Promise<ListLoginConfigurationOutput> => {
-    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listLoginConfigurations(undefined, { headers })
+      const response = await this.configurationApiClient.listLoginConfigurations(undefined)
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public getLoginConfigurationById = async (id: string): Promise<GetLoginConfigurationOutput> => {
-    const headers = await getBFFHeaders()
+  public getLoginConfigurationById = async (id: string): Promise<LoginConfigurationObject> => {
     try {
-      const response = await this.client.v1.getLoginConfigurationsById(id, { headers })
+      const response = await this.configurationApiClient.getLoginConfigurationsById(id)
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -91,9 +87,8 @@ class VPAdapterService {
   }
 
   public deleteLoginConfigurationById = async (id: string): Promise<void> => {
-    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.deleteLoginConfigurationsById(id, { headers })
+      await this.configurationApiClient.deleteLoginConfigurationsById(id)
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
@@ -102,12 +97,12 @@ class VPAdapterService {
   public updateLoginConfigurationById = async (
     id: string,
     updateLoginConfigurationInput: UpdateLoginConfigurationInput,
-  ): Promise<UpdateLoginConfigurationOutput> => {
-    const headers = await getBFFHeaders()
+  ): Promise<LoginConfigurationObject> => {
     try {
-      const response = await this.client.v1.updateLoginConfigurationsById(id, updateLoginConfigurationInput, {
-        headers,
-      })
+      const response = await this.configurationApiClient.updateLoginConfigurationsById(
+        id,
+        updateLoginConfigurationInput,
+      )
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -115,9 +110,8 @@ class VPAdapterService {
   }
 
   public createGroup = async (groupName: string): Promise<GroupDto> => {
-    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.createGroup({ groupName: groupName }, { headers })
+      const response = await this.groupApiClient.createGroup({ groupName: groupName })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -125,9 +119,8 @@ class VPAdapterService {
   }
 
   public getGroup = async (groupName: string): Promise<GroupDto> => {
-    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.getGroupById(groupName, { headers })
+      const response = await this.groupApiClient.getGroupById(groupName)
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -135,28 +128,26 @@ class VPAdapterService {
   }
 
   public deleteGroup = async (name: string): Promise<void> => {
-    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.deleteGroup(name, { headers })
+      await this.groupApiClient.deleteGroup(name)
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
   public listGroups = async (): Promise<GroupsList> => {
-    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listGroups({ headers })
+      const response = await this.groupApiClient.listGroups()
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
   }
 
-  public addUserToGroup = async (groupName: string, userId: string) => {
-    const headers = await getBFFHeaders()
+  public addUserToGroup = async (groupName: string, input: AddUserToGroupInput) => {
+    const { userId, name, description } = input
     try {
-      const response = await this.client.v1.addUserToGroup(groupName, { userId }, { headers })
+      const response = await this.groupApiClient.addUserToGroup(groupName, { userId, name, description })
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
@@ -164,9 +155,8 @@ class VPAdapterService {
   }
 
   public removeUserFromGroup = async (groupName: string, userId: string): Promise<void> => {
-    const headers = await getBFFHeaders()
     try {
-      await this.client.v1.removeUserFromGroup(groupName, { userId }, { headers })
+      await this.groupApiClient.removeUserFromGroup(groupName, { userId })
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
     }
@@ -174,11 +164,12 @@ class VPAdapterService {
 
   public listGroupUsers = async (
     groupName: string,
-    query: { limit?: number; exclusiveStartKey?: string },
+    limit?: number,
+    exclusiveStartKey?: string,
+    sortOrder?: ListGroupUserMappingsSortOrderEnum,
   ): Promise<GroupUserMappingsList> => {
-    const headers = await getBFFHeaders()
     try {
-      const response = await this.client.v1.listGroupUserMappings(groupName, query, { headers })
+      const response = await this.groupApiClient.listGroupUserMappings(groupName, limit, exclusiveStartKey, sortOrder)
       return response.data
     } catch (error) {
       handleServiceError(error, vpaErrorMessageHandler)
