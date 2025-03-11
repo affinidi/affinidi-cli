@@ -3,8 +3,6 @@ kind: Component
 metadata:
   name: affinidi-cli
   description: Affinidi CLI
-  tags:
-    - typescript
 spec:
   type: service
   lifecycle: production
