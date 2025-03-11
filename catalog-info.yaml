@@ -2,11 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: affinidi-cli
-  tla: ais
   description: Affinidi CLI
   tags:
     - typescript
 spec:
   type: service
   lifecycle: production
-  owner: DXP
