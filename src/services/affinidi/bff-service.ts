@@ -168,7 +168,7 @@ export class BFFService {
   public async setSessionActiveProject(projectId: string): Promise<string> {
     const headers = await getBFFHeaders()
     try {
-      const res = await instance.post(`/api/projects/${projectId}`, { projectId }, { headers })
+      const res = await instance.post('/api/projects/active', { projectId }, { headers })
       return res.data.projectId as string
     } catch (error) {
       handleServiceError(error)
