@@ -36,19 +36,18 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
-      // eslint-disable-next-line  @typescript-eslint/consistent-type-assertions
+
       baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
       enableJsonFlag: this.ctor.enableJsonFlag,
       args: this.ctor.args,
       strict: this.ctor.strict,
     })
-    // eslint-disable-next-line  @typescript-eslint/consistent-type-assertions
+
     this.flags = flags as FlagsType<T>
-    // eslint-disable-next-line  @typescript-eslint/consistent-type-assertions
+
     this.args = args as ArgsType<T>
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {
     if (err instanceof ZodError) {
       let message = 'Invalid input parameters\n'
@@ -65,7 +64,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     return super.catch(err)
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
     // called after run and catch regardless of whether or not the command errored
     return super.finally(_)

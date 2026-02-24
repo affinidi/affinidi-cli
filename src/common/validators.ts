@@ -2,8 +2,6 @@ import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { INPUT_LIMIT } from './constants.js'
 
-
-
 export function validateInputLength(text: string, maxLength: number): string {
   if (text.length > maxLength) {
     throw new CLIError(`String must contain at most ${maxLength} character(s)`)

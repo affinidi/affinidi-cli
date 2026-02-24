@@ -8,7 +8,6 @@ export const AuthTokenExpired = "Your session has expired. Please, run command '
 export const InvalidOrMissingAuthToken =
   "Your session token is invalid or missing. Please, run command 'affinidi start' and try again."
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 const getCommonAPIErrorMessage = (response: any): string => {
   switch (response.status) {
     case StatusCodes.FORBIDDEN:
@@ -95,7 +94,7 @@ export function handleServiceError(error: any, serviceErrorMessageHandler?: (res
 
   throw new CLIError(
     serviceErrorMessageHandler
-      ? serviceErrorMessageHandler(error.response) ?? getCommonAPIErrorMessage(error.response)
+      ? (serviceErrorMessageHandler(error.response) ?? getCommonAPIErrorMessage(error.response))
       : getCommonAPIErrorMessage(error.response),
   )
 }

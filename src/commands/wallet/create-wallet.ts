@@ -75,8 +75,8 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
 
     const isDidWeb = didMethod === DidMethods.WEB
     const didWebUrl = isDidWeb
-      ? flags['did-web-url'] ??
-        validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT)
+      ? (flags['did-web-url'] ??
+        validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT))
       : undefined
 
     const data = {
