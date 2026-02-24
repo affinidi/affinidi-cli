@@ -5,7 +5,8 @@ import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { INPUT_LIMIT } from '../../common/validators.js'
+import { INPUT_LIMIT } from '../../common/constants.js'
+
 import { bffService } from '../../services/affinidi/bff-service.js'
 
 export class SelectProject extends BaseCommand<typeof SelectProject> {

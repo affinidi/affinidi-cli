@@ -1,7 +1,8 @@
 import { input } from '@inquirer/prompts'
 import { CLIError } from '@oclif/core/errors'
 import { giveFlagInputErrorMessage } from './error-messages.js'
-import { INPUT_LIMIT, validateInputLength } from './validators.js'
+import { validateInputLength } from './validators.js'
+import { INPUT_LIMIT } from './constants.js'
 
 export async function promptRequiredParameters(
   requiredFlags: string[],

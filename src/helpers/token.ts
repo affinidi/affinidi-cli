@@ -8,7 +8,8 @@ import { iamService } from '../services/affinidi/iam/service.js'
 export function generateDefaultTokenName(): string {
   const user = process.env.USER ?? 'cli'
   const hostname = process.env.HOSTNAME ?? 'cli'
-  return `PAT-${user}@${hostname}`
+  const name = `PAT-${user}@${hostname}`
+  return name.length >= 8 ? name : name.padEnd(8, '-')
 }
 
 export function generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {

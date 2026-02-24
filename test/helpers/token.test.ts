@@ -37,10 +37,11 @@ describe('generateDefaultTokenName', () => {
     expect(result).to.equal('PAT-alice@mybox')
   })
 
-  it('separates user and hostname with @', () => {
+  it('pads result to at least 8 characters when user and hostname are very short', () => {
     process.env.USER = 'u'
     process.env.HOSTNAME = 'h'
     const result = generateDefaultTokenName()
-    expect(result).to.match(/^PAT-[^@]+@[^@]+$/)
+    expect(result.length).to.be.at.least(8)
+    expect(result).to.equal('PAT-u@h-')
   })
 })

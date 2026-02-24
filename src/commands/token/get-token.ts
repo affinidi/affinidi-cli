@@ -3,7 +3,8 @@ import { ux, Flags } from '@oclif/core'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT } from '../../common/validators.js'
+import { INPUT_LIMIT } from '../../common/constants.js'
+
 import { iamService } from '../../services/affinidi/iam/service.js'
 
 export class GetToken extends BaseCommand<typeof GetToken> {

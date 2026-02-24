@@ -5,9 +5,9 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { IdTokenClaimFormats } from '../../common/constants.js'
+import { INPUT_LIMIT, IdTokenClaimFormats } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
+import { validateInputLength } from '../../common/validators.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
 
 export class ImportLoginConfigs extends BaseCommand<typeof ImportLoginConfigs> {

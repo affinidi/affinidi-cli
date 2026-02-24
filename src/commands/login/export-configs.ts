@@ -4,9 +4,10 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import { BaseCommand } from '../../common/base-command.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
+import { validateInputLength } from '../../common/validators.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
+import { INPUT_LIMIT } from '../../common/constants.js'
 
 export class ExportLoginConfigs extends BaseCommand<typeof ExportLoginConfigs> {
   static summary = 'Export selected login configurations of your active project'
