@@ -5,6 +5,12 @@ import { SupportedAlgorithms } from '../common/constants.js'
 import { policiesDataSchema } from '../common/validators.js'
 import { iamService } from '../services/affinidi/iam/service.js'
 
+export function generateDefaultTokenName(): string {
+  const user = process.env.USER ?? 'cli'
+  const hostname = process.env.HOSTNAME ?? 'cli'
+  return `PAT-${user}@${hostname}`
+}
+
 export function generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {
   const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 4096 })
 

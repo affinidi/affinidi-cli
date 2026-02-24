@@ -9,7 +9,13 @@ import { SupportedAlgorithms } from '../../common/constants.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
 import { getKeyType, pemToJWK } from '../../helpers/jwk.js'
-import { addPrincipal, createToken, generateKeyPair, updatePolicies } from '../../helpers/token.js'
+import {
+  addPrincipal,
+  createToken,
+  generateDefaultTokenName,
+  generateKeyPair,
+  updatePolicies,
+} from '../../helpers/token.js'
 import { bffService } from '../../services/affinidi/bff-service.js'
 
 const flagsSchema = z
@@ -52,6 +58,7 @@ export class CreateToken extends BaseCommand<typeof CreateToken> {
     name: Flags.string({
       char: 'n',
       summary: 'Name of the Personal Access Token, at least 8 chars long',
+      default: generateDefaultTokenName(),
     }),
     'key-id': Flags.string({
       char: 'k',
