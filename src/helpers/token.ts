@@ -6,8 +6,8 @@ import { policiesDataSchema } from '../common/validators.js'
 import { iamService } from '../services/affinidi/iam/service.js'
 
 export function generateDefaultTokenName(): string {
-  const user = process.env.USER ?? 'cli'
-  const hostname = process.env.HOSTNAME ?? 'cli'
+  const user = process.env.USER?.trim() || 'cli'
+  const hostname = process.env.HOSTNAME?.trim() || 'cli'
   const name = `PAT-${user}@${hostname}`
   return name.length >= 8 ? name : name.padEnd(8, '-')
 }

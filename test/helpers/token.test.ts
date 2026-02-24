@@ -28,6 +28,7 @@ describe('generateDefaultTokenName', () => {
     delete process.env.HOSTNAME
     const result = generateDefaultTokenName()
     expect(result).to.equal('PAT-cli@cli')
+    expect(result.length).to.be.at.least(8)
   })
 
   it('uses USER and HOSTNAME from env when present', () => {
@@ -35,6 +36,7 @@ describe('generateDefaultTokenName', () => {
     process.env.HOSTNAME = 'mybox'
     const result = generateDefaultTokenName()
     expect(result).to.equal('PAT-alice@mybox')
+    expect(result.length).to.be.at.least(8)
   })
 
   it('pads result to at least 8 characters when user and hostname are very short', () => {
@@ -43,5 +45,13 @@ describe('generateDefaultTokenName', () => {
     const result = generateDefaultTokenName()
     expect(result.length).to.be.at.least(8)
     expect(result).to.equal('PAT-u@h-')
+  })
+
+  it('falls back to "cli" when USER or HOSTNAME is an empty or whitespace-only string', () => {
+    process.env.USER = '   '
+    process.env.HOSTNAME = ''
+    const result = generateDefaultTokenName()
+    expect(result).to.equal('PAT-cli@cli')
+    expect(result.length).to.be.at.least(8)
   })
 })
