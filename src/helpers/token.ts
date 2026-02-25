@@ -8,7 +8,7 @@ import { iamService } from '../services/affinidi/iam/service.js'
 export function generateDefaultTokenName(): string {
   const user = process.env.USER?.trim() || 'cli'
   const hostname = process.env.HOSTNAME?.trim() || 'cli'
-  const name = `PAT-${user}@${hostname}`
+  const name = `PAT-${user}@${hostname}-${Date.now().toString().slice(-4)}`
   return name.length >= 8 ? name : name.padEnd(8, '-')
 }
 

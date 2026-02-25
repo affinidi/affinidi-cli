@@ -27,7 +27,7 @@ describe('generateDefaultTokenName', () => {
     delete process.env.USER
     delete process.env.HOSTNAME
     const result = generateDefaultTokenName()
-    expect(result).to.equal('PAT-cli@cli')
+    expect(result).to.match(/^PAT-cli@cli-\d{4}$/)
     expect(result.length).to.be.at.least(8)
   })
 
@@ -35,7 +35,7 @@ describe('generateDefaultTokenName', () => {
     process.env.USER = 'alice'
     process.env.HOSTNAME = 'mybox'
     const result = generateDefaultTokenName()
-    expect(result).to.equal('PAT-alice@mybox')
+    expect(result).to.match(/^PAT-alice@mybox-\d{4}$/)
     expect(result.length).to.be.at.least(8)
   })
 
@@ -44,14 +44,14 @@ describe('generateDefaultTokenName', () => {
     process.env.HOSTNAME = 'h'
     const result = generateDefaultTokenName()
     expect(result.length).to.be.at.least(8)
-    expect(result).to.equal('PAT-u@h-')
+    expect(result).to.match(/^PAT-u@h-\d{4}$/)
   })
 
   it('falls back to "cli" when USER or HOSTNAME is an empty or whitespace-only string', () => {
     process.env.USER = '   '
     process.env.HOSTNAME = ''
     const result = generateDefaultTokenName()
-    expect(result).to.equal('PAT-cli@cli')
+    expect(result).to.match(/^PAT-cli@cli-\d{4}$/)
     expect(result.length).to.be.at.least(8)
   })
 })

@@ -5,7 +5,7 @@ import { Flags, ux } from '@oclif/core'
 import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { INPUT_LIMIT, SupportedAlgorithms } from '../../common/constants.js'
+import { INPUT_LIMIT, SupportedAlgorithms, TOKEN_NAME_MIN_LENGTH } from '../../common/constants.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
 import { validateInputLength } from '../../common/validators.js'
 import { getKeyType, pemToJWK } from '../../helpers/jwk.js'
@@ -20,7 +20,7 @@ import { bffService } from '../../services/affinidi/bff-service.js'
 
 const flagsSchema = z
   .object({
-    name: z.string().min(8).max(INPUT_LIMIT),
+    name: z.string().min(TOKEN_NAME_MIN_LENGTH).max(INPUT_LIMIT),
     algorithm: z.nativeEnum(SupportedAlgorithms),
     'key-id': z.string().max(INPUT_LIMIT).optional(),
     'public-key-file': z.string().max(INPUT_LIMIT).optional(),
