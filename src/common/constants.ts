@@ -1,3 +1,8 @@
+export const INPUT_LIMIT = 2000
+export const TOKEN_NAME_MIN_LENGTH = 8
+export const TOKEN_LIMIT = 5000
+export const PRESENTATION_DEFINITION_LIMIT = 5000
+
 export enum SupportedAlgorithms {
   RS256 = 'RS256',
   RS512 = 'RS512',

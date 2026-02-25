@@ -8,9 +8,10 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { INPUT_LIMIT } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT, validateInputLength, split } from '../../common/validators.js'
+import { validateInputLength, split } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
 export class UpdateIotaConfig extends BaseCommand<typeof UpdateIotaConfig> {

@@ -3,7 +3,8 @@ import { Flags, ux } from '@oclif/core'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT } from '../../common/validators.js'
+import { INPUT_LIMIT } from '../../common/constants.js'
+
 import { bffService } from '../../services/affinidi/bff-service.js'
 
 export class UpdateProject extends BaseCommand<typeof UpdateProject> {

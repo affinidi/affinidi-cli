@@ -4,9 +4,9 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { DidMethods } from '../../common/constants.js'
+import { INPUT_LIMIT, DidMethods } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
+import { validateInputLength } from '../../common/validators.js'
 import { cweService } from '../../services/affinidi/cwe/service.js'
 
 export class CreateWallet extends BaseCommand<typeof CreateWallet> {
@@ -75,8 +75,8 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
 
     const isDidWeb = didMethod === DidMethods.WEB
     const didWebUrl = isDidWeb
-      ? flags['did-web-url'] ??
-        validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT)
+      ? (flags['did-web-url'] ??
+        validateInputLength(await input({ message: 'Enter did:web URL (your applications domain)' }), INPUT_LIMIT))
       : undefined
 
     const data = {

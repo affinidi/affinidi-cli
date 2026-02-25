@@ -4,8 +4,9 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT } from '../../common/constants.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, validateInputLength } from '../../common/validators.js'
+import { validateInputLength } from '../../common/validators.js'
 import { iotaService } from '../../services/affinidi/iota/service.js'
 
 export class CreateQuery extends BaseCommand<typeof CreateQuery> {

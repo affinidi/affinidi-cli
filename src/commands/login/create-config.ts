@@ -9,9 +9,9 @@ import { Flags, ux } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { IdTokenClaimFormats } from '../../common/constants.js'
+import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, IdTokenClaimFormats } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
-import { INPUT_LIMIT, PRESENTATION_DEFINITION_LIMIT, split, validateInputLength } from '../../common/validators.js'
+import { split, validateInputLength } from '../../common/validators.js'
 import { vpAdapterService } from '../../services/affinidi/vp-adapter/service.js'
 
 export class CreateConfig extends BaseCommand<typeof CreateConfig> {

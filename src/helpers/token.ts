@@ -5,6 +5,13 @@ import { SupportedAlgorithms } from '../common/constants.js'
 import { policiesDataSchema } from '../common/validators.js'
 import { iamService } from '../services/affinidi/iam/service.js'
 
+export function generateDefaultTokenName(): string {
+  const user = process.env.USER?.trim() || 'cli'
+  const hostname = process.env.HOSTNAME?.trim() || 'cli'
+  const name = `PAT-${user}@${hostname}-${Date.now().toString().slice(-4)}`
+  return name.length >= 8 ? name : name.padEnd(8, '-')
+}
+
 export function generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {
   const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 4096 })
 

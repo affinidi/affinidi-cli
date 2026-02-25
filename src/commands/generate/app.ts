@@ -5,10 +5,10 @@ import { CLIError } from '@oclif/core/errors'
 import { v4 as uuidv4 } from 'uuid'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
-import { RefAppProvider, SupportedAlgorithms } from '../../common/constants.js'
+import { INPUT_LIMIT, TOKEN_LIMIT, RefAppProvider, SupportedAlgorithms } from '../../common/constants.js'
 import { giveFlagInputErrorMessage } from '../../common/error-messages.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT, TOKEN_LIMIT, validateInputLength } from '../../common/validators.js'
+import { validateInputLength } from '../../common/validators.js'
 import {
   AppsInformation,
   getAppMetadataToken,

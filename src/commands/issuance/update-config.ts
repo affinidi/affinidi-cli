@@ -9,8 +9,9 @@ import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
 import z from 'zod'
 import { BaseCommand } from '../../common/base-command.js'
+import { INPUT_LIMIT } from '../../common/constants.js'
 import { promptRequiredParameters } from '../../common/prompts.js'
-import { INPUT_LIMIT, validateInputLength } from '../../common/validators.js'
+import { validateInputLength } from '../../common/validators.js'
 import { issuanceService } from '../../services/affinidi/cis/service.js'
 
 export class UpdateIssuanceConfig extends BaseCommand<typeof UpdateIssuanceConfig> {
