@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -30,7 +34,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
           scope: '@affinidi'
@@ -44,5 +48,4 @@ jobs:
       - name: Run release
         run: npx semantic-release@24
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
