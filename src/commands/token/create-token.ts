@@ -14,7 +14,7 @@ import { bffService } from '../../services/affinidi/bff-service.js'
 
 const flagsSchema = z
   .object({
-    name: z.string().max(INPUT_LIMIT),
+    name: z.string().trim().min(8).max(INPUT_LIMIT),
     algorithm: z.nativeEnum(SupportedAlgorithms),
     'key-id': z.string().max(INPUT_LIMIT).optional(),
     'public-key-file': z.string().max(INPUT_LIMIT).optional(),
