@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: affinidi-cli
+  description: Affinidi CLI
+spec:
+  type: service
+  lifecycle: production
+  owner: affinidi
