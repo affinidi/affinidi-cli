@@ -5,18 +5,22 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     environment:
       name: publishEnv
     steps:
-      - name: Generate token from app token #https://github.com/tibdex/github-app-token
+      - name: Generate token from app token
         id: generate_token
-        uses: tibdex/github-app-token@v2
+        uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
-          private_key: ${{ secrets.RELEASE_BOT_PKEY }}
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PKEY }}
 
       - uses: actions/checkout@v4
         with:
@@ -30,10 +34,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@affinidi'
 
       - name: Install dependencies
         run: npm ci
@@ -42,7 +44,6 @@ jobs:
         run: npm run build
 
       - name: Run release
-        run: npx semantic-release@24
+        run: npx semantic-release@25
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
