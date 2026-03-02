@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, test, build]
     environment:
-      name: publishEnv
+      name: release
     steps:
       - name: Generate token from app token
         id: generate_token
