@@ -115,21 +115,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Get tag before release
+        id: tag-before
+        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> "$GITHUB_OUTPUT"
+
       - name: Run semantic-release
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
+      - name: Get tag after release
+        id: tag-after
+        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> "$GITHUB_OUTPUT"
+
       - name: Trigger publish workflow
-        if: success()
+        if: steps.tag-before.outputs.tag != steps.tag-after.outputs.tag && steps.tag-after.outputs.tag != ''
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0)
-          echo "Latest tag: $LATEST_TAG"
+          echo "New tag created: ${{ steps.tag-after.outputs.tag }}"
 
           gh api repos/${{ github.repository }}/dispatches \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -f event_type="publish" \
-            -f client_payload[tag]="$LATEST_TAG"
+            -f client_payload[tag]="${{ steps.tag-after.outputs.tag }}"
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
