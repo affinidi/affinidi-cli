@@ -6,7 +6,12 @@ import { policiesDataSchema } from '../common/validators.js'
 import { iamService } from '../services/affinidi/iam/service.js'
 
 export function generateKeyPair(keyId: string, algorithm: string, passphrase?: string) {
-  const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 4096 })
+  const isEc = algorithm === SupportedAlgorithms.ES256 || algorithm === SupportedAlgorithms.ES512
+  const namedCurve = algorithm === SupportedAlgorithms.ES256 ? 'P-256' : 'P-521'
+
+  const { publicKey, privateKey } = isEc
+    ? generateKeyPairSync('ec', { namedCurve })
+    : generateKeyPairSync('rsa', { modulusLength: 4096 })
 
   const publicKeyPem = publicKey.export({ format: 'pem', type: 'spki' })
   const exportOptions: KeyExportOptions<'pem'> = {
