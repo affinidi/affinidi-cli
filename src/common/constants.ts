@@ -39,4 +39,6 @@ export enum ServiceResourceIds {
 export enum DidMethods {
   KEY = 'key',
   WEB = 'web',
+  PEER0 = 'peer0',
+  PEER2 = 'peer2',
 }

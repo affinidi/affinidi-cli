@@ -1,4 +1,4 @@
-import { CreateWalletInput, CreateWalletResponse } from '@affinidi-tdk/wallets-client'
+import { CreateWalletV2Input, CreateWalletV2Response } from '@affinidi-tdk/wallets-client'
 import { input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -49,7 +49,7 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
     }),
   }
 
-  public async run(): Promise<CreateWalletResponse> {
+  public async run(): Promise<CreateWalletV2Response> {
     const { flags } = await this.parse(CreateWallet)
 
     if (flags['no-input']) {
@@ -103,7 +103,7 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
     const createWalletInput = schema.parse(data)
 
     ux.action.start('Creating wallet')
-    const output = await cweService.createWallet(createWalletInput as CreateWalletInput)
+    const output = await cweService.createWallet(createWalletInput as CreateWalletV2Input)
     ux.action.stop('Created successfully!')
 
     if (!this.jsonEnabled()) this.logJson(output)

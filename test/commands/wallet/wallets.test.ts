@@ -68,7 +68,7 @@ const didWebWallet = {
 describe('wallet', function () {
   describe('wallet:create-wallet', () => {
     it('creates a wallet with did:key when only method is provided and outputs its info', async () => {
-      nock(CWE_URL).post('/v1/wallets').reply(200, didKeyWallet)
+      nock(CWE_URL).post('/v2/wallets').reply(200, { wallet: didKeyWallet })
       const { stdout } = await runCommand([
         'wallet:create-wallet',
         `--did-method=${DidMethods.KEY}`,
@@ -76,16 +76,17 @@ describe('wallet', function () {
         '--json',
       ])
       const response = JSON.parse(stdout)
-      expect(response).to.have.a.property('did')
-      expect(response).to.have.a.property('id')
-      expect(response).to.have.a.property('ari')
-      expect(response).to.have.a.property('name')
-      expect(response).to.have.a.property('description')
-      expect(response).to.have.a.property('keys')
+      expect(response).to.have.a.property('wallet')
+      expect(response.wallet).to.have.a.property('did')
+      expect(response.wallet).to.have.a.property('id')
+      expect(response.wallet).to.have.a.property('ari')
+      expect(response.wallet).to.have.a.property('name')
+      expect(response.wallet).to.have.a.property('description')
+      expect(response.wallet).to.have.a.property('keys')
     })
 
     it('creates a wallet with did:key and outputs its info', async () => {
-      nock(CWE_URL).post('/v1/wallets').reply(200, didKeyWallet)
+      nock(CWE_URL).post('/v2/wallets').reply(200, { wallet: didKeyWallet })
       const { stdout } = await runCommand([
         'wallet:create-wallet',
         `--name=${didKeyWallet.name}`,
@@ -94,16 +95,17 @@ describe('wallet', function () {
         '--json',
       ])
       const response = JSON.parse(stdout)
-      expect(response).to.have.a.property('did')
-      expect(response).to.have.a.property('id')
-      expect(response).to.have.a.property('ari')
-      expect(response).to.have.a.property('name')
-      expect(response).to.have.a.property('description')
-      expect(response).to.have.a.property('keys')
+      expect(response).to.have.a.property('wallet')
+      expect(response.wallet).to.have.a.property('did')
+      expect(response.wallet).to.have.a.property('id')
+      expect(response.wallet).to.have.a.property('ari')
+      expect(response.wallet).to.have.a.property('name')
+      expect(response.wallet).to.have.a.property('description')
+      expect(response.wallet).to.have.a.property('keys')
     })
 
     it('creates a wallet with did:web and outputs its info', async () => {
-      nock(CWE_URL).post('/v1/wallets').reply(200, didKeyWallet)
+      nock(CWE_URL).post('/v2/wallets').reply(200, { wallet: didKeyWallet })
       const { stdout } = await runCommand([
         'wallet:create-wallet',
         `--name=${didKeyWallet.name}`,
@@ -113,12 +115,13 @@ describe('wallet', function () {
         '--json',
       ])
       const response = JSON.parse(stdout)
-      expect(response).to.have.a.property('did')
-      expect(response).to.have.a.property('id')
-      expect(response).to.have.a.property('ari')
-      expect(response).to.have.a.property('name')
-      expect(response).to.have.a.property('description')
-      expect(response).to.have.a.property('keys')
+      expect(response).to.have.a.property('wallet')
+      expect(response.wallet).to.have.a.property('did')
+      expect(response.wallet).to.have.a.property('id')
+      expect(response.wallet).to.have.a.property('ari')
+      expect(response.wallet).to.have.a.property('name')
+      expect(response.wallet).to.have.a.property('description')
+      expect(response.wallet).to.have.a.property('keys')
     })
   })
 
