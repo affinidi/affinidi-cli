@@ -42,3 +42,16 @@ export enum DidMethods {
   PEER0 = 'peer0',
   PEER2 = 'peer2',
 }
+
+export enum WalletAlgorithms {
+  SECP256K1 = 'secp256k1',
+  ED25519 = 'ed25519',
+  P256 = 'p256',
+}
+
+export enum ServiceEndpointTypes {
+  DID_COMM_MESSAGING = 'DIDCommMessaging',
+  LINKED_DOMAINS = 'LinkedDomains',
+  IDENTITY_HUB = 'IdentityHub',
+  CREDENTIAL_REGISTRY = 'CredentialRegistry',
+}
