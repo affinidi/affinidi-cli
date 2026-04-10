@@ -72,6 +72,7 @@ describe('wallet', function () {
       const { stdout } = await runCommand([
         'wallet:create-wallet',
         `--did-method=${DidMethods.KEY}`,
+        '--algorithm=secp256k1',
         '--no-input',
         '--json',
       ])
@@ -91,6 +92,7 @@ describe('wallet', function () {
         'wallet:create-wallet',
         `--name=${didKeyWallet.name}`,
         `--did-method=${DidMethods.KEY}`,
+        '--algorithm=secp256k1',
         '--no-input',
         '--json',
       ])
@@ -111,6 +113,7 @@ describe('wallet', function () {
         `--name=${didKeyWallet.name}`,
         `--did-method=${DidMethods.WEB}`,
         `--did-web-url=${didWebUrl}`,
+        '--algorithm=secp256k1',
         '--no-input',
         '--json',
       ])
