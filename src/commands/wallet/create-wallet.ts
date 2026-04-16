@@ -98,10 +98,12 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
 
     const algorithm =
       flags.algorithm ??
-      (await select({
-        message: 'Select algorithm to generate key for the wallet',
-        choices: walletAlgorithmChoices,
-      }))
+      (flags['no-input']
+        ? WalletAlgorithms.SECP256K1
+        : await select({
+            message: 'Select algorithm to generate key for the wallet',
+            choices: walletAlgorithmChoices,
+          }))
 
     let services: Array<{ name: string; description: string; url: string; serviceType?: string }> | undefined
     if (flags.services) {
@@ -145,10 +147,6 @@ export class CreateWallet extends BaseCommand<typeof CreateWallet> {
       })
 
     const createWalletInput = schema.parse(data) as CreateWalletV2Input
-
-    this.log('\n=== DEBUG: CreateWalletV2Input ===')
-    this.log(JSON.stringify(createWalletInput, null, 2))
-    this.log('=================================\n')
 
     ux.action.start('Creating wallet')
     const output = await cweService.createWallet(createWalletInput)
