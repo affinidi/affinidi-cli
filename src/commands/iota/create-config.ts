@@ -3,7 +3,7 @@ import {
   IotaConfigurationDto,
   CreateIotaConfigurationInputModeEnum,
 } from '@affinidi-tdk/iota-client'
-import { WalletDto, CreateWalletInput } from '@affinidi-tdk/wallets-client'
+import { WalletDto, CreateWalletV2Input } from '@affinidi-tdk/wallets-client'
 import { input, select, confirm } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -182,7 +182,7 @@ export class CreateIotaConfig extends BaseCommand<typeof CreateIotaConfig> {
         const createWalletInput = walletSchema.parse(newWalletData)
 
         ux.action.start('Creating wallet')
-        const output = await cweService.createWallet(createWalletInput as CreateWalletInput)
+        const output = await cweService.createWallet(createWalletInput as CreateWalletV2Input)
         ux.action.stop('Created successfully!')
 
         walletAri = output.wallet?.ari || ''

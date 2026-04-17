@@ -3,9 +3,9 @@ import {
   WalletDto,
   Configuration,
   WalletsListDto,
-  CreateWalletInput,
+  CreateWalletV2Input,
   UpdateWalletInput,
-  CreateWalletResponse,
+  CreateWalletV2Response,
 } from '@affinidi-tdk/wallets-client'
 import { config } from '../../env-config.js'
 import { getBFFHeaders } from '../bff-service.js'
@@ -48,9 +48,9 @@ class CweService {
     }
   }
 
-  public createWallet = async (input: CreateWalletInput): Promise<CreateWalletResponse> => {
+  public createWallet = async (input: CreateWalletV2Input): Promise<CreateWalletV2Response> => {
     try {
-      const response = await this.client.createWallet(input)
+      const response = await this.client.createWalletV2(input)
 
       return response.data
     } catch (error) {
