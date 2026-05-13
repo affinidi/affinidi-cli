@@ -4,7 +4,7 @@ import {
   CreateIssuanceConfigInput,
   CredentialSupportedObject,
 } from '@affinidi-tdk/credential-issuance-client'
-import { WalletDto, CreateWalletV2Input } from '@affinidi-tdk/wallets-client'
+import { WalletDto, CreateWalletInput } from '@affinidi-tdk/wallets-client'
 import { input, select } from '@inquirer/prompts'
 import { ux, Flags } from '@oclif/core'
 import { CLIError } from '@oclif/core/errors'
@@ -137,7 +137,7 @@ export class CreateIssuanceConfig extends BaseCommand<typeof CreateIssuanceConfi
         const createWalletInput = walletSchema.parse(newWalletData)
 
         ux.action.start('Creating wallet')
-        const output = await cweService.createWallet(createWalletInput as CreateWalletV2Input)
+        const output = await cweService.createWallet(createWalletInput as CreateWalletInput)
         ux.action.stop('Created successfully!')
 
         issuerWalletId = output.wallet?.id || ''
