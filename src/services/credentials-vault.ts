@@ -1,6 +1,6 @@
 import os from 'os'
 import path from 'path'
-import keytar from '@postman/node-keytar'
+import { Entry } from '@napi-rs/keyring'
 import Conf from 'conf'
 import z from 'zod'
 import { config } from './env-config.js'
@@ -13,18 +13,25 @@ type Credentials = z.infer<typeof credentialsSchema>
 const account = 'Affinidi'
 const service = 'sessionID (@affinidi/cli)'
 
-// NOTE: `keytar` allows to manage credentials in system's keychain.
+// NOTE: `@napi-rs/keyring` manages credentials in the system's keychain.
 //       On macOS the passwords are managed by the Keychain,
 //       on Linux they are managed by the Secret Service API/libsecret,
-//       and on Windows they are managed by Credential Vault.
-// NOTE: `keytar` uses `libsecret` for Linux, and if that service is
-//        not installed, CLI falls back to saving sessionId into file.
+//       and on Windows they are managed by the Credential Vault.
+// NOTE: The `service`/`account` pair is kept identical to the one previously
+//       used with `keytar`, so credentials already stored in the keychain
+//       remain readable after the migration.
+// NOTE: If the keychain backend is unavailable (e.g. `libsecret` is not
+//       installed on Linux), CLI falls back to saving sessionId into a file.
+function getKeychainEntry(): Entry {
+  return new Entry(service, account)
+}
+
 class CredentialsVault {
   constructor(private readonly store: Conf<Credentials>) {}
 
   async clear(): Promise<void> {
     try {
-      await keytar.deletePassword(service, account)
+      getKeychainEntry().deletePassword()
     } catch (error) {
       this.store.clear()
     }
@@ -32,7 +39,7 @@ class CredentialsVault {
 
   async getSessionId(): Promise<string | null> {
     try {
-      return await keytar.getPassword(service, account)
+      return getKeychainEntry().getPassword()
     } catch (error) {
       return this.store.get('sessionId')
     }
@@ -40,7 +47,7 @@ class CredentialsVault {
 
   async setSessionId(value: string): Promise<void> {
     try {
-      await keytar.setPassword(service, account, value)
+      getKeychainEntry().setPassword(value)
     } catch (error) {
       this.store.set('sessionId', value)
     }
