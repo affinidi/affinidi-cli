@@ -11,7 +11,11 @@ Log in to Affinidi
 
 ```
 USAGE
-  $ affinidi start [--json] [--no-color] [--no-input]
+  $ affinidi start [--json] [--no-color] [--no-input] [-p affinidi|google|microsoft|apple|github]
+
+FLAGS
+  -p, --provider=<option>  Login provider to authenticate with
+                           <options: affinidi|google|microsoft|apple|github>
 
 GLOBAL FLAGS
   --json      Format output as json.
@@ -20,6 +24,13 @@ GLOBAL FLAGS
 
 EXAMPLES
   $ affinidi start
+
+  $ affinidi start --provider github
+
+FLAG DESCRIPTIONS
+  -p, --provider=affinidi|google|microsoft|apple|github  Login provider to authenticate with
+
+    Prompts for a provider if omitted. With --no-input, defaults to Affinidi Vault.
 ```
 
-_See code: [src/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.15.0/src/commands/start.ts)_
