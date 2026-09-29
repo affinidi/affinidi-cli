@@ -9,7 +9,7 @@ import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.ty
 import { handleServiceError } from './errors.js'
 import { ConsoleLoggerAdapter } from './logger/console-logger-adapter.js'
 import { LoggerAdapter } from './logger/logger-adapter.js'
-import { ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
+import { LoginProviders, ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
 import { credentialsVault } from '../credentials-vault.js'
 import { config } from '../env-config.js'
 
@@ -42,9 +42,9 @@ export class BFFService {
     })
   }
 
-  public async login(): Promise<string> {
+  public async login(provider?: LoginProviders): Promise<string> {
     const { privateKey, publicKey } = await this.generateKeyPair()
-    return this.authProvider.authenticate({ privateKey, publicKey })
+    return this.authProvider.authenticate({ privateKey, publicKey, provider })
   }
 
   public async logout(): Promise<void> {
@@ -67,11 +67,11 @@ export class BFFService {
     }
   }
 
-  public async postAuthUrl(publicKey: string): Promise<URL> {
+  public async postAuthUrl(publicKey: string, provider?: LoginProviders): Promise<URL> {
     try {
       const response = await instance.post<{ authUrl: string }>(
         '/api/auth/url',
-        { publicKey, uxClient: config.bffUxClient },
+        { publicKey, uxClient: config.bffUxClient, ...(provider ? { provider } : {}) },
         { headers: await getBFFHeaders() },
       )
       return new URL(response.data.authUrl)

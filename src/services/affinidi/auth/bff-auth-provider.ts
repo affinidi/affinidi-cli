@@ -20,7 +20,11 @@ export class BFFAuthProvider implements AuthProvider {
     this.logger = logger
   }
 
-  public async authenticate({ privateKey, publicKey }: { privateKey: KeyLike; publicKey: KeyLike }): Promise<string> {
+  public async authenticate({
+    privateKey,
+    publicKey,
+    provider,
+  }: Parameters<AuthProvider['authenticate']>[0]): Promise<string> {
     const port = 64287
     const isPortInUse = await check(config.redirectPort)
     if (isPortInUse) {
@@ -30,7 +34,7 @@ export class BFFAuthProvider implements AuthProvider {
       )
     }
 
-    const authUrl = await bffService.postAuthUrl(await JWKToPem(publicKey))
+    const authUrl = await bffService.postAuthUrl(await JWKToPem(publicKey), provider)
     const state = authUrl.searchParams.get('state')
     if (!state) {
       throw new Error('Unexpected error occurred. state parameter missing')
