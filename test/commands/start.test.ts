@@ -23,8 +23,8 @@ describe('start', () => {
     expect(authUrlRequests[0].provider).to.equal('github')
   })
 
-  it('defaults to Affinidi Vault by omitting the provider with --no-input', async () => {
-    await runCommand(['start', '--no-input'])
+  it('omits the provider without --provider, as before the flag existed', async () => {
+    await runCommand(['start'])
 
     expect(authUrlRequests).to.have.length(1)
     expect(authUrlRequests[0]).not.to.have.property('provider')

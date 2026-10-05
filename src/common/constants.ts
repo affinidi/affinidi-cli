@@ -25,7 +25,6 @@ export enum RefAppProvider {
   AUTH0 = 'auth0',
 }
 
-// Must match the BFF's SUPPORTED_PROVIDER_HINTS, which rejects any other value.
 export enum LoginProviders {
   AFFINIDI = 'affinidi',
   GOOGLE = 'google',

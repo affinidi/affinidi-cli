@@ -30,7 +30,7 @@ EXAMPLES
 FLAG DESCRIPTIONS
   -p, --provider=affinidi|google|microsoft|apple|github  Login provider to authenticate with
 
-    Prompts for a provider if omitted. With --no-input, defaults to Affinidi Vault.
+    If omitted, the default login page opens.
 ```
 
 _See code: [src/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.15.0/src/commands/start.ts)_

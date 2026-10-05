@@ -167,19 +167,17 @@ You can authenticate as a builder with Affinidi Vault or with a Google, Microsof
 
 To use Affinidi Vault, install the [extension](https://chrome.google.com/webstore/detail/fejpjjkbaklcdcibmkbmpanjbiihclon), open the extension popup and follow the registration instructions. You can find a user guide to set up your Affinidi Vault [here](https://docs.affinidi.com/docs/get-started/#setup-affinidi-vault).
 
-Authenticate in the CLI with the command below. It asks which login provider to use:
+Authenticate in the CLI with:
 
 ```bash
 affinidi start
 ```
 
-To skip the prompt, pass the provider directly:
+To log in with a specific provider, pass it with `--provider`:
 
 ```bash
 affinidi start --provider github
 ```
-
-With `--no-input` and no `--provider`, the CLI uses Affinidi Vault.
 
 ### Understanding commands
 
