@@ -34,6 +34,10 @@ export enum LoginProviders {
   GITHUB = 'github',
 }
 
+export enum LoginAuthMethods {
+  OTC = 'otc',
+}
+
 export interface Auth0Config {
   callbackUrl: string
   webOriginUrl: string

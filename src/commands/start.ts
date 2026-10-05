@@ -34,7 +34,7 @@ export class Start extends BaseCommand<typeof Start> {
 
     ux.action.start('Authenticating in browser')
     try {
-      await bffService.login(provider)
+      await bffService.login({ provider })
       const activeProject = await bffService.getActiveProject()
       ux.action.stop('Authenticated successfully!')
       this.log(

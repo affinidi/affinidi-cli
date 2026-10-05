@@ -6,6 +6,7 @@ import { KeyLike } from 'jose'
 import open from 'open'
 import { check } from 'tcp-port-used'
 import { authResultPage } from './auth-result-page.js'
+import { applyAuthMethod } from './auth-url.js'
 import { AuthProvider, AuthProviderConfig } from './types.js'
 import { JWKToPem, decryptSessionIdWithPrivateKey } from '../../../helpers/jwk.js'
 import { credentialsVault } from '../../credentials-vault.js'
@@ -24,6 +25,7 @@ export class BFFAuthProvider implements AuthProvider {
     privateKey,
     publicKey,
     provider,
+    authMethod,
   }: Parameters<AuthProvider['authenticate']>[0]): Promise<string> {
     const port = 64287
     const isPortInUse = await check(config.redirectPort)
@@ -34,7 +36,7 @@ export class BFFAuthProvider implements AuthProvider {
       )
     }
 
-    const authUrl = await bffService.postAuthUrl(await JWKToPem(publicKey), provider)
+    const authUrl = applyAuthMethod(await bffService.postAuthUrl(await JWKToPem(publicKey), provider), authMethod)
     const state = authUrl.searchParams.get('state')
     if (!state) {
       throw new Error('Unexpected error occurred. state parameter missing')
