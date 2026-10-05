@@ -2,8 +2,10 @@ import { select } from '@inquirer/prompts'
 import { Flags, ux } from '@oclif/core'
 import chalk from 'chalk'
 import { BaseCommand } from '../common/base-command.js'
-import { LoginProviders } from '../common/constants.js'
+import { LoginAuthMethods, LoginProviders } from '../common/constants.js'
 import { bffService } from '../services/affinidi/bff-service.js'
+
+const EMAIL_LOGIN = 'email'
 
 const loginProviderChoices = [
   { name: 'Affinidi Vault', value: LoginProviders.AFFINIDI },
@@ -11,30 +13,40 @@ const loginProviderChoices = [
   { name: 'Microsoft', value: LoginProviders.MICROSOFT },
   { name: 'Apple', value: LoginProviders.APPLE },
   { name: 'GitHub', value: LoginProviders.GITHUB },
+  { name: 'Email (one-time code)', value: EMAIL_LOGIN },
 ]
 
 export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'
-  static examples = ['<%= config.bin %> <%= command.id %>', '<%= config.bin %> <%= command.id %> --provider github']
+  static examples = [
+    '<%= config.bin %> <%= command.id %>',
+    '<%= config.bin %> <%= command.id %> --provider github',
+    '<%= config.bin %> <%= command.id %> --provider email',
+  ]
   static flags = {
     provider: Flags.string({
       char: 'p',
       summary: 'Login provider to authenticate with',
-      description: 'Prompts for a provider if omitted. With --no-input, defaults to Affinidi Vault.',
-      options: Object.values(LoginProviders),
+      description:
+        'Use "email" to log in with a one-time code sent to your email. Prompts for a provider if omitted. With --no-input, defaults to Affinidi Vault.',
+      options: [...Object.values(LoginProviders), EMAIL_LOGIN],
     }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Start)
     // Without a provider the login UI falls back to Affinidi Vault, keeping --no-input scripts unchanged.
-    const provider =
-      (flags.provider as LoginProviders | undefined) ??
+    const selection =
+      flags.provider ??
       (flags['no-input'] ? undefined : await select({ message: 'Select how to log in', choices: loginProviderChoices }))
+    const loginOption =
+      selection === EMAIL_LOGIN
+        ? { authMethod: LoginAuthMethods.OTC }
+        : { provider: selection as LoginProviders | undefined }
 
     ux.action.start('Authenticating in browser')
     try {
-      await bffService.login({ provider })
+      await bffService.login(loginOption)
       const activeProject = await bffService.getActiveProject()
       ux.action.stop('Authenticated successfully!')
       this.log(

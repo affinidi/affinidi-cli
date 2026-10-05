@@ -30,6 +30,13 @@ describe('start', () => {
     expect(authUrlRequests[0]).not.to.have.property('provider')
   })
 
+  it('logs in with email one-time code without sending a provider', async () => {
+    await runCommand(['start', '--provider', 'email'])
+
+    expect(authUrlRequests).to.have.length(1)
+    expect(authUrlRequests[0]).not.to.have.property('provider')
+  })
+
   it('rejects an unsupported provider', async () => {
     const { error } = await runCommand(['start', '--provider', 'facebook'])
 
