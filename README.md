@@ -163,7 +163,7 @@ The first thing you will want to do in the CLI to access most features is to aut
 
 ### Authenticating to Affinidi
 
-You can authenticate as a builder with Affinidi Vault or with a Google, Microsoft, Apple or GitHub account.
+You can authenticate as a builder with Affinidi Vault, with a Google, Microsoft, Apple or GitHub account, or with a one-time code sent to your email.
 
 To use Affinidi Vault, install the [extension](https://chrome.google.com/webstore/detail/fejpjjkbaklcdcibmkbmpanjbiihclon), open the extension popup and follow the registration instructions. You can find a user guide to set up your Affinidi Vault [here](https://docs.affinidi.com/docs/get-started/#setup-affinidi-vault).
 
@@ -177,6 +177,12 @@ To skip the prompt, pass the provider directly:
 
 ```bash
 affinidi start --provider github
+```
+
+To log in with a one-time code, use `--provider email`. Enter your email address and the code in the browser that opens. An email address without an account gets a new one.
+
+```bash
+affinidi start --provider email
 ```
 
 With `--no-input` and no `--provider`, the CLI uses Affinidi Vault.

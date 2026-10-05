@@ -9,7 +9,7 @@ import { StatsProjectResourceLimit, StatsResponseOutput } from './bff-service.ty
 import { handleServiceError } from './errors.js'
 import { ConsoleLoggerAdapter } from './logger/console-logger-adapter.js'
 import { LoggerAdapter } from './logger/logger-adapter.js'
-import { LoginProviders, ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
+import { LoginAuthMethods, LoginProviders, ServiceResourceIds, SupportedAlgorithms } from '../../common/constants.js'
 import { credentialsVault } from '../credentials-vault.js'
 import { config } from '../env-config.js'
 
@@ -42,9 +42,12 @@ export class BFFService {
     })
   }
 
-  public async login(provider?: LoginProviders): Promise<string> {
+  public async login({
+    provider,
+    authMethod,
+  }: { provider?: LoginProviders; authMethod?: LoginAuthMethods } = {}): Promise<string> {
     const { privateKey, publicKey } = await this.generateKeyPair()
-    return this.authProvider.authenticate({ privateKey, publicKey, provider })
+    return this.authProvider.authenticate({ privateKey, publicKey, provider, authMethod })
   }
 
   public async logout(): Promise<void> {
