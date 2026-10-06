@@ -8,18 +8,18 @@ export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'
   static examples = ['<%= config.bin %> <%= command.id %>', '<%= config.bin %> <%= command.id %> --provider github']
   static flags = {
-    provider: Flags.string({
+    provider: Flags.option({
       char: 'p',
       summary: 'Login provider to authenticate with',
       description: 'If omitted, the default login page opens.',
       options: Object.values(LoginProviders),
-    }),
+    })(),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Start)
     // No prompt here: existing scripts run `start` without flags and must not block on input.
-    const provider = flags.provider as LoginProviders | undefined
+    const { provider } = flags
     this.logProviderHint(provider)
 
     ux.action.start('Authenticating in browser')
