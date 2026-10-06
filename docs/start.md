@@ -33,4 +33,4 @@ FLAG DESCRIPTIONS
     If omitted, the default login page opens.
 ```
 
-_See code: [src/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.15.0/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/start.ts)_
