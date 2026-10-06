@@ -20,6 +20,7 @@ export class Start extends BaseCommand<typeof Start> {
     const { flags } = await this.parse(Start)
     // No prompt here: existing scripts run `start` without flags and must not block on input.
     const provider = flags.provider as LoginProviders | undefined
+    this.logProviderHint(provider)
 
     ux.action.start('Authenticating in browser')
     try {
@@ -40,5 +41,12 @@ export class Start extends BaseCommand<typeof Start> {
       ux.action.stop('Authentication failed!')
       this.error(error as string)
     }
+  }
+
+  // Surfaces --provider to users who would otherwise only find it via --help.
+  private logProviderHint(provider?: LoginProviders): void {
+    const current = provider ? `Logging in with ${chalk.bold(provider)}.` : 'Logging in via the default login page.'
+    const usage = `affinidi start --provider <${Object.values(LoginProviders).join('|')}>`
+    this.log(`${current}\n💡 To log in with a specific provider run: ${usage}\n`)
   }
 }

@@ -30,6 +30,19 @@ describe('start', () => {
     expect(authUrlRequests[0]).not.to.have.property('provider')
   })
 
+  it('hints at --provider and the supported providers', async () => {
+    const { stdout } = await runCommand(['start'])
+
+    expect(stdout).to.contain('Logging in via the default login page.')
+    expect(stdout).to.contain('affinidi start --provider <affinidi|google|microsoft|apple|github>')
+  })
+
+  it('names the chosen provider in the hint', async () => {
+    const { stdout } = await runCommand(['start', '--provider', 'github'])
+
+    expect(stdout).to.contain('Logging in with github.')
+  })
+
   it('rejects an unsupported provider', async () => {
     const { error } = await runCommand(['start', '--provider', 'facebook'])
 
