@@ -25,6 +25,14 @@ export enum RefAppProvider {
   AUTH0 = 'auth0',
 }
 
+export enum LoginProviders {
+  AFFINIDI = 'affinidi',
+  GOOGLE = 'google',
+  MICROSOFT = 'microsoft',
+  APPLE = 'apple',
+  GITHUB = 'github',
+}
+
 export interface Auth0Config {
   callbackUrl: string
   webOriginUrl: string

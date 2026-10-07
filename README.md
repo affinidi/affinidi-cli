@@ -163,14 +163,20 @@ The first thing you will want to do in the CLI to access most features is to aut
 
 ### Authenticating to Affinidi
 
-Authenticating as a builder is also done with Affinidi Login, which requires you to have the Affinidi Vault extension.
+You can authenticate as a builder with Affinidi Vault or with a Google, Microsoft, Apple or GitHub account.
 
-Please install the [extension](https://chrome.google.com/webstore/detail/fejpjjkbaklcdcibmkbmpanjbiihclon), open the extension popup and follow the registration instructions. You can find a user guide to set up your Affinidi Vault [here](https://docs.affinidi.com/docs/get-started/#setup-affinidi-vault).
+To use Affinidi Vault, install the [extension](https://chrome.google.com/webstore/detail/fejpjjkbaklcdcibmkbmpanjbiihclon), open the extension popup and follow the registration instructions. You can find a user guide to set up your Affinidi Vault [here](https://docs.affinidi.com/docs/get-started/#setup-affinidi-vault).
 
-Once you have registered, authenticate in the CLI with:
+Authenticate in the CLI with:
 
 ```bash
 affinidi start
+```
+
+To log in with a specific provider, pass it with `--provider`:
+
+```bash
+affinidi start --provider github
 ```
 
 ### Understanding commands

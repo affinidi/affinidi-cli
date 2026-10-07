@@ -1,16 +1,29 @@
-import { ux } from '@oclif/core'
+import { Flags, ux } from '@oclif/core'
 import chalk from 'chalk'
 import { BaseCommand } from '../common/base-command.js'
+import { LoginProviders } from '../common/constants.js'
 import { bffService } from '../services/affinidi/bff-service.js'
 
 export class Start extends BaseCommand<typeof Start> {
   static summary = 'Log in to Affinidi'
-  static examples = ['<%= config.bin %> <%= command.id %>']
+  static examples = ['<%= config.bin %> <%= command.id %>', '<%= config.bin %> <%= command.id %> --provider github']
+  static flags = {
+    provider: Flags.option({
+      summary: 'Login provider to authenticate with',
+      description: 'If omitted, the default login page opens, same as --provider affinidi.',
+      options: Object.values(LoginProviders),
+    })(),
+  }
 
   public async run(): Promise<void> {
+    const { flags } = await this.parse(Start)
+    // No prompt here: existing scripts run `start` without flags and must not block on input.
+    const { provider } = flags
+    this.logProviderHint(provider)
+
     ux.action.start('Authenticating in browser')
     try {
-      await bffService.login()
+      await bffService.login(provider)
       const activeProject = await bffService.getActiveProject()
       ux.action.stop('Authenticated successfully!')
       this.log(
@@ -27,5 +40,16 @@ export class Start extends BaseCommand<typeof Start> {
       ux.action.stop('Authentication failed!')
       this.error(error as string)
     }
+  }
+
+  // Surfaces --provider to users who would otherwise only find it via --help.
+  private logProviderHint(provider?: LoginProviders): void {
+    if (provider) {
+      this.log(`Logging in with ${chalk.bold(provider)}.\n`)
+      return
+    }
+
+    const usage = `affinidi start --provider <${Object.values(LoginProviders).join('|')}>`
+    this.log(`Logging in via the default login page.\n💡 To log in with a specific provider run: ${usage}\n`)
   }
 }
