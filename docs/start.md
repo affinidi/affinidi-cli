@@ -31,7 +31,7 @@ EXAMPLES
 FLAG DESCRIPTIONS
   --provider=affinidi|google|microsoft|apple|github  Login provider to authenticate with
 
-    If omitted, the default login page opens.
+    If omitted, the default login page opens, same as --provider affinidi.
 ```
 
 _See code: [src/commands/start.ts](https://github.com/affinidi/affinidi-cli/blob/v2.13.0/src/commands/start.ts)_

@@ -10,7 +10,7 @@ export class Start extends BaseCommand<typeof Start> {
   static flags = {
     provider: Flags.option({
       summary: 'Login provider to authenticate with',
-      description: 'If omitted, the default login page opens.',
+      description: 'If omitted, the default login page opens, same as --provider affinidi.',
       options: Object.values(LoginProviders),
     })(),
   }
