@@ -22,12 +22,15 @@ describe('start', () => {
 
   // The login aborts before the mocked request if the redirect port is busy, so use one that is free.
   // runCommand would load the command with its own copy of config, hence Start.run below.
+  // Blocks real requests, so a missed interceptor fails the test instead of reaching the real BFF.
   before(async () => {
     config.redirectPort = await getFreePort()
+    nock.disableNetConnect()
   })
 
   after(() => {
     config.redirectPort = defaultRedirectPort
+    nock.enableNetConnect()
   })
 
   beforeEach(() => {
