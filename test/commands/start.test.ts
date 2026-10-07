@@ -61,10 +61,11 @@ describe('start', () => {
     expect(stdout).to.contain('affinidi start --provider <affinidi|google|microsoft|apple|github>')
   })
 
-  it('names the chosen provider in the hint', async () => {
+  it('names the chosen provider without suggesting --provider again', async () => {
     const { stdout } = await runStart(['--provider', 'github'])
 
     expect(stdout).to.contain('Logging in with github.')
+    expect(stdout).not.to.contain('--provider')
   })
 
   it('rejects an unsupported provider', async () => {

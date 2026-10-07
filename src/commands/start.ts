@@ -45,8 +45,12 @@ export class Start extends BaseCommand<typeof Start> {
 
   // Surfaces --provider to users who would otherwise only find it via --help.
   private logProviderHint(provider?: LoginProviders): void {
-    const current = provider ? `Logging in with ${chalk.bold(provider)}.` : 'Logging in via the default login page.'
+    if (provider) {
+      this.log(`Logging in with ${chalk.bold(provider)}.\n`)
+      return
+    }
+
     const usage = `affinidi start --provider <${Object.values(LoginProviders).join('|')}>`
-    this.log(`${current}\n💡 To log in with a specific provider run: ${usage}\n`)
+    this.log(`Logging in via the default login page.\n💡 To log in with a specific provider run: ${usage}\n`)
   }
 }
