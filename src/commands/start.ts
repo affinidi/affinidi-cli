@@ -9,7 +9,6 @@ export class Start extends BaseCommand<typeof Start> {
   static examples = ['<%= config.bin %> <%= command.id %>', '<%= config.bin %> <%= command.id %> --provider github']
   static flags = {
     provider: Flags.option({
-      char: 'p',
       summary: 'Login provider to authenticate with',
       description: 'If omitted, the default login page opens.',
       options: Object.values(LoginProviders),
