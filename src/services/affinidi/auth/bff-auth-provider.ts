@@ -5,6 +5,7 @@ import helmet from 'helmet'
 import { KeyLike } from 'jose'
 import open from 'open'
 import { check } from 'tcp-port-used'
+import { authErrorMessage } from './auth-error-message.js'
 import { authResultPage } from './auth-result-page.js'
 import { AuthProvider, AuthProviderConfig } from './types.js'
 import { JWKToPem, decryptSessionIdWithPrivateKey } from '../../../helpers/jwk.js'
@@ -115,12 +116,12 @@ export class BFFAuthProvider implements AuthProvider {
       res.end(
         authResultPage(
           'Logged in successfully',
-          'Head back to the terminal to continue using Affinidi CLI.<br><br>You can also access our services from the <a href="https://portal.affinidi.com" target="_blank">Affindi Portal</a>',
+          'Head back to the terminal to continue using Affinidi CLI.<br><br>You can also access our services from the <a href="https://portal.affinidi.com" target="_blank" rel="noopener noreferrer">Affinidi Portal</a>',
         ),
       )
     } catch (error) {
       this.logger.info(error as string)
-      const errorMessage = this.generateErrorMessage()
+      const errorMessage = authErrorMessage()
       reject(errorMessage)
       res.end(authResultPage('Login failed', errorMessage))
     }
@@ -143,24 +144,9 @@ export class BFFAuthProvider implements AuthProvider {
     const { res, req, reject, timeout } = params
     const { type, description } = req.query
     clearTimeout(timeout)
-    const errorMessage = this.generateErrorMessage(type as string, description as string)
+    const errorMessage = authErrorMessage(type as string, description as string)
     reject(errorMessage)
     res.end(authResultPage('Login failed', errorMessage))
-  }
-
-  private generateErrorMessage(type?: string, errorDescription?: string) {
-    let errorMessage: string
-    switch (type) {
-      case 'access_denied':
-        errorMessage =
-          errorDescription === 'request_declined'
-            ? 'You have declined access to your data. Granting access to your data is necessary to avail our services.'
-            : 'Access denied.'
-        break
-      default:
-        errorMessage = 'Unexpected error occurred'
-    }
-    return errorMessage
   }
 
   private shutDownServer(server: http.Server): void {
