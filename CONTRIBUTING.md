@@ -74,6 +74,17 @@ For example, a correct commit name or pull request name is: `fix: add test` or `
 
 Don't forget to write a meaningful description to your pull request. If necessary, attach a screenshot of UI changes.
 
+### Supported Node.js versions
+
+The CLI requires the latest patched release of each supported Node.js major. After every [Node.js security release](https://nodejs.org/en/blog/vulnerability), update:
+
+- `engines.node` in `package.json` (run `npm install` to sync `package-lock.json`)
+- the Node.js line under Requirements in `README.md`
+- the `node` matrix in `.github/workflows/install-smoke.yml` when a major is added or dropped
+- `@types/node` when the oldest supported major changes
+
+Raising the minimum is a breaking change: add a `BREAKING CHANGE:` footer to the squash commit message when merging.
+
 ## Philosophy
 
 - **Human-first design:** CLI is going to be used primarily by humans. Design it for them first, and for machines second.
