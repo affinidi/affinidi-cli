@@ -81,6 +81,7 @@ The CLI requires the latest patched release of each supported Node.js major. Aft
 - `engines.node` in `package.json` (run `npm install` to sync `package-lock.json`)
 - the Node.js line under Requirements in `README.md`
 - the `node` matrix in `.github/workflows/install-smoke.yml` when a major is added or dropped
+- the `node-version` in `.github/workflows/checks.yml`, `release.yml` and `publish.yml` when the major they use is dropped
 - `@types/node` when the oldest supported major changes
 
 Raising the minimum is a breaking change: add a `BREAKING CHANGE:` footer to the squash commit message when merging.
