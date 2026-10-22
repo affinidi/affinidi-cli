@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          check-latest: true
 
       - name: Install dependencies
         run: npm ci
@@ -42,6 +43,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          check-latest: true
 
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y libsecret-1-dev
@@ -66,6 +68,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          check-latest: true
 
       - name: Install dependencies
         run: npm ci
